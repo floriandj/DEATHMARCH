@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { UNIT_FIRE_RATE } from '@/config/GameConfig';
 
 export class PlayerUnit extends Phaser.GameObjects.Sprite {
   active: boolean = false;
@@ -15,7 +14,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
-    this.fireOffset = (index * 37) % UNIT_FIRE_RATE;
+    this.fireOffset = (index * 37) % 200; // spread across base fire rate
   }
 
   spawn(x: number, y: number): void {
@@ -70,11 +69,11 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.setActive(false);
   }
 
-  updateFiring(delta: number): boolean {
+  updateFiring(delta: number, fireRate: number): boolean {
     if (!this.active) return false;
     this.fireTimer += delta;
-    if (this.fireTimer >= UNIT_FIRE_RATE) {
-      this.fireTimer -= UNIT_FIRE_RATE;
+    if (this.fireTimer >= fireRate) {
+      this.fireTimer -= fireRate;
       return true;
     }
     return false;

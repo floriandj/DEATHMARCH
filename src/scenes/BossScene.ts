@@ -9,8 +9,8 @@ import {
   SCORE_BOSS_KILL,
   SCORE_PER_SURVIVING_UNIT,
 } from '@/config/GameConfig';
+import { WeaponType, WEAPON_STATS } from '@/config/WeaponConfig';
 import { InputHandler } from '@/systems/InputHandler';
-import { computeFormation } from '@/entities/Army';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { Bullet } from '@/entities/Bullet';
 import { BossState, BossPhase } from '@/entities/Boss';
@@ -20,6 +20,7 @@ interface BossSceneData {
   score: number;
   distance: number;
   unitCount: number;
+  weapon: WeaponType;
 }
 
 export class BossScene extends Phaser.Scene {
@@ -32,6 +33,7 @@ export class BossScene extends Phaser.Scene {
   private distance: number = 0;
   private unitCount: number = 0;
   private activeUnitCount: number = 0;
+  private currentWeapon: WeaponType = 'pistol';
 
   private units: PlayerUnit[] = [];
   private bullets: Bullet[] = [];
@@ -51,6 +53,7 @@ export class BossScene extends Phaser.Scene {
     this.distance = data.distance;
     this.unitCount = data.unitCount;
     this.activeUnitCount = 0;
+    this.currentWeapon = data.weapon || 'pistol';
     this.armyX = 0;
 
     this.input_handler = new InputHandler(this);
@@ -117,7 +120,7 @@ export class BossScene extends Phaser.Scene {
     // 5. Fire bullets at boss
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta)) {
+      if (unit.updateFiring(delta, WEAPON_STATS[this.currentWeapon].fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
           bullet.fire(unit.x, unit.y);

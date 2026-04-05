@@ -13,15 +13,15 @@ import {
   SCORE_PER_METER,
 } from '@/config/GameConfig';
 import { ENEMY_STATS } from '@/config/EnemyConfig';
-// IsoHelper available for future isometric rendering enhancements
+import { WeaponType, WEAPON_STATS, WEAPON_ORDER, CRATE_INTERVAL } from '@/config/WeaponConfig';
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
 import { pickGatePair } from '@/systems/GateSpawner';
-import { computeFormation } from '@/entities/Army';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { Bullet } from '@/entities/Bullet';
 import { Enemy } from '@/entities/Enemy';
 import { Gate } from '@/entities/Gate';
+import { WeaponCrate } from '@/entities/WeaponCrate';
 import { HUDScene } from '@/scenes/HUDScene';
 
 export class GameScene extends Phaser.Scene {
@@ -42,9 +42,14 @@ export class GameScene extends Phaser.Scene {
   private bullets: Bullet[] = [];
   private enemies: Enemy[] = [];
   private gates: Gate[] = [];
+  private crates: WeaponCrate[] = [];
 
   // Gate tracking
   private nextGateDistance: number = GATE_INTERVAL;
+
+  // Weapon system
+  private currentWeapon: WeaponType = 'pistol';
+  private nextCrateDistance: number = CRATE_INTERVAL;
 
   // Track active unit count to know when to respawn vs reposition
   private activeUnitCount: number = 0;
@@ -62,6 +67,8 @@ export class GameScene extends Phaser.Scene {
     this.killStreak = 0;
     this.lastKillTime = 0;
     this.nextGateDistance = GATE_INTERVAL;
+    this.currentWeapon = 'pistol';
+    this.nextCrateDistance = CRATE_INTERVAL;
 
     this.input_handler = new InputHandler(this);
     this.waveSpawner = new WaveSpawner();
@@ -85,6 +92,11 @@ export class GameScene extends Phaser.Scene {
     this.gates = [];
     for (let i = 0; i < 5; i++) {
       this.gates.push(new Gate(this));
+    }
+
+    this.crates = [];
+    for (let i = 0; i < 3; i++) {
+      this.crates.push(new WeaponCrate(this));
     }
 
     // Start HUD
@@ -134,6 +146,25 @@ export class GameScene extends Phaser.Scene {
       this.nextGateDistance += GATE_INTERVAL;
     }
 
+    // 4b. Spawn weapon crates
+    if (this.distance >= this.nextCrateDistance && this.distance < BOSS_TRIGGER_DISTANCE) {
+      const crate = this.crates.find((c) => !c.active);
+      if (crate) {
+        const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
+        crate.spawn(crateX, -60, this.currentWeapon);
+      }
+      this.nextCrateDistance += CRATE_INTERVAL;
+    }
+
+    // 4c. Update weapon crates
+    for (const crate of this.crates) {
+      if (!crate.active) continue;
+      crate.updateMovement(delta);
+      if (crate.y > GAME_HEIGHT + 60) {
+        crate.despawn(); // missed it
+      }
+    }
+
     // 5. Update bullets
     const armyScreenY = GAME_HEIGHT - 200;
     for (const bullet of this.bullets) {
@@ -166,6 +197,24 @@ export class GameScene extends Phaser.Scene {
             this.lastKillTime = now;
           }
           break;
+        }
+      }
+
+      // Hit check against weapon crates
+      if (bullet.active) {
+        for (const crate of this.crates) {
+          if (!crate.active) continue;
+          const cx = bullet.x - crate.x;
+          const cy = bullet.y - crate.y;
+          if (Math.sqrt(cx * cx + cy * cy) < 30) {
+            bullet.despawn();
+            const newWeapon = crate.takeDamage(bullet.damage);
+            if (newWeapon) {
+              this.currentWeapon = newWeapon;
+              this.showWeaponUpgrade(crate.x, crate.y, newWeapon);
+            }
+            break;
+          }
         }
       }
     }
@@ -250,10 +299,11 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 8. Fire bullets from units (straight up)
+    // 8. Fire bullets from units (straight up, weapon fire rate)
+    const weaponStats = WEAPON_STATS[this.currentWeapon];
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta)) {
+      if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
           bullet.fire(unit.x, unit.y);
@@ -339,6 +389,31 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private showWeaponUpgrade(x: number, y: number, weapon: WeaponType): void {
+    const stats = WEAPON_STATS[weapon];
+    const text = this.add.text(x, y, stats.name + '!', {
+      fontSize: '40px',
+      color: '#ffffff',
+      fontFamily: 'monospace',
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 5,
+    }).setOrigin(0.5);
+
+    this.tweens.add({
+      targets: text,
+      y: y - 180,
+      alpha: 0,
+      scale: 1.8,
+      duration: 1200,
+      ease: 'Power2',
+      onComplete: () => text.destroy(),
+    });
+
+    this.cameras.main.flash(300, 255, 255, 255, true);
+    this.cameras.main.shake(200, 0.015);
+  }
+
   private gameOver(): void {
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
@@ -359,6 +434,7 @@ export class GameScene extends Phaser.Scene {
         score: Math.floor(this.score),
         distance: Math.floor(this.distance),
         unitCount: this.unitCount,
+        weapon: this.currentWeapon,
       });
     });
   }
