@@ -13,7 +13,7 @@ export const WEAPON_STATS: Record<WeaponType, WeaponStats> = {
   pistol: {
     type: 'pistol',
     name: 'PISTOL',
-    fireRate: 800,       // slow semi-auto
+    fireRate: 500,       // semi-auto
     bulletColor: 0xffd43b,
   },
   smg: {
