@@ -98,6 +98,11 @@ export class BossScene extends Phaser.Scene {
     this.armyX = normalized * (FIELD_WIDTH / 2);
     this.respawnArmy();
 
+    // 1b. Unit physics
+    for (const unit of this.units) {
+      unit.updatePhysics(delta, this.units);
+    }
+
     // 2. Update boss phase
     const phaseChanged = this.bossState.update(delta);
     if (phaseChanged) {

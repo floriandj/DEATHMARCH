@@ -106,6 +106,11 @@ export class GameScene extends Phaser.Scene {
     this.armyX = normalized * (FIELD_WIDTH / 2);
     this.respawnArmy();
 
+    // 2b. Unit physics — smooth movement + separation
+    for (const unit of this.units) {
+      unit.updatePhysics(delta, this.units);
+    }
+
     // 3. Spawn enemies
     const spawnCommands = this.waveSpawner.update(this.distance);
     for (const cmd of spawnCommands) {
