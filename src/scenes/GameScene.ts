@@ -128,8 +128,8 @@ export class GameScene extends Phaser.Scene {
       const pair = pickGatePair(this.distance);
       const gate = this.gates.find((g) => !g.active);
       if (gate) {
-        gate.spawn(200, pair.left, pair.right); // spawn at top area
-        gate.setPosition(GAME_WIDTH / 2, 200);
+        gate.spawn(-80, pair.left, pair.right); // spawn above viewport
+        gate.setPosition(GAME_WIDTH / 2, -80);
       }
       this.nextGateDistance += GATE_INTERVAL;
     }
