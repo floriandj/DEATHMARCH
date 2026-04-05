@@ -25,7 +25,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.setActive(true);
     this.fireTimer = this.fireOffset;
     this.setAlpha(1);
-    this.setScale(1);
+    this.setScale(1.5);
     this.play('unit_march');
   }
 
@@ -46,7 +46,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.y += (this.targetY - this.y) * pullStrength * dt;
 
     // Strong separation: units push apart, forming a natural blob
-    const separationRadius = 24;
+    const separationRadius = 30;
     let pushX = 0;
     let pushY = 0;
 

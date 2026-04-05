@@ -94,21 +94,21 @@ export class BossScene extends Phaser.Scene {
     this.respawnArmy();
 
     // Boss entrance sequence: fade in from black, then boss drops into frame
-    this.cameras.main.fadeIn(600, 0, 0, 0);
+    this.cameras.main.fadeIn(1000, 0, 0, 0);
 
     // Pause before boss enters
-    this.time.delayedCall(800, () => {
+    this.time.delayedCall(1200, () => {
       // Boss fades in and drops down with impact
       this.bossSprite.setAlpha(1);
       this.tweens.add({
         targets: this.bossSprite,
         y: 200,
-        duration: 600,
+        duration: 900,
         ease: 'Bounce.easeOut',
         onComplete: () => {
           // Impact effects: shake + flash
-          this.cameras.main.shake(300, 0.03);
-          this.cameras.main.flash(200, 255, 100, 100);
+          this.cameras.main.shake(400, 0.04);
+          this.cameras.main.flash(300, 255, 100, 100);
           this.entranceComplete = true;
         },
       });

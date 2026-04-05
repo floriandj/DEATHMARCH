@@ -449,21 +449,24 @@ export class GameScene extends Phaser.Scene {
 
   private transitionToBoss(): void {
     // Escalating screen shake sequence for dramatic buildup
-    this.cameras.main.shake(300, 0.005);
-    this.time.delayedCall(400, () => {
-      this.cameras.main.shake(400, 0.02);
+    this.cameras.main.shake(400, 0.005);
+    this.time.delayedCall(500, () => {
+      this.cameras.main.shake(500, 0.015);
     });
-    this.time.delayedCall(900, () => {
-      this.cameras.main.shake(500, 0.04);
-      this.cameras.main.flash(400, 255, 50, 50);
+    this.time.delayedCall(1100, () => {
+      this.cameras.main.shake(600, 0.03);
+    });
+    this.time.delayedCall(1800, () => {
+      this.cameras.main.shake(700, 0.05);
+      this.cameras.main.flash(500, 255, 50, 50);
     });
 
     // Fade to black before scene switch
-    this.time.delayedCall(1200, () => {
-      this.cameras.main.fade(500, 0, 0, 0);
+    this.time.delayedCall(2400, () => {
+      this.cameras.main.fade(800, 0, 0, 0);
     });
 
-    this.time.delayedCall(1700, () => {
+    this.time.delayedCall(3200, () => {
       this.scene.stop('HUDScene');
       this.scene.start('BossScene', {
         score: Math.floor(this.score),
