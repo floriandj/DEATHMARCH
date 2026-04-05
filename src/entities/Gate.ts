@@ -54,6 +54,28 @@ export class Gate extends Phaser.GameObjects.Container {
 
     this.setVisible(true);
     this.setActive(true);
+
+    // Pulsing glow animation
+    this.scene.tweens.add({
+      targets: [this.leftBg, this.rightBg],
+      alpha: { from: 0.6, to: 1 },
+      scaleX: { from: 0.95, to: 1.05 },
+      scaleY: { from: 0.95, to: 1.05 },
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    // Labels bob up and down
+    this.scene.tweens.add({
+      targets: [this.leftLabel, this.rightLabel],
+      y: { from: -4, to: 4 },
+      duration: 800,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
   }
 
   checkPass(armyX: number, armyY: number): GateOption | null {
@@ -72,6 +94,12 @@ export class Gate extends Phaser.GameObjects.Container {
   }
 
   despawn(): void {
+    this.scene.tweens.killTweensOf(this.leftBg);
+    this.scene.tweens.killTweensOf(this.rightBg);
+    this.scene.tweens.killTweensOf(this.leftLabel);
+    this.scene.tweens.killTweensOf(this.rightLabel);
+    this.leftBg.setAlpha(1).setScale(1);
+    this.rightBg.setAlpha(1).setScale(1);
     this.setVisible(false);
     this.setActive(false);
   }

@@ -17,7 +17,7 @@ export const BULLET_POOL_SIZE = 600;
 export const FORMATION_SPACING = 30; // pixels between units in formation
 
 // Gates
-export const GATE_INTERVAL = 300; // meters between gate pairs
+export const GATE_INTERVAL = 500; // meters between gate pairs
 export const GATE_WIDTH = 120; // pixels wide per gate side
 export const GATE_GAP = 40; // pixels between left and right gate
 
