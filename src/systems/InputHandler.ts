@@ -5,17 +5,18 @@ export class InputHandler {
   offsetX: number = 0;
   private dragging: boolean = false;
   private startX: number = 0;
+  private baseOffsetX: number = 0;
 
   constructor(scene: Phaser.Scene) {
     scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.dragging = true;
       this.startX = pointer.x;
-      this.offsetX = 0;
+      this.baseOffsetX = this.offsetX; // remember current position
     });
 
     scene.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (this.dragging) {
-        this.offsetX = pointer.x - this.startX;
+        this.offsetX = this.baseOffsetX + (pointer.x - this.startX);
       }
     });
 
