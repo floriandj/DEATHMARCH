@@ -13,25 +13,25 @@ export const WEAPON_STATS: Record<WeaponType, WeaponStats> = {
   pistol: {
     type: 'pistol',
     name: 'PISTOL',
-    fireRate: 200,
+    fireRate: 800,       // slow semi-auto
     bulletColor: 0xffd43b,
   },
   smg: {
     type: 'smg',
     name: 'SMG',
-    fireRate: 140,
+    fireRate: 300,       // rapid but light
     bulletColor: 0x00d4ff,
   },
   ar: {
     type: 'ar',
     name: 'ASSAULT RIFLE',
-    fireRate: 90,
+    fireRate: 150,       // fast and punchy
     bulletColor: 0x51cf66,
   },
   lmg: {
     type: 'lmg',
     name: 'LMG',
-    fireRate: 50,
+    fireRate: 70,        // bullet hose
     bulletColor: 0xff6b6b,
   },
 };
