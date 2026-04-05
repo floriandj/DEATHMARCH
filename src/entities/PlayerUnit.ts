@@ -24,6 +24,9 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.setVisible(true);
     this.setActive(true);
     this.fireTimer = this.fireOffset;
+    this.setAlpha(1);
+    this.setScale(1);
+    this.play('unit_march');
   }
 
   /** Set target without resetting fire timer */
@@ -65,8 +68,34 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
   }
 
   despawn(): void {
+    this.stop();
     this.setVisible(false);
     this.setActive(false);
+  }
+
+  /** Plays a small death burst before despawning */
+  despawnWithEffect(): void {
+    const x = this.x;
+    const y = this.y;
+    this.despawn();
+
+    // Spawn a few tinted particles
+    for (let i = 0; i < 4; i++) {
+      const p = this.scene.add.sprite(x, y, 'death_particle');
+      p.setTint(0x00d4ff);
+      p.setAlpha(0.8);
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 15 + Math.random() * 20;
+      this.scene.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.3,
+        duration: 300 + Math.random() * 200,
+        onComplete: () => p.destroy(),
+      });
+    }
   }
 
   updateFiring(delta: number, fireRate: number): boolean {

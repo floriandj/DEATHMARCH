@@ -10,6 +10,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   splashDamage: number = 0;
   scoreValue: number = 0;
   enemyType: string = '';
+  private enemyColor: number = 0xff6b6b;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, 'enemy_goblin');
@@ -30,6 +31,10 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.splashDamage = stats.splashDamage;
     this.scoreValue = stats.scoreValue;
     this.enemyType = stats.type;
+    this.enemyColor = stats.color;
+    this.setAlpha(1);
+    this.setScale(1);
+    this.play(`enemy_${stats.type}_walk`);
   }
 
   updateMovement(delta: number, targetX: number, targetY: number, armyWorldY: number): boolean {
@@ -52,6 +57,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   takeDamage(amount: number): boolean {
     this.hp -= amount;
     if (this.hp <= 0) {
+      this.playDeathEffect();
       this.despawn();
       return true;
     }
@@ -62,7 +68,32 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     return false;
   }
 
+  private playDeathEffect(): void {
+    const x = this.x;
+    const y = this.y;
+    const color = this.enemyColor;
+    const count = 6;
+
+    for (let i = 0; i < count; i++) {
+      const p = this.scene.add.sprite(x, y, 'death_particle');
+      p.setTint(color);
+      p.setAlpha(1);
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+      const dist = 20 + Math.random() * 25;
+      this.scene.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.2,
+        duration: 250 + Math.random() * 150,
+        onComplete: () => p.destroy(),
+      });
+    }
+  }
+
   despawn(): void {
+    this.stop();
     this.setVisible(false);
     this.setActive(false);
   }

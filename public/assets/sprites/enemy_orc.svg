@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 32" width="64" height="32" shape-rendering="crispEdges">
+  <!-- Frame 0 -->
+  <g>
+    <!-- Head -->
+    <rect x="8" y="0" width="16" height="10" fill="#b03060"/>
+    <rect x="9" y="1" width="14" height="8" fill="#e64980"/>
+    <!-- Brow ridge -->
+    <rect x="8" y="3" width="16" height="2" fill="#993060"/>
+    <!-- Eyes (angry red) -->
+    <rect x="10" y="4" width="4" height="3" fill="#ff0000"/>
+    <rect x="18" y="4" width="4" height="3" fill="#ff0000"/>
+    <rect x="11" y="5" width="2" height="2" fill="#440000"/>
+    <rect x="19" y="5" width="2" height="2" fill="#440000"/>
+    <!-- Tusks -->
+    <rect x="10" y="8" width="2" height="3" fill="#ddd"/>
+    <rect x="20" y="8" width="2" height="3" fill="#ddd"/>
+    <!-- Jaw -->
+    <rect x="10" y="8" width="12" height="2" fill="#993060"/>
+    <!-- Body (heavy armor) -->
+    <rect x="4" y="10" width="24" height="12" fill="#883060"/>
+    <rect x="6" y="11" width="20" height="10" fill="#773050"/>
+    <!-- Chest plate -->
+    <rect x="10" y="12" width="12" height="6" fill="#555"/>
+    <rect x="11" y="13" width="10" height="4" fill="#666"/>
+    <!-- Shoulder pads -->
+    <rect x="2" y="10" width="5" height="4" fill="#555"/>
+    <rect x="25" y="10" width="5" height="4" fill="#555"/>
+    <!-- Arms -->
+    <rect x="2" y="14" width="4" height="8" fill="#e64980"/>
+    <rect x="26" y="14" width="4" height="8" fill="#e64980"/>
+    <!-- Fists -->
+    <rect x="1" y="20" width="5" height="4" fill="#b03060"/>
+    <rect x="26" y="20" width="5" height="4" fill="#b03060"/>
+    <!-- Legs -->
+    <rect x="7" y="22" width="6" height="8" fill="#993060"/>
+    <rect x="19" y="22" width="6" height="8" fill="#993060"/>
+    <!-- Boots -->
+    <rect x="6" y="28" width="7" height="4" fill="#442020"/>
+    <rect x="19" y="28" width="7" height="4" fill="#442020"/>
+  </g>
+  <!-- Frame 1 -->
+  <g transform="translate(32,0)">
+    <!-- Head -->
+    <rect x="8" y="0" width="16" height="10" fill="#b03060"/>
+    <rect x="9" y="1" width="14" height="8" fill="#e64980"/>
+    <!-- Brow ridge -->
+    <rect x="8" y="3" width="16" height="2" fill="#993060"/>
+    <!-- Eyes -->
+    <rect x="10" y="4" width="4" height="3" fill="#ff0000"/>
+    <rect x="18" y="4" width="4" height="3" fill="#ff0000"/>
+    <rect x="11" y="5" width="2" height="2" fill="#440000"/>
+    <rect x="19" y="5" width="2" height="2" fill="#440000"/>
+    <!-- Tusks -->
+    <rect x="10" y="8" width="2" height="3" fill="#ddd"/>
+    <rect x="20" y="8" width="2" height="3" fill="#ddd"/>
+    <!-- Jaw -->
+    <rect x="10" y="8" width="12" height="2" fill="#993060"/>
+    <!-- Body -->
+    <rect x="4" y="10" width="24" height="12" fill="#883060"/>
+    <rect x="6" y="11" width="20" height="10" fill="#773050"/>
+    <!-- Chest plate -->
+    <rect x="10" y="12" width="12" height="6" fill="#555"/>
+    <rect x="11" y="13" width="10" height="4" fill="#666"/>
+    <!-- Shoulder pads -->
+    <rect x="2" y="10" width="5" height="4" fill="#555"/>
+    <rect x="25" y="10" width="5" height="4" fill="#555"/>
+    <!-- Arms (swinging) -->
+    <rect x="0" y="12" width="5" height="7" fill="#e64980"/>
+    <rect x="27" y="15" width="5" height="7" fill="#e64980"/>
+    <!-- Fists -->
+    <rect x="0" y="18" width="4" height="4" fill="#b03060"/>
+    <rect x="28" y="21" width="4" height="4" fill="#b03060"/>
+    <!-- Legs (stride) -->
+    <rect x="6" y="22" width="6" height="6" fill="#993060"/>
+    <rect x="20" y="23" width="6" height="8" fill="#993060"/>
+    <!-- Boots -->
+    <rect x="5" y="27" width="7" height="4" fill="#442020"/>
+    <rect x="20" y="30" width="7" height="2" fill="#442020"/>
+  </g>
+</svg>

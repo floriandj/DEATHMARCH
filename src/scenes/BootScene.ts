@@ -1,57 +1,49 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
-import { ENEMY_STATS, EnemyType } from '@/config/EnemyConfig';
+import { ENEMY_STATS } from '@/config/EnemyConfig';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
     super({ key: 'BootScene' });
   }
 
+  preload(): void {
+    // Player unit spritesheet (2 frames, 20×20 each)
+    this.load.spritesheet('unit', 'assets/sprites/unit.svg', {
+      frameWidth: 20,
+      frameHeight: 20,
+    });
+
+    // Bullet
+    this.load.image('bullet', 'assets/sprites/bullet.svg');
+
+    // Enemy spritesheets (2 frames each)
+    for (const [type, stats] of Object.entries(ENEMY_STATS)) {
+      const size = stats.size * 2;
+      this.load.spritesheet(`enemy_${type}`, `assets/sprites/enemy_${type}.svg`, {
+        frameWidth: size,
+        frameHeight: size,
+      });
+    }
+
+    // Boss spritesheet (2 frames, 88×88 each)
+    this.load.spritesheet('boss', 'assets/sprites/boss.svg', {
+      frameWidth: 88,
+      frameHeight: 88,
+    });
+
+    // Death particle
+    this.load.image('death_particle', 'assets/sprites/death_particle.svg');
+  }
+
   create(): void {
-    this.generatePlayerUnitTexture();
-    this.generateBulletTexture();
-    this.generateEnemyTextures();
-    this.generateBossTexture();
+    // Generate gate textures procedurally (simple colored blocks, no art needed)
     this.generateGateTextures();
 
+    // Create animations
+    this.createAnimations();
+
     this.scene.start('MenuScene');
-  }
-
-  private generatePlayerUnitTexture(): void {
-    const g = this.add.graphics();
-    g.fillStyle(0x00d4ff, 1);
-    g.fillRect(0, 0, 20, 20);
-    g.generateTexture('unit', 20, 20);
-    g.destroy();
-  }
-
-  private generateBulletTexture(): void {
-    const g = this.add.graphics();
-    g.fillStyle(0xffd43b, 1);
-    g.fillCircle(3, 3, 3);
-    g.generateTexture('bullet', 6, 6);
-    g.destroy();
-  }
-
-  private generateEnemyTextures(): void {
-    for (const [type, stats] of Object.entries(ENEMY_STATS)) {
-      const g = this.add.graphics();
-      g.fillStyle(stats.color, 1);
-      const size = stats.size * 2;
-      g.fillRect(0, 0, size, size);
-      g.generateTexture(`enemy_${type}`, size, size);
-      g.destroy();
-    }
-  }
-
-  private generateBossTexture(): void {
-    const g = this.add.graphics();
-    g.fillStyle(0xff6b6b, 1);
-    g.fillRect(0, 0, 88, 88);
-    g.fillStyle(0xbe4bdb, 1);
-    g.fillRect(10, 10, 68, 68);
-    g.generateTexture('boss', 88, 88);
-    g.destroy();
   }
 
   private generateGateTextures(): void {
@@ -72,5 +64,33 @@ export class BootScene extends Phaser.Scene {
     gRed.fillRect(0, 0, 120, 60);
     gRed.generateTexture('gate_subtract', 120, 60);
     gRed.destroy();
+  }
+
+  private createAnimations(): void {
+    // Player unit march
+    this.anims.create({
+      key: 'unit_march',
+      frames: this.anims.generateFrameNumbers('unit', { start: 0, end: 1 }),
+      frameRate: 4,
+      repeat: -1,
+    });
+
+    // Enemy walk animations
+    for (const type of Object.keys(ENEMY_STATS)) {
+      this.anims.create({
+        key: `enemy_${type}_walk`,
+        frames: this.anims.generateFrameNumbers(`enemy_${type}`, { start: 0, end: 1 }),
+        frameRate: 4,
+        repeat: -1,
+      });
+    }
+
+    // Boss idle
+    this.anims.create({
+      key: 'boss_idle',
+      frames: this.anims.generateFrameNumbers('boss', { start: 0, end: 1 }),
+      frameRate: 2,
+      repeat: -1,
+    });
   }
 }

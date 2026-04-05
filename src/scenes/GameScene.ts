@@ -352,6 +352,17 @@ export class GameScene extends Phaser.Scene {
     const armyCenterY = this.armyWorldY + this.armyYOffset;
 
     if (this.unitCount !== this.activeUnitCount) {
+      const shrinking = this.unitCount < this.activeUnitCount;
+      // Show death effect on units being lost
+      if (shrinking) {
+        let effectsPlayed = 0;
+        for (let i = this.units.length - 1; i >= 0 && effectsPlayed < this.activeUnitCount - this.unitCount; i--) {
+          if (this.units[i].active) {
+            this.units[i].despawnWithEffect();
+            effectsPlayed++;
+          }
+        }
+      }
       for (const unit of this.units) {
         unit.despawn();
       }
