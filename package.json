@@ -1,5 +1,5 @@
 {
-  "name": "iso-metric-war",
+  "name": "deathmarch",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "test:watch": "vitest"
   },

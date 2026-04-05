@@ -9,9 +9,9 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.3, 'ISO-METRIC WAR', {
-        fontSize: '48px',
-        color: '#00d4ff',
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.3, 'DEATHMARCH', {
+        fontSize: '56px',
+        color: '#ff4040',
         fontFamily: 'monospace',
         fontStyle: 'bold',
       })
@@ -25,7 +25,7 @@ export class MenuScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    const highScore = localStorage.getItem('iso-metric-war-highscore') || '0';
+    const highScore = localStorage.getItem('deathmarch-highscore') || '0';
     this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.5, `High Score: ${highScore}`, {
         fontSize: '20px',

@@ -14,10 +14,10 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   create(data: GameOverData): void {
-    const prev = parseInt(localStorage.getItem('iso-metric-war-highscore') || '0', 10);
+    const prev = parseInt(localStorage.getItem('deathmarch-highscore') || '0', 10);
     const isNewHigh = data.score > prev;
     if (isNewHigh) {
-      localStorage.setItem('iso-metric-war-highscore', String(data.score));
+      localStorage.setItem('deathmarch-highscore', String(data.score));
     }
 
     const titleText = data.bossDefeated ? 'VICTORY!' : 'GAME OVER';
