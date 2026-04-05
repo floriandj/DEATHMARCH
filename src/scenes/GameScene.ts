@@ -14,6 +14,7 @@ import {
 } from '@/config/GameConfig';
 import { ENEMY_STATS } from '@/config/EnemyConfig';
 import { WeaponType, WEAPON_STATS, WEAPON_ORDER, CRATE_INTERVAL } from '@/config/WeaponConfig';
+import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
 import { pickGatePair } from '@/systems/GateSpawner';
@@ -27,6 +28,7 @@ import { HUDScene } from '@/scenes/HUDScene';
 export class GameScene extends Phaser.Scene {
   private input_handler!: InputHandler;
   private waveSpawner!: WaveSpawner;
+  private background!: Background;
   private hud!: HUDScene;
 
   // Game state
@@ -74,6 +76,7 @@ export class GameScene extends Phaser.Scene {
 
     this.input_handler = new InputHandler(this);
     this.waveSpawner = new WaveSpawner();
+    this.background = new Background(this);
 
     // Create entity pools
     this.units = [];
@@ -124,6 +127,7 @@ export class GameScene extends Phaser.Scene {
 
     // 2. Camera follows army (army stays 200px from bottom)
     this.cameras.main.scrollY = this.armyWorldY - GAME_HEIGHT + 200;
+    this.background.update(this.cameras.main.scrollY);
 
     // 3. Update army position from input (X: left/right, Y: forward/back)
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
