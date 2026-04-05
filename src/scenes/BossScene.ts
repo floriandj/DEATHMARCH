@@ -65,6 +65,7 @@ export class BossScene extends Phaser.Scene {
     this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, 'boss');
     this.bossSprite.setScale(1.5);
     this.bossSprite.setAlpha(0);
+    this.bossSprite.play('boss_idle');
 
     // Entity pools
     this.units = [];
@@ -322,6 +323,16 @@ export class BossScene extends Phaser.Scene {
     const armyScreenY = GAME_HEIGHT - 200;
 
     if (this.unitCount !== this.activeUnitCount) {
+      const shrinking = this.unitCount < this.activeUnitCount;
+      if (shrinking) {
+        let effectsPlayed = 0;
+        for (let i = this.units.length - 1; i >= 0 && effectsPlayed < this.activeUnitCount - this.unitCount; i--) {
+          if (this.units[i].active) {
+            this.units[i].despawnWithEffect();
+            effectsPlayed++;
+          }
+        }
+      }
       for (const unit of this.units) {
         unit.despawn();
       }
