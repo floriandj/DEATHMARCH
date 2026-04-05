@@ -4,20 +4,23 @@ import { UNIT_FIRE_RATE } from '@/config/GameConfig';
 export class PlayerUnit extends Phaser.GameObjects.Sprite {
   active: boolean = false;
   fireTimer: number = 0;
+  /** Permanent offset so each unit fires at its own rhythm */
+  private readonly fireOffset: number;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, index: number = 0) {
     super(scene, 0, 0, 'unit');
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
+    // Each unit gets a unique offset based on its pool index
+    this.fireOffset = (index * 37) % UNIT_FIRE_RATE;
   }
 
   spawn(x: number, y: number): void {
     this.setPosition(x, y);
     this.setVisible(true);
     this.setActive(true);
-    // Randomize start timer so units don't all fire at the same instant
-    this.fireTimer = Math.random() * UNIT_FIRE_RATE;
+    this.fireTimer = this.fireOffset;
   }
 
   /** Reposition without resetting fire timer */

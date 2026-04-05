@@ -12,9 +12,9 @@ export function computeFormation(
 ): Position[] {
   if (unitCount <= 0) return [];
 
-  // Scale down spacing when army is large so it fits on screen
-  const spacing = unitCount > 30
-    ? Math.max(8, FORMATION_SPACING * (30 / unitCount))
+  // Scale down spacing for large armies but keep them readable
+  const spacing = unitCount > 50
+    ? Math.max(18, FORMATION_SPACING * (50 / unitCount))
     : FORMATION_SPACING;
 
   const positions: Position[] = [];

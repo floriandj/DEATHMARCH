@@ -69,7 +69,7 @@ export class GameScene extends Phaser.Scene {
     // Create entity pools
     this.units = [];
     for (let i = 0; i < 200; i++) {
-      this.units.push(new PlayerUnit(this));
+      this.units.push(new PlayerUnit(this, i));
     }
 
     this.bullets = [];

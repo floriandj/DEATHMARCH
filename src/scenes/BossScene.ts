@@ -63,7 +63,7 @@ export class BossScene extends Phaser.Scene {
     // Entity pools
     this.units = [];
     for (let i = 0; i < 200; i++) {
-      this.units.push(new PlayerUnit(this));
+      this.units.push(new PlayerUnit(this, i));
     }
     this.bullets = [];
     for (let i = 0; i < BULLET_POOL_SIZE; i++) {
