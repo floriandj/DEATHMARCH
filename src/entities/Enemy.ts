@@ -32,12 +32,18 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.enemyType = stats.type;
   }
 
-  updateMovement(delta: number, targetY: number): boolean {
+  updateMovement(delta: number, targetX: number, targetY: number): boolean {
     if (!this.active) return false;
     const dt = delta / 1000;
-    const direction = targetY > this.y ? 1 : -1;
-    this.y += direction * this.speed * dt;
-    return Math.abs(this.y - targetY) < 10;
+    const dx = targetX - this.x;
+    const dy = targetY - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 10) return true;
+
+    // Move toward target
+    this.x += (dx / dist) * this.speed * dt;
+    this.y += (dy / dist) * this.speed * dt;
+    return false;
   }
 
   takeDamage(amount: number): boolean {

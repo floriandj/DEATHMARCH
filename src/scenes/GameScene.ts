@@ -165,12 +165,27 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 6. Update enemies — move toward army
+    // 6. Update enemies — move toward nearest unit
     for (const enemy of this.enemies) {
       if (!enemy.active) continue;
 
-      // Move toward player army Y position
-      const reachedArmy = enemy.updateMovement(delta, armyScreenY);
+      // Find nearest active unit
+      let nearestX = GAME_WIDTH / 2 + this.armyX;
+      let nearestY = armyScreenY;
+      let nearestDist = Infinity;
+      for (const unit of this.units) {
+        if (!unit.active) continue;
+        const dx = unit.x - enemy.x;
+        const dy = unit.y - enemy.y;
+        const d = dx * dx + dy * dy;
+        if (d < nearestDist) {
+          nearestDist = d;
+          nearestX = unit.x;
+          nearestY = unit.y;
+        }
+      }
+
+      const reachedArmy = enemy.updateMovement(delta, nearestX, nearestY);
 
       if (reachedArmy) {
         // Enemy contacts army — kill units
