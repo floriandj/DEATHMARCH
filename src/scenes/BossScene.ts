@@ -222,8 +222,8 @@ export class BossScene extends Phaser.Scene {
     for (const zoneX of this.slamZoneX) {
       const zoneCenterX = GAME_WIDTH / 2 + zoneX;
       if (Math.abs(armyScreenX - zoneCenterX) < 100) {
-        // Hit! Kill some units
-        const unitsToKill = Math.ceil(this.unitCount * 0.3);
+        // Hit! Kill a few units (flat amount, not percentage)
+        const unitsToKill = Math.max(1, Math.min(5, Math.ceil(this.unitCount * 0.05)));
         this.unitCount = Math.max(0, this.unitCount - unitsToKill);
 
         this.cameras.main.shake(200, 0.02);
@@ -247,9 +247,10 @@ export class BossScene extends Phaser.Scene {
 
   private chargeDirection: number = 1;
   private chargeStartX: number = 0;
+  private chargeHit: boolean = false;
 
   private startCharge(): void {
-    // Boss charges horizontally across the upper area (not into the army)
+    this.chargeHit = false;
     this.chargeDirection = Math.random() < 0.5 ? -1 : 1;
     this.chargeStartX = this.chargeDirection === 1 ? -100 : GAME_WIDTH + 100;
     this.bossSprite.x = this.chargeStartX;
@@ -260,19 +261,21 @@ export class BossScene extends Phaser.Scene {
     const speed = this.bossState.enraged ? 500 : 350;
     this.bossSprite.x += this.chargeDirection * speed * (delta / 1000);
 
-    // Charge damages units it passes over (based on X overlap only)
-    const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    if (Math.abs(this.bossSprite.x - armyScreenX) < 60) {
-      // Kill a few units as boss sweeps past
-      const unitsToKill = Math.max(1, Math.ceil(this.unitCount * 0.1));
-      this.unitCount = Math.max(0, this.unitCount - unitsToKill);
-      this.cameras.main.shake(150, 0.01);
+    // Charge damages units ONCE if boss passes over army's X position
+    if (!this.chargeHit) {
+      const armyScreenX = GAME_WIDTH / 2 + this.armyX;
+      if (Math.abs(this.bossSprite.x - armyScreenX) < 60) {
+        this.chargeHit = true;
+        const unitsToKill = Math.max(1, Math.min(3, Math.ceil(this.unitCount * 0.05)));
+        this.unitCount = Math.max(0, this.unitCount - unitsToKill);
+        this.cameras.main.shake(150, 0.01);
 
-      if (this.unitCount <= 0) {
-        this.gameOver();
-        return;
+        if (this.unitCount <= 0) {
+          this.gameOver();
+          return;
+        }
+        this.respawnArmy();
       }
-      this.respawnArmy();
     }
 
     // Reset boss position when charge completes (off screen)
