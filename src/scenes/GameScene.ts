@@ -13,7 +13,7 @@ import {
   SCORE_PER_METER,
 } from '@/config/GameConfig';
 import { ENEMY_STATS } from '@/config/EnemyConfig';
-import { toIso, isoDepth } from '@/systems/IsoHelper';
+// IsoHelper available for future isometric rendering enhancements
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
 import { pickGatePair } from '@/systems/GateSpawner';
@@ -108,9 +108,9 @@ export class GameScene extends Phaser.Scene {
       const enemy = this.enemies.find((e) => !e.active);
       if (enemy) {
         const stats = ENEMY_STATS[cmd.type];
-        // Spawn enemy ahead of the army in screen space
-        const isoPos = toIso(cmd.x, -300); // above the screen
-        enemy.spawn(isoPos.x + GAME_WIDTH / 2, isoPos.y + 100, stats);
+        // Spawn at top of screen, spread across field width
+        const screenX = GAME_WIDTH / 2 + cmd.x;
+        enemy.spawn(screenX, -20, stats);
       }
     }
 
@@ -199,7 +199,9 @@ export class GameScene extends Phaser.Scene {
       if (result) {
         this.unitCount = result.apply(this.unitCount);
         this.unitCount = Math.max(1, this.unitCount); // never go to 0 from gate
+        gate.despawn();
         this.respawnArmy();
+        continue;
       }
 
       // Remove gates that scroll off the bottom
