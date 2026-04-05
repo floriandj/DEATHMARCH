@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- LMG icon -->
+  <!-- Barrel (thick) -->
+  <rect x="0" y="7" width="12" height="5" fill="#ff6b6b"/>
+  <rect x="0" y="8" width="3" height="3" fill="#dd5555"/>
+  <!-- Body (bulky) -->
+  <rect x="10" y="4" width="14" height="10" fill="#ff6b6b"/>
+  <rect x="12" y="5" width="10" height="8" fill="#dd5555"/>
+  <!-- Stock -->
+  <rect x="22" y="5" width="10" height="6" fill="#dd5555"/>
+  <rect x="24" y="6" width="6" height="4" fill="#cc4444"/>
+  <!-- Bipod -->
+  <rect x="4" y="12" width="2" height="8" fill="#cc4444"/>
+  <rect x="8" y="12" width="2" height="8" fill="#cc4444"/>
+  <rect x="2" y="18" width="4" height="2" fill="#aa3333"/>
+  <rect x="8" y="18" width="4" height="2" fill="#aa3333"/>
+  <!-- Ammo box -->
+  <rect x="14" y="14" width="8" height="8" fill="#cc4444"/>
+  <rect x="15" y="15" width="6" height="6" fill="#aa3333"/>
+  <!-- Belt hint -->
+  <rect x="12" y="13" width="3" height="2" fill="#ffcc44"/>
+  <!-- Grip -->
+  <rect x="22" y="11" width="5" height="9" fill="#cc4444"/>
+  <rect x="23" y="12" width="3" height="7" fill="#aa3333"/>
+  <!-- Sight -->
+  <rect x="10" y="2" width="3" height="3" fill="#dd5555"/>
+</svg>

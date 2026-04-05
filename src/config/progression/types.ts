@@ -70,6 +70,10 @@ export interface BossPhaseConfig {
 }
 
 export interface BossConfig {
+  name: string; // display name for HUD
+  sprite: string; // texture key for boss spritesheet
+  tint?: string; // hex color tint, e.g. "#ff6b6b" (omit for no tint)
+  scale?: number; // sprite scale (default 1.5)
   hp: number;
   triggerDistance: number;
   phases: BossPhaseConfig[];

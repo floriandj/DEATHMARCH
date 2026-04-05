@@ -42,6 +42,9 @@ export class BossScene extends Phaser.Scene {
   private slamZoneX: number[] = []; // X positions of danger zones
   private entranceComplete: boolean = false;
 
+  // Boss visual config
+  private bossScale: number = 1.5;
+
   // VFX tracking
   private enrageTriggered: boolean = false;
   private chargeTrailTimer: number = 0;
@@ -71,10 +74,22 @@ export class BossScene extends Phaser.Scene {
     this.bossState = new BossState(bossCfg);
 
     // Boss sprite - starts off-screen, will animate in
-    this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, 'boss');
-    this.bossSprite.setScale(1.5);
+    const bossSpriteKey = bossCfg.sprite || 'boss';
+    this.bossScale = bossCfg.scale ?? 1.5;
+    this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, bossSpriteKey);
+    this.bossSprite.setScale(this.bossScale);
     this.bossSprite.setAlpha(0);
-    this.bossSprite.play('boss_idle');
+    const bossAnimKey = `${bossSpriteKey}_idle`;
+    if (this.anims.exists(bossAnimKey)) {
+      this.bossSprite.play(bossAnimKey);
+    } else {
+      this.bossSprite.play('boss_idle');
+    }
+    // Apply tint if specified
+    if (bossCfg.tint) {
+      const tintColor = parseInt(bossCfg.tint.replace('#', ''), 16);
+      this.bossSprite.setTint(tintColor);
+    }
 
     // Entity pools
     this.units = [];
@@ -99,6 +114,7 @@ export class BossScene extends Phaser.Scene {
     this.scene.launch('HUDScene');
     this.hud = this.scene.get('HUDScene') as HUDScene;
     this.hud.bossHpPercent = 1;
+    this.hud.bossName = bossCfg.name || 'BOSS';
 
     this.respawnArmy();
 
@@ -315,12 +331,12 @@ export class BossScene extends Phaser.Scene {
     // Boss pulse scale effect
     this.tweens.add({
       targets: this.bossSprite,
-      scale: 2.0,
+      scale: this.bossScale * 1.33,
       duration: 200,
       yoyo: true,
       ease: 'Power2',
       onComplete: () => {
-        this.bossSprite.setScale(1.5);
+        this.bossSprite.setScale(this.bossScale);
         this.bossSprite.setTint(0xff4040);
       },
     });

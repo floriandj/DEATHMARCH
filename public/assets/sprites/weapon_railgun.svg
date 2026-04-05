@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Railgun icon -->
+  <!-- Long barrel with rails -->
+  <rect x="0" y="8" width="16" height="2" fill="#00ffcc"/>
+  <rect x="0" y="12" width="16" height="2" fill="#00ffcc"/>
+  <rect x="0" y="10" width="16" height="2" fill="#00ddaa"/>
+  <!-- Rail glow -->
+  <rect x="2" y="9" width="2" height="1" fill="#ccffee"/>
+  <rect x="6" y="9" width="2" height="1" fill="#ccffee"/>
+  <rect x="10" y="9" width="2" height="1" fill="#ccffee"/>
+  <rect x="2" y="12" width="2" height="1" fill="#ccffee"/>
+  <rect x="6" y="12" width="2" height="1" fill="#ccffee"/>
+  <rect x="10" y="12" width="2" height="1" fill="#ccffee"/>
+  <!-- Body -->
+  <rect x="14" y="5" width="10" height="12" fill="#00ddaa"/>
+  <rect x="16" y="6" width="6" height="10" fill="#00bb88"/>
+  <!-- Energy cell -->
+  <rect x="16" y="7" width="4" height="4" fill="#00ffcc"/>
+  <rect x="17" y="8" width="2" height="2" fill="#eeffff"/>
+  <!-- Stock -->
+  <rect x="22" y="6" width="10" height="6" fill="#00bb88"/>
+  <rect x="24" y="7" width="6" height="4" fill="#009977"/>
+  <!-- Scope -->
+  <rect x="8" y="4" width="6" height="4" fill="#00bb88"/>
+  <rect x="9" y="5" width="4" height="2" fill="#00ffcc"/>
+  <!-- Grip -->
+  <rect x="20" y="14" width="6" height="10" fill="#009977"/>
+  <rect x="22" y="15" width="2" height="8" fill="#007755"/>
+</svg>
