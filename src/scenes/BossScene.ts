@@ -102,12 +102,7 @@ export class BossScene extends Phaser.Scene {
       this.onPhaseChange();
     }
 
-    // 3. Handle slam phase
-    if (this.bossState.phase === BossPhase.Slam) {
-      this.updateSlam(delta);
-    }
-
-    // 4. Handle charge phase
+    // 3. Handle charge phase
     if (this.bossState.phase === BossPhase.Charge) {
       this.updateCharge(delta);
     }
