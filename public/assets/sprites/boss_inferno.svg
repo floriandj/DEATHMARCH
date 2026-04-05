@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
+  <!-- Frame 0: Inferno Titan - massive fiery golem -->
+  <g>
+    <!-- Flame crown -->
+    <rect x="20" y="0" width="6" height="10" fill="#ff6600"/>
+    <rect x="30" y="0" width="8" height="14" fill="#ff4400"/>
+    <rect x="31" y="0" width="6" height="8" fill="#ffaa00"/>
+    <rect x="42" y="0" width="8" height="12" fill="#ff6600"/>
+    <rect x="52" y="0" width="6" height="10" fill="#ff4400"/>
+    <rect x="53" y="0" width="4" height="6" fill="#ffaa00"/>
+
+    <!-- Head (angular, rocky) -->
+    <rect x="18" y="10" width="52" height="24" fill="#8b4513"/>
+    <rect x="20" y="12" width="48" height="20" fill="#a0522d"/>
+    <!-- Lava cracks -->
+    <rect x="24" y="14" width="2" height="8" fill="#ff4400"/>
+    <rect x="34" y="12" width="2" height="6" fill="#ff6600"/>
+    <rect x="50" y="14" width="2" height="10" fill="#ff4400"/>
+    <rect x="60" y="16" width="2" height="6" fill="#ff6600"/>
+
+    <!-- Eyes (molten) -->
+    <rect x="24" y="20" width="14" height="8" fill="#111"/>
+    <rect x="50" y="20" width="14" height="8" fill="#111"/>
+    <rect x="26" y="21" width="10" height="6" fill="#ff6600"/>
+    <rect x="52" y="21" width="10" height="6" fill="#ff6600"/>
+    <rect x="30" y="22" width="4" height="4" fill="#ffee00"/>
+    <rect x="56" y="22" width="4" height="4" fill="#ffee00"/>
+
+    <!-- Jaw (wide, heavy) -->
+    <rect x="22" y="30" width="44" height="8" fill="#6b3410"/>
+    <rect x="26" y="31" width="36" height="4" fill="#ff2200"/>
+    <!-- Teeth (jagged) -->
+    <rect x="28" y="30" width="6" height="4" fill="#ddd"/>
+    <rect x="38" y="30" width="6" height="5" fill="#ddd"/>
+    <rect x="48" y="30" width="6" height="4" fill="#ddd"/>
+
+    <!-- Body (massive, armored) -->
+    <rect x="6" y="36" width="76" height="34" fill="#8b4513"/>
+    <rect x="10" y="38" width="68" height="30" fill="#a0522d"/>
+    <!-- Chest magma core -->
+    <rect x="26" y="42" width="36" height="20" fill="#cc2200"/>
+    <rect x="30" y="44" width="28" height="16" fill="#ff4400"/>
+    <rect x="34" y="46" width="20" height="12" fill="#ff8800"/>
+    <rect x="38" y="48" width="12" height="8" fill="#ffcc00"/>
+    <rect x="42" y="50" width="4" height="4" fill="#ffffff"/>
+
+    <!-- Shoulder plates -->
+    <rect x="0" y="34" width="14" height="14" fill="#6b3410"/>
+    <rect x="2" y="36" width="10" height="10" fill="#8b4513"/>
+    <rect x="74" y="34" width="14" height="14" fill="#6b3410"/>
+    <rect x="76" y="36" width="10" height="10" fill="#8b4513"/>
+    <!-- Lava veins on shoulders -->
+    <rect x="4" y="38" width="2" height="6" fill="#ff4400"/>
+    <rect x="80" y="38" width="2" height="6" fill="#ff4400"/>
+
+    <!-- Arms (thick, rocky) -->
+    <rect x="0" y="46" width="12" height="18" fill="#a0522d"/>
+    <rect x="2" y="48" width="8" height="14" fill="#8b4513"/>
+    <rect x="76" y="46" width="12" height="18" fill="#a0522d"/>
+    <rect x="78" y="48" width="8" height="14" fill="#8b4513"/>
+    <!-- Fists (glowing) -->
+    <rect x="0" y="62" width="14" height="12" fill="#6b3410"/>
+    <rect x="2" y="64" width="10" height="8" fill="#ff4400"/>
+    <rect x="74" y="62" width="14" height="12" fill="#6b3410"/>
+    <rect x="76" y="64" width="10" height="8" fill="#ff4400"/>
+
+    <!-- Legs -->
+    <rect x="18" y="70" width="16" height="14" fill="#6b3410"/>
+    <rect x="20" y="72" width="12" height="10" fill="#8b4513"/>
+    <rect x="54" y="70" width="16" height="14" fill="#6b3410"/>
+    <rect x="56" y="72" width="12" height="10" fill="#8b4513"/>
+    <!-- Feet -->
+    <rect x="14" y="82" width="20" height="6" fill="#5a2d0c"/>
+    <rect x="54" y="82" width="20" height="6" fill="#5a2d0c"/>
+  </g>
+
+  <!-- Frame 1 (arms raised, flames higher) -->
+  <g transform="translate(88,0)">
+    <!-- Flame crown (taller) -->
+    <rect x="18" y="0" width="6" height="14" fill="#ff6600"/>
+    <rect x="28" y="0" width="8" height="16" fill="#ff4400"/>
+    <rect x="29" y="0" width="6" height="10" fill="#ffaa00"/>
+    <rect x="40" y="0" width="10" height="14" fill="#ff6600"/>
+    <rect x="41" y="0" width="8" height="8" fill="#ffcc00"/>
+    <rect x="52" y="0" width="6" height="12" fill="#ff4400"/>
+
+    <!-- Head -->
+    <rect x="18" y="12" width="52" height="22" fill="#8b4513"/>
+    <rect x="20" y="14" width="48" height="18" fill="#a0522d"/>
+    <rect x="24" y="14" width="2" height="8" fill="#ff4400"/>
+    <rect x="50" y="14" width="2" height="10" fill="#ff4400"/>
+
+    <!-- Eyes (brighter) -->
+    <rect x="24" y="20" width="14" height="8" fill="#111"/>
+    <rect x="50" y="20" width="14" height="8" fill="#111"/>
+    <rect x="26" y="21" width="10" height="6" fill="#ff8800"/>
+    <rect x="52" y="21" width="10" height="6" fill="#ff8800"/>
+    <rect x="30" y="22" width="4" height="4" fill="#ffff00"/>
+    <rect x="56" y="22" width="4" height="4" fill="#ffff00"/>
+
+    <!-- Jaw -->
+    <rect x="22" y="30" width="44" height="8" fill="#6b3410"/>
+    <rect x="26" y="31" width="36" height="5" fill="#ff2200"/>
+    <rect x="28" y="30" width="6" height="4" fill="#ddd"/>
+    <rect x="38" y="30" width="6" height="5" fill="#ddd"/>
+    <rect x="48" y="30" width="6" height="4" fill="#ddd"/>
+
+    <!-- Body -->
+    <rect x="8" y="38" width="72" height="32" fill="#8b4513"/>
+    <rect x="12" y="40" width="64" height="28" fill="#a0522d"/>
+    <!-- Core (pulsing brighter) -->
+    <rect x="26" y="44" width="36" height="18" fill="#cc2200"/>
+    <rect x="30" y="46" width="28" height="14" fill="#ff4400"/>
+    <rect x="32" y="48" width="24" height="10" fill="#ff8800"/>
+    <rect x="36" y="50" width="16" height="6" fill="#ffcc00"/>
+    <rect x="40" y="52" width="8" height="2" fill="#ffffff"/>
+
+    <!-- Shoulders -->
+    <rect x="0" y="36" width="14" height="14" fill="#6b3410"/>
+    <rect x="2" y="38" width="10" height="10" fill="#8b4513"/>
+    <rect x="74" y="36" width="14" height="14" fill="#6b3410"/>
+    <rect x="76" y="38" width="10" height="10" fill="#8b4513"/>
+
+    <!-- Arms (raised) -->
+    <rect x="0" y="42" width="10" height="16" fill="#a0522d"/>
+    <rect x="2" y="44" width="8" height="12" fill="#8b4513"/>
+    <rect x="78" y="44" width="10" height="18" fill="#a0522d"/>
+    <rect x="80" y="46" width="8" height="14" fill="#8b4513"/>
+    <!-- Fists -->
+    <rect x="0" y="56" width="14" height="12" fill="#6b3410"/>
+    <rect x="2" y="58" width="10" height="8" fill="#ff4400"/>
+    <rect x="74" y="60" width="14" height="12" fill="#6b3410"/>
+    <rect x="76" y="62" width="10" height="8" fill="#ff4400"/>
+
+    <!-- Legs -->
+    <rect x="16" y="70" width="16" height="14" fill="#6b3410"/>
+    <rect x="18" y="72" width="12" height="10" fill="#8b4513"/>
+    <rect x="56" y="71" width="16" height="14" fill="#6b3410"/>
+    <rect x="58" y="73" width="12" height="10" fill="#8b4513"/>
+    <rect x="12" y="82" width="20" height="6" fill="#5a2d0c"/>
+    <rect x="56" y="83" width="20" height="5" fill="#5a2d0c"/>
+  </g>
+</svg>

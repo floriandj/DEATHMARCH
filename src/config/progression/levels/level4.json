@@ -69,6 +69,8 @@
   },
 
   "boss": {
+    "name": "PLAGUE HYDRA",
+    "sprite": "boss_plague",
     "hp": 1100,
     "triggerDistance": 2600,
     "phases": [

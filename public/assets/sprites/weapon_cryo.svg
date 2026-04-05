@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Cryo Cannon icon -->
+  <!-- Wide barrel with frost -->
+  <rect x="0" y="6" width="12" height="8" fill="#7fdbff"/>
+  <rect x="2" y="7" width="8" height="6" fill="#5bc0de"/>
+  <!-- Frost crystals at tip -->
+  <rect x="0" y="4" width="3" height="3" fill="#ccffff"/>
+  <rect x="0" y="13" width="3" height="3" fill="#ccffff"/>
+  <rect x="0" y="8" width="2" height="4" fill="#eeffff"/>
+  <!-- Tank body -->
+  <rect x="10" y="4" width="14" height="14" fill="#5bc0de"/>
+  <rect x="12" y="5" width="10" height="12" fill="#4aa3c0"/>
+  <!-- Frost core -->
+  <rect x="14" y="7" width="6" height="6" fill="#7fdbff"/>
+  <rect x="15" y="8" width="4" height="4" fill="#ccffff"/>
+  <rect x="16" y="9" width="2" height="2" fill="#fff"/>
+  <!-- Grip -->
+  <rect x="20" y="16" width="6" height="10" fill="#4aa3c0"/>
+  <rect x="22" y="17" width="2" height="8" fill="#3d8ea5"/>
+  <!-- Stock tube -->
+  <rect x="22" y="6" width="10" height="4" fill="#4aa3c0"/>
+  <rect x="24" y="7" width="6" height="2" fill="#3d8ea5"/>
+  <!-- Pressure gauge -->
+  <rect x="12" y="16" width="4" height="4" fill="#3d8ea5"/>
+  <rect x="13" y="17" width="2" height="2" fill="#7fdbff"/>
+</svg>

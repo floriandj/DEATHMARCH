@@ -20,6 +20,7 @@ export class HUDScene extends Phaser.Scene {
   bossHpPercent: number = -1; // -1 = hidden
   weaponType: string = '';
   weaponName: string = '';
+  bossName: string = '';
 
   constructor() {
     super({ key: 'HUDScene' });
@@ -52,12 +53,12 @@ export class HUDScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setVisible(false);
 
-    // Weapon indicator (bottom-center)
-    this.weaponIcon = this.add.sprite(GAME_WIDTH / 2 - 50, 80, 'weapon_icon_default')
-      .setScale(2)
+    // Weapon indicator (top-center area)
+    this.weaponIcon = this.add.sprite(GAME_WIDTH / 2 - 60, 84, 'weapon_svg_pistol')
+      .setDisplaySize(24, 24)
       .setAlpha(0.9)
       .setVisible(false);
-    this.weaponLabel = this.add.text(GAME_WIDTH / 2 - 30, 74, '', {
+    this.weaponLabel = this.add.text(GAME_WIDTH / 2 - 40, 80, '', {
       fontSize: '14px',
       color: '#aaaaaa',
       fontFamily: 'monospace',
@@ -81,7 +82,8 @@ export class HUDScene extends Phaser.Scene {
       this.bossHpBar.clear();
       this.bossHpBar.fillStyle(0xff6b6b, 1);
       this.bossHpBar.fillRect(barX, 55, barWidth * this.bossHpPercent, 20);
-      this.bossHpLabel.setText(`GORATH ${Math.ceil(this.bossHpPercent * 100)}%`);
+      const name = this.bossName || 'BOSS';
+      this.bossHpLabel.setText(`${name} ${Math.ceil(this.bossHpPercent * 100)}%`);
     }
 
     // Update weapon display
@@ -90,26 +92,28 @@ export class HUDScene extends Phaser.Scene {
       this.weaponLabel.setVisible(true);
       this.weaponLabel.setText(this.weaponName);
 
-      const iconKey = this.getWeaponIconKey(this.weaponType);
-      if (this.weaponIcon.texture.key !== iconKey) {
-        this.weaponIcon.setTexture(iconKey);
+      const svgKey = this.getWeaponSvgKey(this.weaponType);
+      if (this.weaponIcon.texture.key !== svgKey) {
+        this.weaponIcon.setTexture(svgKey);
+        this.weaponIcon.setDisplaySize(24, 24);
       }
     }
   }
 
-  private getWeaponIconKey(weaponType: string): string {
-    const iconMap: Record<string, string> = {
-      pistol: 'weapon_icon_pistol',
-      smg: 'weapon_icon_smg',
-      ar: 'weapon_icon_ar',
-      lmg: 'weapon_icon_lmg',
-      minigun: 'weapon_icon_minigun',
-      cryo_cannon: 'weapon_icon_cryo_cannon',
-      railgun: 'weapon_icon_railgun',
-      plasma_rifle: 'weapon_icon_plasma_rifle',
-      void_beam: 'weapon_icon_void_beam',
-      godslayer: 'weapon_icon_godslayer',
+  private getWeaponSvgKey(weaponType: string): string {
+    const map: Record<string, string> = {
+      pistol: 'weapon_svg_pistol',
+      smg: 'weapon_svg_smg',
+      ar: 'weapon_svg_ar',
+      lmg: 'weapon_svg_lmg',
+      minigun: 'weapon_svg_minigun',
+      cryo: 'weapon_svg_cryo',
+      railgun: 'weapon_svg_railgun',
+      plasma: 'weapon_svg_plasma',
+      voidbeam: 'weapon_svg_voidbeam',
+      godslayer: 'weapon_svg_godslayer',
+      flamer: 'weapon_svg_flamer',
     };
-    return iconMap[weaponType] || 'weapon_icon_default';
+    return map[weaponType] || 'weapon_svg_pistol';
   }
 }

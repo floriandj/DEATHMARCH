@@ -70,6 +70,9 @@
   },
 
   "boss": {
+    "name": "LICH KING",
+    "sprite": "boss_lich",
+    "scale": 1.8,
     "hp": 1500,
     "triggerDistance": 2500,
     "phases": [

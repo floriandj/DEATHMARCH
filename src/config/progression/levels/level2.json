@@ -68,6 +68,8 @@
   },
 
   "boss": {
+    "name": "INFERNO TITAN",
+    "sprite": "boss_inferno",
     "hp": 700,
     "triggerDistance": 2800,
     "phases": [

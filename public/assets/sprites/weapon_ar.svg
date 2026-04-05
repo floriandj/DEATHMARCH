@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Assault Rifle icon -->
+  <!-- Barrel -->
+  <rect x="0" y="8" width="10" height="3" fill="#51cf66"/>
+  <rect x="0" y="9" width="2" height="1" fill="#3daa50"/>
+  <!-- Handguard -->
+  <rect x="8" y="6" width="8" height="6" fill="#51cf66"/>
+  <rect x="10" y="7" width="4" height="4" fill="#3daa50"/>
+  <!-- Receiver -->
+  <rect x="14" y="5" width="10" height="8" fill="#51cf66"/>
+  <rect x="16" y="6" width="6" height="6" fill="#3daa50"/>
+  <!-- Stock -->
+  <rect x="22" y="6" width="10" height="5" fill="#3daa50"/>
+  <rect x="24" y="7" width="6" height="3" fill="#2d8840"/>
+  <!-- Sight -->
+  <rect x="10" y="3" width="2" height="4" fill="#3daa50"/>
+  <rect x="18" y="3" width="3" height="3" fill="#3daa50"/>
+  <!-- Magazine -->
+  <rect x="16" y="13" width="5" height="10" fill="#2d8840"/>
+  <rect x="17" y="14" width="3" height="8" fill="#247035"/>
+  <!-- Grip -->
+  <rect x="22" y="11" width="5" height="10" fill="#2d8840"/>
+  <rect x="23" y="12" width="3" height="8" fill="#247035"/>
+  <!-- Trigger -->
+  <rect x="20" y="13" width="2" height="3" fill="#247035"/>
+</svg>

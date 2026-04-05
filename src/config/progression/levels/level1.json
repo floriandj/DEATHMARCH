@@ -72,6 +72,8 @@
   },
 
   "boss": {
+    "name": "GORATH",
+    "sprite": "boss_gorath",
     "hp": 500,
     "triggerDistance": 3000,
     "phases": [

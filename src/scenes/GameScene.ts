@@ -423,30 +423,30 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private getWeaponIconKey(weaponType: string): string {
-    // Map weapon type keys to icon texture keys
-    const iconMap: Record<string, string> = {
-      pistol: 'weapon_icon_pistol',
-      smg: 'weapon_icon_smg',
-      ar: 'weapon_icon_ar',
-      lmg: 'weapon_icon_lmg',
-      minigun: 'weapon_icon_minigun',
-      cryo_cannon: 'weapon_icon_cryo_cannon',
-      railgun: 'weapon_icon_railgun',
-      plasma_rifle: 'weapon_icon_plasma_rifle',
-      void_beam: 'weapon_icon_void_beam',
-      godslayer: 'weapon_icon_godslayer',
+  private getWeaponSvgKey(weaponType: string): string {
+    const map: Record<string, string> = {
+      pistol: 'weapon_svg_pistol',
+      smg: 'weapon_svg_smg',
+      ar: 'weapon_svg_ar',
+      lmg: 'weapon_svg_lmg',
+      minigun: 'weapon_svg_minigun',
+      cryo: 'weapon_svg_cryo',
+      railgun: 'weapon_svg_railgun',
+      plasma: 'weapon_svg_plasma',
+      voidbeam: 'weapon_svg_voidbeam',
+      godslayer: 'weapon_svg_godslayer',
+      flamer: 'weapon_svg_flamer',
     };
-    return iconMap[weaponType] || 'weapon_icon_default';
+    return map[weaponType] || 'weapon_svg_pistol';
   }
 
   private showWeaponUpgrade(x: number, y: number, weapon: string): void {
     const stats = LevelManager.instance.getWeaponStats(weapon);
-    const iconKey = this.getWeaponIconKey(weapon);
+    const svgKey = this.getWeaponSvgKey(weapon);
 
-    // Container for icon + label
-    const icon = this.add.sprite(x, y, iconKey).setScale(3).setOrigin(0.5);
-    const label = this.add.text(x, y + 50, stats.name, {
+    // Icon from SVG
+    const icon = this.add.image(x, y, svgKey).setDisplaySize(48, 48).setOrigin(0.5);
+    const label = this.add.text(x, y + 40, stats.name, {
       fontSize: '22px',
       color: '#ffffff',
       fontFamily: 'monospace',
@@ -468,11 +468,11 @@ export class GameScene extends Phaser.Scene {
       },
     });
 
-    // Icon spin + scale pop
+    // Icon scale pop
     this.tweens.add({
       targets: icon,
-      scale: 4.5,
-      angle: 360,
+      displayWidth: 72,
+      displayHeight: 72,
       duration: 1400,
       ease: 'Power2',
     });

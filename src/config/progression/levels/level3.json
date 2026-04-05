@@ -69,6 +69,8 @@
   },
 
   "boss": {
+    "name": "FROST WYRM",
+    "sprite": "boss_frost",
     "hp": 900,
     "triggerDistance": 2900,
     "phases": [
