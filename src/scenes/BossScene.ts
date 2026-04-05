@@ -5,11 +5,8 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
-  BOSS_HP,
-  SCORE_BOSS_KILL,
-  SCORE_PER_SURVIVING_UNIT,
 } from '@/config/GameConfig';
-import { WeaponType, WEAPON_STATS } from '@/config/WeaponConfig';
+import { LevelManager } from '@/config/progression';
 import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { Bullet } from '@/entities/Bullet';
@@ -20,7 +17,7 @@ interface BossSceneData {
   score: number;
   distance: number;
   unitCount: number;
-  weapon: WeaponType;
+  weapon: string;
 }
 
 export class BossScene extends Phaser.Scene {
@@ -33,7 +30,7 @@ export class BossScene extends Phaser.Scene {
   private distance: number = 0;
   private unitCount: number = 0;
   private activeUnitCount: number = 0;
-  private currentWeapon: WeaponType = 'pistol';
+  private currentWeapon: string = 'pistol';
 
   private units: PlayerUnit[] = [];
   private bullets: Bullet[] = [];
@@ -50,16 +47,18 @@ export class BossScene extends Phaser.Scene {
   }
 
   create(data: BossSceneData): void {
+    const bossCfg = LevelManager.instance.bossConfig;
+
     this.score = data.score;
     this.distance = data.distance;
     this.unitCount = data.unitCount;
     this.activeUnitCount = 0;
-    this.currentWeapon = data.weapon || 'pistol';
+    this.currentWeapon = data.weapon || LevelManager.instance.current.startingWeapon;
     this.armyX = 0;
     this.entranceComplete = false;
 
     this.input_handler = new InputHandler(this);
-    this.bossState = new BossState();
+    this.bossState = new BossState(bossCfg);
 
     // Boss sprite - starts off-screen, will animate in
     this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, 'boss');
@@ -119,6 +118,8 @@ export class BossScene extends Phaser.Scene {
     if (!this.entranceComplete) return;
     if (this.bossState.isDead) return;
 
+    const bossCfg = LevelManager.instance.bossConfig;
+
     // 1. Update army position
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
@@ -141,9 +142,10 @@ export class BossScene extends Phaser.Scene {
     }
 
     // 5. Fire bullets at boss
+    const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta, WEAPON_STATS[this.currentWeapon].fireRate)) {
+      if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
           bullet.fire(unit.x, unit.y);
@@ -191,7 +193,7 @@ export class BossScene extends Phaser.Scene {
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
-    this.hud.bossHpPercent = this.bossState.hp / BOSS_HP;
+    this.hud.bossHpPercent = this.bossState.hp / bossCfg.hp;
   }
 
   private onPhaseChange(): void {
@@ -289,7 +291,7 @@ export class BossScene extends Phaser.Scene {
   }
 
   private updateCharge(delta: number): void {
-    const speed = this.bossState.enraged ? 500 : 350;
+    const speed = this.bossState.chargeSpeed;
     this.bossSprite.x += this.chargeDirection * speed * (delta / 1000);
 
     // Charge damages units ONCE if boss passes over army's X position
@@ -354,6 +356,8 @@ export class BossScene extends Phaser.Scene {
   }
 
   private bossDefeated(): void {
+    const level = LevelManager.instance.current;
+
     // Death animation
     this.cameras.main.shake(500, 0.03);
     this.cameras.main.flash(500, 255, 255, 255);
@@ -364,8 +368,8 @@ export class BossScene extends Phaser.Scene {
       scale: 3,
       duration: 800,
       onComplete: () => {
-        this.score += SCORE_BOSS_KILL;
-        this.score += this.unitCount * SCORE_PER_SURVIVING_UNIT;
+        this.score += level.scoring.bossKill;
+        this.score += this.unitCount * level.scoring.perSurvivingUnit;
 
         this.scene.stop('HUDScene');
         this.scene.start('GameOverScene', {

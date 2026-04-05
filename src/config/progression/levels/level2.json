@@ -1,0 +1,99 @@
+{
+  "id": "level_2",
+  "name": "Crimson Gauntlet",
+  "description": "Faster enemies, tighter waves, and a raging fire boss await.",
+
+  "startingUnits": 3,
+  "marchSpeed": 120,
+
+  "startingWeapon": "smg",
+  "weapons": {
+    "smg":      { "type": "smg",      "name": "SMG",           "fireRate": 180, "bulletColor": "#00d4ff" },
+    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 90,  "bulletColor": "#51cf66" },
+    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 40,  "bulletColor": "#ff6b6b" },
+    "minigun":  { "type": "minigun",  "name": "MINIGUN",       "fireRate": 20,  "bulletColor": "#ff00ff" }
+  },
+  "weaponOrder": ["smg", "ar", "lmg", "minigun"],
+  "weaponCrates": [
+    { "currentWeapon": "smg",  "nextWeapon": "ar",      "distance": 400,  "hp": 20 },
+    { "currentWeapon": "ar",   "nextWeapon": "lmg",     "distance": 1000, "hp": 35 },
+    { "currentWeapon": "lmg",  "nextWeapon": "minigun", "distance": 2000, "hp": 55 }
+  ],
+
+  "enemies": {
+    "orc": {
+      "type": "orc", "hp": 4, "speed": 100, "size": 16,
+      "contactDamage": 2, "splashRadius": 0, "splashDamage": 0,
+      "color": "#e64980", "appearsAtDistance": 0, "scoreValue": 35
+    },
+    "troll": {
+      "type": "troll", "hp": 12, "speed": 60, "size": 24,
+      "contactDamage": 4, "splashRadius": 0, "splashDamage": 0,
+      "color": "#be4bdb", "appearsAtDistance": 500, "scoreValue": 60
+    },
+    "demon": {
+      "type": "demon", "hp": 7, "speed": 180, "size": 16,
+      "contactDamage": 3, "splashRadius": 60, "splashDamage": 2,
+      "color": "#ffd43b", "appearsAtDistance": 1200, "scoreValue": 55
+    },
+    "wraith": {
+      "type": "wraith", "hp": 3, "speed": 220, "size": 14,
+      "contactDamage": 4, "splashRadius": 0, "splashDamage": 0,
+      "color": "#845ef7", "appearsAtDistance": 1800, "scoreValue": 70
+    }
+  },
+
+  "waves": {
+    "gracePeriod": 80,
+    "brackets": [
+      { "maxDistance": 300,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 80,  "intervalMax": 120 },
+      { "maxDistance": 600,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 55,  "intervalMax": 80  },
+      { "maxDistance": 1000, "clusterMin": 2, "clusterMax": 4, "intervalMin": 40,  "intervalMax": 60  },
+      { "maxDistance": 1500, "clusterMin": 3, "clusterMax": 5, "intervalMin": 30,  "intervalMax": 45  },
+      { "maxDistance": 2000, "clusterMin": 3, "clusterMax": 6, "intervalMin": 22,  "intervalMax": 35  },
+      { "maxDistance": 99999,"clusterMin": 5, "clusterMax": 8, "intervalMin": 15,  "intervalMax": 22  }
+    ]
+  },
+
+  "gates": {
+    "interval": 450,
+    "templates": [
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 8  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 15}, "right": { "op": "add",      "value": 5  }, "minDistance": 200 },
+      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 25}, "right": { "op": "subtract", "value": 8  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 800 }
+    ]
+  },
+
+  "boss": {
+    "hp": 800,
+    "triggerDistance": 2800,
+    "phases": [
+      { "name": "vulnerable", "duration": 4000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3500, "damageReduction": 0.6 },
+      { "name": "charge",     "duration": 3000, "damageReduction": 1 },
+      { "name": "vulnerable", "duration": 3000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 4000, "damageReduction": 0.6 }
+    ],
+    "enrageThreshold": 0.3,
+    "enrageDurationMultiplier": 0.4,
+    "slamWarning": 1200,
+    "enrageWarning": 600,
+    "chargeSpeed": 420,
+    "enrageChargeSpeed": 600
+  },
+
+  "scoring": {
+    "perMeter": 2,
+    "perSurvivingUnit": 150,
+    "bossKill": 8000,
+    "enemyKills": {
+      "orc": 35,
+      "troll": 60,
+      "demon": 55,
+      "wraith": 70
+    }
+  }
+}

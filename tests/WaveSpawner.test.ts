@@ -1,7 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { WaveSpawner } from '../src/systems/WaveSpawner';
+import { LevelManager } from '../src/config/progression';
 
 describe('WaveSpawner', () => {
+  beforeEach(() => {
+    LevelManager.reset();
+  });
+
   it('produces spawn commands based on distance', () => {
     const spawner = new WaveSpawner();
     const spawns = spawner.update(50);
@@ -11,10 +16,10 @@ describe('WaveSpawner', () => {
     }
   });
 
-  it('only spawns goblins before 300m', () => {
+  it('only spawns goblins before 700m', () => {
     const spawner = new WaveSpawner();
     const allSpawns = [];
-    for (let d = 10; d <= 250; d += 10) {
+    for (let d = 10; d <= 600; d += 10) {
       allSpawns.push(...spawner.update(d));
     }
     for (const s of allSpawns) {
@@ -22,13 +27,13 @@ describe('WaveSpawner', () => {
     }
   });
 
-  it('can spawn orcs after 300m', () => {
+  it('can spawn orcs after 700m', () => {
     const spawner = new WaveSpawner();
-    for (let d = 10; d <= 300; d += 10) {
+    for (let d = 10; d <= 700; d += 10) {
       spawner.update(d);
     }
     const types = new Set<string>();
-    for (let d = 310; d <= 600; d += 10) {
+    for (let d = 710; d <= 1200; d += 10) {
       for (const s of spawner.update(d)) {
         types.add(s.type);
       }
@@ -58,10 +63,10 @@ describe('WaveSpawner', () => {
 
   it('stops spawning after boss trigger distance', () => {
     const spawner = new WaveSpawner();
-    for (let d = 10; d <= 1200; d += 10) {
+    for (let d = 10; d <= 3010; d += 10) {
       spawner.update(d);
     }
-    const postBoss = spawner.update(1210);
+    const postBoss = spawner.update(3020);
     expect(postBoss).toHaveLength(0);
   });
 });
