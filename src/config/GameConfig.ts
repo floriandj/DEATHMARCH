@@ -26,7 +26,7 @@ export const FIELD_WIDTH = 600; // usable width in game coords
 export const SPAWN_AHEAD_DISTANCE = 800; // how far ahead enemies spawn
 
 // Boss
-export const BOSS_TRIGGER_DISTANCE = 1200;
+export const BOSS_TRIGGER_DISTANCE = 3000;
 export const BOSS_HP = 500;
 export const BOSS_VULNERABLE_DURATION = 5000; // ms
 export const BOSS_SLAM_DURATION = 3000;

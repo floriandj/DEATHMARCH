@@ -51,5 +51,10 @@ export const CRATE_HP: Record<WeaponType, number> = {
   lmg: 0,      // no crate (already max)
 };
 
-/** Distance between weapon crate spawns */
-export const CRATE_INTERVAL = 250;
+/** Fixed distance where each weapon crate appears (one per tier) */
+export const CRATE_SPAWN_DISTANCE: Record<WeaponType, number> = {
+  pistol: 500,   // SMG crate at 500m
+  smg: 1200,     // AR crate at 1200m
+  ar: 2200,      // LMG crate at 2200m
+  lmg: 0,        // no crate
+};

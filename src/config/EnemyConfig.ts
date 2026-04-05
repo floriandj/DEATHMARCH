@@ -35,7 +35,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     splashRadius: 0,
     splashDamage: 0,
     color: 0xe64980,
-    appearsAtDistance: 300,
+    appearsAtDistance: 700,
     scoreValue: 30,
   },
   troll: {
@@ -47,7 +47,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     splashRadius: 0,
     splashDamage: 0,
     color: 0xbe4bdb,
-    appearsAtDistance: 600,
+    appearsAtDistance: 1400,
     scoreValue: 50,
   },
   demon: {
@@ -59,7 +59,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     splashRadius: 50,
     splashDamage: 1,
     color: 0xffd43b,
-    appearsAtDistance: 900,
+    appearsAtDistance: 2100,
     scoreValue: 40,
   },
 };

@@ -13,7 +13,7 @@ import {
   SCORE_PER_METER,
 } from '@/config/GameConfig';
 import { ENEMY_STATS } from '@/config/EnemyConfig';
-import { WeaponType, WEAPON_STATS, WEAPON_ORDER, CRATE_INTERVAL } from '@/config/WeaponConfig';
+import { WeaponType, WEAPON_STATS, CRATE_SPAWN_DISTANCE } from '@/config/WeaponConfig';
 import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
@@ -53,7 +53,7 @@ export class GameScene extends Phaser.Scene {
 
   // Weapon system
   private currentWeapon: WeaponType = 'pistol';
-  private nextCrateDistance: number = CRATE_INTERVAL;
+  private crateSpawned: boolean = false; // one crate per weapon tier
 
   // Track active unit count to know when to respawn vs reposition
   private activeUnitCount: number = 0;
@@ -72,7 +72,7 @@ export class GameScene extends Phaser.Scene {
     this.lastKillTime = 0;
     this.nextGateDistance = GATE_INTERVAL;
     this.currentWeapon = 'pistol';
-    this.nextCrateDistance = CRATE_INTERVAL;
+    this.crateSpawned = false;
 
     this.input_handler = new InputHandler(this);
     this.waveSpawner = new WaveSpawner();
@@ -165,15 +165,16 @@ export class GameScene extends Phaser.Scene {
       this.nextGateDistance += GATE_INTERVAL;
     }
 
-    // 5b. Spawn weapon crates in world space (static)
-    if (this.distance >= this.nextCrateDistance && this.distance < BOSS_TRIGGER_DISTANCE) {
+    // 5b. Spawn weapon crate (one per tier, at fixed distance)
+    const crateDistance = CRATE_SPAWN_DISTANCE[this.currentWeapon];
+    if (!this.crateSpawned && crateDistance > 0 && this.distance >= crateDistance) {
       const crate = this.crates.find((c) => !c.active);
       if (crate) {
-        const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
+        const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.4;
         const crateY = this.armyWorldY - GAME_HEIGHT - 50;
         crate.spawn(crateX, crateY, this.currentWeapon);
+        this.crateSpawned = true;
       }
-      this.nextCrateDistance += CRATE_INTERVAL;
     }
 
     // 5c. Despawn crates army has passed
@@ -230,6 +231,7 @@ export class GameScene extends Phaser.Scene {
             const newWeapon = crate.takeDamage(bullet.damage);
             if (newWeapon) {
               this.currentWeapon = newWeapon;
+              this.crateSpawned = false; // allow next tier's crate
               this.showWeaponUpgrade(crate.x, crate.y, newWeapon);
             }
             break;

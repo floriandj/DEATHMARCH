@@ -36,20 +36,22 @@ export class WaveSpawner {
   }
 
   private getClusterSize(distance: number): number {
-    if (distance < 200) return 1;                              // solo goblins
-    if (distance < 400) return 1;                              // still solo
-    if (distance < 600) return 1 + Math.floor(Math.random() * 2); // 1-2
-    if (distance < 800) return 2 + Math.floor(Math.random() * 2); // 2-3
-    if (distance < 1000) return 3 + Math.floor(Math.random() * 2); // 3-4
-    return 3 + Math.floor(Math.random() * 4);                      // 3-6
+    if (distance < 300) return 1;                                   // solo
+    if (distance < 600) return 1;                                   // solo, more frequent
+    if (distance < 1000) return 1 + Math.floor(Math.random() * 2); // 1-2
+    if (distance < 1400) return 2 + Math.floor(Math.random() * 2); // 2-3
+    if (distance < 2000) return 2 + Math.floor(Math.random() * 3); // 2-4
+    if (distance < 2500) return 3 + Math.floor(Math.random() * 3); // 3-5
+    return 4 + Math.floor(Math.random() * 4);                       // 4-7
   }
 
   private getSpawnInterval(distance: number): number {
-    if (distance < 200) return 120 + Math.random() * 60;  // very sparse
-    if (distance < 400) return 80 + Math.random() * 40;   // gentle
-    if (distance < 600) return 55 + Math.random() * 25;   // warming up
-    if (distance < 800) return 40 + Math.random() * 15;   // picking up
-    if (distance < 1000) return 30 + Math.random() * 10;  // intense
-    return 20 + Math.random() * 10;                        // chaos
+    if (distance < 300) return 120 + Math.random() * 60;   // very sparse
+    if (distance < 600) return 80 + Math.random() * 40;    // gentle
+    if (distance < 1000) return 60 + Math.random() * 25;   // warming up
+    if (distance < 1400) return 45 + Math.random() * 20;   // orcs arrive
+    if (distance < 2000) return 35 + Math.random() * 15;   // picking up
+    if (distance < 2500) return 25 + Math.random() * 10;   // intense
+    return 18 + Math.random() * 8;                          // pre-boss chaos
   }
 }
