@@ -377,9 +377,11 @@ export class GameScene extends Phaser.Scene {
       for (const unit of this.units) {
         unit.despawn();
       }
+      // Scale spawn radius with unit count so large armies spread out
+      const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
         const angle = (i / this.unitCount) * Math.PI * 2;
-        const radius = 10 + Math.random() * 30;
+        const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
         this.units[i].spawn(
           armyCenterX + Math.cos(angle) * radius,
           armyCenterY + Math.sin(angle) * radius,
@@ -388,9 +390,18 @@ export class GameScene extends Phaser.Scene {
       this.activeUnitCount = this.unitCount;
     }
 
+    // Give each unit a formation offset so they don't all converge on one point
+    const formationRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
+    let activeIdx = 0;
     for (const unit of this.units) {
       if (!unit.active) continue;
-      unit.moveTo(armyCenterX, armyCenterY);
+      const angle = (activeIdx / this.activeUnitCount) * Math.PI * 2;
+      const r = formationRadius * 0.4 + (activeIdx % 5) * formationRadius * 0.12;
+      unit.moveTo(
+        armyCenterX + Math.cos(angle) * r,
+        armyCenterY + Math.sin(angle) * r,
+      );
+      activeIdx++;
     }
   }
 

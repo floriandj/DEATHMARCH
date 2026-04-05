@@ -46,7 +46,9 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.y += (this.targetY - this.y) * pullStrength * dt;
 
     // Strong separation: units push apart, forming a natural blob
-    const separationRadius = 30;
+    // Scale separation with army size so large armies spread visibly
+    const count = allUnits.length;
+    const separationRadius = count > 50 ? 30 + Math.sqrt(count) * 1.5 : 30;
     let pushX = 0;
     let pushY = 0;
 
