@@ -43,6 +43,7 @@ export class BossScene extends Phaser.Scene {
   private dangerZones: Phaser.GameObjects.Rectangle[] = [];
   private slamActive: boolean = false;
   private slamZoneX: number[] = []; // X positions of danger zones
+  private entranceComplete: boolean = false;
 
   constructor() {
     super({ key: 'BossScene' });
@@ -55,13 +56,15 @@ export class BossScene extends Phaser.Scene {
     this.activeUnitCount = 0;
     this.currentWeapon = data.weapon || 'pistol';
     this.armyX = 0;
+    this.entranceComplete = false;
 
     this.input_handler = new InputHandler(this);
     this.bossState = new BossState();
 
-    // Boss sprite
-    this.bossSprite = this.add.sprite(GAME_WIDTH / 2, 200, 'boss');
+    // Boss sprite - starts off-screen, will animate in
+    this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, 'boss');
     this.bossSprite.setScale(1.5);
+    this.bossSprite.setAlpha(0);
 
     // Entity pools
     this.units = [];
@@ -89,11 +92,30 @@ export class BossScene extends Phaser.Scene {
 
     this.respawnArmy();
 
-    // Entrance flash
-    this.cameras.main.flash(300, 255, 100, 100);
+    // Boss entrance sequence: fade in from black, then boss drops into frame
+    this.cameras.main.fadeIn(600, 0, 0, 0);
+
+    // Pause before boss enters
+    this.time.delayedCall(800, () => {
+      // Boss fades in and drops down with impact
+      this.bossSprite.setAlpha(1);
+      this.tweens.add({
+        targets: this.bossSprite,
+        y: 200,
+        duration: 600,
+        ease: 'Bounce.easeOut',
+        onComplete: () => {
+          // Impact effects: shake + flash
+          this.cameras.main.shake(300, 0.03);
+          this.cameras.main.flash(200, 255, 100, 100);
+          this.entranceComplete = true;
+        },
+      });
+    });
   }
 
   update(_time: number, delta: number): void {
+    if (!this.entranceComplete) return;
     if (this.bossState.isDead) return;
 
     // 1. Update army position
