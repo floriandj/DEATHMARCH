@@ -64,6 +64,13 @@ export class Gate extends Phaser.GameObjects.Container {
     return armyX < 0 ? this.leftOption : this.rightOption;
   }
 
+  /** Check pass based on a unit's X position relative to gate center */
+  checkPassByX(relativeX: number): GateOption | null {
+    if (this.passed || !this.active) return null;
+    this.passed = true;
+    return relativeX < 0 ? this.leftOption : this.rightOption;
+  }
+
   despawn(): void {
     this.setVisible(false);
     this.setActive(false);

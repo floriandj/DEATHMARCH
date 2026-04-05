@@ -192,22 +192,36 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 7. Update gates — check if army passes through
+    // 7. Update gates — check if a front unit touches a gate
     for (const gate of this.gates) {
       if (!gate.active || gate.passed) continue;
 
       // Gates scroll down as army advances
       gate.y += MARCH_SPEED * dt;
 
-      const result = gate.checkPass(this.armyX, armyScreenY);
-      if (result) {
-        const oldCount = this.unitCount;
-        this.unitCount = result.apply(this.unitCount);
-        this.unitCount = Math.max(1, this.unitCount);
-        this.showGateEffect(gate.x, gate.y, result.label, this.unitCount > oldCount);
-        gate.despawn();
-        this.respawnArmy();
-        continue;
+      // Check if any active unit touches this gate
+      let hitUnit: PlayerUnit | null = null;
+      for (const unit of this.units) {
+        if (!unit.active) continue;
+        if (Math.abs(unit.y - gate.y) < 20) {
+          hitUnit = unit;
+          break;
+        }
+      }
+
+      if (hitUnit) {
+        // Determine left or right based on the unit's X relative to gate center
+        const unitRelativeX = hitUnit.x - gate.x;
+        const result = gate.checkPassByX(unitRelativeX);
+        if (result) {
+          const oldCount = this.unitCount;
+          this.unitCount = result.apply(this.unitCount);
+          this.unitCount = Math.max(1, this.unitCount);
+          this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
+          gate.despawn();
+          this.respawnArmy();
+          continue;
+        }
       }
 
       // Remove gates that scroll off the bottom
