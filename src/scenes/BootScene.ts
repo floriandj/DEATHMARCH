@@ -43,7 +43,7 @@ export class BootScene extends Phaser.Scene {
     // Create animations
     this.createAnimations();
 
-    this.scene.start('MenuScene');
+    this.scene.start('SplashScene');
   }
 
   private generateGateTextures(): void {

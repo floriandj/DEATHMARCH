@@ -2,7 +2,9 @@ import './pwa';
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { BootScene } from '@/scenes/BootScene';
+import { SplashScene } from '@/scenes/SplashScene';
 import { MenuScene } from '@/scenes/MenuScene';
+import { SettingsScene } from '@/scenes/SettingsScene';
 import { GameScene } from '@/scenes/GameScene';
 import { BossScene } from '@/scenes/BossScene';
 import { HUDScene } from '@/scenes/HUDScene';
@@ -17,7 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, MenuScene, GameScene, BossScene, HUDScene, GameOverScene],
+  scene: [BootScene, SplashScene, MenuScene, SettingsScene, GameScene, BossScene, HUDScene, GameOverScene],
 };
 
 new Phaser.Game(config);
