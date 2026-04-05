@@ -1,0 +1,100 @@
+{
+  "id": "level_4",
+  "name": "Plague Wastes",
+  "description": "Toxic swamps breed monstrosities. The Plague Hydra regenerates endlessly.",
+
+  "startingUnits": 5,
+  "marchSpeed": 105,
+
+  "startingWeapon": "ar",
+  "weapons": {
+    "ar":        { "type": "ar",        "name": "ASSAULT RIFLE", "fireRate": 90,  "bulletColor": "#51cf66" },
+    "lmg":       { "type": "lmg",       "name": "LMG",           "fireRate": 40,  "bulletColor": "#ff6b6b" },
+    "flamer":    { "type": "flamer",    "name": "FLAMETHROWER",  "fireRate": 30,  "bulletColor": "#ff6348" },
+    "plasma":    { "type": "plasma",    "name": "PLASMA RIFLE",  "fireRate": 15,  "bulletColor": "#7bed9f" }
+  },
+  "weaponOrder": ["ar", "lmg", "flamer", "plasma"],
+  "weaponCrates": [
+    { "currentWeapon": "ar",     "nextWeapon": "lmg",    "distance": 400,  "hp": 22 },
+    { "currentWeapon": "lmg",    "nextWeapon": "flamer", "distance": 1100, "hp": 38 },
+    { "currentWeapon": "flamer", "nextWeapon": "plasma", "distance": 1900, "hp": 55 }
+  ],
+
+  "enemies": {
+    "rat_swarm": {
+      "type": "rat_swarm", "hp": 1, "speed": 130, "size": 10,
+      "contactDamage": 1, "splashRadius": 0, "splashDamage": 0,
+      "color": "#a0522d", "appearsAtDistance": 0, "scoreValue": 8
+    },
+    "blighted": {
+      "type": "blighted", "hp": 6, "speed": 70, "size": 18,
+      "contactDamage": 3, "splashRadius": 45, "splashDamage": 1,
+      "color": "#2ecc71", "appearsAtDistance": 400, "scoreValue": 45
+    },
+    "spore_carrier": {
+      "type": "spore_carrier", "hp": 4, "speed": 55, "size": 20,
+      "contactDamage": 2, "splashRadius": 80, "splashDamage": 3,
+      "color": "#f39c12", "appearsAtDistance": 1000, "scoreValue": 60
+    },
+    "abomination": {
+      "type": "abomination", "hp": 18, "speed": 40, "size": 28,
+      "contactDamage": 6, "splashRadius": 60, "splashDamage": 2,
+      "color": "#8e44ad", "appearsAtDistance": 1700, "scoreValue": 100
+    }
+  },
+
+  "waves": {
+    "gracePeriod": 80,
+    "brackets": [
+      { "maxDistance": 250,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 80,  "intervalMax": 120 },
+      { "maxDistance": 500,  "clusterMin": 2, "clusterMax": 4, "intervalMin": 60,  "intervalMax": 90  },
+      { "maxDistance": 900,  "clusterMin": 3, "clusterMax": 5, "intervalMin": 45,  "intervalMax": 65  },
+      { "maxDistance": 1300, "clusterMin": 3, "clusterMax": 6, "intervalMin": 35,  "intervalMax": 50  },
+      { "maxDistance": 1800, "clusterMin": 4, "clusterMax": 7, "intervalMin": 25,  "intervalMax": 38  },
+      { "maxDistance": 99999,"clusterMin": 5, "clusterMax": 9, "intervalMin": 14,  "intervalMax": 22  }
+    ]
+  },
+
+  "gates": {
+    "interval": 420,
+    "templates": [
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 8  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 15}, "right": { "op": "subtract", "value": 5  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 10 }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 25}, "right": { "op": "divide",   "value": 3  }, "minDistance": 700 },
+      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "subtract", "value": 15 }, "minDistance": 900 },
+      { "left": { "op": "add",      "value": 30}, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
+    ]
+  },
+
+  "boss": {
+    "hp": 1100,
+    "triggerDistance": 2600,
+    "phases": [
+      { "name": "vulnerable", "duration": 3500, "damageReduction": 0 },
+      { "name": "slam",       "duration": 2500, "damageReduction": 0.4 },
+      { "name": "charge",     "duration": 3000, "damageReduction": 1 },
+      { "name": "vulnerable", "duration": 2500, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.6 }
+    ],
+    "enrageThreshold": 0.3,
+    "enrageDurationMultiplier": 0.4,
+    "slamWarning": 1100,
+    "enrageWarning": 550,
+    "chargeSpeed": 380,
+    "enrageChargeSpeed": 560
+  },
+
+  "scoring": {
+    "perMeter": 3,
+    "perSurvivingUnit": 200,
+    "bossKill": 12000,
+    "enemyKills": {
+      "rat_swarm": 8,
+      "blighted": 45,
+      "spore_carrier": 60,
+      "abomination": 100
+    }
+  }
+}
