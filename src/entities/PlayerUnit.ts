@@ -16,7 +16,8 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.setPosition(x, y);
     this.setVisible(true);
     this.setActive(true);
-    this.fireTimer = 0;
+    // Randomize start timer so units don't all fire at the same instant
+    this.fireTimer = Math.random() * UNIT_FIRE_RATE;
   }
 
   /** Reposition without resetting fire timer */
