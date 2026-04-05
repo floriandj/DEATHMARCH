@@ -32,6 +32,7 @@ export class GameScene extends Phaser.Scene {
   // Game state
   private armyX: number = 0; // game-world X of army center
   private armyWorldY: number = 0; // world Y position (decreases as army marches up)
+  private armyYOffset: number = 0; // player-controlled forward/back nudge
   private distance: number = 0;
   private score: number = 0;
   private unitCount: number = STARTING_UNITS;
@@ -124,9 +125,11 @@ export class GameScene extends Phaser.Scene {
     // 2. Camera follows army (army stays 200px from bottom)
     this.cameras.main.scrollY = this.armyWorldY - GAME_HEIGHT + 200;
 
-    // 3. Update army X from input
+    // 3. Update army position from input (X: left/right, Y: forward/back)
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
+    const normalizedY = this.input_handler.getNormalizedY(300);
+    this.armyYOffset = normalizedY * 200; // up to 200px forward or back
     this.respawnArmy();
 
     // 3b. Unit physics
@@ -340,7 +343,7 @@ export class GameScene extends Phaser.Scene {
   /** Reposition army in world space. */
   private respawnArmy(): void {
     const armyCenterX = GAME_WIDTH / 2 + this.armyX;
-    const armyCenterY = this.armyWorldY;
+    const armyCenterY = this.armyWorldY + this.armyYOffset;
 
     if (this.unitCount !== this.activeUnitCount) {
       for (const unit of this.units) {
