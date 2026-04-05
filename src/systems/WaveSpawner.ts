@@ -21,10 +21,12 @@ export class WaveSpawner {
 
     while (this.nextSpawnDistance <= currentDistance) {
       const clusterSize = this.getClusterSize(this.nextSpawnDistance);
+      // Cluster enemies around a random center point (tight tunnel formation)
+      const clusterCenterX = (Math.random() - 0.5) * FIELD_WIDTH * 0.5;
       for (let i = 0; i < clusterSize; i++) {
         spawns.push({
           type: pickEnemyType(this.nextSpawnDistance),
-          x: (Math.random() - 0.5) * FIELD_WIDTH,
+          x: clusterCenterX + (Math.random() - 0.5) * 80,
         });
       }
       this.nextSpawnDistance += this.getSpawnInterval(this.nextSpawnDistance);

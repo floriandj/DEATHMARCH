@@ -19,6 +19,11 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.fireTimer = 0;
   }
 
+  /** Reposition without resetting fire timer */
+  moveTo(x: number, y: number): void {
+    this.setPosition(x, y);
+  }
+
   despawn(): void {
     this.setVisible(false);
     this.setActive(false);

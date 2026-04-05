@@ -46,6 +46,9 @@ export class GameScene extends Phaser.Scene {
   // Gate tracking
   private nextGateDistance: number = GATE_INTERVAL;
 
+  // Track active unit count to know when to respawn vs reposition
+  private activeUnitCount: number = 0;
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -256,19 +259,26 @@ export class GameScene extends Phaser.Scene {
     this.children.sort('y', (a: any, b: any) => (a.y || 0) - (b.y || 0));
   }
 
+  /** Reposition army. Only despawn/spawn when unit count changes. */
   private respawnArmy(): void {
-    // Deactivate all units first
-    for (const unit of this.units) {
-      unit.despawn();
-    }
-
-    // Compute formation positions
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - 200;
     const positions = computeFormation(this.unitCount, armyScreenX, armyScreenY);
 
-    for (let i = 0; i < positions.length && i < this.units.length; i++) {
-      this.units[i].spawn(positions[i].x, positions[i].y);
+    if (this.unitCount !== this.activeUnitCount) {
+      // Unit count changed — full respawn
+      for (const unit of this.units) {
+        unit.despawn();
+      }
+      for (let i = 0; i < positions.length && i < this.units.length; i++) {
+        this.units[i].spawn(positions[i].x, positions[i].y);
+      }
+      this.activeUnitCount = this.unitCount;
+    } else {
+      // Just reposition without resetting fire timers
+      for (let i = 0; i < positions.length && i < this.units.length; i++) {
+        this.units[i].moveTo(positions[i].x, positions[i].y);
+      }
     }
   }
 
