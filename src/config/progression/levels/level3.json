@@ -1,0 +1,100 @@
+{
+  "id": "level_3",
+  "name": "Frozen Abyss",
+  "description": "Ice and silence. The Frost Wyrm stirs beneath the glacier.",
+
+  "startingUnits": 5,
+  "marchSpeed": 90,
+
+  "startingWeapon": "ar",
+  "weapons": {
+    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 95,  "bulletColor": "#51cf66" },
+    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 42,  "bulletColor": "#ff6b6b" },
+    "cryo":     { "type": "cryo",     "name": "CRYO CANNON",   "fireRate": 60,  "bulletColor": "#7fdbff" },
+    "railgun":  { "type": "railgun",  "name": "RAILGUN",       "fireRate": 18,  "bulletColor": "#00ffcc" }
+  },
+  "weaponOrder": ["ar", "lmg", "cryo", "railgun"],
+  "weaponCrates": [
+    { "currentWeapon": "ar",   "nextWeapon": "lmg",     "distance": 500,  "hp": 25 },
+    { "currentWeapon": "lmg",  "nextWeapon": "cryo",    "distance": 1300, "hp": 40 },
+    { "currentWeapon": "cryo", "nextWeapon": "railgun",  "distance": 2200, "hp": 55 }
+  ],
+
+  "enemies": {
+    "frostbite": {
+      "type": "frostbite", "hp": 2, "speed": 100, "size": 11,
+      "contactDamage": 1, "splashRadius": 0, "splashDamage": 0,
+      "color": "#74c0fc", "appearsAtDistance": 0, "scoreValue": 15
+    },
+    "ice_golem": {
+      "type": "ice_golem", "hp": 15, "speed": 35, "size": 26,
+      "contactDamage": 5, "splashRadius": 0, "splashDamage": 0,
+      "color": "#4dabf7", "appearsAtDistance": 600, "scoreValue": 70
+    },
+    "banshee": {
+      "type": "banshee", "hp": 3, "speed": 190, "size": 13,
+      "contactDamage": 2, "splashRadius": 55, "splashDamage": 2,
+      "color": "#d0bfff", "appearsAtDistance": 1200, "scoreValue": 55
+    },
+    "yeti": {
+      "type": "yeti", "hp": 10, "speed": 110, "size": 24,
+      "contactDamage": 4, "splashRadius": 35, "splashDamage": 1,
+      "color": "#e8e8e8", "appearsAtDistance": 1900, "scoreValue": 80
+    }
+  },
+
+  "waves": {
+    "gracePeriod": 100,
+    "brackets": [
+      { "maxDistance": 300,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 90,  "intervalMax": 140 },
+      { "maxDistance": 700,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 65,  "intervalMax": 95  },
+      { "maxDistance": 1100, "clusterMin": 2, "clusterMax": 4, "intervalMin": 45,  "intervalMax": 65  },
+      { "maxDistance": 1600, "clusterMin": 3, "clusterMax": 5, "intervalMin": 35,  "intervalMax": 50  },
+      { "maxDistance": 2200, "clusterMin": 3, "clusterMax": 6, "intervalMin": 22,  "intervalMax": 38  },
+      { "maxDistance": 99999,"clusterMin": 5, "clusterMax": 8, "intervalMin": 15,  "intervalMax": 24  }
+    ]
+  },
+
+  "gates": {
+    "interval": 480,
+    "templates": [
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 10 }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 12}, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 300 },
+      { "left": { "op": "add",      "value": 20}, "right": { "op": "divide",   "value": 2  }, "minDistance": 500 },
+      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "subtract", "value": 10 }, "minDistance": 800 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 1000 },
+      { "left": { "op": "add",      "value": 30}, "right": { "op": "subtract", "value": 8  }, "minDistance": 1200 }
+    ]
+  },
+
+  "boss": {
+    "hp": 900,
+    "triggerDistance": 2900,
+    "phases": [
+      { "name": "vulnerable", "duration": 4500, "damageReduction": 0 },
+      { "name": "charge",     "duration": 5000, "damageReduction": 1 },
+      { "name": "vulnerable", "duration": 3000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.5 },
+      { "name": "slam",       "duration": 2500, "damageReduction": 0.7 }
+    ],
+    "enrageThreshold": 0.25,
+    "enrageDurationMultiplier": 0.45,
+    "slamWarning": 1300,
+    "enrageWarning": 650,
+    "chargeSpeed": 280,
+    "enrageChargeSpeed": 480
+  },
+
+  "scoring": {
+    "perMeter": 2,
+    "perSurvivingUnit": 180,
+    "bossKill": 9000,
+    "enemyKills": {
+      "frostbite": 15,
+      "ice_golem": 70,
+      "banshee": 55,
+      "yeti": 80
+    }
+  }
+}

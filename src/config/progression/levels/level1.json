@@ -1,0 +1,101 @@
+{
+  "id": "level_1",
+  "name": "The Death March",
+  "description": "March your army through goblin hordes and face the demon lord.",
+
+  "startingUnits": 1,
+  "marchSpeed": 100,
+
+  "startingWeapon": "pistol",
+  "weapons": {
+    "pistol": { "type": "pistol", "name": "PISTOL", "fireRate": 400, "bulletColor": "#ffd43b" },
+    "smg":    { "type": "smg",    "name": "SMG",    "fireRate": 200, "bulletColor": "#00d4ff" },
+    "ar":     { "type": "ar",     "name": "ASSAULT RIFLE", "fireRate": 100, "bulletColor": "#51cf66" },
+    "lmg":    { "type": "lmg",    "name": "LMG",    "fireRate": 45,  "bulletColor": "#ff6b6b" }
+  },
+  "weaponOrder": ["pistol", "smg", "ar", "lmg"],
+  "weaponCrates": [
+    { "currentWeapon": "pistol", "nextWeapon": "smg", "distance": 500,  "hp": 15 },
+    { "currentWeapon": "smg",    "nextWeapon": "ar",  "distance": 1200, "hp": 25 },
+    { "currentWeapon": "ar",     "nextWeapon": "lmg", "distance": 2200, "hp": 40 }
+  ],
+
+  "enemies": {
+    "goblin": {
+      "type": "goblin", "hp": 1, "speed": 70, "size": 12,
+      "contactDamage": 1, "splashRadius": 0, "splashDamage": 0,
+      "color": "#ff6b6b", "appearsAtDistance": 0, "scoreValue": 10
+    },
+    "orc": {
+      "type": "orc", "hp": 3, "speed": 80, "size": 16,
+      "contactDamage": 2, "splashRadius": 0, "splashDamage": 0,
+      "color": "#e64980", "appearsAtDistance": 700, "scoreValue": 30
+    },
+    "troll": {
+      "type": "troll", "hp": 8, "speed": 50, "size": 22,
+      "contactDamage": 3, "splashRadius": 0, "splashDamage": 0,
+      "color": "#be4bdb", "appearsAtDistance": 1400, "scoreValue": 50
+    },
+    "demon": {
+      "type": "demon", "hp": 5, "speed": 160, "size": 16,
+      "contactDamage": 2, "splashRadius": 50, "splashDamage": 1,
+      "color": "#ffd43b", "appearsAtDistance": 2100, "scoreValue": 40
+    }
+  },
+
+  "waves": {
+    "gracePeriod": 120,
+    "brackets": [
+      { "maxDistance": 300,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 120, "intervalMax": 180 },
+      { "maxDistance": 600,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 80,  "intervalMax": 120 },
+      { "maxDistance": 1000, "clusterMin": 1, "clusterMax": 2, "intervalMin": 60,  "intervalMax": 85  },
+      { "maxDistance": 1400, "clusterMin": 2, "clusterMax": 3, "intervalMin": 45,  "intervalMax": 65  },
+      { "maxDistance": 2000, "clusterMin": 2, "clusterMax": 4, "intervalMin": 35,  "intervalMax": 50  },
+      { "maxDistance": 2500, "clusterMin": 3, "clusterMax": 5, "intervalMin": 25,  "intervalMax": 35  },
+      { "maxDistance": 99999,"clusterMin": 4, "clusterMax": 7, "intervalMin": 18,  "intervalMax": 26  }
+    ]
+  },
+
+  "gates": {
+    "interval": 500,
+    "templates": [
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 5  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 10}, "right": { "op": "add",      "value": 5  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "add",      "value": 10 }, "minDistance": 150 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 300 },
+      { "left": { "op": "add",      "value": 20}, "right": { "op": "add",      "value": 5  }, "minDistance": 300 },
+      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 600 },
+      { "left": { "op": "divide",   "value": 2 }, "right": { "op": "multiply", "value": 3  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 900 },
+      { "left": { "op": "add",      "value": 20}, "right": { "op": "subtract", "value": 5  }, "minDistance": 900 }
+    ]
+  },
+
+  "boss": {
+    "hp": 500,
+    "triggerDistance": 3000,
+    "phases": [
+      { "name": "vulnerable", "duration": 5000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.5 },
+      { "name": "charge",     "duration": 4000, "damageReduction": 1 }
+    ],
+    "enrageThreshold": 0.2,
+    "enrageDurationMultiplier": 0.5,
+    "slamWarning": 1500,
+    "enrageWarning": 800,
+    "chargeSpeed": 350,
+    "enrageChargeSpeed": 500
+  },
+
+  "scoring": {
+    "perMeter": 1,
+    "perSurvivingUnit": 100,
+    "bossKill": 5000,
+    "enemyKills": {
+      "goblin": 10,
+      "orc": 30,
+      "troll": 50,
+      "demon": 40
+    }
+  }
+}

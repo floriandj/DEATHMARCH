@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 40" width="80" height="40" shape-rendering="crispEdges">
+  <!-- Frame 0: Spore Carrier - mushroom-like creature with spore sacs -->
+  <g>
+    <!-- Mushroom cap -->
+    <rect x="6" y="0" width="28" height="6" fill="#f39c12"/>
+    <rect x="4" y="4" width="32" height="8" fill="#e67e22"/>
+    <rect x="6" y="6" width="28" height="4" fill="#d35400"/>
+    <!-- Spore dots on cap -->
+    <rect x="8" y="2" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="16" y="1" width="3" height="3" fill="#ffeaa7"/>
+    <rect x="26" y="2" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="12" y="5" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="22" y="4" width="3" height="2" fill="#ffeaa7"/>
+    <!-- Face/stalk -->
+    <rect x="12" y="12" width="16" height="8" fill="#c8a070"/>
+    <rect x="13" y="13" width="14" height="6" fill="#b08850"/>
+    <!-- Eyes (small, alien) -->
+    <rect x="14" y="14" width="3" height="3" fill="#111"/>
+    <rect x="23" y="14" width="3" height="3" fill="#111"/>
+    <rect x="15" y="15" width="1" height="1" fill="#f39c12"/>
+    <rect x="24" y="15" width="1" height="1" fill="#f39c12"/>
+    <!-- Mouth (slit) -->
+    <rect x="17" y="18" width="6" height="1" fill="#654321"/>
+    <!-- Body/stalk -->
+    <rect x="10" y="20" width="20" height="10" fill="#c8a070"/>
+    <rect x="12" y="21" width="16" height="8" fill="#b08850"/>
+    <!-- Spore sacs on body -->
+    <rect x="8" y="22" width="4" height="4" fill="#e67e22"/>
+    <rect x="9" y="23" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="28" y="21" width="4" height="4" fill="#e67e22"/>
+    <rect x="29" y="22" width="2" height="2" fill="#ffeaa7"/>
+    <!-- Arms (stubby, spored) -->
+    <rect x="4" y="18" width="6" height="6" fill="#b08850"/>
+    <rect x="30" y="18" width="6" height="6" fill="#b08850"/>
+    <!-- Legs (root-like) -->
+    <rect x="11" y="30" width="6" height="6" fill="#8b6914"/>
+    <rect x="23" y="30" width="6" height="6" fill="#8b6914"/>
+    <!-- Roots -->
+    <rect x="10" y="35" width="3" height="5" fill="#6b4f10"/>
+    <rect x="15" y="34" width="3" height="6" fill="#6b4f10"/>
+    <rect x="22" y="35" width="3" height="5" fill="#6b4f10"/>
+    <rect x="27" y="34" width="3" height="6" fill="#6b4f10"/>
+  </g>
+  <!-- Frame 1: Pulsing -->
+  <g transform="translate(40,0)">
+    <!-- Cap slightly bigger (pulsing) -->
+    <rect x="5" y="0" width="30" height="6" fill="#f39c12"/>
+    <rect x="3" y="4" width="34" height="8" fill="#e67e22"/>
+    <rect x="5" y="6" width="30" height="4" fill="#d35400"/>
+    <rect x="8" y="2" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="16" y="1" width="3" height="3" fill="#ffeaa7"/>
+    <rect x="26" y="2" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="12" y="5" width="2" height="2" fill="#ffeaa7"/>
+    <rect x="22" y="4" width="3" height="2" fill="#ffeaa7"/>
+    <!-- Additional spore release -->
+    <rect x="6" y="0" width="2" height="2" fill="#ffe082"/>
+    <rect x="30" y="1" width="2" height="2" fill="#ffe082"/>
+    <rect x="12" y="12" width="16" height="8" fill="#c8a070"/>
+    <rect x="13" y="13" width="14" height="6" fill="#b08850"/>
+    <rect x="14" y="14" width="3" height="3" fill="#111"/>
+    <rect x="23" y="14" width="3" height="3" fill="#111"/>
+    <rect x="15" y="15" width="1" height="1" fill="#f39c12"/>
+    <rect x="24" y="15" width="1" height="1" fill="#f39c12"/>
+    <rect x="17" y="18" width="6" height="1" fill="#654321"/>
+    <rect x="10" y="20" width="20" height="10" fill="#c8a070"/>
+    <rect x="12" y="21" width="16" height="8" fill="#b08850"/>
+    <!-- Sacs pulsing bigger -->
+    <rect x="7" y="21" width="5" height="5" fill="#e67e22"/>
+    <rect x="8" y="22" width="3" height="3" fill="#ffeaa7"/>
+    <rect x="28" y="20" width="5" height="5" fill="#e67e22"/>
+    <rect x="29" y="21" width="3" height="3" fill="#ffeaa7"/>
+    <rect x="4" y="18" width="6" height="6" fill="#b08850"/>
+    <rect x="30" y="18" width="6" height="6" fill="#b08850"/>
+    <rect x="10" y="30" width="6" height="6" fill="#8b6914"/>
+    <rect x="24" y="30" width="6" height="6" fill="#8b6914"/>
+    <rect x="9" y="35" width="3" height="5" fill="#6b4f10"/>
+    <rect x="14" y="34" width="3" height="6" fill="#6b4f10"/>
+    <rect x="23" y="35" width="3" height="5" fill="#6b4f10"/>
+    <rect x="28" y="34" width="3" height="6" fill="#6b4f10"/>
+  </g>
+</svg>

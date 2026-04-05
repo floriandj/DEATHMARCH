@@ -1,14 +1,5 @@
 // src/entities/Boss.ts
-import {
-  BOSS_HP,
-  BOSS_VULNERABLE_DURATION,
-  BOSS_SLAM_DURATION,
-  BOSS_SLAM_WARNING,
-  BOSS_CHARGE_DURATION,
-  BOSS_ENRAGE_THRESHOLD,
-  BOSS_ENRAGE_WARNING,
-  BOSS_DAMAGE_REDUCTION_SLAM,
-} from '@/config/GameConfig';
+import type { BossConfig, BossPhaseConfig } from '@/config/progression';
 
 export enum BossPhase {
   Vulnerable = 'vulnerable',
@@ -16,34 +7,40 @@ export enum BossPhase {
   Charge = 'charge',
 }
 
-const PHASE_ORDER: BossPhase[] = [
-  BossPhase.Vulnerable,
-  BossPhase.Slam,
-  BossPhase.Charge,
-];
-
 export class BossState {
-  hp: number = BOSS_HP;
-  phase: BossPhase = BossPhase.Vulnerable;
+  hp: number;
+  phase: BossPhase;
   phaseTimer: number = 0;
   enraged: boolean = false;
+
+  private config: BossConfig;
+  private phaseIndex: number = 0;
+
+  constructor(config: BossConfig) {
+    this.config = config;
+    this.hp = config.hp;
+    this.phase = config.phases[0].name as BossPhase;
+  }
 
   get isDead(): boolean {
     return this.hp <= 0;
   }
 
   get slamWarningDuration(): number {
-    return this.enraged ? BOSS_ENRAGE_WARNING : BOSS_SLAM_WARNING;
+    return this.enraged ? this.config.enrageWarning : this.config.slamWarning;
+  }
+
+  get chargeSpeed(): number {
+    return this.enraged ? this.config.enrageChargeSpeed : this.config.chargeSpeed;
+  }
+
+  private get currentPhaseConfig(): BossPhaseConfig {
+    return this.config.phases[this.phaseIndex];
   }
 
   private get phaseDuration(): number {
-    const base = {
-      [BossPhase.Vulnerable]: BOSS_VULNERABLE_DURATION,
-      [BossPhase.Slam]: BOSS_SLAM_DURATION,
-      [BossPhase.Charge]: BOSS_CHARGE_DURATION,
-    }[this.phase];
-
-    return this.enraged ? base / 2 : base;
+    const base = this.currentPhaseConfig.duration;
+    return this.enraged ? base * this.config.enrageDurationMultiplier : base;
   }
 
   update(deltaMs: number): boolean {
@@ -51,22 +48,18 @@ export class BossState {
     this.phaseTimer += deltaMs;
     if (this.phaseTimer >= this.phaseDuration) {
       this.phaseTimer = 0;
-      const currentIndex = PHASE_ORDER.indexOf(this.phase);
-      this.phase = PHASE_ORDER[(currentIndex + 1) % PHASE_ORDER.length];
+      this.phaseIndex = (this.phaseIndex + 1) % this.config.phases.length;
+      this.phase = this.config.phases[this.phaseIndex].name as BossPhase;
       return true;
     }
     return false;
   }
 
   takeDamage(amount: number): void {
-    let effective = amount;
-    if (this.phase === BossPhase.Charge) {
-      effective = 0;
-    } else if (this.phase === BossPhase.Slam) {
-      effective = amount * BOSS_DAMAGE_REDUCTION_SLAM;
-    }
+    const reduction = this.currentPhaseConfig.damageReduction;
+    const effective = amount * (1 - reduction);
     this.hp = Math.max(0, this.hp - effective);
-    if (this.hp / BOSS_HP <= BOSS_ENRAGE_THRESHOLD) {
+    if (this.hp / this.config.hp <= this.config.enrageThreshold) {
       this.enraged = true;
     }
   }

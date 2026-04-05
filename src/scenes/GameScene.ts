@@ -3,17 +3,11 @@ import Phaser from 'phaser';
 import {
   GAME_WIDTH,
   GAME_HEIGHT,
-  STARTING_UNITS,
-  MARCH_SPEED,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
   ENEMY_POOL_SIZE,
-  GATE_INTERVAL,
-  BOSS_TRIGGER_DISTANCE,
-  SCORE_PER_METER,
 } from '@/config/GameConfig';
-import { ENEMY_STATS } from '@/config/EnemyConfig';
-import { WeaponType, WEAPON_STATS, CRATE_SPAWN_DISTANCE } from '@/config/WeaponConfig';
+import { LevelManager, hexToNum } from '@/config/progression';
 import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
@@ -37,7 +31,7 @@ export class GameScene extends Phaser.Scene {
   private armyYOffset: number = 0; // player-controlled forward/back nudge
   private distance: number = 0;
   private score: number = 0;
-  private unitCount: number = STARTING_UNITS;
+  private unitCount: number = 1;
   private killStreak: number = 0;
   private lastKillTime: number = 0;
 
@@ -49,10 +43,10 @@ export class GameScene extends Phaser.Scene {
   private crates: WeaponCrate[] = [];
 
   // Gate tracking
-  private nextGateDistance: number = GATE_INTERVAL;
+  private nextGateDistance: number = 500;
 
   // Weapon system
-  private currentWeapon: WeaponType = 'pistol';
+  private currentWeapon: string = 'pistol';
   private crateSpawned: boolean = false; // one crate per weapon tier
 
   // Track active unit count to know when to respawn vs reposition
@@ -63,15 +57,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    const level = LevelManager.instance.current;
+
     this.armyX = 0;
     this.distance = 0;
     this.score = 0;
-    this.unitCount = STARTING_UNITS;
+    this.unitCount = level.startingUnits;
     this.activeUnitCount = 0;
     this.killStreak = 0;
     this.lastKillTime = 0;
-    this.nextGateDistance = GATE_INTERVAL;
-    this.currentWeapon = 'pistol';
+    this.nextGateDistance = level.gates.interval;
+    this.currentWeapon = level.startingWeapon;
     this.crateSpawned = false;
 
     this.input_handler = new InputHandler(this);
@@ -119,11 +115,13 @@ export class GameScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     const dt = delta / 1000;
     const AGGRO_RANGE = 500; // enemies start moving when army is this close
+    const level = LevelManager.instance.current;
+    const marchSpeed = level.marchSpeed;
 
     // 1. Army marches upward in world space
-    this.distance += MARCH_SPEED * dt;
-    this.score += MARCH_SPEED * dt * SCORE_PER_METER;
-    this.armyWorldY -= MARCH_SPEED * dt;
+    this.distance += marchSpeed * dt;
+    this.score += marchSpeed * dt * level.scoring.perMeter;
+    this.armyWorldY -= marchSpeed * dt;
 
     // 2. Camera follows army (army stays 200px from bottom)
     this.cameras.main.scrollY = this.armyWorldY - GAME_HEIGHT + 200;
@@ -146,15 +144,26 @@ export class GameScene extends Phaser.Scene {
     for (const cmd of spawnCommands) {
       const enemy = this.enemies.find((e) => !e.active);
       if (enemy) {
-        const stats = ENEMY_STATS[cmd.type];
+        const enemyCfg = LevelManager.instance.getEnemyStats(cmd.type);
         const worldX = GAME_WIDTH / 2 + cmd.x;
         const worldY = this.armyWorldY - GAME_HEIGHT - 100; // ahead of camera
-        enemy.spawn(worldX, worldY, stats);
+        enemy.spawn(worldX, worldY, {
+          type: enemyCfg.type as any,
+          hp: enemyCfg.hp,
+          speed: enemyCfg.speed,
+          size: enemyCfg.size,
+          contactDamage: enemyCfg.contactDamage,
+          splashRadius: enemyCfg.splashRadius,
+          splashDamage: enemyCfg.splashDamage,
+          color: hexToNum(enemyCfg.color),
+          appearsAtDistance: enemyCfg.appearsAtDistance,
+          scoreValue: enemyCfg.scoreValue,
+        });
       }
     }
 
     // 5. Spawn gates in world space (static — army walks through them)
-    if (this.distance >= this.nextGateDistance && this.distance < BOSS_TRIGGER_DISTANCE) {
+    if (this.distance >= this.nextGateDistance && this.distance < level.boss.triggerDistance) {
       const pair = pickGatePair(this.distance);
       const gate = this.gates.find((g) => !g.active);
       if (gate) {
@@ -162,17 +171,17 @@ export class GameScene extends Phaser.Scene {
         gate.spawn(gateWorldY, pair.left, pair.right);
         gate.setPosition(GAME_WIDTH / 2, gateWorldY);
       }
-      this.nextGateDistance += GATE_INTERVAL;
+      this.nextGateDistance += level.gates.interval;
     }
 
     // 5b. Spawn weapon crate (one per tier, at fixed distance)
-    const crateDistance = CRATE_SPAWN_DISTANCE[this.currentWeapon];
-    if (!this.crateSpawned && crateDistance > 0 && this.distance >= crateDistance) {
+    const crateCfg = LevelManager.instance.getCrateForWeapon(this.currentWeapon);
+    if (!this.crateSpawned && crateCfg && this.distance >= crateCfg.distance) {
       const crate = this.crates.find((c) => !c.active);
       if (crate) {
         const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.4;
         const crateY = this.armyWorldY - GAME_HEIGHT - 50;
-        crate.spawn(crateX, crateY, this.currentWeapon);
+        crate.spawn(crateX, crateY, this.currentWeapon as any);
         this.crateSpawned = true;
       }
     }
@@ -319,7 +328,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // 9. Fire bullets (weapon fire rate)
-    const weaponStats = WEAPON_STATS[this.currentWeapon];
+    const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
@@ -331,7 +340,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // 10. Check boss trigger
-    if (this.distance >= BOSS_TRIGGER_DISTANCE) {
+    if (this.distance >= level.boss.triggerDistance) {
       const activeEnemies = this.enemies.filter((e) => e.active).length;
       if (activeEnemies === 0) {
         this.transitionToBoss();
@@ -412,8 +421,8 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private showWeaponUpgrade(x: number, y: number, weapon: WeaponType): void {
-    const stats = WEAPON_STATS[weapon];
+  private showWeaponUpgrade(x: number, y: number, weapon: string): void {
+    const stats = LevelManager.instance.getWeaponStats(weapon);
     const text = this.add.text(x, y, stats.name + '!', {
       fontSize: '40px',
       color: '#ffffff',

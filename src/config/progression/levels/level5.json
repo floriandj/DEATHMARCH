@@ -1,0 +1,102 @@
+{
+  "id": "level_5",
+  "name": "Throne of Ash",
+  "description": "The final march. The Lich King commands an army of shadow and flame.",
+
+  "startingUnits": 8,
+  "marchSpeed": 120,
+
+  "startingWeapon": "lmg",
+  "weapons": {
+    "lmg":       { "type": "lmg",       "name": "LMG",           "fireRate": 40,  "bulletColor": "#ff6b6b" },
+    "plasma":    { "type": "plasma",    "name": "PLASMA RIFLE",  "fireRate": 18,  "bulletColor": "#7bed9f" },
+    "voidbeam":  { "type": "voidbeam",  "name": "VOID BEAM",     "fireRate": 12,  "bulletColor": "#a855f7" },
+    "godslayer": { "type": "godslayer", "name": "GODSLAYER",     "fireRate": 8,   "bulletColor": "#fbbf24" }
+  },
+  "weaponOrder": ["lmg", "plasma", "voidbeam", "godslayer"],
+  "weaponCrates": [
+    { "currentWeapon": "lmg",      "nextWeapon": "plasma",    "distance": 400,  "hp": 30 },
+    { "currentWeapon": "plasma",   "nextWeapon": "voidbeam",  "distance": 1000, "hp": 50 },
+    { "currentWeapon": "voidbeam", "nextWeapon": "godslayer", "distance": 1800, "hp": 70 }
+  ],
+
+  "enemies": {
+    "shadow_knight": {
+      "type": "shadow_knight", "hp": 8, "speed": 100, "size": 18,
+      "contactDamage": 3, "splashRadius": 0, "splashDamage": 0,
+      "color": "#2c3e50", "appearsAtDistance": 0, "scoreValue": 50
+    },
+    "ashwalker": {
+      "type": "ashwalker", "hp": 5, "speed": 160, "size": 14,
+      "contactDamage": 3, "splashRadius": 50, "splashDamage": 2,
+      "color": "#e74c3c", "appearsAtDistance": 500, "scoreValue": 65
+    },
+    "void_weaver": {
+      "type": "void_weaver", "hp": 4, "speed": 200, "size": 12,
+      "contactDamage": 4, "splashRadius": 65, "splashDamage": 3,
+      "color": "#9b59b6", "appearsAtDistance": 1100, "scoreValue": 85
+    },
+    "archfiend": {
+      "type": "archfiend", "hp": 20, "speed": 80, "size": 28,
+      "contactDamage": 7, "splashRadius": 75, "splashDamage": 3,
+      "color": "#c0392b", "appearsAtDistance": 1600, "scoreValue": 120
+    }
+  },
+
+  "waves": {
+    "gracePeriod": 60,
+    "brackets": [
+      { "maxDistance": 250,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 70,  "intervalMax": 100 },
+      { "maxDistance": 500,  "clusterMin": 2, "clusterMax": 4, "intervalMin": 50,  "intervalMax": 75  },
+      { "maxDistance": 800,  "clusterMin": 3, "clusterMax": 5, "intervalMin": 38,  "intervalMax": 55  },
+      { "maxDistance": 1200, "clusterMin": 3, "clusterMax": 6, "intervalMin": 28,  "intervalMax": 42  },
+      { "maxDistance": 1700, "clusterMin": 4, "clusterMax": 7, "intervalMin": 20,  "intervalMax": 32  },
+      { "maxDistance": 99999,"clusterMin": 6, "clusterMax": 10,"intervalMin": 12,  "intervalMax": 20  }
+    ]
+  },
+
+  "gates": {
+    "interval": 400,
+    "templates": [
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "add",      "value": 10 }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 20}, "right": { "op": "subtract", "value": 5  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 15 }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 30}, "right": { "op": "divide",   "value": 3  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "divide",   "value": 4  }, "minDistance": 800 },
+      { "left": { "op": "multiply", "value": 6 }, "right": { "op": "subtract", "value": 20 }, "minDistance": 1000 },
+      { "left": { "op": "add",      "value": 40}, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
+    ]
+  },
+
+  "boss": {
+    "hp": 1500,
+    "triggerDistance": 2500,
+    "phases": [
+      { "name": "vulnerable", "duration": 3000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 2500, "damageReduction": 0.5 },
+      { "name": "charge",     "duration": 3500, "damageReduction": 1 },
+      { "name": "vulnerable", "duration": 2000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.7 },
+      { "name": "charge",     "duration": 2500, "damageReduction": 1 }
+    ],
+    "enrageThreshold": 0.35,
+    "enrageDurationMultiplier": 0.35,
+    "slamWarning": 900,
+    "enrageWarning": 450,
+    "chargeSpeed": 450,
+    "enrageChargeSpeed": 700
+  },
+
+  "scoring": {
+    "perMeter": 5,
+    "perSurvivingUnit": 300,
+    "bossKill": 20000,
+    "enemyKills": {
+      "shadow_knight": 50,
+      "ashwalker": 65,
+      "void_weaver": 85,
+      "archfiend": 120
+    }
+  }
+}

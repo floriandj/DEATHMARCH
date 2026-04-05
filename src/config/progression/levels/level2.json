@@ -1,0 +1,98 @@
+{
+  "id": "level_2",
+  "name": "Crimson Gauntlet",
+  "description": "The Inferno Titan awaits at the end of a blood-soaked warpath.",
+
+  "startingUnits": 3,
+  "marchSpeed": 110,
+
+  "startingWeapon": "smg",
+  "weapons": {
+    "smg":      { "type": "smg",      "name": "SMG",           "fireRate": 190, "bulletColor": "#00d4ff" },
+    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 95,  "bulletColor": "#51cf66" },
+    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 42,  "bulletColor": "#ff6b6b" },
+    "minigun":  { "type": "minigun",  "name": "MINIGUN",       "fireRate": 22,  "bulletColor": "#ff00ff" }
+  },
+  "weaponOrder": ["smg", "ar", "lmg", "minigun"],
+  "weaponCrates": [
+    { "currentWeapon": "smg",  "nextWeapon": "ar",      "distance": 450,  "hp": 20 },
+    { "currentWeapon": "ar",   "nextWeapon": "lmg",     "distance": 1100, "hp": 35 },
+    { "currentWeapon": "lmg",  "nextWeapon": "minigun", "distance": 2000, "hp": 50 }
+  ],
+
+  "enemies": {
+    "orc": {
+      "type": "orc", "hp": 4, "speed": 90, "size": 16,
+      "contactDamage": 2, "splashRadius": 0, "splashDamage": 0,
+      "color": "#e64980", "appearsAtDistance": 0, "scoreValue": 25
+    },
+    "berserker": {
+      "type": "berserker", "hp": 2, "speed": 150, "size": 14,
+      "contactDamage": 3, "splashRadius": 0, "splashDamage": 0,
+      "color": "#ff4444", "appearsAtDistance": 500, "scoreValue": 40
+    },
+    "hellhound": {
+      "type": "hellhound", "hp": 3, "speed": 180, "size": 13,
+      "contactDamage": 2, "splashRadius": 40, "splashDamage": 1,
+      "color": "#ff8c00", "appearsAtDistance": 1200, "scoreValue": 45
+    },
+    "warlock": {
+      "type": "warlock", "hp": 6, "speed": 65, "size": 15,
+      "contactDamage": 4, "splashRadius": 70, "splashDamage": 2,
+      "color": "#9b59b6", "appearsAtDistance": 1800, "scoreValue": 65
+    }
+  },
+
+  "waves": {
+    "gracePeriod": 100,
+    "brackets": [
+      { "maxDistance": 300,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 100, "intervalMax": 150 },
+      { "maxDistance": 600,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 70,  "intervalMax": 100 },
+      { "maxDistance": 1000, "clusterMin": 2, "clusterMax": 3, "intervalMin": 50,  "intervalMax": 75  },
+      { "maxDistance": 1400, "clusterMin": 2, "clusterMax": 4, "intervalMin": 40,  "intervalMax": 55  },
+      { "maxDistance": 2000, "clusterMin": 3, "clusterMax": 5, "intervalMin": 28,  "intervalMax": 42  },
+      { "maxDistance": 99999,"clusterMin": 4, "clusterMax": 7, "intervalMin": 18,  "intervalMax": 28  }
+    ]
+  },
+
+  "gates": {
+    "interval": 450,
+    "templates": [
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 8  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 15}, "right": { "op": "add",      "value": 5  }, "minDistance": 200 },
+      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 25}, "right": { "op": "subtract", "value": 8  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 800 }
+    ]
+  },
+
+  "boss": {
+    "hp": 700,
+    "triggerDistance": 2800,
+    "phases": [
+      { "name": "vulnerable", "duration": 4000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3500, "damageReduction": 0.6 },
+      { "name": "slam",       "duration": 2500, "damageReduction": 0.4 },
+      { "name": "charge",     "duration": 3500, "damageReduction": 1 }
+    ],
+    "enrageThreshold": 0.25,
+    "enrageDurationMultiplier": 0.5,
+    "slamWarning": 1200,
+    "enrageWarning": 600,
+    "chargeSpeed": 420,
+    "enrageChargeSpeed": 620
+  },
+
+  "scoring": {
+    "perMeter": 2,
+    "perSurvivingUnit": 150,
+    "bossKill": 7000,
+    "enemyKills": {
+      "orc": 25,
+      "berserker": 40,
+      "hellhound": 45,
+      "warlock": 65
+    }
+  }
+}

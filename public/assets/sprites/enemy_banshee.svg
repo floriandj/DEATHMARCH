@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 26" width="52" height="26" shape-rendering="crispEdges">
+  <!-- Frame 0: Banshee - ghostly, floating, ethereal -->
+  <g>
+    <!-- Hair (flowing, wispy) -->
+    <rect x="3" y="0" width="2" height="5" fill="#c9b0ff"/>
+    <rect x="6" y="0" width="2" height="3" fill="#b08cff"/>
+    <rect x="18" y="0" width="2" height="4" fill="#c9b0ff"/>
+    <rect x="21" y="0" width="2" height="3" fill="#b08cff"/>
+    <!-- Head -->
+    <rect x="5" y="2" width="16" height="8" fill="#e8deff"/>
+    <rect x="6" y="3" width="14" height="6" fill="#d0bfff"/>
+    <!-- Eyes (hollow, glowing) -->
+    <rect x="7" y="4" width="4" height="3" fill="#111"/>
+    <rect x="15" y="4" width="4" height="3" fill="#111"/>
+    <rect x="8" y="5" width="2" height="1" fill="#b08cff"/>
+    <rect x="16" y="5" width="2" height="1" fill="#b08cff"/>
+    <!-- Mouth (wailing) -->
+    <rect x="10" y="8" width="6" height="2" fill="#222"/>
+    <rect x="11" y="8" width="4" height="1" fill="#555"/>
+    <!-- Body (ghostly, transparent feel) -->
+    <rect x="6" y="10" width="14" height="8" fill="#d0bfff"/>
+    <rect x="7" y="11" width="12" height="6" fill="#b08cff"/>
+    <!-- Ghostly arms -->
+    <rect x="2" y="10" width="4" height="7" fill="#d0bfff"/>
+    <rect x="20" y="10" width="4" height="7" fill="#d0bfff"/>
+    <rect x="1" y="12" width="2" height="4" fill="#e8deff"/>
+    <rect x="23" y="12" width="2" height="4" fill="#e8deff"/>
+    <!-- Spectral tail (no legs, floating) -->
+    <rect x="7" y="18" width="12" height="3" fill="#d0bfff"/>
+    <rect x="8" y="20" width="10" height="2" fill="#b08cff"/>
+    <rect x="10" y="22" width="6" height="2" fill="#9775d4"/>
+    <rect x="11" y="23" width="4" height="2" fill="#7b5fb8"/>
+    <rect x="12" y="24" width="2" height="2" fill="#6644aa"/>
+  </g>
+  <!-- Frame 1: Wailing pose -->
+  <g transform="translate(26,0)">
+    <rect x="3" y="0" width="2" height="6" fill="#d0bfff"/>
+    <rect x="6" y="0" width="2" height="4" fill="#c9b0ff"/>
+    <rect x="18" y="0" width="2" height="5" fill="#d0bfff"/>
+    <rect x="21" y="0" width="2" height="4" fill="#c9b0ff"/>
+    <rect x="5" y="2" width="16" height="8" fill="#e8deff"/>
+    <rect x="6" y="3" width="14" height="6" fill="#d0bfff"/>
+    <!-- Eyes brighter -->
+    <rect x="7" y="4" width="4" height="3" fill="#111"/>
+    <rect x="15" y="4" width="4" height="3" fill="#111"/>
+    <rect x="8" y="5" width="2" height="1" fill="#d0bfff"/>
+    <rect x="16" y="5" width="2" height="1" fill="#d0bfff"/>
+    <!-- Mouth wider (screaming) -->
+    <rect x="9" y="7" width="8" height="3" fill="#111"/>
+    <rect x="10" y="8" width="6" height="1" fill="#444"/>
+    <rect x="6" y="10" width="14" height="8" fill="#d0bfff"/>
+    <rect x="7" y="11" width="12" height="6" fill="#b08cff"/>
+    <!-- Arms raised (screaming) -->
+    <rect x="1" y="8" width="5" height="6" fill="#d0bfff"/>
+    <rect x="20" y="8" width="5" height="6" fill="#d0bfff"/>
+    <rect x="0" y="9" width="2" height="4" fill="#e8deff"/>
+    <rect x="24" y="9" width="2" height="4" fill="#e8deff"/>
+    <!-- Tail wisp -->
+    <rect x="7" y="18" width="12" height="3" fill="#d0bfff"/>
+    <rect x="9" y="20" width="8" height="2" fill="#b08cff"/>
+    <rect x="11" y="22" width="4" height="2" fill="#9775d4"/>
+    <rect x="12" y="23" width="2" height="2" fill="#6644aa"/>
+  </g>
+</svg>

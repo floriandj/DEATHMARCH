@@ -1,6 +1,6 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
-import { ENEMY_STATS } from '@/config/EnemyConfig';
+import { LevelManager } from '@/config/progression';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -17,14 +17,22 @@ export class BootScene extends Phaser.Scene {
     // Bullet
     this.load.image('bullet', 'assets/sprites/bullet.svg');
 
-    // Enemy spritesheets (2 frames each)
-    for (const [type, stats] of Object.entries(ENEMY_STATS)) {
-      const size = stats.size * 2;
-      this.load.spritesheet(`enemy_${type}`, `assets/sprites/enemy_${type}.svg`, {
-        frameWidth: size,
-        frameHeight: size,
-      });
+    // Enemy spritesheets — load from ALL levels so switching levels works
+    const loadedTypes = new Set<string>();
+    const mgr = LevelManager.instance;
+    for (let i = 0; i < mgr.totalLevels; i++) {
+      mgr.setLevel(i);
+      for (const [type, stats] of Object.entries(mgr.enemies)) {
+        if (loadedTypes.has(type)) continue;
+        loadedTypes.add(type);
+        const size = stats.size * 2;
+        this.load.spritesheet(`enemy_${type}`, `assets/sprites/enemy_${type}.svg`, {
+          frameWidth: size,
+          frameHeight: size,
+        });
+      }
     }
+    mgr.setLevel(0); // reset to first level
 
     // Boss spritesheet (2 frames, 88×88 each)
     this.load.spritesheet('boss', 'assets/sprites/boss.svg', {
@@ -39,6 +47,9 @@ export class BootScene extends Phaser.Scene {
   create(): void {
     // Generate gate textures procedurally (simple colored blocks, no art needed)
     this.generateGateTextures();
+
+    // Generate VFX textures
+    this.generateVfxTextures();
 
     // Create animations
     this.createAnimations();
@@ -66,6 +77,36 @@ export class BootScene extends Phaser.Scene {
     gRed.destroy();
   }
 
+  private generateVfxTextures(): void {
+    // Hit spark (small bright square)
+    const spark = this.add.graphics();
+    spark.fillStyle(0xffffff, 1);
+    spark.fillRect(0, 0, 3, 3);
+    spark.generateTexture('vfx_spark', 3, 3);
+    spark.destroy();
+
+    // Slam shockwave ring segment
+    const ring = this.add.graphics();
+    ring.fillStyle(0xff0000, 1);
+    ring.fillRect(0, 0, 6, 6);
+    ring.generateTexture('vfx_ring', 6, 6);
+    ring.destroy();
+
+    // Charge trail particle
+    const trail = this.add.graphics();
+    trail.fillStyle(0xff4400, 1);
+    trail.fillRect(0, 0, 5, 5);
+    trail.generateTexture('vfx_trail', 5, 5);
+    trail.destroy();
+
+    // Enrage burst particle
+    const burst = this.add.graphics();
+    burst.fillStyle(0xff0000, 1);
+    burst.fillRect(0, 0, 4, 4);
+    burst.generateTexture('vfx_burst', 4, 4);
+    burst.destroy();
+  }
+
   private createAnimations(): void {
     // Player unit march
     this.anims.create({
@@ -75,15 +116,24 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    // Enemy walk animations
-    for (const type of Object.keys(ENEMY_STATS)) {
-      this.anims.create({
-        key: `enemy_${type}_walk`,
-        frames: this.anims.generateFrameNumbers(`enemy_${type}`, { start: 0, end: 1 }),
-        frameRate: 4,
-        repeat: -1,
-      });
+    // Enemy walk animations — create for all loaded types
+    const mgr = LevelManager.instance;
+    const createdAnims = new Set<string>();
+    for (let i = 0; i < mgr.totalLevels; i++) {
+      mgr.setLevel(i);
+      for (const type of Object.keys(mgr.enemies)) {
+        const animKey = `enemy_${type}_walk`;
+        if (createdAnims.has(animKey)) continue;
+        createdAnims.add(animKey);
+        this.anims.create({
+          key: animKey,
+          frames: this.anims.generateFrameNumbers(`enemy_${type}`, { start: 0, end: 1 }),
+          frameRate: 4,
+          repeat: -1,
+        });
+      }
     }
+    mgr.setLevel(0);
 
     // Boss idle
     this.anims.create({

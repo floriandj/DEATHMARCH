@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 28" width="56" height="28" shape-rendering="crispEdges">
+  <!-- Frame 0: Berserker - fast, aggressive, dual-wielding red warrior -->
+  <g>
+    <!-- Hair (wild, spiky) -->
+    <rect x="6" y="0" width="2" height="3" fill="#cc0000"/>
+    <rect x="10" y="0" width="3" height="2" fill="#cc0000"/>
+    <rect x="16" y="0" width="2" height="3" fill="#cc0000"/>
+    <rect x="20" y="0" width="2" height="2" fill="#cc0000"/>
+    <!-- Head -->
+    <rect x="7" y="2" width="14" height="7" fill="#ff4444"/>
+    <rect x="8" y="3" width="12" height="5" fill="#cc2222"/>
+    <!-- War paint stripes -->
+    <rect x="8" y="3" width="2" height="5" fill="#880000"/>
+    <rect x="18" y="3" width="2" height="5" fill="#880000"/>
+    <!-- Eyes (rage-filled) -->
+    <rect x="10" y="4" width="3" height="2" fill="#fff"/>
+    <rect x="15" y="4" width="3" height="2" fill="#fff"/>
+    <rect x="11" y="4" width="2" height="2" fill="#ff0000"/>
+    <rect x="16" y="4" width="2" height="2" fill="#ff0000"/>
+    <!-- Mouth (snarling) -->
+    <rect x="11" y="7" width="6" height="2" fill="#660000"/>
+    <rect x="12" y="7" width="1" height="1" fill="#fff"/>
+    <rect x="15" y="7" width="1" height="1" fill="#fff"/>
+    <!-- Body (muscular, scarred) -->
+    <rect x="6" y="9" width="16" height="9" fill="#ff4444"/>
+    <rect x="8" y="10" width="12" height="7" fill="#cc2222"/>
+    <!-- Chest scar -->
+    <rect x="12" y="11" width="4" height="1" fill="#880000"/>
+    <rect x="13" y="12" width="2" height="2" fill="#880000"/>
+    <!-- Left arm + axe -->
+    <rect x="2" y="9" width="4" height="7" fill="#cc2222"/>
+    <rect x="0" y="8" width="3" height="2" fill="#888"/>
+    <rect x="0" y="6" width="2" height="3" fill="#aaa"/>
+    <!-- Right arm + axe -->
+    <rect x="22" y="9" width="4" height="7" fill="#cc2222"/>
+    <rect x="25" y="8" width="3" height="2" fill="#888"/>
+    <rect x="26" y="6" width="2" height="3" fill="#aaa"/>
+    <!-- Legs -->
+    <rect x="8" y="18" width="5" height="7" fill="#cc2222"/>
+    <rect x="15" y="18" width="5" height="7" fill="#cc2222"/>
+    <!-- Boots (spiked) -->
+    <rect x="7" y="24" width="6" height="4" fill="#442222"/>
+    <rect x="15" y="24" width="6" height="4" fill="#442222"/>
+  </g>
+  <!-- Frame 1: Running pose -->
+  <g transform="translate(28,0)">
+    <rect x="6" y="0" width="2" height="3" fill="#cc0000"/>
+    <rect x="10" y="0" width="3" height="2" fill="#cc0000"/>
+    <rect x="16" y="0" width="2" height="3" fill="#cc0000"/>
+    <rect x="20" y="0" width="2" height="2" fill="#cc0000"/>
+    <rect x="7" y="2" width="14" height="7" fill="#ff4444"/>
+    <rect x="8" y="3" width="12" height="5" fill="#cc2222"/>
+    <rect x="8" y="3" width="2" height="5" fill="#880000"/>
+    <rect x="18" y="3" width="2" height="5" fill="#880000"/>
+    <rect x="10" y="4" width="3" height="2" fill="#fff"/>
+    <rect x="15" y="4" width="3" height="2" fill="#fff"/>
+    <rect x="11" y="4" width="2" height="2" fill="#ff0000"/>
+    <rect x="16" y="4" width="2" height="2" fill="#ff0000"/>
+    <rect x="11" y="7" width="6" height="2" fill="#660000"/>
+    <rect x="12" y="7" width="1" height="1" fill="#fff"/>
+    <rect x="15" y="7" width="1" height="1" fill="#fff"/>
+    <rect x="6" y="9" width="16" height="9" fill="#ff4444"/>
+    <rect x="8" y="10" width="12" height="7" fill="#cc2222"/>
+    <rect x="12" y="11" width="4" height="1" fill="#880000"/>
+    <rect x="13" y="12" width="2" height="2" fill="#880000"/>
+    <!-- Arms swinging wide -->
+    <rect x="0" y="10" width="5" height="5" fill="#cc2222"/>
+    <rect x="0" y="7" width="2" height="4" fill="#aaa"/>
+    <rect x="23" y="8" width="5" height="5" fill="#cc2222"/>
+    <rect x="27" y="6" width="2" height="4" fill="#aaa"/>
+    <!-- Legs (wide stride) -->
+    <rect x="6" y="18" width="5" height="6" fill="#cc2222"/>
+    <rect x="17" y="19" width="5" height="7" fill="#cc2222"/>
+    <rect x="5" y="23" width="6" height="4" fill="#442222"/>
+    <rect x="17" y="25" width="6" height="3" fill="#442222"/>
+  </g>
+</svg>

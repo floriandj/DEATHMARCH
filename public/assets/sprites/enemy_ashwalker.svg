@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 28" width="56" height="28" shape-rendering="crispEdges">
+  <!-- Frame 0: Ashwalker - ember-wreathed humanoid, fast -->
+  <g>
+    <!-- Flame crown -->
+    <rect x="7" y="0" width="2" height="3" fill="#ff4400"/>
+    <rect x="11" y="0" width="3" height="2" fill="#ff6600"/>
+    <rect x="17" y="0" width="2" height="3" fill="#ff4400"/>
+    <rect x="20" y="0" width="2" height="2" fill="#ff8800"/>
+    <!-- Head (charred) -->
+    <rect x="7" y="2" width="14" height="7" fill="#e74c3c"/>
+    <rect x="8" y="3" width="12" height="5" fill="#922b21"/>
+    <!-- Eyes (ember glow) -->
+    <rect x="9" y="4" width="3" height="2" fill="#ff8800"/>
+    <rect x="16" y="4" width="3" height="2" fill="#ff8800"/>
+    <rect x="10" y="4" width="1" height="1" fill="#ffcc00"/>
+    <rect x="17" y="4" width="1" height="1" fill="#ffcc00"/>
+    <!-- Mouth (embers) -->
+    <rect x="11" y="7" width="6" height="1" fill="#ff4400"/>
+    <!-- Body -->
+    <rect x="6" y="9" width="16" height="9" fill="#e74c3c"/>
+    <rect x="7" y="10" width="14" height="7" fill="#922b21"/>
+    <!-- Ember core -->
+    <rect x="11" y="11" width="6" height="4" fill="#e74c3c"/>
+    <rect x="12" y="12" width="4" height="2" fill="#ff6600"/>
+    <rect x="13" y="12" width="2" height="1" fill="#ffcc00"/>
+    <!-- Ash particles floating -->
+    <rect x="3" y="5" width="1" height="1" fill="#ff660088"/>
+    <rect x="24" y="3" width="1" height="1" fill="#ff440088"/>
+    <rect x="1" y="12" width="1" height="1" fill="#ff880088"/>
+    <!-- Arms -->
+    <rect x="2" y="9" width="4" height="7" fill="#922b21"/>
+    <rect x="22" y="9" width="4" height="7" fill="#922b21"/>
+    <!-- Flame hands -->
+    <rect x="1" y="15" width="3" height="3" fill="#ff4400"/>
+    <rect x="23" y="15" width="3" height="3" fill="#ff4400"/>
+    <!-- Legs -->
+    <rect x="8" y="18" width="5" height="7" fill="#922b21"/>
+    <rect x="15" y="18" width="5" height="7" fill="#922b21"/>
+    <!-- Feet (ember trail) -->
+    <rect x="7" y="24" width="6" height="4" fill="#641e16"/>
+    <rect x="15" y="24" width="6" height="4" fill="#641e16"/>
+  </g>
+  <!-- Frame 1: Running, flames trail -->
+  <g transform="translate(28,0)">
+    <rect x="7" y="0" width="2" height="4" fill="#ff6600"/>
+    <rect x="11" y="0" width="3" height="3" fill="#ff4400"/>
+    <rect x="17" y="0" width="2" height="2" fill="#ff8800"/>
+    <rect x="20" y="0" width="2" height="3" fill="#ff4400"/>
+    <rect x="7" y="2" width="14" height="7" fill="#e74c3c"/>
+    <rect x="8" y="3" width="12" height="5" fill="#922b21"/>
+    <rect x="9" y="4" width="3" height="2" fill="#ff8800"/>
+    <rect x="16" y="4" width="3" height="2" fill="#ff8800"/>
+    <rect x="10" y="4" width="1" height="1" fill="#ffcc00"/>
+    <rect x="17" y="4" width="1" height="1" fill="#ffcc00"/>
+    <rect x="11" y="7" width="6" height="1" fill="#ff4400"/>
+    <rect x="6" y="9" width="16" height="9" fill="#e74c3c"/>
+    <rect x="7" y="10" width="14" height="7" fill="#922b21"/>
+    <!-- Core brighter -->
+    <rect x="11" y="11" width="6" height="4" fill="#ff4400"/>
+    <rect x="12" y="12" width="4" height="2" fill="#ff8800"/>
+    <rect x="13" y="12" width="2" height="1" fill="#fff"/>
+    <!-- More ash particles -->
+    <rect x="2" y="3" width="1" height="1" fill="#ff4400"/>
+    <rect x="25" y="5" width="1" height="1" fill="#ff6600"/>
+    <rect x="0" y="10" width="1" height="1" fill="#ff8800"/>
+    <rect x="26" y="11" width="1" height="1" fill="#ff4400"/>
+    <!-- Arms swinging -->
+    <rect x="1" y="10" width="5" height="6" fill="#922b21"/>
+    <rect x="22" y="8" width="5" height="6" fill="#922b21"/>
+    <rect x="0" y="15" width="3" height="3" fill="#ff4400"/>
+    <rect x="24" y="13" width="3" height="3" fill="#ff6600"/>
+    <!-- Legs stride -->
+    <rect x="6" y="18" width="5" height="6" fill="#922b21"/>
+    <rect x="17" y="19" width="5" height="7" fill="#922b21"/>
+    <rect x="5" y="23" width="6" height="4" fill="#641e16"/>
+    <rect x="17" y="25" width="6" height="3" fill="#641e16"/>
+  </g>
+</svg>

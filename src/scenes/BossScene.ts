@@ -5,11 +5,8 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
-  BOSS_HP,
-  SCORE_BOSS_KILL,
-  SCORE_PER_SURVIVING_UNIT,
 } from '@/config/GameConfig';
-import { WeaponType, WEAPON_STATS } from '@/config/WeaponConfig';
+import { LevelManager } from '@/config/progression';
 import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { Bullet } from '@/entities/Bullet';
@@ -20,7 +17,7 @@ interface BossSceneData {
   score: number;
   distance: number;
   unitCount: number;
-  weapon: WeaponType;
+  weapon: string;
 }
 
 export class BossScene extends Phaser.Scene {
@@ -33,7 +30,7 @@ export class BossScene extends Phaser.Scene {
   private distance: number = 0;
   private unitCount: number = 0;
   private activeUnitCount: number = 0;
-  private currentWeapon: WeaponType = 'pistol';
+  private currentWeapon: string = 'pistol';
 
   private units: PlayerUnit[] = [];
   private bullets: Bullet[] = [];
@@ -45,21 +42,33 @@ export class BossScene extends Phaser.Scene {
   private slamZoneX: number[] = []; // X positions of danger zones
   private entranceComplete: boolean = false;
 
+  // VFX tracking
+  private enrageTriggered: boolean = false;
+  private chargeTrailTimer: number = 0;
+  private bossAuraParticles: Phaser.GameObjects.Sprite[] = [];
+  private auraTimer: number = 0;
+
   constructor() {
     super({ key: 'BossScene' });
   }
 
   create(data: BossSceneData): void {
+    const bossCfg = LevelManager.instance.bossConfig;
+
     this.score = data.score;
     this.distance = data.distance;
     this.unitCount = data.unitCount;
     this.activeUnitCount = 0;
-    this.currentWeapon = data.weapon || 'pistol';
+    this.currentWeapon = data.weapon || LevelManager.instance.current.startingWeapon;
     this.armyX = 0;
     this.entranceComplete = false;
+    this.enrageTriggered = false;
+    this.chargeTrailTimer = 0;
+    this.bossAuraParticles = [];
+    this.auraTimer = 0;
 
     this.input_handler = new InputHandler(this);
-    this.bossState = new BossState();
+    this.bossState = new BossState(bossCfg);
 
     // Boss sprite - starts off-screen, will animate in
     this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, 'boss');
@@ -106,9 +115,10 @@ export class BossScene extends Phaser.Scene {
         duration: 900,
         ease: 'Bounce.easeOut',
         onComplete: () => {
-          // Impact effects: shake + flash
+          // Impact effects: shake + flash + ground impact particles
           this.cameras.main.shake(400, 0.04);
           this.cameras.main.flash(300, 255, 100, 100);
+          this.spawnImpactParticles(this.bossSprite.x, this.bossSprite.y + 40, 12, 0xff4400);
           this.entranceComplete = true;
         },
       });
@@ -118,6 +128,8 @@ export class BossScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     if (!this.entranceComplete) return;
     if (this.bossState.isDead) return;
+
+    const bossCfg = LevelManager.instance.bossConfig;
 
     // 1. Update army position
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
@@ -135,15 +147,31 @@ export class BossScene extends Phaser.Scene {
       this.onPhaseChange();
     }
 
+    // 2b. Enrage burst VFX (trigger once)
+    if (this.bossState.enraged && !this.enrageTriggered) {
+      this.enrageTriggered = true;
+      this.playEnrageBurst();
+    }
+
+    // 2c. Enrage aura particles (continuous when enraged)
+    if (this.bossState.enraged) {
+      this.auraTimer += delta;
+      if (this.auraTimer > 120) {
+        this.auraTimer = 0;
+        this.spawnAuraParticle();
+      }
+    }
+
     // 3. Handle charge phase
     if (this.bossState.phase === BossPhase.Charge) {
       this.updateCharge(delta);
     }
 
     // 5. Fire bullets at boss
+    const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta, WEAPON_STATS[this.currentWeapon].fireRate)) {
+      if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
           bullet.fire(unit.x, unit.y);
@@ -169,6 +197,9 @@ export class BossScene extends Phaser.Scene {
         bullet.despawn();
         this.bossState.takeDamage(bullet.damage);
 
+        // Hit spark VFX
+        this.spawnHitSpark(bullet.x, bullet.y);
+
         // Flash boss on hit
         this.bossSprite.setTint(0xffffff);
         this.time.delayedCall(30, () => {
@@ -191,8 +222,131 @@ export class BossScene extends Phaser.Scene {
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
-    this.hud.bossHpPercent = this.bossState.hp / BOSS_HP;
+    this.hud.bossHpPercent = this.bossState.hp / bossCfg.hp;
   }
+
+  // ---------- VFX Methods ----------
+
+  /** Small spark burst when a bullet hits the boss */
+  private spawnHitSpark(x: number, y: number): void {
+    const count = 3;
+    for (let i = 0; i < count; i++) {
+      const p = this.add.sprite(x, y, 'vfx_spark');
+      p.setTint(this.bossState.enraged ? 0xff4400 : 0xffcc00);
+      p.setAlpha(1);
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 8 + Math.random() * 12;
+      this.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.3,
+        duration: 150 + Math.random() * 100,
+        onComplete: () => p.destroy(),
+      });
+    }
+  }
+
+  /** Ground impact particles (entrance + slam) */
+  private spawnImpactParticles(x: number, y: number, count: number, color: number): void {
+    for (let i = 0; i < count; i++) {
+      const p = this.add.sprite(x, y, 'vfx_ring');
+      p.setTint(color);
+      p.setAlpha(0.9);
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+      const dist = 30 + Math.random() * 50;
+      this.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist * 0.4, // flatten vertically for ground effect
+        alpha: 0,
+        scale: 0.2,
+        duration: 400 + Math.random() * 200,
+        onComplete: () => p.destroy(),
+      });
+    }
+  }
+
+  /** Charge trail particles emitted behind the boss during charge */
+  private spawnChargeTrail(): void {
+    const x = this.bossSprite.x - this.chargeDirection * 20;
+    const y = this.bossSprite.y + (Math.random() - 0.5) * 30;
+    const p = this.add.sprite(x, y, 'vfx_trail');
+    p.setTint(this.bossState.enraged ? 0xff0000 : 0xff6600);
+    p.setAlpha(0.8);
+    p.setScale(0.8 + Math.random() * 0.6);
+    this.tweens.add({
+      targets: p,
+      x: x - this.chargeDirection * (15 + Math.random() * 15),
+      alpha: 0,
+      scale: 0.1,
+      duration: 300 + Math.random() * 200,
+      onComplete: () => p.destroy(),
+    });
+  }
+
+  /** Explosive burst when boss enters enrage mode */
+  private playEnrageBurst(): void {
+    this.cameras.main.shake(500, 0.05);
+    this.cameras.main.flash(400, 255, 50, 50);
+
+    const x = this.bossSprite.x;
+    const y = this.bossSprite.y;
+    const count = 20;
+    for (let i = 0; i < count; i++) {
+      const p = this.add.sprite(x, y, 'vfx_burst');
+      p.setTint(i % 2 === 0 ? 0xff0000 : 0xff4400);
+      p.setAlpha(1);
+      p.setScale(1 + Math.random() * 0.5);
+      const angle = (i / count) * Math.PI * 2;
+      const dist = 40 + Math.random() * 60;
+      this.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.1,
+        duration: 500 + Math.random() * 300,
+        onComplete: () => p.destroy(),
+      });
+    }
+
+    // Boss pulse scale effect
+    this.tweens.add({
+      targets: this.bossSprite,
+      scale: 2.0,
+      duration: 200,
+      yoyo: true,
+      ease: 'Power2',
+      onComplete: () => {
+        this.bossSprite.setScale(1.5);
+        this.bossSprite.setTint(0xff4040);
+      },
+    });
+  }
+
+  /** Continuous floating aura particle around enraged boss */
+  private spawnAuraParticle(): void {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 40 + Math.random() * 20;
+    const x = this.bossSprite.x + Math.cos(angle) * radius;
+    const y = this.bossSprite.y + Math.sin(angle) * radius;
+    const p = this.add.sprite(x, y, 'vfx_burst');
+    p.setTint(Math.random() > 0.5 ? 0xff0000 : 0xff4400);
+    p.setAlpha(0.6);
+    p.setScale(0.4 + Math.random() * 0.4);
+    this.tweens.add({
+      targets: p,
+      y: y - 20 - Math.random() * 20,
+      alpha: 0,
+      scale: 0.1,
+      duration: 400 + Math.random() * 300,
+      onComplete: () => p.destroy(),
+    });
+  }
+
+  // ---------- Phase handling ----------
 
   private onPhaseChange(): void {
     // Clean up previous phase visuals
@@ -206,6 +360,11 @@ export class BossScene extends Phaser.Scene {
     if (this.bossState.phase === BossPhase.Charge) {
       this.startCharge();
     }
+
+    // Phase transition flash
+    if (this.bossState.phase === BossPhase.Vulnerable) {
+      this.cameras.main.flash(150, 100, 100, 255, true);
+    }
   }
 
   private prepareSlamZones(): void {
@@ -213,7 +372,7 @@ export class BossScene extends Phaser.Scene {
     const lanes = [-200, -60, 80, 220];
     const dangerIndices = Phaser.Utils.Array.Shuffle([0, 1, 2, 3]).slice(0, 2);
 
-    this.slamZoneX = dangerIndices.map((i) => lanes[i]);
+    this.slamZoneX = dangerIndices.map((i: number) => lanes[i]);
 
     for (let i = 0; i < this.slamZoneX.length && i < this.dangerZones.length; i++) {
       this.dangerZones[i].setPosition(GAME_WIDTH / 2 + this.slamZoneX[i], GAME_HEIGHT - 400);
@@ -247,6 +406,14 @@ export class BossScene extends Phaser.Scene {
         zone.setFillStyle(0xff0000, 0.6);
       }
     }
+
+    // Slam impact VFX: shockwave particles along danger zones
+    for (const zoneX of this.slamZoneX) {
+      const impactX = GAME_WIDTH / 2 + zoneX;
+      const impactY = GAME_HEIGHT - 250;
+      this.spawnImpactParticles(impactX, impactY, 8, 0xff2200);
+    }
+    this.cameras.main.shake(250, 0.025);
 
     // Check if army is in a danger zone
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
@@ -282,15 +449,26 @@ export class BossScene extends Phaser.Scene {
 
   private startCharge(): void {
     this.chargeHit = false;
+    this.chargeTrailTimer = 0;
     this.chargeDirection = Math.random() < 0.5 ? -1 : 1;
     this.chargeStartX = this.chargeDirection === 1 ? -100 : GAME_WIDTH + 100;
     this.bossSprite.x = this.chargeStartX;
     this.bossSprite.y = GAME_HEIGHT * 0.45; // mid-screen, above the army
+
+    // Charge wind-up flash
+    this.cameras.main.flash(100, 255, 100, 0, true);
   }
 
   private updateCharge(delta: number): void {
-    const speed = this.bossState.enraged ? 500 : 350;
+    const speed = this.bossState.chargeSpeed;
     this.bossSprite.x += this.chargeDirection * speed * (delta / 1000);
+
+    // Emit charge trail particles
+    this.chargeTrailTimer += delta;
+    if (this.chargeTrailTimer > 40) {
+      this.chargeTrailTimer = 0;
+      this.spawnChargeTrail();
+    }
 
     // Charge damages units ONCE if boss passes over army's X position
     if (!this.chargeHit) {
@@ -300,6 +478,9 @@ export class BossScene extends Phaser.Scene {
         const unitsToKill = Math.max(1, Math.min(3, Math.ceil(this.unitCount * 0.05)));
         this.unitCount = Math.max(0, this.unitCount - unitsToKill);
         this.cameras.main.shake(150, 0.01);
+
+        // Charge hit impact particles
+        this.spawnImpactParticles(armyScreenX, GAME_HEIGHT - 200, 10, 0xff6600);
 
         if (this.unitCount <= 0) {
           this.gameOver();
@@ -317,6 +498,8 @@ export class BossScene extends Phaser.Scene {
       this.bossSprite.setPosition(GAME_WIDTH / 2, 200);
     }
   }
+
+  // ---------- Army management ----------
 
   private respawnArmy(): void {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
@@ -353,10 +536,31 @@ export class BossScene extends Phaser.Scene {
     }
   }
 
+  // ---------- End states ----------
+
   private bossDefeated(): void {
-    // Death animation
-    this.cameras.main.shake(500, 0.03);
+    const level = LevelManager.instance.current;
+
+    // Epic death explosion — multi-wave particle burst
+    const x = this.bossSprite.x;
+    const y = this.bossSprite.y;
+
+    // Wave 1: Immediate burst
+    this.cameras.main.shake(600, 0.04);
     this.cameras.main.flash(500, 255, 255, 255);
+    this.spawnDeathExplosion(x, y, 16, 0xff4400);
+
+    // Wave 2: Delayed secondary burst
+    this.time.delayedCall(200, () => {
+      this.spawnDeathExplosion(x, y, 12, 0xffcc00);
+      this.cameras.main.shake(400, 0.03);
+    });
+
+    // Wave 3: Final white burst
+    this.time.delayedCall(450, () => {
+      this.spawnDeathExplosion(x, y, 20, 0xffffff);
+      this.cameras.main.flash(300, 255, 200, 100);
+    });
 
     this.tweens.add({
       targets: this.bossSprite,
@@ -364,8 +568,8 @@ export class BossScene extends Phaser.Scene {
       scale: 3,
       duration: 800,
       onComplete: () => {
-        this.score += SCORE_BOSS_KILL;
-        this.score += this.unitCount * SCORE_PER_SURVIVING_UNIT;
+        this.score += level.scoring.bossKill;
+        this.score += this.unitCount * level.scoring.perSurvivingUnit;
 
         this.scene.stop('HUDScene');
         this.scene.start('GameOverScene', {
@@ -375,6 +579,30 @@ export class BossScene extends Phaser.Scene {
         });
       },
     });
+  }
+
+  /** Multi-particle explosion burst for boss death */
+  private spawnDeathExplosion(x: number, y: number, count: number, color: number): void {
+    for (let i = 0; i < count; i++) {
+      const textures = ['vfx_spark', 'vfx_burst', 'vfx_ring', 'death_particle'];
+      const tex = textures[Math.floor(Math.random() * textures.length)];
+      const p = this.add.sprite(x, y, tex);
+      p.setTint(color);
+      p.setAlpha(1);
+      p.setScale(1 + Math.random() * 1.5);
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const dist = 50 + Math.random() * 100;
+      this.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.1,
+        duration: 500 + Math.random() * 400,
+        ease: 'Power2',
+        onComplete: () => p.destroy(),
+      });
+    }
   }
 
   private gameOver(): void {

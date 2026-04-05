@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 56" width="112" height="56" shape-rendering="crispEdges">
+  <!-- Frame 0: Archfiend - towering demon lord, massive horns and wings -->
+  <g>
+    <!-- Horns (curved, massive) -->
+    <rect x="6" y="0" width="4" height="6" fill="#440000"/>
+    <rect x="4" y="2" width="3" height="4" fill="#660000"/>
+    <rect x="2" y="4" width="3" height="3" fill="#880000"/>
+    <rect x="42" y="0" width="4" height="6" fill="#440000"/>
+    <rect x="45" y="2" width="3" height="4" fill="#660000"/>
+    <rect x="47" y="4" width="3" height="3" fill="#880000"/>
+    <!-- Head -->
+    <rect x="12" y="2" width="28" height="12" fill="#c0392b"/>
+    <rect x="14" y="4" width="24" height="8" fill="#922b21"/>
+    <!-- Eyes (hellfire) -->
+    <rect x="16" y="6" width="6" height="4" fill="#ff0000"/>
+    <rect x="17" y="7" width="4" height="2" fill="#ffcc00"/>
+    <rect x="30" y="6" width="6" height="4" fill="#ff0000"/>
+    <rect x="31" y="7" width="4" height="2" fill="#ffcc00"/>
+    <!-- Mouth -->
+    <rect x="18" y="11" width="16" height="3" fill="#440000"/>
+    <rect x="20" y="11" width="3" height="2" fill="#eee"/>
+    <rect x="26" y="11" width="3" height="2" fill="#eee"/>
+    <rect x="31" y="11" width="2" height="2" fill="#eee"/>
+    <!-- Crown spikes -->
+    <rect x="14" y="0" width="2" height="4" fill="#ff4400"/>
+    <rect x="22" y="0" width="3" height="3" fill="#ff6600"/>
+    <rect x="30" y="0" width="2" height="4" fill="#ff4400"/>
+    <rect x="37" y="0" width="2" height="3" fill="#ff6600"/>
+    <!-- Wings -->
+    <rect x="0" y="10" width="10" height="18" fill="#7b241c"/>
+    <rect x="1" y="12" width="8" height="14" fill="#922b21"/>
+    <rect x="0" y="8" width="4" height="6" fill="#641e16"/>
+    <rect x="42" y="10" width="10" height="18" fill="#7b241c"/>
+    <rect x="43" y="12" width="8" height="14" fill="#922b21"/>
+    <rect x="48" y="8" width="4" height="6" fill="#641e16"/>
+    <!-- Body -->
+    <rect x="10" y="14" width="32" height="18" fill="#c0392b"/>
+    <rect x="12" y="16" width="28" height="14" fill="#922b21"/>
+    <!-- Infernal core -->
+    <rect x="20" y="18" width="12" height="8" fill="#c0392b"/>
+    <rect x="22" y="20" width="8" height="4" fill="#ff4400"/>
+    <rect x="23" y="21" width="6" height="2" fill="#ffcc00"/>
+    <rect x="24" y="21" width="4" height="1" fill="#fff"/>
+    <!-- Shoulder armor -->
+    <rect x="6" y="14" width="6" height="6" fill="#641e16"/>
+    <rect x="40" y="14" width="6" height="6" fill="#641e16"/>
+    <!-- Arms -->
+    <rect x="4" y="20" width="6" height="14" fill="#922b21"/>
+    <rect x="42" y="20" width="6" height="14" fill="#922b21"/>
+    <!-- Fists -->
+    <rect x="3" y="32" width="8" height="6" fill="#7b241c"/>
+    <rect x="41" y="32" width="8" height="6" fill="#7b241c"/>
+    <!-- Legs -->
+    <rect x="14" y="32" width="10" height="14" fill="#922b21"/>
+    <rect x="28" y="32" width="10" height="14" fill="#922b21"/>
+    <!-- Hooves -->
+    <rect x="12" y="44" width="12" height="12" fill="#440000"/>
+    <rect x="28" y="44" width="12" height="12" fill="#440000"/>
+    <!-- Tail -->
+    <rect x="38" y="28" width="6" height="3" fill="#922b21"/>
+    <rect x="42" y="26" width="4" height="3" fill="#c0392b"/>
+    <rect x="44" y="25" width="3" height="3" fill="#ff4400"/>
+  </g>
+  <!-- Frame 1: Attacking pose -->
+  <g transform="translate(56,0)">
+    <rect x="6" y="0" width="4" height="6" fill="#440000"/>
+    <rect x="4" y="2" width="3" height="4" fill="#660000"/>
+    <rect x="2" y="4" width="3" height="3" fill="#880000"/>
+    <rect x="42" y="0" width="4" height="6" fill="#440000"/>
+    <rect x="45" y="2" width="3" height="4" fill="#660000"/>
+    <rect x="47" y="4" width="3" height="3" fill="#880000"/>
+    <rect x="12" y="2" width="28" height="12" fill="#c0392b"/>
+    <rect x="14" y="4" width="24" height="8" fill="#922b21"/>
+    <rect x="16" y="6" width="6" height="4" fill="#ff0000"/>
+    <rect x="17" y="7" width="4" height="2" fill="#ffcc00"/>
+    <rect x="30" y="6" width="6" height="4" fill="#ff0000"/>
+    <rect x="31" y="7" width="4" height="2" fill="#ffcc00"/>
+    <!-- Mouth wider -->
+    <rect x="18" y="11" width="16" height="4" fill="#440000"/>
+    <rect x="20" y="11" width="3" height="3" fill="#eee"/>
+    <rect x="26" y="11" width="3" height="3" fill="#eee"/>
+    <rect x="31" y="11" width="2" height="3" fill="#eee"/>
+    <!-- Crown flames higher -->
+    <rect x="14" y="0" width="2" height="5" fill="#ff6600"/>
+    <rect x="22" y="0" width="3" height="4" fill="#ff4400"/>
+    <rect x="30" y="0" width="2" height="5" fill="#ff6600"/>
+    <rect x="37" y="0" width="2" height="4" fill="#ff4400"/>
+    <!-- Wings spread wider -->
+    <rect x="0" y="8" width="12" height="20" fill="#7b241c"/>
+    <rect x="1" y="10" width="10" height="16" fill="#922b21"/>
+    <rect x="0" y="6" width="5" height="6" fill="#641e16"/>
+    <rect x="40" y="8" width="12" height="20" fill="#7b241c"/>
+    <rect x="41" y="10" width="10" height="16" fill="#922b21"/>
+    <rect x="47" y="6" width="5" height="6" fill="#641e16"/>
+    <rect x="10" y="14" width="32" height="18" fill="#c0392b"/>
+    <rect x="12" y="16" width="28" height="14" fill="#922b21"/>
+    <!-- Core pulsing bigger -->
+    <rect x="18" y="17" width="16" height="10" fill="#c0392b"/>
+    <rect x="20" y="19" width="12" height="6" fill="#ff4400"/>
+    <rect x="22" y="20" width="8" height="4" fill="#ffcc00"/>
+    <rect x="23" y="21" width="6" height="2" fill="#fff"/>
+    <rect x="6" y="14" width="6" height="6" fill="#641e16"/>
+    <rect x="40" y="14" width="6" height="6" fill="#641e16"/>
+    <!-- Arms raised -->
+    <rect x="2" y="18" width="6" height="14" fill="#922b21"/>
+    <rect x="44" y="18" width="6" height="14" fill="#922b21"/>
+    <rect x="1" y="30" width="8" height="6" fill="#7b241c"/>
+    <rect x="43" y="30" width="8" height="6" fill="#7b241c"/>
+    <!-- Legs stride -->
+    <rect x="12" y="32" width="10" height="12" fill="#922b21"/>
+    <rect x="30" y="33" width="10" height="14" fill="#922b21"/>
+    <rect x="10" y="42" width="12" height="12" fill="#440000"/>
+    <rect x="30" y="45" width="12" height="11" fill="#440000"/>
+    <!-- Tail swish -->
+    <rect x="38" y="30" width="6" height="3" fill="#922b21"/>
+    <rect x="42" y="28" width="4" height="3" fill="#c0392b"/>
+    <rect x="44" y="27" width="3" height="2" fill="#ff6600"/>
+  </g>
+</svg>
