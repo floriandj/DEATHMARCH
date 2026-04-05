@@ -11,44 +11,53 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0a0a1a');
+    this.cameras.main.setBackgroundColor('#050510');
 
-    // Header
+    // Background glow
+    const bgGlow = this.add.graphics();
+    bgGlow.fillStyle(0xff2040, 0.03);
+    bgGlow.fillCircle(GAME_WIDTH / 2, 80, 200);
+
+    // Header with stroke
     this.add
-      .text(GAME_WIDTH / 2, 80, 'SETTINGS', {
-        fontSize: '40px',
-        color: '#ff4040',
+      .text(GAME_WIDTH / 2, 75, 'SETTINGS', {
+        fontSize: '36px',
+        color: '#ffffff',
         fontFamily: 'monospace',
         fontStyle: 'bold',
+        stroke: '#ff2040',
+        strokeThickness: 1,
+        letterSpacing: 6,
       })
       .setOrigin(0.5);
 
-    // Separator line
-    this.add.rectangle(GAME_WIDTH / 2, 120, GAME_WIDTH * 0.6, 2, 0xff4040, 0.5);
+    // Decorative lines
+    this.add.rectangle(GAME_WIDTH / 2, 108, 140, 2, 0xff4040, 0.4);
+    this.add.rectangle(GAME_WIDTH / 2, 113, 80, 1, 0xff4040, 0.2);
 
-    let yPos = 200;
+    let yPos = 170;
 
-    // ── Hard Update ──
-    yPos = this.addSection(yPos, 'APP UPDATE', 'Force-refresh the app to the latest version');
-    const updateBtn = this.createButton(GAME_WIDTH / 2, yPos, '[ HARD UPDATE ]', '#00d4ff');
-    updateBtn.on('pointerdown', () => this.hardUpdate());
-    yPos += 70;
+    // ── Hard Update Section ──
+    yPos = this.addSection(yPos, 'APP UPDATE', 'Force-refresh to the latest version', 0x00d4ff);
+    this.createPillButton(GAME_WIDTH / 2, yPos, 'UPDATE', 160, 44, 0x00d4ff, '#00d4ff',
+      () => this.hardUpdate());
+    yPos += 80;
 
-    // ── Clear Cache ──
-    yPos = this.addSection(yPos, 'CLEAR CACHE', 'Wipe service worker cache and reload');
-    const cacheBtn = this.createButton(GAME_WIDTH / 2, yPos, '[ CLEAR CACHE ]', '#ffd43b');
-    cacheBtn.on('pointerdown', () => this.clearCache());
-    yPos += 70;
+    // ── Clear Cache Section ──
+    yPos = this.addSection(yPos, 'CLEAR CACHE', 'Wipe service worker cache and reload', 0xffd43b);
+    this.createPillButton(GAME_WIDTH / 2, yPos, 'CLEAR', 160, 44, 0xffd43b, '#ffd43b',
+      () => this.clearCache());
+    yPos += 80;
 
-    // ── Reset High Score ──
-    yPos = this.addSection(yPos, 'HIGH SCORE', 'Reset your saved high score to zero');
-    const resetBtn = this.createButton(GAME_WIDTH / 2, yPos, '[ RESET SCORE ]', '#ff6b6b');
-    resetBtn.on('pointerdown', () => this.resetHighScore());
-    yPos += 70;
+    // ── Reset High Score Section ──
+    yPos = this.addSection(yPos, 'HIGH SCORE', 'Reset your saved high score to zero', 0xff6b6b);
+    this.createPillButton(GAME_WIDTH / 2, yPos, 'RESET', 160, 44, 0xff6b6b, '#ff6b6b',
+      () => this.resetHighScore());
+    yPos += 80;
 
     // ── Status area ──
     this.statusText = this.add
-      .text(GAME_WIDTH / 2, yPos + 20, '', {
+      .text(GAME_WIDTH / 2, yPos + 10, '', {
         fontSize: '14px',
         color: '#51cf66',
         fontFamily: 'monospace',
@@ -57,66 +66,112 @@ export class SettingsScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setWordWrapWidth(GAME_WIDTH * 0.8);
 
-    // ── Version info at bottom ──
+    // ── Version info card at bottom ──
+    const infoY = GAME_HEIGHT - 175;
+    const infoBg = this.add.graphics();
+    infoBg.fillStyle(0xffffff, 0.02);
+    infoBg.fillRoundedRect(GAME_WIDTH / 2 - 130, infoY, 260, 52, 12);
+
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 160, 'DEATHMARCH v1.0.0', {
-        fontSize: '14px',
-        color: '#444444',
+      .text(GAME_WIDTH / 2, infoY + 16, 'DEATHMARCH v1.0.0', {
+        fontSize: '13px',
+        color: '#555555',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5);
 
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 136, `Build: ${new Date().toISOString().slice(0, 10)}`, {
-        fontSize: '12px',
-        color: '#333333',
+      .text(GAME_WIDTH / 2, infoY + 36, `Build: ${new Date().toISOString().slice(0, 10)}`, {
+        fontSize: '11px',
+        color: '#383838',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5);
 
     // ── Back button ──
-    const backBtn = this.createButton(GAME_WIDTH / 2, GAME_HEIGHT - 80, '[ BACK ]', '#888888');
-    backBtn.on('pointerdown', () => {
-      this.scene.start('MenuScene');
-    });
+    this.createPillButton(GAME_WIDTH / 2, GAME_HEIGHT - 85, '\u2190  BACK', 160, 48, 0x888888, '#888888',
+      () => this.scene.start('MenuScene'));
   }
 
-  private addSection(y: number, title: string, desc: string): number {
+  private addSection(y: number, title: string, desc: string, accentColor: number): number {
+    // Section card background
+    const card = this.add.graphics();
+    card.fillStyle(0xffffff, 0.02);
+    card.fillRoundedRect(GAME_WIDTH / 2 - 220, y - 8, 440, 100, 16);
+    card.lineStyle(1, accentColor, 0.1);
+    card.strokeRoundedRect(GAME_WIDTH / 2 - 220, y - 8, 440, 100, 16);
+
+    // Accent dot
+    this.add.circle(GAME_WIDTH / 2 - 190, y + 18, 4, accentColor, 0.5);
+
     this.add
-      .text(GAME_WIDTH / 2, y, title, {
-        fontSize: '18px',
+      .text(GAME_WIDTH / 2 - 175, y + 12, title, {
+        fontSize: '16px',
         color: '#ffffff',
         fontFamily: 'monospace',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0, 0.5);
 
     this.add
-      .text(GAME_WIDTH / 2, y + 26, desc, {
-        fontSize: '12px',
+      .text(GAME_WIDTH / 2 - 175, y + 36, desc, {
+        fontSize: '11px',
         color: '#666666',
         fontFamily: 'monospace',
       })
-      .setOrigin(0.5);
+      .setOrigin(0, 0.5);
 
-    return y + 60;
+    return y + 64;
   }
 
-  private createButton(x: number, y: number, label: string, color: string): Phaser.GameObjects.Text {
-    const btn = this.add
-      .text(x, y, label, {
-        fontSize: '22px',
-        color,
+  private createPillButton(
+    x: number, y: number,
+    label: string, w: number, h: number,
+    bgColor: number, textColor: string,
+    callback: () => void,
+  ): Phaser.GameObjects.Container {
+    const container = this.add.container(x, y);
+
+    const bg = this.add.graphics();
+    bg.fillStyle(bgColor, 0.1);
+    bg.fillRoundedRect(-w / 2, -h / 2, w, h, h / 2);
+    bg.lineStyle(1.5, bgColor, 0.4);
+    bg.strokeRoundedRect(-w / 2, -h / 2, w, h, h / 2);
+    container.add(bg);
+
+    const text = this.add
+      .text(0, 0, label, {
+        fontSize: `${Math.min(h * 0.4, 18)}px`,
+        color: textColor,
         fontFamily: 'monospace',
         fontStyle: 'bold',
+        letterSpacing: 2,
       })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
+      .setOrigin(0.5);
+    container.add(text);
 
-    btn.on('pointerover', () => btn.setColor('#ffffff'));
-    btn.on('pointerout', () => btn.setColor(color));
+    const hitZone = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
+    container.add(hitZone);
 
-    return btn;
+    hitZone.on('pointerover', () => {
+      text.setColor('#ffffff');
+      bg.clear();
+      bg.fillStyle(bgColor, 0.2);
+      bg.fillRoundedRect(-w / 2, -h / 2, w, h, h / 2);
+      bg.lineStyle(1.5, bgColor, 0.7);
+      bg.strokeRoundedRect(-w / 2, -h / 2, w, h, h / 2);
+    });
+    hitZone.on('pointerout', () => {
+      text.setColor(textColor);
+      bg.clear();
+      bg.fillStyle(bgColor, 0.1);
+      bg.fillRoundedRect(-w / 2, -h / 2, w, h, h / 2);
+      bg.lineStyle(1.5, bgColor, 0.4);
+      bg.strokeRoundedRect(-w / 2, -h / 2, w, h, h / 2);
+    });
+    hitZone.on('pointerdown', callback);
+
+    return container;
   }
 
   private showStatus(message: string, color: string = '#51cf66'): void {
@@ -134,14 +189,12 @@ export class SettingsScene extends Phaser.Scene {
       const updateSW = registerSW({
         immediate: true,
         onNeedRefresh() {
-          // New content available — reload
           updateSW(true);
         },
         onOfflineReady: () => {
           this.showStatus('Already on the latest version.', '#ffd43b');
         },
       });
-      // Also force a hard reload as fallback after a brief delay
       this.time.delayedCall(3000, () => {
         this.showStatus('Forcing hard reload...', '#00d4ff');
         this.time.delayedCall(500, () => {
@@ -149,7 +202,6 @@ export class SettingsScene extends Phaser.Scene {
         });
       });
     } catch {
-      // Fallback: just reload
       this.showStatus('Reloading app...', '#00d4ff');
       this.time.delayedCall(500, () => {
         window.location.reload();
@@ -164,7 +216,6 @@ export class SettingsScene extends Phaser.Scene {
         const names = await caches.keys();
         await Promise.all(names.map((name) => caches.delete(name)));
       }
-      // Unregister service workers
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         await Promise.all(registrations.map((r) => r.unregister()));

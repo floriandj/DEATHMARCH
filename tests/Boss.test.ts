@@ -5,6 +5,8 @@ import type { BossConfig } from '../src/config/progression';
 
 function defaultBossConfig(): BossConfig {
   return {
+    name: 'Test Boss',
+    sprite: 'boss',
     hp: 500,
     triggerDistance: 3000,
     phases: [

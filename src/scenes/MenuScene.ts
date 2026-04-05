@@ -9,7 +9,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0a0a1a');
+    this.cameras.main.setBackgroundColor('#050510');
     this.cameras.main.fadeIn(400, 0, 0, 0);
 
     // Restore saved level progress
@@ -19,137 +19,167 @@ export class MenuScene extends Phaser.Scene {
       mgr.setLevel(savedLevel);
     }
 
-    // Ambient floating particles in background
-    for (let i = 0; i < 20; i++) {
+    // Background gradient layers
+    const bgGlow = this.add.graphics();
+    bgGlow.fillStyle(0xff2040, 0.04);
+    bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.15, 300);
+    bgGlow.fillStyle(0x0040ff, 0.02);
+    bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.7, 400);
+
+    // Ambient floating particles
+    for (let i = 0; i < 25; i++) {
       const dot = this.add.circle(
         Phaser.Math.Between(20, GAME_WIDTH - 20),
         Phaser.Math.Between(20, GAME_HEIGHT - 20),
-        Phaser.Math.Between(1, 3),
+        Phaser.Math.Between(1, 2),
         0xff4040,
-        Phaser.Math.FloatBetween(0.05, 0.15),
+        Phaser.Math.FloatBetween(0.05, 0.2),
       );
       this.tweens.add({
         targets: dot,
-        y: dot.y - Phaser.Math.Between(40, 120),
+        y: dot.y - Phaser.Math.Between(60, 150),
         alpha: 0,
-        duration: Phaser.Math.Between(3000, 6000),
+        duration: Phaser.Math.Between(3000, 7000),
         repeat: -1,
         delay: Phaser.Math.Between(0, 3000),
       });
     }
 
-    // Title
-    const title = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.18, 'DEATHMARCH', {
-        fontSize: '56px',
-        color: '#ff4040',
-        fontFamily: 'monospace',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-
-    // Subtle glow behind title
-    const glow = this.add.circle(GAME_WIDTH / 2, GAME_HEIGHT * 0.18, 100, 0xff4040, 0.06);
+    // ── Title Section ──
+    const titleGlow = this.add.circle(GAME_WIDTH / 2, GAME_HEIGHT * 0.14, 100, 0xff2040, 0.08);
     this.tweens.add({
-      targets: glow,
-      alpha: 0.12,
-      scale: 1.3,
-      duration: 2000,
+      targets: titleGlow,
+      alpha: 0.15,
+      scale: 1.4,
+      duration: 2500,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
 
-    // Separator
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.24, GAME_WIDTH * 0.5, 2, 0xff4040, 0.4);
-
-    // Tagline
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.28, 'Drag to command your army', {
-        fontSize: '16px',
-        color: '#666666',
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.14, 'DEATHMARCH', {
+        fontSize: '52px',
+        color: '#ffffff',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+        stroke: '#ff2040',
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5);
+
+    // Decorative lines under title
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.19, 200, 2, 0xff4040, 0.5);
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.195, 120, 1, 0xff4040, 0.25);
+
+    this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.22, 'Drag to command your army', {
+        fontSize: '14px',
+        color: '#777777',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5);
 
-    // High score display
+    // ── High Score Card ──
+    const scoreCardY = GAME_HEIGHT * 0.32;
+    const scoreCard = this.add.graphics();
+    scoreCard.fillStyle(0xffffff, 0.03);
+    scoreCard.fillRoundedRect(GAME_WIDTH / 2 - 150, scoreCardY - 30, 300, 90, 16);
+    scoreCard.lineStyle(1, 0xffd43b, 0.15);
+    scoreCard.strokeRoundedRect(GAME_WIDTH / 2 - 150, scoreCardY - 30, 300, 90, 16);
+
+    this.add
+      .text(GAME_WIDTH / 2, scoreCardY - 10, 'HIGH SCORE', {
+        fontSize: '11px',
+        color: '#999999',
+        fontFamily: 'monospace',
+        letterSpacing: 6,
+      })
+      .setOrigin(0.5);
+
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.35, `HIGH SCORE`, {
-        fontSize: '12px',
-        color: '#888888',
-        fontFamily: 'monospace',
-        letterSpacing: 4,
-      })
-      .setOrigin(0.5);
-
     const scoreValue = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.39, highScore, {
-        fontSize: '36px',
+      .text(GAME_WIDTH / 2, scoreCardY + 25, highScore, {
+        fontSize: '38px',
         color: '#ffd43b',
         fontFamily: 'monospace',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
-    // Gentle score shimmer
     this.tweens.add({
       targets: scoreValue,
-      alpha: 0.7,
-      duration: 1500,
+      alpha: 0.6,
+      duration: 1800,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
 
-    // ── Level selector ──
-    const levelY = GAME_HEIGHT * 0.48;
+    // ── Level Selector Card ──
+    const levelY = GAME_HEIGHT * 0.47;
+    const levelCard = this.add.graphics();
+    levelCard.fillStyle(0xffffff, 0.03);
+    levelCard.fillRoundedRect(GAME_WIDTH / 2 - 200, levelY - 35, 400, 80, 16);
+    levelCard.lineStyle(1, 0x00d4ff, 0.15);
+    levelCard.strokeRoundedRect(GAME_WIDTH / 2 - 200, levelY - 35, 400, 80, 16);
 
-    // Level label
     this.add
-      .text(GAME_WIDTH / 2, levelY - 25, 'LEVEL', {
-        fontSize: '12px',
-        color: '#888888',
+      .text(GAME_WIDTH / 2, levelY - 16, 'LEVEL', {
+        fontSize: '10px',
+        color: '#999999',
         fontFamily: 'monospace',
-        letterSpacing: 4,
+        letterSpacing: 6,
       })
       .setOrigin(0.5);
 
     const levelText = this.add
-      .text(GAME_WIDTH / 2, levelY + 10, this.getLevelLabel(mgr), {
-        fontSize: '22px',
+      .text(GAME_WIDTH / 2, levelY + 14, this.getLevelLabel(mgr), {
+        fontSize: '20px',
         color: '#00d4ff',
         fontFamily: 'monospace',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
-    // Left arrow
+    // Arrow buttons with circle backgrounds
+    const maxUnlocked = savedLevel;
+
+    const leftArrowBg = this.createCircleButton(
+      GAME_WIDTH / 2 - 170, levelY + 8, 22,
+      mgr.currentLevelIndex > 0,
+    );
     const leftArrow = this.add
-      .text(GAME_WIDTH / 2 - 160, levelY + 10, '<', {
-        fontSize: '32px',
+      .text(GAME_WIDTH / 2 - 170, levelY + 8, '\u25C0', {
+        fontSize: '18px',
         color: mgr.currentLevelIndex > 0 ? '#00d4ff' : '#333333',
         fontFamily: 'monospace',
-        fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 
-    // Right arrow
-    const maxUnlocked = savedLevel;
+    const rightArrowBg = this.createCircleButton(
+      GAME_WIDTH / 2 + 170, levelY + 8, 22,
+      mgr.currentLevelIndex < maxUnlocked,
+    );
     const rightArrow = this.add
-      .text(GAME_WIDTH / 2 + 160, levelY + 10, '>', {
-        fontSize: '32px',
+      .text(GAME_WIDTH / 2 + 170, levelY + 8, '\u25B6', {
+        fontSize: '18px',
         color: mgr.currentLevelIndex < maxUnlocked ? '#00d4ff' : '#333333',
         fontFamily: 'monospace',
-        fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 
     const updateArrows = () => {
-      leftArrow.setColor(mgr.currentLevelIndex > 0 ? '#00d4ff' : '#333333');
-      rightArrow.setColor(mgr.currentLevelIndex < maxUnlocked ? '#00d4ff' : '#333333');
+      const canLeft = mgr.currentLevelIndex > 0;
+      const canRight = mgr.currentLevelIndex < maxUnlocked;
+      leftArrow.setColor(canLeft ? '#00d4ff' : '#333333');
+      rightArrow.setColor(canRight ? '#00d4ff' : '#333333');
+      leftArrowBg.clear();
+      this.drawCircleBtn(leftArrowBg, GAME_WIDTH / 2 - 170, levelY + 8, 22, canLeft);
+      rightArrowBg.clear();
+      this.drawCircleBtn(rightArrowBg, GAME_WIDTH / 2 + 170, levelY + 8, 22, canRight);
       levelText.setText(this.getLevelLabel(mgr));
     };
 
@@ -167,19 +197,86 @@ export class MenuScene extends Phaser.Scene {
       }
     });
 
-    // ── START button ──
+    // ── START Button (Modern pill style) ──
+    const startY = GAME_HEIGHT * 0.60;
+    const startBtnW = 280;
+    const startBtnH = 64;
+
+    // Glow behind button
+    const startGlow = this.add.graphics();
+    startGlow.fillStyle(0x51cf66, 0.1);
+    startGlow.fillRoundedRect(
+      GAME_WIDTH / 2 - startBtnW / 2 - 8, startY - startBtnH / 2 - 8,
+      startBtnW + 16, startBtnH + 16, 40,
+    );
+    this.tweens.add({
+      targets: startGlow,
+      alpha: 0.4,
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    // Button body
+    const startBtnBg = this.add.graphics();
+    startBtnBg.fillStyle(0x51cf66, 0.15);
+    startBtnBg.fillRoundedRect(
+      GAME_WIDTH / 2 - startBtnW / 2, startY - startBtnH / 2,
+      startBtnW, startBtnH, 32,
+    );
+    startBtnBg.lineStyle(2, 0x51cf66, 0.6);
+    startBtnBg.strokeRoundedRect(
+      GAME_WIDTH / 2 - startBtnW / 2, startY - startBtnH / 2,
+      startBtnW, startBtnH, 32,
+    );
+
     const startBtn = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.58, '[ START ]', {
-        fontSize: '36px',
+      .text(GAME_WIDTH / 2, startY, 'START', {
+        fontSize: '32px',
         color: '#51cf66',
         fontFamily: 'monospace',
         fontStyle: 'bold',
+        letterSpacing: 8,
       })
       .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
+      .setInteractive({
+        useHandCursor: true,
+        hitArea: new Phaser.Geom.Rectangle(
+          -startBtnW / 2, -startBtnH / 2,
+          startBtnW, startBtnH,
+        ),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+      });
 
-    startBtn.on('pointerover', () => startBtn.setColor('#ffffff'));
-    startBtn.on('pointerout', () => startBtn.setColor('#51cf66'));
+    startBtn.on('pointerover', () => {
+      startBtn.setColor('#ffffff');
+      startBtnBg.clear();
+      startBtnBg.fillStyle(0x51cf66, 0.25);
+      startBtnBg.fillRoundedRect(
+        GAME_WIDTH / 2 - startBtnW / 2, startY - startBtnH / 2,
+        startBtnW, startBtnH, 32,
+      );
+      startBtnBg.lineStyle(2, 0x51cf66, 0.9);
+      startBtnBg.strokeRoundedRect(
+        GAME_WIDTH / 2 - startBtnW / 2, startY - startBtnH / 2,
+        startBtnW, startBtnH, 32,
+      );
+    });
+    startBtn.on('pointerout', () => {
+      startBtn.setColor('#51cf66');
+      startBtnBg.clear();
+      startBtnBg.fillStyle(0x51cf66, 0.15);
+      startBtnBg.fillRoundedRect(
+        GAME_WIDTH / 2 - startBtnW / 2, startY - startBtnH / 2,
+        startBtnW, startBtnH, 32,
+      );
+      startBtnBg.lineStyle(2, 0x51cf66, 0.6);
+      startBtnBg.strokeRoundedRect(
+        GAME_WIDTH / 2 - startBtnW / 2, startY - startBtnH / 2,
+        startBtnW, startBtnH, 32,
+      );
+    });
     startBtn.on('pointerdown', () => {
       this.cameras.main.fadeOut(200, 0, 0, 0);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
@@ -187,42 +284,65 @@ export class MenuScene extends Phaser.Scene {
       });
     });
 
-    this.tweens.add({
-      targets: startBtn,
-      alpha: 0.5,
-      duration: 800,
-      yoyo: true,
-      repeat: -1,
-    });
+    // ── SETTINGS Button (Subtle pill) ──
+    const settingsY = GAME_HEIGHT * 0.72;
+    const settBtnW = 200;
+    const settBtnH = 48;
 
-    // ── SETTINGS button ──
+    const settBtnBg = this.add.graphics();
+    settBtnBg.fillStyle(0xffffff, 0.04);
+    settBtnBg.fillRoundedRect(
+      GAME_WIDTH / 2 - settBtnW / 2, settingsY - settBtnH / 2,
+      settBtnW, settBtnH, 24,
+    );
+    settBtnBg.lineStyle(1, 0x888888, 0.2);
+    settBtnBg.strokeRoundedRect(
+      GAME_WIDTH / 2 - settBtnW / 2, settingsY - settBtnH / 2,
+      settBtnW, settBtnH, 24,
+    );
+
     const settingsBtn = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.68, '[ SETTINGS ]', {
-        fontSize: '22px',
+      .text(GAME_WIDTH / 2, settingsY, '\u2699  SETTINGS', {
+        fontSize: '18px',
         color: '#888888',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
+      .setInteractive({
+        useHandCursor: true,
+        hitArea: new Phaser.Geom.Rectangle(-settBtnW / 2, -settBtnH / 2, settBtnW, settBtnH),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+      });
 
-    settingsBtn.on('pointerover', () => settingsBtn.setColor('#ffffff'));
-    settingsBtn.on('pointerout', () => settingsBtn.setColor('#888888'));
-    settingsBtn.on('pointerdown', () => {
-      this.scene.start('SettingsScene');
+    settingsBtn.on('pointerover', () => {
+      settingsBtn.setColor('#ffffff');
+      settBtnBg.clear();
+      settBtnBg.fillStyle(0xffffff, 0.08);
+      settBtnBg.fillRoundedRect(
+        GAME_WIDTH / 2 - settBtnW / 2, settingsY - settBtnH / 2,
+        settBtnW, settBtnH, 24,
+      );
+      settBtnBg.lineStyle(1, 0xffffff, 0.3);
+      settBtnBg.strokeRoundedRect(
+        GAME_WIDTH / 2 - settBtnW / 2, settingsY - settBtnH / 2,
+        settBtnW, settBtnH, 24,
+      );
     });
-
-    // Gear icon in top-right corner as alternative
-    const gear = this.add
-      .text(GAME_WIDTH - 40, 40, '\u2699', {
-        fontSize: '28px',
-        color: '#555555',
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-
-    gear.on('pointerover', () => gear.setColor('#ffffff'));
-    gear.on('pointerout', () => gear.setColor('#555555'));
-    gear.on('pointerdown', () => {
+    settingsBtn.on('pointerout', () => {
+      settingsBtn.setColor('#888888');
+      settBtnBg.clear();
+      settBtnBg.fillStyle(0xffffff, 0.04);
+      settBtnBg.fillRoundedRect(
+        GAME_WIDTH / 2 - settBtnW / 2, settingsY - settBtnH / 2,
+        settBtnW, settBtnH, 24,
+      );
+      settBtnBg.lineStyle(1, 0x888888, 0.2);
+      settBtnBg.strokeRoundedRect(
+        GAME_WIDTH / 2 - settBtnW / 2, settingsY - settBtnH / 2,
+        settBtnW, settBtnH, 24,
+      );
+    });
+    settingsBtn.on('pointerdown', () => {
       this.scene.start('SettingsScene');
     });
 
@@ -236,7 +356,27 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5);
   }
 
+  private createCircleButton(x: number, y: number, r: number, active: boolean): Phaser.GameObjects.Graphics {
+    const g = this.add.graphics();
+    this.drawCircleBtn(g, x, y, r, active);
+    return g;
+  }
+
+  private drawCircleBtn(g: Phaser.GameObjects.Graphics, x: number, y: number, r: number, active: boolean): void {
+    if (active) {
+      g.fillStyle(0x00d4ff, 0.1);
+      g.fillCircle(x, y, r);
+      g.lineStyle(1, 0x00d4ff, 0.3);
+      g.strokeCircle(x, y, r);
+    } else {
+      g.fillStyle(0xffffff, 0.03);
+      g.fillCircle(x, y, r);
+      g.lineStyle(1, 0x333333, 0.2);
+      g.strokeCircle(x, y, r);
+    }
+  }
+
   private getLevelLabel(mgr: LevelManager): string {
-    return `${mgr.currentLevelIndex + 1}/${mgr.totalLevels} — ${mgr.current.name}`;
+    return `${mgr.currentLevelIndex + 1}/${mgr.totalLevels}  ${mgr.current.name}`;
   }
 }
