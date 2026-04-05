@@ -8,10 +8,12 @@ export class HUDScene extends Phaser.Scene {
   private unitText!: Phaser.GameObjects.Text;
   private killStreakText!: Phaser.GameObjects.Text;
   private bossHpBar!: Phaser.GameObjects.Graphics;
-  private bossHpBg!: Phaser.GameObjects.Rectangle;
+  private bossHpBg!: Phaser.GameObjects.Graphics;
   private bossHpLabel!: Phaser.GameObjects.Text;
   private weaponIcon!: Phaser.GameObjects.Sprite;
   private weaponLabel!: Phaser.GameObjects.Text;
+  private weaponPill!: Phaser.GameObjects.Graphics;
+  private topBarBg!: Phaser.GameObjects.Graphics;
 
   score: number = 0;
   distance: number = 0;
@@ -27,49 +29,120 @@ export class HUDScene extends Phaser.Scene {
   }
 
   create(): void {
-    const style: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontSize: '20px',
-      color: '#ffffff',
-      fontFamily: 'monospace',
-    };
+    // Top bar background with gradient fade
+    this.topBarBg = this.add.graphics();
+    this.topBarBg.fillStyle(0x000000, 0.5);
+    this.topBarBg.fillRect(0, 0, GAME_WIDTH, 90);
+    this.topBarBg.fillStyle(0x000000, 0.25);
+    this.topBarBg.fillRect(0, 90, GAME_WIDTH, 20);
 
-    this.scoreText = this.add.text(20, 20, 'Score: 0', style);
-    this.distanceText = this.add.text(20, 48, 'Distance: 0m', style);
-    this.unitText = this.add.text(GAME_WIDTH - 20, 20, 'Units: 0', style).setOrigin(1, 0);
-    this.killStreakText = this.add.text(GAME_WIDTH - 20, 48, 'Streak: 0', style).setOrigin(1, 0);
+    // Left stat cluster - Score
+    const leftPill = this.add.graphics();
+    leftPill.fillStyle(0xffd43b, 0.1);
+    leftPill.fillRoundedRect(12, 12, 180, 30, 15);
+    leftPill.lineStyle(1, 0xffd43b, 0.2);
+    leftPill.strokeRoundedRect(12, 12, 180, 30, 15);
+
+    this.add.text(24, 20, '\u2605', {
+      fontSize: '14px',
+      color: '#ffd43b',
+    }).setOrigin(0, 0.5);
+
+    this.scoreText = this.add.text(42, 20, '0', {
+      fontSize: '16px',
+      color: '#ffd43b',
+      fontFamily: 'monospace',
+      fontStyle: 'bold',
+    }).setOrigin(0, 0.5);
+
+    // Left stat cluster - Distance
+    const distPill = this.add.graphics();
+    distPill.fillStyle(0xffffff, 0.06);
+    distPill.fillRoundedRect(12, 48, 150, 26, 13);
+
+    this.distanceText = this.add.text(24, 54, '0m', {
+      fontSize: '13px',
+      color: '#aaaaaa',
+      fontFamily: 'monospace',
+    }).setOrigin(0, 0.5);
+
+    // Right stat cluster - Units
+    const rightPill = this.add.graphics();
+    rightPill.fillStyle(0x00d4ff, 0.1);
+    rightPill.fillRoundedRect(GAME_WIDTH - 152, 12, 140, 30, 15);
+    rightPill.lineStyle(1, 0x00d4ff, 0.2);
+    rightPill.strokeRoundedRect(GAME_WIDTH - 152, 12, 140, 30, 15);
+
+    this.unitText = this.add.text(GAME_WIDTH - 24, 20, '0', {
+      fontSize: '16px',
+      color: '#00d4ff',
+      fontFamily: 'monospace',
+      fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
+
+    this.add.text(GAME_WIDTH - 140, 20, '\u2694', {
+      fontSize: '14px',
+      color: '#00d4ff',
+    }).setOrigin(0, 0.5);
+
+    // Right stat cluster - Kill streak
+    const streakPill = this.add.graphics();
+    streakPill.fillStyle(0xff6b6b, 0.08);
+    streakPill.fillRoundedRect(GAME_WIDTH - 130, 48, 118, 26, 13);
+
+    this.killStreakText = this.add.text(GAME_WIDTH - 24, 54, 'x0', {
+      fontSize: '13px',
+      color: '#ff6b6b',
+      fontFamily: 'monospace',
+      fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
+
+    this.add.text(GAME_WIDTH - 118, 54, '\u26A1', {
+      fontSize: '11px',
+      color: '#ff6b6b',
+    }).setOrigin(0, 0.5);
 
     // Boss HP bar (hidden by default)
-    const barWidth = 360;
+    const barWidth = 400;
     const barX = (GAME_WIDTH - barWidth) / 2;
-    this.bossHpBg = this.add.rectangle(barX, 55, barWidth, 20, 0x333333).setOrigin(0, 0).setVisible(false);
+    const barY = 52;
+
+    this.bossHpBg = this.add.graphics().setVisible(false);
     this.bossHpBar = this.add.graphics().setVisible(false);
     this.bossHpLabel = this.add
-      .text(GAME_WIDTH / 2, 58, '', {
-        fontSize: '13px',
+      .text(GAME_WIDTH / 2, barY + 12, '', {
+        fontSize: '12px',
         color: '#ffffff',
         fontFamily: 'monospace',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5, 0)
+      .setOrigin(0.5)
       .setVisible(false);
 
-    // Weapon indicator (top-center area)
-    this.weaponIcon = this.add.sprite(GAME_WIDTH / 2 - 60, 84, 'weapon_svg_pistol')
-      .setDisplaySize(24, 24)
+    // Draw boss bar background shape once
+    this.bossHpBg.fillStyle(0xffffff, 0.08);
+    this.bossHpBg.fillRoundedRect(barX - 4, barY, barWidth + 8, 24, 12);
+    this.bossHpBg.lineStyle(1, 0xff6b6b, 0.3);
+    this.bossHpBg.strokeRoundedRect(barX - 4, barY, barWidth + 8, 24, 12);
+
+    // Weapon indicator pill (bottom-center ish, hidden by default)
+    this.weaponPill = this.add.graphics().setVisible(false);
+    this.weaponIcon = this.add.sprite(GAME_WIDTH / 2 - 50, 86, 'weapon_svg_pistol')
+      .setDisplaySize(20, 20)
       .setAlpha(0.9)
       .setVisible(false);
-    this.weaponLabel = this.add.text(GAME_WIDTH / 2 - 40, 80, '', {
-      fontSize: '14px',
-      color: '#aaaaaa',
+    this.weaponLabel = this.add.text(GAME_WIDTH / 2 - 30, 86, '', {
+      fontSize: '12px',
+      color: '#cccccc',
       fontFamily: 'monospace',
-    }).setVisible(false);
+    }).setOrigin(0, 0.5).setVisible(false);
   }
 
   update(): void {
-    this.scoreText.setText(`Score: ${this.score}`);
-    this.distanceText.setText(`Distance: ${Math.floor(this.distance)}m`);
-    this.unitText.setText(`Units: ${this.unitCount}`);
-    this.killStreakText.setText(`Streak: ${this.killStreak}`);
+    this.scoreText.setText(this.formatNumber(this.score));
+    this.distanceText.setText(`${Math.floor(this.distance)}m`);
+    this.unitText.setText(String(this.unitCount));
+    this.killStreakText.setText(`x${this.killStreak}`);
 
     const showBoss = this.bossHpPercent >= 0;
     this.bossHpBg.setVisible(showBoss);
@@ -77,27 +150,50 @@ export class HUDScene extends Phaser.Scene {
     this.bossHpLabel.setVisible(showBoss);
 
     if (showBoss) {
-      const barWidth = 360;
+      const barWidth = 400;
       const barX = (GAME_WIDTH - barWidth) / 2;
+      const barY = 52;
+      const fillWidth = barWidth * this.bossHpPercent;
+
       this.bossHpBar.clear();
-      this.bossHpBar.fillStyle(0xff6b6b, 1);
-      this.bossHpBar.fillRect(barX, 55, barWidth * this.bossHpPercent, 20);
+      // Bar fill with color based on HP
+      const hpColor = this.bossHpPercent > 0.5 ? 0xff4040 :
+                       this.bossHpPercent > 0.2 ? 0xff6b00 : 0xff2020;
+      this.bossHpBar.fillStyle(hpColor, 0.8);
+      this.bossHpBar.fillRoundedRect(barX, barY + 2, fillWidth, 20, 10);
+      // Highlight on top
+      this.bossHpBar.fillStyle(0xffffff, 0.15);
+      this.bossHpBar.fillRoundedRect(barX + 4, barY + 4, Math.max(fillWidth - 8, 0), 8, 4);
+
       const name = this.bossName || 'BOSS';
-      this.bossHpLabel.setText(`${name} ${Math.ceil(this.bossHpPercent * 100)}%`);
+      this.bossHpLabel.setText(`${name}  ${Math.ceil(this.bossHpPercent * 100)}%`);
     }
 
     // Update weapon display
     if (this.weaponType) {
+      this.weaponPill.setVisible(true);
       this.weaponIcon.setVisible(true);
       this.weaponLabel.setVisible(true);
       this.weaponLabel.setText(this.weaponName);
 
+      // Redraw weapon pill
+      const pillW = 120;
+      this.weaponPill.clear();
+      this.weaponPill.fillStyle(0xffffff, 0.06);
+      this.weaponPill.fillRoundedRect(GAME_WIDTH / 2 - 60, 76, pillW, 22, 11);
+
       const svgKey = this.getWeaponSvgKey(this.weaponType);
       if (this.weaponIcon.texture.key !== svgKey) {
         this.weaponIcon.setTexture(svgKey);
-        this.weaponIcon.setDisplaySize(24, 24);
+        this.weaponIcon.setDisplaySize(20, 20);
       }
     }
+  }
+
+  private formatNumber(n: number): string {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return String(n);
   }
 
   private getWeaponSvgKey(weaponType: string): string {

@@ -8,142 +8,177 @@ export class SplashScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#000000');
+    this.cameras.main.setBackgroundColor('#050510');
 
-    // Blood-red particles rising from the bottom
-    const particles: Phaser.GameObjects.Arc[] = [];
-    for (let i = 0; i < 40; i++) {
-      const x = Phaser.Math.Between(40, GAME_WIDTH - 40);
-      const y = Phaser.Math.Between(GAME_HEIGHT + 20, GAME_HEIGHT + 400);
-      const dot = this.add.circle(x, y, Phaser.Math.Between(2, 5), 0xff4040, 0);
-      particles.push(dot);
+    // Layered radial gradient background
+    const bgGlow = this.add.graphics();
+    bgGlow.fillStyle(0xff2040, 0.06);
+    bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 400);
+    bgGlow.fillStyle(0xff2040, 0.03);
+    bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 600);
+
+    // Animated ember particles rising from bottom
+    for (let i = 0; i < 50; i++) {
+      const x = Phaser.Math.Between(0, GAME_WIDTH);
+      const y = Phaser.Math.Between(GAME_HEIGHT + 20, GAME_HEIGHT + 500);
+      const size = Phaser.Math.Between(1, 4);
+      const ember = this.add.circle(x, y, size, 0xff4040, 0);
 
       this.tweens.add({
-        targets: dot,
-        y: Phaser.Math.Between(-50, GAME_HEIGHT * 0.3),
-        alpha: { from: 0, to: Phaser.Math.FloatBetween(0.15, 0.5) },
-        duration: Phaser.Math.Between(1500, 3000),
-        delay: Phaser.Math.Between(0, 800),
+        targets: ember,
+        y: Phaser.Math.Between(-100, GAME_HEIGHT * 0.2),
+        x: ember.x + Phaser.Math.Between(-60, 60),
+        alpha: { from: 0, to: Phaser.Math.FloatBetween(0.2, 0.7) },
+        scale: { from: 1, to: 0.3 },
+        duration: Phaser.Math.Between(2000, 4000),
+        delay: Phaser.Math.Between(0, 1000),
         ease: 'Sine.easeOut',
       });
     }
 
-    // Horizontal slash line across the center
-    const slashLine = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.45, 0, 2, 0xff4040, 0.8);
+    // Dramatic horizontal slash line
+    const slashLine = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.45, 0, 3, 0xff4040, 0.9);
     this.tweens.add({
       targets: slashLine,
-      width: GAME_WIDTH * 0.6,
+      width: GAME_WIDTH * 0.7,
+      duration: 350,
+      delay: 500,
+      ease: 'Power3',
+    });
+
+    // Secondary thinner lines flanking the main slash
+    const topLine = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.45 - 12, 0, 1, 0xff4040, 0.3);
+    const botLine = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.45 + 12, 0, 1, 0xff4040, 0.3);
+    this.tweens.add({
+      targets: [topLine, botLine],
+      width: GAME_WIDTH * 0.5,
       duration: 400,
-      delay: 600,
+      delay: 650,
       ease: 'Power2',
     });
 
-    // Main title — fades and scales in
+    // Pulsing glow behind title
+    const titleGlow = this.add.circle(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 120, 0xff2040, 0);
+    this.tweens.add({
+      targets: titleGlow,
+      alpha: 0.15,
+      scale: 2,
+      duration: 1500,
+      delay: 200,
+      ease: 'Sine.easeOut',
+    });
+
+    // Main title with scale-in
     const title = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 'DEATHMARCH', {
         fontSize: '64px',
-        color: '#ff4040',
+        color: '#ffffff',
         fontFamily: 'monospace',
         fontStyle: 'bold',
+        stroke: '#ff2040',
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setAlpha(0)
-      .setScale(1.4);
+      .setScale(1.6);
 
     this.tweens.add({
       targets: title,
       alpha: 1,
       scale: 1,
-      duration: 800,
-      delay: 300,
+      duration: 700,
+      delay: 250,
       ease: 'Back.easeOut',
     });
 
-    // Subtitle slides up
+    // Subtitle with letter-spacing slide-up
     const subtitle = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.50, 'ENDLESS WAR AWAITS', {
-        fontSize: '16px',
-        color: '#888888',
+        fontSize: '15px',
+        color: '#ff6b6b',
         fontFamily: 'monospace',
-        letterSpacing: 8,
+        letterSpacing: 10,
       })
       .setOrigin(0.5)
       .setAlpha(0);
 
     this.tweens.add({
       targets: subtitle,
-      alpha: 1,
+      alpha: 0.8,
       y: GAME_HEIGHT * 0.47,
       duration: 600,
-      delay: 900,
+      delay: 800,
       ease: 'Sine.easeOut',
     });
 
-    // Skull / icon glow pulse behind the title
-    const glow = this.add.circle(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 80, 0xff4040, 0);
-    this.tweens.add({
-      targets: glow,
-      alpha: 0.12,
-      scale: 1.5,
-      duration: 1200,
-      delay: 300,
-      ease: 'Sine.easeOut',
-      yoyo: true,
-    });
+    // Version badge
+    const versionBg = this.add
+      .graphics()
+      .fillStyle(0xffffff, 0.05)
+      .fillRoundedRect(GAME_WIDTH / 2 - 40, GAME_HEIGHT * 0.53, 80, 24, 12)
+      .setAlpha(0);
 
-    // Version tag
-    this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.55, 'v1.0.0', {
-        fontSize: '12px',
-        color: '#444444',
+    const versionText = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.53 + 12, 'v1.0.0', {
+        fontSize: '11px',
+        color: '#666666',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5)
       .setAlpha(0);
 
     this.tweens.add({
-      targets: this.children.list[this.children.list.length - 1],
+      targets: [versionBg, versionText],
       alpha: 1,
       duration: 400,
-      delay: 1200,
+      delay: 1100,
     });
 
-    // "Tap to continue" prompt — appears last, pulses
+    // Modern "Tap to continue" with animated underline
     const tapText = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.75, 'TAP TO CONTINUE', {
-        fontSize: '18px',
-        color: '#555555',
+        fontSize: '16px',
+        color: '#ffffff',
         fontFamily: 'monospace',
+        letterSpacing: 4,
       })
       .setOrigin(0.5)
       .setAlpha(0);
+
+    const tapLine = this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.75 + 16, 0, 2, 0xff4040, 0.6);
 
     this.tweens.add({
       targets: tapText,
-      alpha: 1,
+      alpha: 0.7,
       duration: 500,
-      delay: 2000,
+      delay: 1800,
       onComplete: () => {
-        // Pulse loop
+        this.tweens.add({
+          targets: tapLine,
+          width: 160,
+          duration: 400,
+          ease: 'Power2',
+        });
+
         this.tweens.add({
           targets: tapText,
           alpha: 0.3,
-          duration: 900,
+          duration: 1000,
           yoyo: true,
           repeat: -1,
+          ease: 'Sine.easeInOut',
         });
 
-        // Allow tap/click to proceed
         this.input.once('pointerdown', () => this.transitionToMenu());
       },
     });
 
-    // Auto-advance after 6 seconds regardless
+    // Auto-advance after 6 seconds
     this.time.delayedCall(6000, () => this.transitionToMenu());
   }
 
   private transitionToMenu(): void {
-    // Prevent double-transition
     if (this.scene.isActive('MenuScene')) return;
 
     this.cameras.main.fadeOut(400, 0, 0, 0);
