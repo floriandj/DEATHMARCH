@@ -35,6 +35,7 @@ export class BossScene extends Phaser.Scene {
   private units: PlayerUnit[] = [];
   private bullets: Bullet[] = [];
   private bossSprite!: Phaser.GameObjects.Sprite;
+  private scaledBossHp: number = 0;
 
   // Slam danger zones
   private dangerZones: Phaser.GameObjects.Rectangle[] = [];
@@ -71,7 +72,13 @@ export class BossScene extends Phaser.Scene {
     this.auraTimer = 0;
 
     this.input_handler = new InputHandler(this);
-    this.bossState = new BossState(bossCfg);
+
+    // Scale boss HP with army size so large armies don't instantly melt the boss
+    const baseUnits = 30;
+    const hpScale = Math.max(1, this.unitCount / baseUnits);
+    const scaledBossCfg = { ...bossCfg, hp: Math.ceil(bossCfg.hp * hpScale) };
+    this.scaledBossHp = scaledBossCfg.hp;
+    this.bossState = new BossState(scaledBossCfg);
 
     // Boss sprite - starts off-screen, will animate in
     const bossSpriteKey = bossCfg.sprite || 'boss';
@@ -238,7 +245,7 @@ export class BossScene extends Phaser.Scene {
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
-    this.hud.bossHpPercent = this.bossState.hp / bossCfg.hp;
+    this.hud.bossHpPercent = this.bossState.hp / this.scaledBossHp;
   }
 
   // ---------- VFX Methods ----------
@@ -535,9 +542,10 @@ export class BossScene extends Phaser.Scene {
       for (const unit of this.units) {
         unit.despawn();
       }
+      const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
         const angle = (i / this.unitCount) * Math.PI * 2;
-        const radius = 10 + Math.random() * 30;
+        const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
         this.units[i].spawn(
           armyScreenX + Math.cos(angle) * radius,
           armyScreenY + Math.sin(angle) * radius,
@@ -546,9 +554,17 @@ export class BossScene extends Phaser.Scene {
       this.activeUnitCount = this.unitCount;
     }
 
+    const formationRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
+    let activeIdx = 0;
     for (const unit of this.units) {
       if (!unit.active) continue;
-      unit.moveTo(armyScreenX, armyScreenY);
+      const angle = (activeIdx / this.activeUnitCount) * Math.PI * 2;
+      const r = formationRadius * 0.4 + (activeIdx % 5) * formationRadius * 0.12;
+      unit.moveTo(
+        armyScreenX + Math.cos(angle) * r,
+        armyScreenY + Math.sin(angle) * r,
+      );
+      activeIdx++;
     }
   }
 
