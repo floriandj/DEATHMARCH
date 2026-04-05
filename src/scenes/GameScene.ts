@@ -213,28 +213,13 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 8. Fire bullets from units
+    // 8. Fire bullets from units (straight up)
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta)) {
-        // Find nearest enemy
-        let nearest: Enemy | null = null;
-        let nearestDist = Infinity;
-        for (const enemy of this.enemies) {
-          if (!enemy.active) continue;
-          const dx = unit.x - enemy.x;
-          const dy = unit.y - enemy.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < nearestDist) {
-            nearestDist = d;
-            nearest = enemy;
-          }
-        }
-        if (nearest) {
-          const bullet = this.bullets.find((b) => !b.active);
-          if (bullet) {
-            bullet.fire(unit.x, unit.y, nearest.x, nearest.y);
-          }
+        const bullet = this.bullets.find((b) => !b.active);
+        if (bullet) {
+          bullet.fire(unit.x, unit.y);
         }
       }
     }

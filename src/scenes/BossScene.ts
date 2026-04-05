@@ -113,7 +113,7 @@ export class BossScene extends Phaser.Scene {
       if (unit.updateFiring(delta)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
-          bullet.fire(unit.x, unit.y, this.bossSprite.x, this.bossSprite.y);
+          bullet.fire(unit.x, unit.y);
         }
       }
     }

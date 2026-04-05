@@ -14,14 +14,14 @@ export class Bullet extends Phaser.GameObjects.Sprite {
     this.setActive(false);
   }
 
-  fire(fromX: number, fromY: number, targetX: number, targetY: number): void {
+  fire(fromX: number, fromY: number): void {
     this.setPosition(fromX, fromY);
     this.setVisible(true);
     this.setActive(true);
 
-    const angle = Math.atan2(targetY - fromY, targetX - fromX);
-    this.velocityX = Math.cos(angle) * BULLET_SPEED;
-    this.velocityY = Math.sin(angle) * BULLET_SPEED;
+    // Always fire straight up
+    this.velocityX = 0;
+    this.velocityY = -BULLET_SPEED;
   }
 
   updateMovement(delta: number): void {
