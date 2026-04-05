@@ -17,7 +17,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   goblin: {
     type: 'goblin',
     hp: 1,
-    speed: 120,
+    speed: 70,
     size: 12,
     contactDamage: 1,
     splashRadius: 0,
