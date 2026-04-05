@@ -263,7 +263,7 @@ export class GameScene extends Phaser.Scene {
           }
         }
 
-        const reached = enemy.updateMovement(delta, nearestX, nearestY);
+        const reached = enemy.updateMovement(delta, nearestX, nearestY, this.armyWorldY);
         if (reached) {
           this.unitCount = Math.max(0, this.unitCount - enemy.contactDamage);
           if (enemy.splashRadius > 0) {

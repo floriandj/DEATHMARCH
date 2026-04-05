@@ -32,7 +32,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.enemyType = stats.type;
   }
 
-  updateMovement(delta: number, targetX: number, targetY: number): boolean {
+  updateMovement(delta: number, targetX: number, targetY: number, armyWorldY: number): boolean {
     if (!this.active) return false;
     const dt = delta / 1000;
     const dx = targetX - this.x;
@@ -40,9 +40,12 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 10) return true;
 
-    // Move toward target
-    this.x += (dx / dist) * this.speed * dt;
-    this.y += (dy / dist) * this.speed * dt;
+    // Speed boost if enemy got behind the army line
+    const behindLine = this.y > armyWorldY;
+    const currentSpeed = behindLine ? this.speed * 2.5 : this.speed;
+
+    this.x += (dx / dist) * currentSpeed * dt;
+    this.y += (dy / dist) * currentSpeed * dt;
     return false;
   }
 
