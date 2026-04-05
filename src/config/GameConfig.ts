@@ -6,7 +6,7 @@ export const TILE_WIDTH = 64;
 export const TILE_HEIGHT = 32;
 
 // Player army
-export const STARTING_UNITS = 5;
+export const STARTING_UNITS = 1;
 export const MARCH_SPEED = 100; // game-units per second
 export const UNIT_FIRE_RATE = 200; // ms between bullets per unit (rapid stream)
 export const BULLET_SPEED = 400; // pixels per second
