@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 24" width="48" height="24" shape-rendering="crispEdges">
+  <!-- Frame 0: Void Weaver - ethereal, spider-like, dark purple -->
+  <g>
+    <!-- Head (angular, alien) -->
+    <rect x="6" y="1" width="12" height="6" fill="#9b59b6"/>
+    <rect x="7" y="2" width="10" height="4" fill="#6c3483"/>
+    <!-- Eyes (multiple, glowing) -->
+    <rect x="8" y="3" width="2" height="1" fill="#e8b0ff"/>
+    <rect x="11" y="2" width="2" height="2" fill="#d580ff"/>
+    <rect x="14" y="3" width="2" height="1" fill="#e8b0ff"/>
+    <rect x="10" y="5" width="1" height="1" fill="#d580ff"/>
+    <rect x="13" y="5" width="1" height="1" fill="#d580ff"/>
+    <!-- Body (segmented) -->
+    <rect x="5" y="7" width="14" height="6" fill="#9b59b6"/>
+    <rect x="6" y="8" width="12" height="4" fill="#6c3483"/>
+    <!-- Void core -->
+    <rect x="9" y="8" width="6" height="4" fill="#2d0040"/>
+    <rect x="10" y="9" width="4" height="2" fill="#4a0066"/>
+    <rect x="11" y="9" width="2" height="1" fill="#d580ff"/>
+    <!-- Tendrils (4 pairs) -->
+    <rect x="0" y="5" width="5" height="2" fill="#7d3c98"/>
+    <rect x="19" y="5" width="5" height="2" fill="#7d3c98"/>
+    <rect x="1" y="8" width="4" height="2" fill="#6c3483"/>
+    <rect x="19" y="8" width="4" height="2" fill="#6c3483"/>
+    <rect x="2" y="11" width="3" height="2" fill="#7d3c98"/>
+    <rect x="19" y="11" width="3" height="2" fill="#7d3c98"/>
+    <rect x="3" y="14" width="2" height="2" fill="#6c3483"/>
+    <rect x="19" y="14" width="2" height="2" fill="#6c3483"/>
+    <!-- Lower body (wispy) -->
+    <rect x="6" y="13" width="12" height="4" fill="#9b59b6"/>
+    <rect x="7" y="14" width="10" height="2" fill="#6c3483"/>
+    <!-- Tail wisps -->
+    <rect x="8" y="17" width="8" height="2" fill="#7d3c98"/>
+    <rect x="9" y="19" width="6" height="2" fill="#6c3483"/>
+    <rect x="10" y="21" width="4" height="2" fill="#4a235a"/>
+    <rect x="11" y="22" width="2" height="2" fill="#2d0040"/>
+  </g>
+  <!-- Frame 1: Pulsing -->
+  <g transform="translate(24,0)">
+    <rect x="6" y="1" width="12" height="6" fill="#9b59b6"/>
+    <rect x="7" y="2" width="10" height="4" fill="#6c3483"/>
+    <!-- Eyes brighter -->
+    <rect x="8" y="3" width="2" height="1" fill="#fff"/>
+    <rect x="11" y="2" width="2" height="2" fill="#e8b0ff"/>
+    <rect x="14" y="3" width="2" height="1" fill="#fff"/>
+    <rect x="10" y="5" width="1" height="1" fill="#e8b0ff"/>
+    <rect x="13" y="5" width="1" height="1" fill="#e8b0ff"/>
+    <rect x="5" y="7" width="14" height="6" fill="#9b59b6"/>
+    <rect x="6" y="8" width="12" height="4" fill="#6c3483"/>
+    <!-- Core pulsing -->
+    <rect x="8" y="7" width="8" height="6" fill="#2d0040"/>
+    <rect x="9" y="8" width="6" height="4" fill="#4a0066"/>
+    <rect x="10" y="9" width="4" height="2" fill="#d580ff"/>
+    <rect x="11" y="9" width="2" height="1" fill="#fff"/>
+    <!-- Tendrils extended -->
+    <rect x="0" y="4" width="6" height="2" fill="#7d3c98"/>
+    <rect x="18" y="4" width="6" height="2" fill="#7d3c98"/>
+    <rect x="0" y="7" width="5" height="2" fill="#6c3483"/>
+    <rect x="19" y="7" width="5" height="2" fill="#6c3483"/>
+    <rect x="1" y="10" width="4" height="2" fill="#7d3c98"/>
+    <rect x="19" y="10" width="4" height="2" fill="#7d3c98"/>
+    <rect x="2" y="13" width="3" height="2" fill="#6c3483"/>
+    <rect x="19" y="13" width="3" height="2" fill="#6c3483"/>
+    <rect x="6" y="13" width="12" height="4" fill="#9b59b6"/>
+    <rect x="7" y="14" width="10" height="2" fill="#6c3483"/>
+    <rect x="8" y="17" width="8" height="2" fill="#7d3c98"/>
+    <rect x="10" y="19" width="4" height="2" fill="#6c3483"/>
+    <rect x="11" y="21" width="2" height="2" fill="#2d0040"/>
+  </g>
+</svg>

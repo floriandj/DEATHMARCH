@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 36" width="72" height="36" shape-rendering="crispEdges">
+  <!-- Frame 0: Shadow Knight - dark armored warrior with glowing visor -->
+  <g>
+    <!-- Helmet -->
+    <rect x="9" y="0" width="18" height="4" fill="#1a1a2e"/>
+    <rect x="7" y="3" width="22" height="8" fill="#2c3e50"/>
+    <rect x="8" y="4" width="20" height="6" fill="#1a1a2e"/>
+    <!-- Visor (glowing red slit) -->
+    <rect x="10" y="6" width="16" height="2" fill="#ff0040"/>
+    <rect x="12" y="6" width="4" height="1" fill="#ff4466"/>
+    <rect x="20" y="6" width="4" height="1" fill="#ff4466"/>
+    <!-- Shoulder pauldrons -->
+    <rect x="2" y="8" width="8" height="6" fill="#34495e"/>
+    <rect x="3" y="9" width="6" height="4" fill="#2c3e50"/>
+    <rect x="26" y="8" width="8" height="6" fill="#34495e"/>
+    <rect x="27" y="9" width="6" height="4" fill="#2c3e50"/>
+    <!-- Spikes on shoulders -->
+    <rect x="2" y="6" width="2" height="3" fill="#555"/>
+    <rect x="32" y="6" width="2" height="3" fill="#555"/>
+    <!-- Body armor -->
+    <rect x="8" y="11" width="20" height="12" fill="#2c3e50"/>
+    <rect x="10" y="12" width="16" height="10" fill="#1a1a2e"/>
+    <!-- Dark energy core -->
+    <rect x="15" y="14" width="6" height="4" fill="#2d0040"/>
+    <rect x="16" y="15" width="4" height="2" fill="#8800aa"/>
+    <!-- Sword (right hand) -->
+    <rect x="33" y="4" width="2" height="20" fill="#aaa"/>
+    <rect x="32" y="3" width="4" height="2" fill="#888"/>
+    <rect x="33" y="2" width="2" height="2" fill="#ff0040"/>
+    <!-- Shield (left hand) -->
+    <rect x="0" y="12" width="6" height="10" fill="#34495e"/>
+    <rect x="1" y="13" width="4" height="8" fill="#2c3e50"/>
+    <rect x="2" y="15" width="2" height="4" fill="#ff0040"/>
+    <!-- Legs (armored) -->
+    <rect x="10" y="23" width="6" height="8" fill="#2c3e50"/>
+    <rect x="20" y="23" width="6" height="8" fill="#2c3e50"/>
+    <!-- Boots -->
+    <rect x="9" y="30" width="7" height="6" fill="#1a1a2e"/>
+    <rect x="20" y="30" width="7" height="6" fill="#1a1a2e"/>
+  </g>
+  <!-- Frame 1: Marching -->
+  <g transform="translate(36,0)">
+    <rect x="9" y="0" width="18" height="4" fill="#1a1a2e"/>
+    <rect x="7" y="3" width="22" height="8" fill="#2c3e50"/>
+    <rect x="8" y="4" width="20" height="6" fill="#1a1a2e"/>
+    <rect x="10" y="6" width="16" height="2" fill="#ff0040"/>
+    <rect x="12" y="6" width="4" height="1" fill="#ff4466"/>
+    <rect x="20" y="6" width="4" height="1" fill="#ff4466"/>
+    <rect x="2" y="8" width="8" height="6" fill="#34495e"/>
+    <rect x="3" y="9" width="6" height="4" fill="#2c3e50"/>
+    <rect x="26" y="8" width="8" height="6" fill="#34495e"/>
+    <rect x="27" y="9" width="6" height="4" fill="#2c3e50"/>
+    <rect x="2" y="6" width="2" height="3" fill="#555"/>
+    <rect x="32" y="6" width="2" height="3" fill="#555"/>
+    <rect x="8" y="11" width="20" height="12" fill="#2c3e50"/>
+    <rect x="10" y="12" width="16" height="10" fill="#1a1a2e"/>
+    <rect x="15" y="14" width="6" height="4" fill="#2d0040"/>
+    <rect x="16" y="15" width="4" height="2" fill="#8800aa"/>
+    <!-- Sword forward -->
+    <rect x="33" y="6" width="2" height="18" fill="#aaa"/>
+    <rect x="32" y="5" width="4" height="2" fill="#888"/>
+    <rect x="33" y="3" width="2" height="3" fill="#ff0040"/>
+    <!-- Shield raised -->
+    <rect x="0" y="10" width="6" height="10" fill="#34495e"/>
+    <rect x="1" y="11" width="4" height="8" fill="#2c3e50"/>
+    <rect x="2" y="13" width="2" height="4" fill="#ff0040"/>
+    <!-- Legs stride -->
+    <rect x="8" y="23" width="6" height="7" fill="#2c3e50"/>
+    <rect x="22" y="24" width="6" height="8" fill="#2c3e50"/>
+    <rect x="7" y="29" width="7" height="6" fill="#1a1a2e"/>
+    <rect x="22" y="31" width="7" height="5" fill="#1a1a2e"/>
+  </g>
+</svg>
