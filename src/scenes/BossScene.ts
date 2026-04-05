@@ -249,28 +249,24 @@ export class BossScene extends Phaser.Scene {
   private chargeStartX: number = 0;
 
   private startCharge(): void {
-    // Boss charges from one side to the other
+    // Boss charges horizontally across the upper area (not into the army)
     this.chargeDirection = Math.random() < 0.5 ? -1 : 1;
-    this.chargeStartX = this.chargeDirection === 1 ? 50 : GAME_WIDTH - 50;
+    this.chargeStartX = this.chargeDirection === 1 ? -100 : GAME_WIDTH + 100;
     this.bossSprite.x = this.chargeStartX;
-    this.bossSprite.y = GAME_HEIGHT - 250;
+    this.bossSprite.y = GAME_HEIGHT * 0.45; // mid-screen, above the army
   }
 
   private updateCharge(delta: number): void {
-    const speed = this.bossState.enraged ? 600 : 400;
+    const speed = this.bossState.enraged ? 500 : 350;
     this.bossSprite.x += this.chargeDirection * speed * (delta / 1000);
 
-    // Check collision with army
+    // Charge damages units it passes over (based on X overlap only)
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200;
-
-    if (
-      Math.abs(this.bossSprite.x - armyScreenX) < 80 &&
-      Math.abs(this.bossSprite.y - armyScreenY) < 100
-    ) {
-      const unitsToKill = Math.ceil(this.unitCount * 0.4);
+    if (Math.abs(this.bossSprite.x - armyScreenX) < 60) {
+      // Kill a few units as boss sweeps past
+      const unitsToKill = Math.max(1, Math.ceil(this.unitCount * 0.1));
       this.unitCount = Math.max(0, this.unitCount - unitsToKill);
-      this.cameras.main.shake(300, 0.03);
+      this.cameras.main.shake(150, 0.01);
 
       if (this.unitCount <= 0) {
         this.gameOver();
@@ -280,7 +276,10 @@ export class BossScene extends Phaser.Scene {
     }
 
     // Reset boss position when charge completes (off screen)
-    if (this.bossSprite.x < -100 || this.bossSprite.x > GAME_WIDTH + 100) {
+    if (
+      (this.chargeDirection === 1 && this.bossSprite.x > GAME_WIDTH + 100) ||
+      (this.chargeDirection === -1 && this.bossSprite.x < -100)
+    ) {
       this.bossSprite.setPosition(GAME_WIDTH / 2, 200);
     }
   }
