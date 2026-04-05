@@ -31,6 +31,7 @@ export class BossScene extends Phaser.Scene {
   private score: number = 0;
   private distance: number = 0;
   private unitCount: number = 0;
+  private activeUnitCount: number = 0;
 
   private units: PlayerUnit[] = [];
   private bullets: Bullet[] = [];
@@ -284,14 +285,22 @@ export class BossScene extends Phaser.Scene {
   }
 
   private respawnArmy(): void {
-    for (const unit of this.units) {
-      unit.despawn();
-    }
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - 200;
     const positions = computeFormation(this.unitCount, armyScreenX, armyScreenY);
-    for (let i = 0; i < positions.length && i < this.units.length; i++) {
-      this.units[i].spawn(positions[i].x, positions[i].y);
+
+    if (this.unitCount !== this.activeUnitCount) {
+      for (const unit of this.units) {
+        unit.despawn();
+      }
+      for (let i = 0; i < positions.length && i < this.units.length; i++) {
+        this.units[i].spawn(positions[i].x, positions[i].y);
+      }
+      this.activeUnitCount = this.unitCount;
+    } else {
+      for (let i = 0; i < positions.length && i < this.units.length; i++) {
+        this.units[i].moveTo(positions[i].x, positions[i].y);
+      }
     }
   }
 
