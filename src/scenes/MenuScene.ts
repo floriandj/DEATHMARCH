@@ -8,8 +8,31 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.3, 'DEATHMARCH', {
+    this.cameras.main.setBackgroundColor('#0a0a1a');
+    this.cameras.main.fadeIn(400, 0, 0, 0);
+
+    // Ambient floating particles in background
+    for (let i = 0; i < 20; i++) {
+      const dot = this.add.circle(
+        Phaser.Math.Between(20, GAME_WIDTH - 20),
+        Phaser.Math.Between(20, GAME_HEIGHT - 20),
+        Phaser.Math.Between(1, 3),
+        0xff4040,
+        Phaser.Math.FloatBetween(0.05, 0.15),
+      );
+      this.tweens.add({
+        targets: dot,
+        y: dot.y - Phaser.Math.Between(40, 120),
+        alpha: 0,
+        duration: Phaser.Math.Between(3000, 6000),
+        repeat: -1,
+        delay: Phaser.Math.Between(0, 3000),
+      });
+    }
+
+    // Title
+    const title = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.22, 'DEATHMARCH', {
         fontSize: '56px',
         color: '#ff4040',
         fontFamily: 'monospace',
@@ -17,26 +40,64 @@ export class MenuScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    // Subtle glow behind title
+    const glow = this.add.circle(GAME_WIDTH / 2, GAME_HEIGHT * 0.22, 100, 0xff4040, 0.06);
+    this.tweens.add({
+      targets: glow,
+      alpha: 0.12,
+      scale: 1.3,
+      duration: 2000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    // Separator
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.28, GAME_WIDTH * 0.5, 2, 0xff4040, 0.4);
+
+    // Tagline
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 'Drag to command your army', {
-        fontSize: '18px',
-        color: '#888888',
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.32, 'Drag to command your army', {
+        fontSize: '16px',
+        color: '#666666',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5);
 
+    // High score display
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.5, `High Score: ${highScore}`, {
-        fontSize: '20px',
-        color: '#ffd43b',
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.40, `HIGH SCORE`, {
+        fontSize: '12px',
+        color: '#888888',
         fontFamily: 'monospace',
+        letterSpacing: 4,
       })
       .setOrigin(0.5);
 
+    const scoreValue = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.44, highScore, {
+        fontSize: '36px',
+        color: '#ffd43b',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    // Gentle score shimmer
+    this.tweens.add({
+      targets: scoreValue,
+      alpha: 0.7,
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    // ── START button ──
     const startBtn = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.65, '[ START ]', {
-        fontSize: '32px',
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.58, '[ START ]', {
+        fontSize: '36px',
         color: '#51cf66',
         fontFamily: 'monospace',
         fontStyle: 'bold',
@@ -47,7 +108,10 @@ export class MenuScene extends Phaser.Scene {
     startBtn.on('pointerover', () => startBtn.setColor('#ffffff'));
     startBtn.on('pointerout', () => startBtn.setColor('#51cf66'));
     startBtn.on('pointerdown', () => {
-      this.scene.start('GameScene');
+      this.cameras.main.fadeOut(200, 0, 0, 0);
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        this.scene.start('GameScene');
+      });
     });
 
     this.tweens.add({
@@ -57,5 +121,45 @@ export class MenuScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
     });
+
+    // ── SETTINGS button ──
+    const settingsBtn = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.68, '[ SETTINGS ]', {
+        fontSize: '22px',
+        color: '#888888',
+        fontFamily: 'monospace',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    settingsBtn.on('pointerover', () => settingsBtn.setColor('#ffffff'));
+    settingsBtn.on('pointerout', () => settingsBtn.setColor('#888888'));
+    settingsBtn.on('pointerdown', () => {
+      this.scene.start('SettingsScene');
+    });
+
+    // Gear icon in top-right corner as alternative
+    const gear = this.add
+      .text(GAME_WIDTH - 40, 40, '\u2699', {
+        fontSize: '28px',
+        color: '#555555',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    gear.on('pointerover', () => gear.setColor('#ffffff'));
+    gear.on('pointerout', () => gear.setColor('#555555'));
+    gear.on('pointerdown', () => {
+      this.scene.start('SettingsScene');
+    });
+
+    // Version tag bottom
+    this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 40, 'v1.0.0', {
+        fontSize: '11px',
+        color: '#333333',
+        fontFamily: 'monospace',
+      })
+      .setOrigin(0.5);
   }
 }
