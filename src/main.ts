@@ -1,3 +1,4 @@
+import './pwa';
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { BootScene } from '@/scenes/BootScene';
