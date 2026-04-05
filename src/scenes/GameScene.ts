@@ -201,8 +201,10 @@ export class GameScene extends Phaser.Scene {
 
       const result = gate.checkPass(this.armyX, armyScreenY);
       if (result) {
+        const oldCount = this.unitCount;
         this.unitCount = result.apply(this.unitCount);
-        this.unitCount = Math.max(1, this.unitCount); // never go to 0 from gate
+        this.unitCount = Math.max(1, this.unitCount);
+        this.showGateEffect(gate.x, gate.y, result.label, this.unitCount > oldCount);
         gate.despawn();
         this.respawnArmy();
         continue;
@@ -265,6 +267,35 @@ export class GameScene extends Phaser.Scene {
       for (let i = 0; i < positions.length && i < this.units.length; i++) {
         this.units[i].moveTo(positions[i].x, positions[i].y);
       }
+    }
+  }
+
+  private showGateEffect(x: number, y: number, label: string, isPositive: boolean): void {
+    const color = isPositive ? '#51cf66' : '#ff6b6b';
+    const text = this.add.text(x, y, label + '!', {
+      fontSize: '48px',
+      color,
+      fontFamily: 'monospace',
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 4,
+    }).setOrigin(0.5);
+
+    this.tweens.add({
+      targets: text,
+      y: y - 150,
+      alpha: 0,
+      scale: 1.5,
+      duration: 800,
+      ease: 'Power2',
+      onComplete: () => text.destroy(),
+    });
+
+    // Flash the screen briefly
+    if (isPositive) {
+      this.cameras.main.flash(200, 81, 207, 102, true); // green flash
+    } else {
+      this.cameras.main.flash(200, 255, 107, 107, true); // red flash
     }
   }
 
