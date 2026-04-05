@@ -295,20 +295,25 @@ export class BossScene extends Phaser.Scene {
   private respawnArmy(): void {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - 200;
-    const positions = computeFormation(this.unitCount, armyScreenX, armyScreenY);
 
     if (this.unitCount !== this.activeUnitCount) {
       for (const unit of this.units) {
         unit.despawn();
       }
-      for (let i = 0; i < positions.length && i < this.units.length; i++) {
-        this.units[i].spawn(positions[i].x, positions[i].y);
+      for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
+        const angle = (i / this.unitCount) * Math.PI * 2;
+        const radius = 10 + Math.random() * 30;
+        this.units[i].spawn(
+          armyScreenX + Math.cos(angle) * radius,
+          armyScreenY + Math.sin(angle) * radius,
+        );
       }
       this.activeUnitCount = this.unitCount;
-    } else {
-      for (let i = 0; i < positions.length && i < this.units.length; i++) {
-        this.units[i].moveTo(positions[i].x, positions[i].y);
-      }
+    }
+
+    for (const unit of this.units) {
+      if (!unit.active) continue;
+      unit.moveTo(armyScreenX, armyScreenY);
     }
   }
 

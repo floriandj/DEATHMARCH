@@ -33,17 +33,18 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.targetY = y;
   }
 
-  /** Snap to formation target, then apply small bump from overlapping neighbors */
+  /** Physics: gentle pull toward target + strong separation = organic blob */
   updatePhysics(delta: number, allUnits: PlayerUnit[]): void {
     if (!this.active) return;
     const dt = delta / 1000;
 
-    // Snap toward formation position (strong pull)
-    this.x += (this.targetX - this.x) * Math.min(1, 12 * dt);
-    this.y += (this.targetY - this.y) * Math.min(1, 12 * dt);
+    // Gentle pull toward formation target (keeps the group together)
+    const pullStrength = 3;
+    this.x += (this.targetX - this.x) * pullStrength * dt;
+    this.y += (this.targetY - this.y) * pullStrength * dt;
 
-    // Light bump: push apart when overlapping, creates jiggle not drift
-    const bumpRadius = 16;
+    // Strong separation: units push apart, forming a natural blob
+    const separationRadius = 24;
     let pushX = 0;
     let pushY = 0;
 
@@ -52,14 +53,16 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
       const dx = this.x - other.x;
       const dy = this.y - other.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < bumpRadius && dist > 0.1) {
-        pushX += (dx / dist) * 2;
-        pushY += (dy / dist) * 2;
+      if (dist < separationRadius && dist > 0.1) {
+        const force = (separationRadius - dist) / separationRadius;
+        pushX += (dx / dist) * force;
+        pushY += (dy / dist) * force;
       }
     }
 
-    this.x += pushX;
-    this.y += pushY;
+    const pushStrength = 200;
+    this.x += pushX * pushStrength * dt;
+    this.y += pushY * pushStrength * dt;
   }
 
   despawn(): void {
