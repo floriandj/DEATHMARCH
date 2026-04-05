@@ -31,6 +31,7 @@ export class GameScene extends Phaser.Scene {
 
   // Game state
   private armyX: number = 0; // game-world X of army center
+  private armyWorldY: number = 0; // world Y position (decreases as army marches up)
   private distance: number = 0;
   private score: number = 0;
   private unitCount: number = STARTING_UNITS;
@@ -99,6 +100,10 @@ export class GameScene extends Phaser.Scene {
       this.crates.push(new WeaponCrate(this));
     }
 
+    // World setup
+    this.armyWorldY = 0;
+    this.cameras.main.setBounds(-Infinity, -Infinity, Infinity, Infinity);
+
     // Start HUD
     this.scene.launch('HUDScene');
     this.hud = this.scene.get('HUDScene') as HUDScene;
@@ -108,82 +113,89 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
-    // 1. Advance distance
     const dt = delta / 1000;
+    const AGGRO_RANGE = 500; // enemies start moving when army is this close
+
+    // 1. Army marches upward in world space
     this.distance += MARCH_SPEED * dt;
     this.score += MARCH_SPEED * dt * SCORE_PER_METER;
+    this.armyWorldY -= MARCH_SPEED * dt;
 
-    // 2. Update army position from input
+    // 2. Camera follows army (army stays 200px from bottom)
+    this.cameras.main.scrollY = this.armyWorldY - GAME_HEIGHT + 200;
+
+    // 3. Update army X from input
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
     this.respawnArmy();
 
-    // 2b. Unit physics — smooth movement + separation
+    // 3b. Unit physics
     for (const unit of this.units) {
       unit.updatePhysics(delta, this.units);
     }
 
-    // 3. Spawn enemies
+    // 4. Spawn enemies ahead of army in world space (static until aggro)
     const spawnCommands = this.waveSpawner.update(this.distance);
     for (const cmd of spawnCommands) {
       const enemy = this.enemies.find((e) => !e.active);
       if (enemy) {
         const stats = ENEMY_STATS[cmd.type];
-        // Spawn at top of screen, spread across field width
-        const screenX = GAME_WIDTH / 2 + cmd.x;
-        enemy.spawn(screenX, -20, stats);
+        const worldX = GAME_WIDTH / 2 + cmd.x;
+        const worldY = this.armyWorldY - GAME_HEIGHT - 100; // ahead of camera
+        enemy.spawn(worldX, worldY, stats);
       }
     }
 
-    // 4. Spawn gates
+    // 5. Spawn gates in world space (static — army walks through them)
     if (this.distance >= this.nextGateDistance && this.distance < BOSS_TRIGGER_DISTANCE) {
       const pair = pickGatePair(this.distance);
       const gate = this.gates.find((g) => !g.active);
       if (gate) {
-        gate.spawn(-80, pair.left, pair.right); // spawn above viewport
-        gate.setPosition(GAME_WIDTH / 2, -80);
+        const gateWorldY = this.armyWorldY - GAME_HEIGHT - 50;
+        gate.spawn(gateWorldY, pair.left, pair.right);
+        gate.setPosition(GAME_WIDTH / 2, gateWorldY);
       }
       this.nextGateDistance += GATE_INTERVAL;
     }
 
-    // 4b. Spawn weapon crates
+    // 5b. Spawn weapon crates in world space (static)
     if (this.distance >= this.nextCrateDistance && this.distance < BOSS_TRIGGER_DISTANCE) {
       const crate = this.crates.find((c) => !c.active);
       if (crate) {
         const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
-        crate.spawn(crateX, -60, this.currentWeapon);
+        const crateY = this.armyWorldY - GAME_HEIGHT - 50;
+        crate.spawn(crateX, crateY, this.currentWeapon);
       }
       this.nextCrateDistance += CRATE_INTERVAL;
     }
 
-    // 4c. Update weapon crates
+    // 5c. Despawn crates army has passed
     for (const crate of this.crates) {
       if (!crate.active) continue;
-      crate.updateMovement(delta);
-      if (crate.y > GAME_HEIGHT + 60) {
-        crate.despawn(); // missed it
+      if (crate.y > this.armyWorldY + 200) {
+        crate.despawn();
       }
     }
 
-    // 5. Update bullets
-    const armyScreenY = GAME_HEIGHT - 200;
+    // 6. Update bullets (world space)
+    const camTop = this.cameras.main.scrollY;
+    const camBottom = camTop + GAME_HEIGHT;
     for (const bullet of this.bullets) {
       if (!bullet.active) continue;
       bullet.updateMovement(delta);
 
-      // Off-screen check
-      if (bullet.y < -50 || bullet.y > GAME_HEIGHT + 50 || bullet.x < -50 || bullet.x > GAME_WIDTH + 50) {
+      // Off-screen check (world space)
+      if (bullet.y < camTop - 100 || bullet.y > camBottom + 100) {
         bullet.despawn();
         continue;
       }
 
-      // Hit check against enemies
+      // Hit enemies
       for (const enemy of this.enemies) {
         if (!enemy.active) continue;
         const dx = bullet.x - enemy.x;
         const dy = bullet.y - enemy.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < enemy.displayWidth / 2 + 5) {
+        if (Math.sqrt(dx * dx + dy * dy) < enemy.displayWidth / 2 + 5) {
           bullet.despawn();
           const killed = enemy.takeDamage(bullet.damage);
           if (killed) {
@@ -200,7 +212,7 @@ export class GameScene extends Phaser.Scene {
         }
       }
 
-      // Hit check against weapon crates
+      // Hit weapon crates
       if (bullet.active) {
         for (const crate of this.crates) {
           if (!crate.active) continue;
@@ -219,56 +231,55 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 6. Update enemies — move toward nearest unit
+    // 7. Update enemies — idle until army is close, then aggro
     for (const enemy of this.enemies) {
       if (!enemy.active) continue;
 
-      // Find nearest active unit
-      let nearestX = GAME_WIDTH / 2 + this.armyX;
-      let nearestY = armyScreenY;
-      let nearestDist = Infinity;
-      for (const unit of this.units) {
-        if (!unit.active) continue;
-        const dx = unit.x - enemy.x;
-        const dy = unit.y - enemy.y;
-        const d = dx * dx + dy * dy;
-        if (d < nearestDist) {
-          nearestDist = d;
-          nearestX = unit.x;
-          nearestY = unit.y;
-        }
+      const distToArmy = Math.abs(enemy.y - this.armyWorldY);
+
+      // Despawn if army passed it
+      if (enemy.y > this.armyWorldY + 200) {
+        enemy.despawn();
+        continue;
       }
 
-      const reachedArmy = enemy.updateMovement(delta, nearestX, nearestY);
-
-      if (reachedArmy) {
-        // Enemy contacts army — kill units
-        this.unitCount = Math.max(0, this.unitCount - enemy.contactDamage);
-
-        // Splash damage
-        if (enemy.splashRadius > 0) {
-          this.unitCount = Math.max(0, this.unitCount - enemy.splashDamage);
+      // Only move when army is within aggro range
+      if (distToArmy < AGGRO_RANGE) {
+        let nearestX = GAME_WIDTH / 2 + this.armyX;
+        let nearestY = this.armyWorldY;
+        let nearestDist = Infinity;
+        for (const unit of this.units) {
+          if (!unit.active) continue;
+          const dx = unit.x - enemy.x;
+          const dy = unit.y - enemy.y;
+          const d = dx * dx + dy * dy;
+          if (d < nearestDist) {
+            nearestDist = d;
+            nearestX = unit.x;
+            nearestY = unit.y;
+          }
         }
 
-        enemy.despawn();
-
-        if (this.unitCount <= 0) {
-          this.gameOver();
-          return;
+        const reached = enemy.updateMovement(delta, nearestX, nearestY);
+        if (reached) {
+          this.unitCount = Math.max(0, this.unitCount - enemy.contactDamage);
+          if (enemy.splashRadius > 0) {
+            this.unitCount = Math.max(0, this.unitCount - enemy.splashDamage);
+          }
+          enemy.despawn();
+          if (this.unitCount <= 0) {
+            this.gameOver();
+            return;
+          }
+          this.respawnArmy();
         }
-
-        this.respawnArmy();
       }
     }
 
-    // 7. Update gates — check if a front unit touches a gate
+    // 8. Gates — static, check if unit walks into them
     for (const gate of this.gates) {
       if (!gate.active || gate.passed) continue;
 
-      // Gates scroll down as army advances
-      gate.y += MARCH_SPEED * dt;
-
-      // Check if any active unit touches this gate
       let hitUnit: PlayerUnit | null = null;
       for (const unit of this.units) {
         if (!unit.active) continue;
@@ -279,7 +290,6 @@ export class GameScene extends Phaser.Scene {
       }
 
       if (hitUnit) {
-        // Determine left or right based on the unit's X relative to gate center
         const unitRelativeX = hitUnit.x - gate.x;
         const result = gate.checkPassByX(unitRelativeX);
         if (result) {
@@ -293,13 +303,13 @@ export class GameScene extends Phaser.Scene {
         }
       }
 
-      // Remove gates that scroll off the bottom
-      if (gate.y > GAME_HEIGHT + 100) {
+      // Despawn gates army has passed
+      if (gate.y > this.armyWorldY + 200) {
         gate.despawn();
       }
     }
 
-    // 8. Fire bullets from units (straight up, weapon fire rate)
+    // 9. Fire bullets (weapon fire rate)
     const weaponStats = WEAPON_STATS[this.currentWeapon];
     for (const unit of this.units) {
       if (!unit.active) continue;
@@ -311,9 +321,8 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 9. Check boss trigger
+    // 10. Check boss trigger
     if (this.distance >= BOSS_TRIGGER_DISTANCE) {
-      // Check if all remaining enemies are dead
       const activeEnemies = this.enemies.filter((e) => e.active).length;
       if (activeEnemies === 0) {
         this.transitionToBoss();
@@ -321,42 +330,36 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 10. Update HUD
+    // 11. Update HUD
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
     this.hud.killStreak = this.killStreak;
-
-    // 11. Depth sort all visible sprites
-    this.children.sort('y', (a: any, b: any) => (a.y || 0) - (b.y || 0));
   }
 
-  /** Reposition army. Only despawn/spawn when unit count changes. */
+  /** Reposition army in world space. */
   private respawnArmy(): void {
-    const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200;
+    const armyCenterX = GAME_WIDTH / 2 + this.armyX;
+    const armyCenterY = this.armyWorldY;
 
     if (this.unitCount !== this.activeUnitCount) {
-      // Unit count changed — full respawn, scatter around center
       for (const unit of this.units) {
         unit.despawn();
       }
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
-        // Spawn scattered around center so physics has room to work
         const angle = (i / this.unitCount) * Math.PI * 2;
         const radius = 10 + Math.random() * 30;
         this.units[i].spawn(
-          armyScreenX + Math.cos(angle) * radius,
-          armyScreenY + Math.sin(angle) * radius,
+          armyCenterX + Math.cos(angle) * radius,
+          armyCenterY + Math.sin(angle) * radius,
         );
       }
       this.activeUnitCount = this.unitCount;
     }
 
-    // Always update targets to army center — physics spreads them out
     for (const unit of this.units) {
       if (!unit.active) continue;
-      unit.moveTo(armyScreenX, armyScreenY);
+      unit.moveTo(armyCenterX, armyCenterY);
     }
   }
 
