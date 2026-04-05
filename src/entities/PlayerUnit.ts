@@ -33,41 +33,33 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.targetY = y;
   }
 
-  /** Smoothly move toward target and apply separation from neighbors */
+  /** Snap to formation target, then apply small bump from overlapping neighbors */
   updatePhysics(delta: number, allUnits: PlayerUnit[]): void {
     if (!this.active) return;
     const dt = delta / 1000;
-    const moveSpeed = 400;
 
-    // Move toward formation target
-    let dx = this.targetX - this.x;
-    let dy = this.targetY - this.y;
-    const distToTarget = Math.sqrt(dx * dx + dy * dy);
-    if (distToTarget > 1) {
-      this.x += (dx / distToTarget) * Math.min(moveSpeed * dt, distToTarget);
-      this.y += (dy / distToTarget) * Math.min(moveSpeed * dt, distToTarget);
-    }
+    // Snap toward formation position (strong pull)
+    this.x += (this.targetX - this.x) * Math.min(1, 12 * dt);
+    this.y += (this.targetY - this.y) * Math.min(1, 12 * dt);
 
-    // Separation: push apart from overlapping neighbors
-    const separationRadius = 18;
-    const pushForce = 150;
+    // Light bump: push apart when overlapping, creates jiggle not drift
+    const bumpRadius = 16;
     let pushX = 0;
     let pushY = 0;
 
     for (const other of allUnits) {
       if (other === this || !other.active) continue;
-      dx = this.x - other.x;
-      dy = this.y - other.y;
+      const dx = this.x - other.x;
+      const dy = this.y - other.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < separationRadius && dist > 0.1) {
-        const overlap = separationRadius - dist;
-        pushX += (dx / dist) * overlap;
-        pushY += (dy / dist) * overlap;
+      if (dist < bumpRadius && dist > 0.1) {
+        pushX += (dx / dist) * 2;
+        pushY += (dy / dist) * 2;
       }
     }
 
-    this.x += pushX * pushForce * dt;
-    this.y += pushY * pushForce * dt;
+    this.x += pushX;
+    this.y += pushY;
   }
 
   despawn(): void {
