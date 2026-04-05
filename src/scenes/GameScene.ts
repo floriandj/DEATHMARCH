@@ -353,6 +353,8 @@ export class GameScene extends Phaser.Scene {
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
     this.hud.killStreak = this.killStreak;
+    this.hud.weaponType = this.currentWeapon;
+    this.hud.weaponName = weaponStats.name;
   }
 
   /** Reposition army in world space. */
@@ -395,12 +397,12 @@ export class GameScene extends Phaser.Scene {
   private showGateEffect(x: number, y: number, label: string, isPositive: boolean): void {
     const color = isPositive ? '#51cf66' : '#ff6b6b';
     const text = this.add.text(x, y, label + '!', {
-      fontSize: '48px',
+      fontSize: '56px',
       color,
       fontFamily: 'monospace',
       fontStyle: 'bold',
       stroke: '#000000',
-      strokeThickness: 4,
+      strokeThickness: 5,
     }).setOrigin(0.5);
 
     this.tweens.add({
@@ -421,25 +423,58 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private getWeaponIconKey(weaponType: string): string {
+    // Map weapon type keys to icon texture keys
+    const iconMap: Record<string, string> = {
+      pistol: 'weapon_icon_pistol',
+      smg: 'weapon_icon_smg',
+      ar: 'weapon_icon_ar',
+      lmg: 'weapon_icon_lmg',
+      minigun: 'weapon_icon_minigun',
+      cryo_cannon: 'weapon_icon_cryo_cannon',
+      railgun: 'weapon_icon_railgun',
+      plasma_rifle: 'weapon_icon_plasma_rifle',
+      void_beam: 'weapon_icon_void_beam',
+      godslayer: 'weapon_icon_godslayer',
+    };
+    return iconMap[weaponType] || 'weapon_icon_default';
+  }
+
   private showWeaponUpgrade(x: number, y: number, weapon: string): void {
     const stats = LevelManager.instance.getWeaponStats(weapon);
-    const text = this.add.text(x, y, stats.name + '!', {
-      fontSize: '40px',
+    const iconKey = this.getWeaponIconKey(weapon);
+
+    // Container for icon + label
+    const icon = this.add.sprite(x, y, iconKey).setScale(3).setOrigin(0.5);
+    const label = this.add.text(x, y + 50, stats.name, {
+      fontSize: '22px',
       color: '#ffffff',
       fontFamily: 'monospace',
       fontStyle: 'bold',
       stroke: '#000000',
-      strokeThickness: 5,
+      strokeThickness: 4,
     }).setOrigin(0.5);
 
+    // Animate both up and out
     this.tweens.add({
-      targets: text,
-      y: y - 180,
+      targets: [icon, label],
+      y: `-=180`,
       alpha: 0,
-      scale: 1.8,
-      duration: 1200,
+      duration: 1400,
       ease: 'Power2',
-      onComplete: () => text.destroy(),
+      onComplete: () => {
+        icon.destroy();
+        label.destroy();
+      },
+    });
+
+    // Icon spin + scale pop
+    this.tweens.add({
+      targets: icon,
+      scale: 4.5,
+      angle: 360,
+      duration: 1400,
+      ease: 'Power2',
     });
 
     this.cameras.main.flash(300, 255, 255, 255, true);

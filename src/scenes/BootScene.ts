@@ -48,6 +48,9 @@ export class BootScene extends Phaser.Scene {
     // Generate gate textures procedurally (simple colored blocks, no art needed)
     this.generateGateTextures();
 
+    // Generate weapon icons
+    this.generateWeaponIcons();
+
     // Generate VFX textures
     this.generateVfxTextures();
 
@@ -75,6 +78,103 @@ export class BootScene extends Phaser.Scene {
     gRed.fillRect(0, 0, 120, 60);
     gRed.generateTexture('gate_subtract', 120, 60);
     gRed.destroy();
+  }
+
+  private generateWeaponIcons(): void {
+    // Small weapon silhouette icons (24x24) drawn procedurally
+    const iconSize = 24;
+
+    // Generic gun icon helper: barrel + grip
+    const drawGun = (key: string, color: number, barrelW: number, barrelH: number, hasStock: boolean) => {
+      const g = this.add.graphics();
+      // Barrel
+      g.fillStyle(color, 1);
+      g.fillRect(iconSize / 2 - barrelW / 2, 2, barrelW, barrelH);
+      // Body
+      g.fillRect(iconSize / 2 - 5, barrelH, 10, 8);
+      // Grip
+      g.fillStyle(color, 0.8);
+      g.fillRect(iconSize / 2 - 3, barrelH + 6, 6, 8);
+      // Stock
+      if (hasStock) {
+        g.fillStyle(color, 0.6);
+        g.fillRect(iconSize / 2 + 3, barrelH + 2, 8, 4);
+      }
+      g.generateTexture(key, iconSize, iconSize);
+      g.destroy();
+    };
+
+    // Pistol - small, compact
+    drawGun('weapon_icon_pistol', 0xffd43b, 4, 8, false);
+    // SMG - slightly longer
+    drawGun('weapon_icon_smg', 0x00d4ff, 5, 10, false);
+    // Assault Rifle - long barrel + stock
+    drawGun('weapon_icon_ar', 0x51cf66, 4, 12, true);
+    // LMG - thick barrel + stock
+    drawGun('weapon_icon_lmg', 0xff6b6b, 6, 12, true);
+
+    // Minigun - multi-barrel
+    const mg = this.add.graphics();
+    mg.fillStyle(0xff8800, 1);
+    for (let i = -3; i <= 3; i += 3) {
+      mg.fillRect(iconSize / 2 + i - 1, 1, 3, 14);
+    }
+    mg.fillRect(iconSize / 2 - 6, 13, 12, 6);
+    mg.fillStyle(0xff8800, 0.7);
+    mg.fillRect(iconSize / 2 - 3, 17, 6, 6);
+    mg.generateTexture('weapon_icon_minigun', iconSize, iconSize);
+    mg.destroy();
+
+    // Cryo cannon - wide barrel with frost tip
+    const cc = this.add.graphics();
+    cc.fillStyle(0x88ddff, 1);
+    cc.fillRect(iconSize / 2 - 4, 2, 8, 10);
+    cc.fillStyle(0xccffff, 1);
+    cc.fillRect(iconSize / 2 - 5, 0, 10, 4);
+    cc.fillStyle(0x88ddff, 0.8);
+    cc.fillRect(iconSize / 2 - 5, 10, 10, 6);
+    cc.fillRect(iconSize / 2 - 3, 14, 6, 8);
+    cc.generateTexture('weapon_icon_cryo_cannon', iconSize, iconSize);
+    cc.destroy();
+
+    // Railgun - long thin barrel with glow
+    drawGun('weapon_icon_railgun', 0xaa66ff, 3, 14, true);
+
+    // Plasma Rifle
+    drawGun('weapon_icon_plasma_rifle', 0xff44ff, 5, 11, true);
+
+    // Void Beam - wide energy barrel
+    const vb = this.add.graphics();
+    vb.fillStyle(0x8844ff, 1);
+    vb.fillRect(iconSize / 2 - 3, 1, 6, 13);
+    vb.fillStyle(0xcc88ff, 1);
+    vb.fillRect(iconSize / 2 - 5, 0, 10, 3);
+    vb.fillStyle(0x8844ff, 0.8);
+    vb.fillRect(iconSize / 2 - 5, 12, 10, 6);
+    vb.fillRect(iconSize / 2 - 3, 16, 6, 6);
+    vb.generateTexture('weapon_icon_void_beam', iconSize, iconSize);
+    vb.destroy();
+
+    // Godslayer - big ornate
+    const gs = this.add.graphics();
+    gs.fillStyle(0xffd700, 1);
+    gs.fillRect(iconSize / 2 - 4, 0, 8, 14);
+    gs.fillStyle(0xffee88, 1);
+    gs.fillRect(iconSize / 2 - 6, 1, 12, 3);
+    gs.fillStyle(0xffd700, 0.8);
+    gs.fillRect(iconSize / 2 - 6, 12, 12, 6);
+    gs.fillRect(iconSize / 2 - 3, 16, 6, 7);
+    gs.generateTexture('weapon_icon_godslayer', iconSize, iconSize);
+    gs.destroy();
+
+    // Fallback generic icon
+    const fb = this.add.graphics();
+    fb.fillStyle(0xcccccc, 1);
+    fb.fillRect(iconSize / 2 - 3, 2, 6, 12);
+    fb.fillRect(iconSize / 2 - 5, 12, 10, 6);
+    fb.fillRect(iconSize / 2 - 3, 16, 6, 6);
+    fb.generateTexture('weapon_icon_default', iconSize, iconSize);
+    fb.destroy();
   }
 
   private generateVfxTextures(): void {
