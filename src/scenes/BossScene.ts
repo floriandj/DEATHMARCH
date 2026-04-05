@@ -50,6 +50,7 @@ export class BossScene extends Phaser.Scene {
     this.score = data.score;
     this.distance = data.distance;
     this.unitCount = data.unitCount;
+    this.activeUnitCount = 0;
     this.armyX = 0;
 
     this.input_handler = new InputHandler(this);

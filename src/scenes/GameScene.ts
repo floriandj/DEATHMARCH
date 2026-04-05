@@ -58,6 +58,7 @@ export class GameScene extends Phaser.Scene {
     this.distance = 0;
     this.score = 0;
     this.unitCount = STARTING_UNITS;
+    this.activeUnitCount = 0;
     this.killStreak = 0;
     this.lastKillTime = 0;
     this.nextGateDistance = GATE_INTERVAL;

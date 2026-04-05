@@ -15,7 +15,8 @@ describe('Army formation', () => {
     expect(positions[0].x).toBe(0);
     expect(positions[1].x).toBeLessThan(0);
     expect(positions[2].x).toBeGreaterThan(0);
-    expect(positions[1].y).toBeGreaterThan(positions[0].y);
+    // Back row is above front row (lower y = upward on screen)
+    expect(positions[1].y).toBeLessThan(positions[0].y);
   });
 
   it('places 5 units in 3 rows', () => {
