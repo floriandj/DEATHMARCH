@@ -86,7 +86,7 @@ export class GameScene extends Phaser.Scene {
     // Apply weapon tier boost
     const weaponTier = Math.min(boosts.weaponTier, level.weaponOrder.length - 1);
     this.currentWeapon = level.weaponOrder[weaponTier];
-    this.crateSpawned = weaponTier > 0; // skip crates for tiers we already have
+    this.crateSpawned = false;
     this.shootSoundTimer = 0;
 
     // Gold tracking
