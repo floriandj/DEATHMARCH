@@ -12,6 +12,13 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   enemyType: string = '';
   private enemyColor: number = 0xff6b6b;
 
+  // Behavior trait state
+  private zigzagTimer: number = 0;
+  private zigzagDir: number = 1;
+  private dashTimer: number = 0;
+  private isDashing: boolean = false;
+  private shieldHp: number = 0;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, 'enemy_goblin');
     scene.add.existing(this);
@@ -21,7 +28,6 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
   spawn(x: number, y: number, stats: EnemyStats): void {
     this.setPosition(x, y);
-    this.setTexture(`enemy_${stats.type}`);
     this.setVisible(true);
     this.setActive(true);
     this.hp = stats.hp;
@@ -34,20 +40,66 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.enemyColor = stats.color;
     this.setAlpha(1);
     this.setScale(1);
-    this.play(`enemy_${stats.type}_walk`);
+
+    // Reset trait state
+    this.zigzagTimer = Math.random() * 1000;
+    this.zigzagDir = Math.random() > 0.5 ? 1 : -1;
+    this.dashTimer = 1500 + Math.random() * 1000;
+    this.isDashing = false;
+    this.shieldHp = this.isShielded() ? Math.ceil(stats.hp * 0.3) : 0;
+
+    // Try to set texture — procedural enemies may have generated textures
+    const texKey = `enemy_${stats.type}`;
+    if (this.scene.textures.exists(texKey)) {
+      this.setTexture(texKey);
+      const animKey = `enemy_${stats.type}_walk`;
+      if (this.scene.anims.exists(animKey)) {
+        this.play(animKey);
+      }
+    }
   }
 
   updateMovement(delta: number, targetX: number, targetY: number, armyWorldY: number): boolean {
     if (!this.active) return false;
     const dt = delta / 1000;
-    const dx = targetX - this.x;
-    const dy = targetY - this.y;
+    let dx = targetX - this.x;
+    let dy = targetY - this.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 10) return true;
 
-    // Speed boost if enemy got behind the army line
     const behindLine = this.y > armyWorldY;
-    const currentSpeed = behindLine ? this.speed * 2.5 : this.speed;
+    let currentSpeed = behindLine ? this.speed * 2.5 : this.speed;
+
+    // Zigzag trait — oscillate perpendicular to movement direction
+    if (this.isZigzag()) {
+      this.zigzagTimer += delta;
+      if (this.zigzagTimer > 400) {
+        this.zigzagTimer = 0;
+        this.zigzagDir *= -1;
+      }
+      // Perpendicular offset
+      const perpX = -dy / dist;
+      dx += perpX * this.zigzagDir * 60;
+      const newDist = Math.sqrt(dx * dx + dy * dy);
+      dx = dx / newDist * dist;
+      dy = dy / newDist * dist;
+    }
+
+    // Dasher trait — periodic burst of speed
+    if (this.isDasherType()) {
+      this.dashTimer -= delta;
+      if (this.dashTimer <= 0) {
+        this.isDashing = true;
+        this.dashTimer = 2000 + Math.random() * 1000;
+      }
+      if (this.isDashing) {
+        currentSpeed *= 3;
+        this.dashTimer += delta * 3; // dash lasts ~300ms
+        if (this.dashTimer > 300) {
+          this.isDashing = false;
+        }
+      }
+    }
 
     this.x += (dx / dist) * currentSpeed * dt;
     this.y += (dy / dist) * currentSpeed * dt;
@@ -55,9 +107,28 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   takeDamage(amount: number): boolean {
+    // Shielded enemies absorb initial damage
+    if (this.shieldHp > 0) {
+      this.shieldHp -= amount;
+      this.setTint(0x4444ff);
+      this.scene.time.delayedCall(50, () => {
+        if (this.active) this.clearTint();
+      });
+      if (this.shieldHp > 0) return false;
+      // Shield broken — remaining damage applies
+      amount = -this.shieldHp;
+      this.shieldHp = 0;
+    }
+
     this.hp -= amount;
     if (this.hp <= 0) {
       this.playDeathEffect();
+
+      // Splitter trait — spawn 2 smaller enemies (simulated via particles)
+      if (this.isSplitter()) {
+        this.spawnSplitlings();
+      }
+
       this.despawn();
       return true;
     }
@@ -66,6 +137,29 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       if (this.active) this.clearTint();
     });
     return false;
+  }
+
+  // ── Trait checks (based on enemy type name) ──
+  private isZigzag(): boolean { return this.enemyType.includes('zigzag') || this.enemyType.includes('stalker') || this.enemyType.includes('wisp'); }
+  private isDasherType(): boolean { return this.enemyType.includes('dash') || this.enemyType.includes('charger') || this.enemyType.includes('runner'); }
+  private isShielded(): boolean { return this.enemyType.includes('shield') || this.enemyType.includes('golem') || this.enemyType.includes('iron'); }
+  private isSplitter(): boolean { return this.enemyType.includes('split') || this.enemyType.includes('swarm') || this.enemyType.includes('slime'); }
+
+  private spawnSplitlings(): void {
+    for (let i = 0; i < 2; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const p = this.scene.add.sprite(this.x, this.y, 'death_particle');
+      p.setTint(this.enemyColor);
+      p.setScale(1.5);
+      this.scene.tweens.add({
+        targets: p,
+        x: this.x + Math.cos(angle) * 30,
+        y: this.y + Math.sin(angle) * 30,
+        alpha: 0,
+        duration: 400,
+        onComplete: () => p.destroy(),
+      });
+    }
   }
 
   private playDeathEffect(): void {

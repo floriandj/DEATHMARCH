@@ -1,6 +1,7 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
 import { LevelManager, generateLevel } from '@/config/progression';
+import { generateEnemySet, generateEnemyTexture } from '@/systems/ProceduralEnemy';
 
 /** We only need to load assets for the 5 world themes (they cycle). */
 const WORLDS_COUNT = 5;
@@ -74,7 +75,27 @@ export class BootScene extends Phaser.Scene {
     this.generateGateTextures();
     this.generateVfxTextures();
     this.createAnimations();
+    this.generateProceduralEnemies();
     this.scene.start('SplashScene');
+  }
+
+  /** Generate textures for procedural enemies across multiple cycles */
+  private generateProceduralEnemies(): void {
+    const generatedTypes = new Set<string>();
+    // Pre-generate enemies for cycles 1-4 (levels 5-24)
+    for (let cycle = 1; cycle <= 4; cycle++) {
+      for (let pos = 0; pos < 5; pos++) {
+        const levelIdx = cycle * 5 + pos;
+        const worldIdx = cycle % 5;
+        const seed = levelIdx * 7919 + 42;
+        const defs = generateEnemySet(seed, worldIdx);
+        for (const def of defs) {
+          if (generatedTypes.has(def.type)) continue;
+          generatedTypes.add(def.type);
+          generateEnemyTexture(this, def);
+        }
+      }
+    }
   }
 
   private generateGateTextures(): void {

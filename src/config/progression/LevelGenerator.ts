@@ -4,6 +4,7 @@
 // the 5 world themes. Overall difficulty creeps up with each cycle so later
 // "easy" levels are still harder than earlier ones.
 
+import { generateEnemySet, toEnemyConfigs } from '@/systems/ProceduralEnemy';
 import type {
   LevelConfig,
   LevelTheme,
@@ -220,23 +221,36 @@ export function generateLevel(levelIndex: number): LevelConfig {
   const gateInterval = Math.max(250, Math.round(500 - cycle * 10 - posInCycle * 10));
   const marchSpeed = Math.round(130 + cycle * 3 + posInCycle * 2);
 
-  // ── Enemies ──
+  // ── Enemies (world templates for cycle 0, procedural for later cycles) ──
   const enemies: Record<string, LevelEnemyConfig> = {};
   const enemyKills: Record<string, number> = {};
-  for (const tmpl of world.enemies) {
-    enemies[tmpl.type] = {
-      type: tmpl.type,
-      hp: Math.max(1, Math.round(tmpl.baseHp * diff)),
-      speed: Math.round(tmpl.speed * (1 + posInCycle * 0.04)),
-      size: tmpl.size,
-      contactDamage: tmpl.contactDamage,
-      splashRadius: tmpl.splashRadius,
-      splashDamage: tmpl.splashDamage,
-      color: tmpl.color,
-      appearsAtDistance: Math.round(tmpl.introFraction * triggerDistance),
-      scoreValue: Math.round(tmpl.scoreValue * diff),
-    };
-    enemyKills[tmpl.type] = Math.round(tmpl.scoreValue * diff);
+
+  if (cycle === 0) {
+    // First cycle: use hand-crafted world enemies
+    for (const tmpl of world.enemies) {
+      enemies[tmpl.type] = {
+        type: tmpl.type,
+        hp: Math.max(1, Math.round(tmpl.baseHp * diff)),
+        speed: Math.round(tmpl.speed * (1 + posInCycle * 0.04)),
+        size: tmpl.size,
+        contactDamage: tmpl.contactDamage,
+        splashRadius: tmpl.splashRadius,
+        splashDamage: tmpl.splashDamage,
+        color: tmpl.color,
+        appearsAtDistance: Math.round(tmpl.introFraction * triggerDistance),
+        scoreValue: Math.round(tmpl.scoreValue * diff),
+      };
+      enemyKills[tmpl.type] = Math.round(tmpl.scoreValue * diff);
+    }
+  } else {
+    // Later cycles: procedural enemies unique to this level
+    const seed = levelIndex * 7919 + 42;
+    const procDefs = generateEnemySet(seed, worldIdx);
+    const procConfigs = toEnemyConfigs(procDefs, diff, triggerDistance);
+    for (const [type, cfg] of Object.entries(procConfigs)) {
+      enemies[type] = cfg;
+      enemyKills[type] = cfg.scoreValue;
+    }
   }
 
   // ── Weapons ──
