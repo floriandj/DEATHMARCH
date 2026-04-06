@@ -1,16 +1,14 @@
 // src/scenes/MenuScene.ts
-// Horizontal level carousel — simpler and better for endless games.
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 
-const NODE_R = 52;       // current level node radius
-const NODE_R_SM = 36;    // neighbor node radius
-const CAROUSEL_Y = 560;  // vertical center of the carousel
-const NODE_GAP = 160;    // horizontal gap between nodes
-const VISIBLE = 5;       // max visible nodes (2 left, current, 2 right)
+const NODE_R = 58;
+const NODE_R_SM = 44;
+const CAROUSEL_Y = 440;
+const NODE_GAP = 150;
 
 export class MenuScene extends Phaser.Scene {
   private carouselContainer!: Phaser.GameObjects.Container;
@@ -23,7 +21,6 @@ export class MenuScene extends Phaser.Scene {
   private velocity: number = 0;
   private lastPointerX: number = 0;
 
-  // Refreshable UI elements
   private levelNameText!: Phaser.GameObjects.Text;
   private worldNameText!: Phaser.GameObjects.Text;
   private cycleText!: Phaser.GameObjects.Text;
@@ -46,30 +43,35 @@ export class MenuScene extends Phaser.Scene {
 
     // ── Background ──
     const bgGlow = this.add.graphics();
-    bgGlow.fillStyle(0xff2040, 0.03);
-    bgGlow.fillCircle(GAME_WIDTH / 2, 200, 300);
+    bgGlow.fillStyle(0xff2040, 0.04);
+    bgGlow.fillCircle(GAME_WIDTH / 2, 180, 280);
 
     // ── Title ──
-    this.add.text(GAME_WIDTH / 2, 60, 'DEATHMARCH', {
-      fontSize: '44px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(GAME_WIDTH / 2, 50, 'DEATHMARCH', {
+      fontSize: '48px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
       stroke: '#ff2040', strokeThickness: 3,
     }).setOrigin(0.5);
 
-    this.add.rectangle(GAME_WIDTH / 2, 92, 200, 3, 0xff4040, 0.5);
+    this.add.rectangle(GAME_WIDTH / 2, 84, 220, 3, 0xff4040, 0.5);
 
     // ── Stats row ──
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add.text(GAME_WIDTH / 2 - 120, 120, `BEST ${highScore}`, {
-      fontSize: '16px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(GAME_WIDTH / 2 - 110, 120, `BEST  ${highScore}`, {
+      fontSize: '22px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.add.text(GAME_WIDTH / 2 + 120, 120, `${WalletManager.gold}g`, {
-      fontSize: '16px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(GAME_WIDTH / 2 + 130, 120, `${WalletManager.gold}g`, {
+      fontSize: '22px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    // ── Subtitle / instruction ──
+    this.add.text(GAME_WIDTH / 2, 165, 'SELECT LEVEL', {
+      fontSize: '16px', color: '#555555', fontFamily: 'monospace', letterSpacing: 6,
     }).setOrigin(0.5);
 
     // ── World name banner (above carousel) ──
-    this.worldNameText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y - 120, '', {
-      fontSize: '14px', color: '#666666', fontFamily: 'monospace', letterSpacing: 4,
+    this.worldNameText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y - 110, '', {
+      fontSize: '20px', color: '#666666', fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 4,
     }).setOrigin(0.5);
 
     // ── Carousel ──
@@ -78,35 +80,35 @@ export class MenuScene extends Phaser.Scene {
     this.rebuildCarousel();
 
     // ── Level name (below carousel) ──
-    this.levelNameText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 90, '', {
-      fontSize: '22px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+    this.levelNameText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 100, '', {
+      fontSize: '28px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.cycleText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 120, '', {
-      fontSize: '13px', color: '#555555', fontFamily: 'monospace',
+    this.cycleText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 140, '', {
+      fontSize: '18px', color: '#666666', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
     this.updateLabels();
 
-    // ── Swipe hint ──
-    this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 160, '\u25C0  SWIPE  \u25B6', {
-      fontSize: '13px', color: '#333333', fontFamily: 'monospace',
+    // ── Swipe arrows ──
+    this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 180, '\u25C0  SWIPE  \u25B6', {
+      fontSize: '16px', color: '#444444', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
-    // ── PLAY button (fixed, always visible) ──
-    this.createPlayButton(GAME_WIDTH / 2, GAME_HEIGHT - 220);
+    // ── PLAY button ──
+    this.createPlayButton(GAME_WIDTH / 2, GAME_HEIGHT - 200);
 
     // ── Settings button ──
     const settBg = this.add.graphics();
     settBg.fillStyle(0xffffff, 0.06);
-    settBg.fillRoundedRect(GAME_WIDTH / 2 - 80, GAME_HEIGHT - 110, 160, 48, 24);
+    settBg.fillRoundedRect(GAME_WIDTH / 2 - 90, GAME_HEIGHT - 105, 180, 50, 25);
 
-    const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 86, '\u2699  SETTINGS', {
-      fontSize: '15px', color: '#666666', fontFamily: 'monospace', fontStyle: 'bold',
+    const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 80, '\u2699  SETTINGS', {
+      fontSize: '18px', color: '#777777', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     settBtn.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
     settBtn.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settBtn.on('pointerout', () => settBtn.setColor('#666666'));
+    settBtn.on('pointerout', () => settBtn.setColor('#777777'));
 
     // ── Swipe input ──
     this.velocity = 0;
@@ -129,7 +131,6 @@ export class MenuScene extends Phaser.Scene {
       this.dragging = false;
       const swipeDist = p.x - this.dragStartX;
 
-      // Determine snap target
       if (Math.abs(swipeDist) > 40 || Math.abs(this.velocity) > 4) {
         if (swipeDist > 0 && this.currentIndex > 0) {
           this.currentIndex--;
@@ -137,21 +138,16 @@ export class MenuScene extends Phaser.Scene {
           this.currentIndex++;
         }
       }
-
-      // Snap to current index
       this.snapToIndex();
     });
   }
 
-  update(): void {
-    // Inertia handled by snap tween
-  }
+  update(): void {}
 
   private snapToIndex(): void {
-    const targetOffset = 0; // current index is always at center
     this.tweens.add({
       targets: this,
-      offsetX: targetOffset,
+      offsetX: 0,
       duration: 250,
       ease: 'Power2',
       onUpdate: () => this.rebuildCarousel(),
@@ -174,7 +170,6 @@ export class MenuScene extends Phaser.Scene {
   private rebuildCarousel(): void {
     this.carouselContainer.removeAll(true);
 
-    // Render nodes around the current index
     const startIdx = Math.max(0, this.currentIndex - 3);
     const endIdx = this.currentIndex + 4;
 
@@ -182,8 +177,7 @@ export class MenuScene extends Phaser.Scene {
       const offset = i - this.currentIndex;
       const screenX = GAME_WIDTH / 2 + offset * NODE_GAP + this.offsetX;
 
-      // Skip if far off-screen
-      if (screenX < -100 || screenX > GAME_WIDTH + 100) continue;
+      if (screenX < -120 || screenX > GAME_WIDTH + 120) continue;
 
       const isCurrent = i === this.currentIndex;
       const isCompleted = i < this.maxUnlocked;
@@ -192,18 +186,14 @@ export class MenuScene extends Phaser.Scene {
       const accent = lvl.theme.accentColor;
 
       const r = isCurrent ? NODE_R : NODE_R_SM;
-
-      // Distance from center for scaling
       const distFromCenter = Math.abs(screenX - GAME_WIDTH / 2);
-      const scaleFactor = Math.max(0.6, 1 - distFromCenter / 500);
+      const scaleFactor = Math.max(0.55, 1 - distFromCenter / 450);
 
       const nodeG = this.add.graphics();
 
       if (isCurrent) {
-        // Glowing ring
-        nodeG.fillStyle(accent, 0.08);
-        nodeG.fillCircle(screenX, CAROUSEL_Y, r + 12);
-        // Main circle
+        nodeG.fillStyle(accent, 0.1);
+        nodeG.fillCircle(screenX, CAROUSEL_Y, r + 14);
         nodeG.fillStyle(0x0a0a1a, 1);
         nodeG.fillCircle(screenX, CAROUSEL_Y, r);
         nodeG.lineStyle(3, accent, 0.9);
@@ -216,31 +206,22 @@ export class MenuScene extends Phaser.Scene {
       } else {
         nodeG.fillStyle(0x0a0a1a, 0.8);
         nodeG.fillCircle(screenX, CAROUSEL_Y, r * scaleFactor);
-        nodeG.lineStyle(2, 0x333333, 0.3 * scaleFactor);
+        nodeG.lineStyle(2, 0x444444, 0.3 * scaleFactor);
         nodeG.strokeCircle(screenX, CAROUSEL_Y, r * scaleFactor);
       }
       this.carouselContainer.add(nodeG);
 
-      // Number
-      const numSize = isCurrent ? '28px' : `${Math.round(18 * scaleFactor)}px`;
-      const numColor = isCurrent ? '#ffffff' : isCompleted ? '#51cf66' : '#333333';
+      const numSize = isCurrent ? '32px' : `${Math.round(22 * scaleFactor)}px`;
+      const numColor = isCurrent ? '#ffffff' : isCompleted ? '#51cf66' : '#444444';
       const num = this.add.text(screenX, CAROUSEL_Y, String(i + 1), {
         fontSize: numSize, color: numColor, fontFamily: 'monospace', fontStyle: 'bold',
       }).setOrigin(0.5).setAlpha(scaleFactor);
       this.carouselContainer.add(num);
-
-      // Lock icon for locked levels
-      if (isLocked) {
-        const lock = this.add.text(screenX, CAROUSEL_Y + r * scaleFactor + 12, '\u{1F512}', {
-          fontSize: '12px', color: '#333333',
-        }).setOrigin(0.5).setAlpha(scaleFactor * 0.6);
-        this.carouselContainer.add(lock);
-      }
     }
   }
 
   private createPlayButton(x: number, y: number): void {
-    const btnW = 320, btnH = 72;
+    const btnW = 340, btnH = 76;
     const container = this.add.container(x, y);
 
     const glow = this.add.graphics();
@@ -260,7 +241,7 @@ export class MenuScene extends Phaser.Scene {
     container.add(bg);
 
     const text = this.add.text(0, 0, '\u25B6  PLAY', {
-      fontSize: '28px', color: '#51cf66', fontFamily: 'monospace',
+      fontSize: '32px', color: '#51cf66', fontFamily: 'monospace',
       fontStyle: 'bold', letterSpacing: 6,
     }).setOrigin(0.5);
     container.add(text);
