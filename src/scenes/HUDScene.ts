@@ -5,6 +5,9 @@ import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager } from '@/config/progression';
 
+/** Safe margin from edges to avoid ENVELOP cropping */
+const PAD = 32;
+
 export class HUDScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private distanceText!: Phaser.GameObjects.Text;
@@ -87,10 +90,10 @@ export class HUDScene extends Phaser.Scene {
     // Score (top-left)
     const scorePill = this.add.graphics();
     scorePill.fillStyle(0xffd43b, 0.12);
-    scorePill.fillRoundedRect(12, 10, 180, 36, 18);
+    scorePill.fillRoundedRect(PAD, 10, 180, 36, 18);
     this.topElements.add(scorePill);
-    this.topElements.add(this.add.text(24, 22, '\u2605', { fontSize: '18px', color: '#ffd43b' }).setOrigin(0, 0.5));
-    this.scoreText = this.add.text(46, 22, '0', {
+    this.topElements.add(this.add.text(PAD + 12, 22, '\u2605', { fontSize: '18px', color: '#ffd43b' }).setOrigin(0, 0.5));
+    this.scoreText = this.add.text(PAD + 34, 22, '0', {
       fontSize: '20px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.scoreText);
@@ -104,16 +107,16 @@ export class HUDScene extends Phaser.Scene {
     // Units (top-right)
     const unitPill = this.add.graphics();
     unitPill.fillStyle(0x00d4ff, 0.12);
-    unitPill.fillRoundedRect(GAME_WIDTH - 152, 10, 140, 36, 18);
+    unitPill.fillRoundedRect(GAME_WIDTH - PAD - 140, 10, 140, 36, 18);
     this.topElements.add(unitPill);
-    this.topElements.add(this.add.text(GAME_WIDTH - 140, 22, '\u2694', { fontSize: '18px', color: '#00d4ff' }).setOrigin(0, 0.5));
-    this.unitText = this.add.text(GAME_WIDTH - 20, 22, '0', {
+    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 128, 22, '\u2694', { fontSize: '18px', color: '#00d4ff' }).setOrigin(0, 0.5));
+    this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 22, '0', {
       fontSize: '20px', color: '#00d4ff', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
     this.topElements.add(this.unitText);
 
     // Gold (below score, small)
-    this.goldText = this.add.text(24, 50, '0g', {
+    this.goldText = this.add.text(PAD + 12, 50, '0g', {
       fontSize: '13px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
@@ -137,19 +140,19 @@ export class HUDScene extends Phaser.Scene {
     this.bossHpBg.strokeRoundedRect(barX - 4, barY, barWidth + 8, 32, 16);
 
     // ── Weapon indicator (bottom-left, above thumb zone) ──
-    this.weaponIcon = this.add.sprite(36, GAME_HEIGHT - 80, 'weapon_svg_pistol')
+    this.weaponIcon = this.add.sprite(PAD + 16, GAME_HEIGHT - 80, 'weapon_svg_pistol')
       .setDisplaySize(32, 32).setAlpha(0).setOrigin(0.5);
-    this.weaponLabel = this.add.text(58, GAME_HEIGHT - 80, '', {
+    this.weaponLabel = this.add.text(PAD + 38, GAME_HEIGHT - 80, '', {
       fontSize: '14px', color: '#cccccc', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5).setAlpha(0);
 
     // ── Pause button (top-right, above unit count) ──
     const pauseBg = this.add.graphics();
     pauseBg.fillStyle(0xffffff, 0.08);
-    pauseBg.fillRoundedRect(GAME_WIDTH - 56, 52, 44, 44, 12);
+    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 44, 52, 44, 44, 12);
     this.topElements.add(pauseBg);
 
-    const pauseBtn = this.add.text(GAME_WIDTH - 34, 68, '\u23F8', {
+    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 22, 68, '\u23F8', {
       fontSize: '22px', color: '#999999',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
     this.topElements.add(pauseBtn);
@@ -245,14 +248,12 @@ export class HUDScene extends Phaser.Scene {
       this.progressBar.clear();
       // Background track
       this.progressBar.fillStyle(0xffffff, 0.06);
-      this.progressBar.fillRect(20, 68, GAME_WIDTH - 40, 4);
-      // Fill
+      this.progressBar.fillRect(PAD, 68, GAME_WIDTH - PAD * 2, 4);
       this.progressBar.fillStyle(0xff4040, 0.4);
-      this.progressBar.fillRect(20, 68, (GAME_WIDTH - 40) * progress, 4);
-      // Boss skull at the end
+      this.progressBar.fillRect(PAD, 68, (GAME_WIDTH - PAD * 2) * progress, 4);
       if (progress < 0.98) {
         this.progressBar.fillStyle(0xff4040, 0.6);
-        this.progressBar.fillCircle(20 + (GAME_WIDTH - 40) * progress, 70, 3);
+        this.progressBar.fillCircle(PAD + (GAME_WIDTH - PAD * 2) * progress, 70, 3);
       }
     } else {
       this.progressBar.clear();
