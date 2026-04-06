@@ -217,8 +217,10 @@ export function generateLevel(levelIndex: number): LevelConfig {
   const diff = difficultyScale(cycle, posInCycle);
 
   // Core tuning knobs
-  const triggerDistance = Math.round(6000 + cycle * 400 + posInCycle * 300);
   const gateInterval = Math.max(250, Math.round(500 - cycle * 10 - posInCycle * 10));
+  // Boss gate lands one interval after the last regular gate
+  const rawTrigger = 6000 + cycle * 400 + posInCycle * 300;
+  const triggerDistance = Math.ceil(rawTrigger / gateInterval) * gateInterval;
   const marchSpeed = Math.round(130 + cycle * 3 + posInCycle * 2);
 
   // ── Enemies (world templates for cycle 0, procedural for later cycles) ──
