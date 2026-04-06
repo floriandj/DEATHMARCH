@@ -217,7 +217,7 @@ export function generateLevel(levelIndex: number): LevelConfig {
   const diff = difficultyScale(cycle, posInCycle);
 
   // Core tuning knobs
-  const triggerDistance = Math.round(2000 + cycle * 200 + posInCycle * 150);
+  const triggerDistance = Math.round(6000 + cycle * 400 + posInCycle * 300);
   const gateInterval = Math.max(250, Math.round(500 - cycle * 10 - posInCycle * 10));
   const marchSpeed = Math.round(130 + cycle * 3 + posInCycle * 2);
 
