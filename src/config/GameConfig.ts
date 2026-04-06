@@ -53,3 +53,6 @@ export const SCORE_PER_SURVIVING_UNIT = 100;
 
 // Enemy pool
 export const ENEMY_POOL_SIZE = 100;
+
+// Global sprite scale multiplier for all game entities (units, enemies, bosses, bullets)
+export const ENTITY_SCALE = 2;

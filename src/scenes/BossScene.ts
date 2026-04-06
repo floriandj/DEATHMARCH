@@ -7,11 +7,12 @@ import {
   BULLET_POOL_SIZE,
   ARMY_INPUT_Y_RANGE,
   ARMY_Y_OFFSET_MAX,
+  ENTITY_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
 import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
-import { Bullet } from '@/entities/Bullet';
+import { BulletPool } from '@/systems/BulletPool';
 import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
@@ -42,7 +43,7 @@ export class BossScene extends Phaser.Scene {
   private pouchGold: number = 0;
 
   private units: PlayerUnit[] = [];
-  private bullets: Bullet[] = [];
+  private bullets!: BulletPool;
   private bossSprite!: Phaser.GameObjects.Sprite;
   private scaledBossHp: number = 0;
 
@@ -105,7 +106,7 @@ export class BossScene extends Phaser.Scene {
 
     // Boss sprite - starts off-screen, will animate in
     const bossSpriteKey = bossCfg.sprite || 'boss';
-    this.bossScale = bossCfg.scale ?? 1.5;
+    this.bossScale = (bossCfg.scale ?? 1.5) * ENTITY_SCALE;
     this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, bossSpriteKey);
     this.bossSprite.setScale(this.bossScale);
     this.bossSprite.setAlpha(0);
@@ -126,10 +127,7 @@ export class BossScene extends Phaser.Scene {
     for (let i = 0; i < 200; i++) {
       this.units.push(new PlayerUnit(this, i));
     }
-    this.bullets = [];
-    for (let i = 0; i < BULLET_POOL_SIZE; i++) {
-      this.bullets.push(new Bullet(this));
-    }
+    this.bullets = new BulletPool(this, BULLET_POOL_SIZE);
 
     // Danger zone rectangles (for slam phase)
     this.dangerZones = [];
@@ -247,9 +245,7 @@ export class BossScene extends Phaser.Scene {
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
-        const bullet = this.bullets.find((b) => !b.active);
-        if (bullet) {
-          bullet.fire(unit.x, unit.y, bulletColor);
+        if (this.bullets.fire(unit.x, unit.y, bulletColor)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -259,28 +255,28 @@ export class BossScene extends Phaser.Scene {
     }
 
     // 6. Update bullets
-    for (const bullet of this.bullets) {
-      if (!bullet.active) continue;
-      bullet.updateMovement(delta);
+    this.bullets.update(delta);
+    const bossHitRadius = (50 * ENTITY_SCALE) ** 2;
+    let bossKilled = false;
+    this.bullets.forEachActive((b, idx) => {
+      if (bossKilled) return;
 
       // Off-screen
-      if (bullet.y < -50) {
-        bullet.despawn();
-        continue;
+      if (b.y < -50) {
+        this.bullets.despawn(idx);
+        return;
       }
 
       // Hit boss
-      const dx = bullet.x - this.bossSprite.x;
-      const dy = bullet.y - this.bossSprite.y;
-      if (Math.sqrt(dx * dx + dy * dy) < 50) {
-        bullet.despawn();
-        this.bossState.takeDamage(bullet.damage);
+      const dx = b.x - this.bossSprite.x;
+      const dy = b.y - this.bossSprite.y;
+      if (dx * dx + dy * dy < bossHitRadius) {
+        this.bullets.despawn(idx);
+        this.bossState.takeDamage(b.damage);
         SoundManager.play('boss_hit');
 
-        // Hit spark VFX
-        this.spawnHitSpark(bullet.x, bullet.y);
+        this.spawnHitSpark(b.x, b.y);
 
-        // Flash boss on hit
         this.bossSprite.setTint(0xffffff);
         this.time.delayedCall(30, () => {
           if (!this.bossState.isDead) {
@@ -292,10 +288,14 @@ export class BossScene extends Phaser.Scene {
         });
 
         if (this.bossState.isDead) {
-          this.bossDefeated();
-          return;
+          bossKilled = true;
         }
       }
+    });
+    this.bullets.draw();
+    if (bossKilled) {
+      this.bossDefeated();
+      return;
     }
 
     // 7. Update HUD
@@ -606,7 +606,7 @@ export class BossScene extends Phaser.Scene {
     // Charge damages units ONCE if boss passes over army's X position
     if (!this.chargeHit) {
       const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-      if (Math.abs(this.bossSprite.x - armyScreenX) < 60) {
+      if (Math.abs(this.bossSprite.x - armyScreenX) < 60 * ENTITY_SCALE) {
         this.chargeHit = true;
         const unitsToKill = Math.max(1, Math.min(3, Math.ceil(this.unitCount * 0.05)));
         this.unitCount = Math.max(0, this.unitCount - unitsToKill);
@@ -749,7 +749,7 @@ export class BossScene extends Phaser.Scene {
           if (!unit.active) continue;
           const ux = proj.sprite.x - unit.x;
           const uy = proj.sprite.y - unit.y;
-          if (Math.sqrt(ux * ux + uy * uy) < 20) {
+          if (Math.sqrt(ux * ux + uy * uy) < 20 * ENTITY_SCALE) {
             // Hit a unit — stun it briefly
             unit.stun(800);
             SoundManager.play('stun_hit');

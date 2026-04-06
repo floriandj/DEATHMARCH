@@ -15,7 +15,7 @@ import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
 import { pickGatePair } from '@/systems/GateSpawner';
 import { PlayerUnit } from '@/entities/PlayerUnit';
-import { Bullet } from '@/entities/Bullet';
+import { BulletPool } from '@/systems/BulletPool';
 import { Enemy } from '@/entities/Enemy';
 import { Gate } from '@/entities/Gate';
 import { WeaponCrate } from '@/entities/WeaponCrate';
@@ -41,7 +41,7 @@ export class GameScene extends Phaser.Scene {
 
   // Entity arrays
   private units: PlayerUnit[] = [];
-  private bullets: Bullet[] = [];
+  private bullets!: BulletPool;
   private enemies: Enemy[] = [];
   private gates: Gate[] = [];
   private crates: WeaponCrate[] = [];
@@ -58,6 +58,13 @@ export class GameScene extends Phaser.Scene {
   private shootSoundTimer: number = 0;
   private dmgNumberTimer: number = 0;
   private dmgNumberAccum: number = 0;
+
+  // Boss gate
+  private bossGateWorldY: number = 0;
+  private bossGateSpawned: boolean = false;
+  private bossGatePassed: boolean = false;
+  private bossGateSprite: Phaser.GameObjects.Sprite | null = null;
+  private bossGateLabel: Phaser.GameObjects.Text | null = null;
 
   // Gold
   private levelGold: number = 0;
@@ -89,6 +96,13 @@ export class GameScene extends Phaser.Scene {
     this.crateSpawned = false;
     this.shootSoundTimer = 0;
 
+    // Boss gate (world Y is negative since army marches upward)
+    this.bossGateWorldY = -level.boss.triggerDistance;
+    this.bossGateSpawned = false;
+    this.bossGatePassed = false;
+    this.bossGateSprite = null;
+    this.bossGateLabel = null;
+
     // Gold tracking
     this.levelGold = 0;
     this.pouchGold = 0;
@@ -108,10 +122,7 @@ export class GameScene extends Phaser.Scene {
       this.units.push(new PlayerUnit(this, i));
     }
 
-    this.bullets = [];
-    for (let i = 0; i < BULLET_POOL_SIZE; i++) {
-      this.bullets.push(new Bullet(this));
-    }
+    this.bullets = new BulletPool(this, BULLET_POOL_SIZE);
 
     this.enemies = [];
     const currentLevelIdx = LevelManager.instance.currentLevelIndex;
@@ -321,26 +332,23 @@ export class GameScene extends Phaser.Scene {
     // 6. Update bullets (world space)
     const camTop = this.cameras.main.scrollY;
     const camBottom = camTop + GAME_HEIGHT;
-    for (const bullet of this.bullets) {
-      if (!bullet.active) continue;
-      bullet.updateMovement(delta);
-
-      // Off-screen check (world space)
-      if (bullet.y < camTop - 100 || bullet.y > camBottom + 100) {
-        bullet.despawn();
-        continue;
+    this.bullets.update(delta);
+    this.bullets.forEachActive((b, idx) => {
+      // Off-screen cull
+      if (b.y < camTop - 100 || b.y > camBottom + 100) {
+        this.bullets.despawn(idx);
+        return;
       }
 
       // Hit enemies
       for (const enemy of this.enemies) {
         if (!enemy.active) continue;
-        const dx = bullet.x - enemy.x;
-        const dy = bullet.y - enemy.y;
-        if (Math.sqrt(dx * dx + dy * dy) < enemy.displayWidth / 2 + 5) {
-          bullet.despawn();
-          // Floating damage number
-          this.showDamageNumber(bullet.x, bullet.y - 10, bullet.damage);
-          const killed = enemy.takeDamage(bullet.damage);
+        const dx = b.x - enemy.x;
+        const dy = b.y - enemy.y;
+        if (dx * dx + dy * dy < (enemy.displayWidth / 2 + 5) ** 2) {
+          this.bullets.despawn(idx);
+          this.showDamageNumber(b.x, b.y - 10, b.damage);
+          const killed = enemy.takeDamage(b.damage);
           if (killed) {
             SoundManager.play('enemy_death');
             this.levelGold += 1;
@@ -353,30 +361,29 @@ export class GameScene extends Phaser.Scene {
             }
             this.lastKillTime = now;
           }
-          break;
+          return;
         }
       }
 
       // Hit weapon crates
-      if (bullet.active) {
-        for (const crate of this.crates) {
-          if (!crate.active) continue;
-          const cx = bullet.x - crate.x;
-          const cy = bullet.y - crate.y;
-          if (Math.sqrt(cx * cx + cy * cy) < 30) {
-            bullet.despawn();
-            const newWeapon = crate.takeDamage(bullet.damage);
-            if (newWeapon) {
-              SoundManager.play('weapon_upgrade');
-              this.currentWeapon = newWeapon;
-              this.crateSpawned = false;
-              this.showWeaponUpgrade(crate.x, crate.y, newWeapon);
-            }
-            break;
+      for (const crate of this.crates) {
+        if (!crate.active) continue;
+        const cx = b.x - crate.x;
+        const cy = b.y - crate.y;
+        if (cx * cx + cy * cy < 900) { // 30^2
+          this.bullets.despawn(idx);
+          const newWeapon = crate.takeDamage(b.damage);
+          if (newWeapon) {
+            SoundManager.play('weapon_upgrade');
+            this.currentWeapon = newWeapon;
+            this.crateSpawned = false;
+            this.showWeaponUpgrade(crate.x, crate.y, newWeapon);
           }
+          return;
         }
       }
-    }
+    });
+    this.bullets.draw();
 
     // 7. Update enemies — idle until army is close, then aggro
     for (const enemy of this.enemies) {
@@ -470,9 +477,7 @@ export class GameScene extends Phaser.Scene {
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
-        const bullet = this.bullets.find((b) => !b.active);
-        if (bullet) {
-          bullet.fire(unit.x, unit.y, bulletColor);
+        if (this.bullets.fire(unit.x, unit.y, bulletColor)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -481,14 +486,25 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 10. Check boss trigger
-    if (this.distance >= level.boss.triggerDistance) {
-      // Force-despawn any remaining enemies so boss fight can start
-      for (const enemy of this.enemies) {
-        if (enemy.active) enemy.despawn();
+    // 10. Boss gate — spawn when approaching, transition on contact
+    if (!this.bossGateSpawned) {
+      const camTop = this.cameras.main.scrollY;
+      if (this.bossGateWorldY > camTop - 200) {
+        this.spawnBossGate();
       }
-      this.transitionToBoss();
-      return;
+    }
+    if (this.bossGateSprite && !this.bossGatePassed) {
+      for (const unit of this.units) {
+        if (!unit.active) continue;
+        if (Math.abs(unit.y - this.bossGateWorldY) < 25) {
+          this.bossGatePassed = true;
+          for (const enemy of this.enemies) {
+            if (enemy.active) enemy.despawn();
+          }
+          this.transitionToBoss();
+          return;
+        }
+      }
     }
 
     // 11. Update HUD
@@ -666,6 +682,45 @@ export class GameScene extends Phaser.Scene {
       distance: Math.floor(this.distance),
       bossDefeated: false,
       goldEarned: this.levelGold + Math.floor(this.pouchGold * 0.5),
+    });
+  }
+
+  private spawnBossGate(): void {
+    this.bossGateSpawned = true;
+    const y = this.bossGateWorldY;
+
+    this.bossGateSprite = this.add.sprite(GAME_WIDTH / 2, y, 'gate_boss');
+    this.bossGateSprite.setDepth(2);
+
+    this.bossGateLabel = this.add.text(GAME_WIDTH / 2, y, 'BOSS FIGHT', {
+      fontSize: '28px',
+      color: '#ffcc00',
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(3);
+
+    // Pulsing glow
+    this.tweens.add({
+      targets: this.bossGateSprite,
+      alpha: { from: 0.7, to: 1 },
+      scaleX: { from: 0.98, to: 1.02 },
+      scaleY: { from: 0.95, to: 1.05 },
+      duration: 500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    // Label bob
+    this.tweens.add({
+      targets: this.bossGateLabel,
+      y: { from: y - 5, to: y + 5 },
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
     });
   }
 

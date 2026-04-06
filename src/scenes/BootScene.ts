@@ -1,9 +1,6 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
-import { LevelManager, generateLevel } from '@/config/progression';
-
-/** We only need to load assets for the 5 world themes (they cycle). */
-const WORLDS_COUNT = 5;
+import { getAllBaseEnemySprites, getAllBossSprites } from '@/config/progression';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -17,36 +14,21 @@ export class BootScene extends Phaser.Scene {
       frameHeight: 20,
     });
 
-    // Bullet
-    this.load.image('bullet', 'assets/sprites/bullet.svg');
-
-    // Enemy spritesheets — load one representative level per world (first of each cycle)
-    const loadedTypes = new Set<string>();
-    for (let w = 0; w < WORLDS_COUNT; w++) {
-      const lvl = generateLevel(w * 5); // first level of each world
-      for (const [type, stats] of Object.entries(lvl.enemies)) {
-        if (loadedTypes.has(type)) continue;
-        loadedTypes.add(type);
-        const size = stats.size * 2;
-        this.load.spritesheet(`enemy_${type}`, `assets/sprites/enemy_${type}.svg`, {
-          frameWidth: size,
-          frameHeight: size,
-        });
-      }
+    // Enemy spritesheets — load all base sprites (procedural enemies reuse these with tinting)
+    for (const { type, size } of getAllBaseEnemySprites()) {
+      const frameSize = size * 2;
+      this.load.spritesheet(`enemy_${type}`, `assets/sprites/enemy_${type}.svg`, {
+        frameWidth: frameSize,
+        frameHeight: frameSize,
+      });
     }
 
     // Boss spritesheets — one per world theme
-    const loadedBosses = new Set<string>();
-    for (let w = 0; w < WORLDS_COUNT; w++) {
-      const lvl = generateLevel(w * 5);
-      const bossSprite = lvl.boss.sprite;
-      if (!loadedBosses.has(bossSprite)) {
-        loadedBosses.add(bossSprite);
-        this.load.spritesheet(bossSprite, `assets/sprites/${bossSprite}.svg`, {
-          frameWidth: 88,
-          frameHeight: 88,
-        });
-      }
+    for (const bossSprite of getAllBossSprites()) {
+      this.load.spritesheet(bossSprite, `assets/sprites/${bossSprite}.svg`, {
+        frameWidth: 88,
+        frameHeight: 88,
+      });
     }
     // Legacy 'boss' key
     this.load.spritesheet('boss', 'assets/sprites/boss.svg', {
@@ -119,6 +101,26 @@ export class BootScene extends Phaser.Scene {
     gRed.fillRoundedRect(6, 6, w - 12, h / 2 - 6, r - 4);
     gRed.generateTexture('gate_subtract', w, h);
     gRed.destroy();
+
+    // Boss gate — wide ominous banner spanning the battlefield
+    const bw = 600, bh = 70, br = 12;
+    const gBoss = this.add.graphics();
+    // Dark outer edge
+    gBoss.fillStyle(0x220011, 1);
+    gBoss.fillRoundedRect(0, 0, bw, bh, br);
+    // Deep crimson body
+    gBoss.fillStyle(0x660022, 1);
+    gBoss.fillRoundedRect(3, 3, bw - 6, bh - 6, br - 2);
+    // Danger stripes
+    gBoss.fillStyle(0x440016, 0.6);
+    for (let sx = 8; sx < bw; sx += 20) {
+      gBoss.fillRect(sx, 3, 10, bh - 6);
+    }
+    // Inner glow
+    gBoss.fillStyle(0x990033, 0.4);
+    gBoss.fillRoundedRect(6, 6, bw - 12, bh / 2 - 6, br - 4);
+    gBoss.generateTexture('gate_boss', bw, bh);
+    gBoss.destroy();
   }
 
   private generateVfxTextures(): void {
@@ -156,21 +158,14 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    // Enemy walk animations — one per unique enemy type across all worlds
-    const createdAnims = new Set<string>();
-    for (let w = 0; w < WORLDS_COUNT; w++) {
-      const lvl = generateLevel(w * 5);
-      for (const type of Object.keys(lvl.enemies)) {
-        const animKey = `enemy_${type}_walk`;
-        if (createdAnims.has(animKey)) continue;
-        createdAnims.add(animKey);
-        this.anims.create({
-          key: animKey,
-          frames: this.anims.generateFrameNumbers(`enemy_${type}`, { start: 0, end: 1 }),
-          frameRate: 4,
-          repeat: -1,
-        });
-      }
+    // Enemy walk animations — one per base sprite type
+    for (const { type } of getAllBaseEnemySprites()) {
+      this.anims.create({
+        key: `enemy_${type}_walk`,
+        frames: this.anims.generateFrameNumbers(`enemy_${type}`, { start: 0, end: 1 }),
+        frameRate: 4,
+        repeat: -1,
+      });
     }
 
     // Boss idle animations
@@ -181,20 +176,13 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    const createdBossAnims = new Set<string>();
-    for (let w = 0; w < WORLDS_COUNT; w++) {
-      const lvl = generateLevel(w * 5);
-      const spriteKey = lvl.boss.sprite;
-      const animKey = `${spriteKey}_idle`;
-      if (!createdBossAnims.has(animKey)) {
-        createdBossAnims.add(animKey);
-        this.anims.create({
-          key: animKey,
-          frames: this.anims.generateFrameNumbers(spriteKey, { start: 0, end: 1 }),
-          frameRate: 2,
-          repeat: -1,
-        });
-      }
+    for (const bossSprite of getAllBossSprites()) {
+      this.anims.create({
+        key: `${bossSprite}_idle`,
+        frames: this.anims.generateFrameNumbers(bossSprite, { start: 0, end: 1 }),
+        frameRate: 2,
+        repeat: -1,
+      });
     }
   }
 }

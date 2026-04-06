@@ -442,3 +442,27 @@ function toRoman(n: number): string {
   }
   return String(n);
 }
+
+/** All base enemy sprites across all worlds (for asset loading). */
+export function getAllBaseEnemySprites(): { type: string; size: number }[] {
+  const result: { type: string; size: number }[] = [];
+  const seen = new Set<string>();
+  for (const world of WORLDS) {
+    for (const enemy of world.enemies) {
+      if (!seen.has(enemy.type)) {
+        seen.add(enemy.type);
+        result.push({ type: enemy.type, size: enemy.size });
+      }
+    }
+  }
+  return result;
+}
+
+/** All unique boss sprite keys across all worlds (for asset loading). */
+export function getAllBossSprites(): string[] {
+  const seen = new Set<string>();
+  for (const world of WORLDS) {
+    seen.add(world.bossSprite);
+  }
+  return [...seen];
+}

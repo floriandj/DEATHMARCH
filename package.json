@@ -19,6 +19,11 @@
   "dependencies": {
     "phaser": "^3.90.0"
   },
+  "overrides": {
+    "vite-plugin-pwa": {
+      "vite": "$vite"
+    }
+  },
   "devDependencies": {
     "@types/node": "^25.5.2",
     "typescript": "^6.0.2",

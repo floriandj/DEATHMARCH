@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ENTITY_SCALE } from '@/config/GameConfig';
 
 export class PlayerUnit extends Phaser.GameObjects.Sprite {
   active: boolean = false;
@@ -36,7 +37,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.fireTimer = this.fireOffset;
     this.stunTimer = 0;
     this.setAlpha(1);
-    this.setScale(1.5);
+    this.setScale(1.5 * ENTITY_SCALE);
     this.play('unit_march');
   }
 
