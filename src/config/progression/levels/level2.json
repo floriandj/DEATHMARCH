@@ -8,10 +8,10 @@
 
   "startingWeapon": "smg",
   "weapons": {
-    "smg":      { "type": "smg",      "name": "SMG",           "fireRate": 190, "bulletColor": "#00d4ff" },
-    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 95,  "bulletColor": "#51cf66" },
-    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 42,  "bulletColor": "#ff6b6b" },
-    "minigun":  { "type": "minigun",  "name": "MINIGUN",       "fireRate": 22,  "bulletColor": "#ff00ff" }
+    "smg":      { "type": "smg",      "name": "SMG",           "fireRate": 430, "bulletColor": "#00d4ff" },
+    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 240, "bulletColor": "#51cf66" },
+    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 110, "bulletColor": "#ff6b6b" },
+    "minigun":  { "type": "minigun",  "name": "MINIGUN",       "fireRate": 55,  "bulletColor": "#ff00ff" }
   },
   "weaponOrder": ["smg", "ar", "lmg", "minigun"],
   "weaponCrates": [
@@ -58,12 +58,12 @@
   "gates": {
     "interval": 450,
     "templates": [
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 8  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 15}, "right": { "op": "add",      "value": 5  }, "minDistance": 200 },
-      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 400 },
-      { "left": { "op": "add",      "value": 25}, "right": { "op": "subtract", "value": 8  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 800 }
+      { "left": { "op": "add",      "value": 4 }, "right": { "op": "add",      "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 6 }, "right": { "op": "add",      "value": 3  }, "minDistance": 200 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 10}, "right": { "op": "subtract", "value": 4  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 800 }
     ]
   },
 

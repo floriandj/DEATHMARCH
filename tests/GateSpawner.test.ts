@@ -45,16 +45,16 @@ describe('GateSpawner', () => {
     expect(apply(5)).toBe(15);
   });
 
-  it('-5 gate subtracts but never goes below 1', () => {
+  it('-3 gate subtracts but never goes below 1', () => {
     const templates = LevelManager.instance.current.gates.templates;
     const sub = templates.find(
-      (t) => (t.left.op === 'subtract' && t.left.value === 5) || (t.right.op === 'subtract' && t.right.value === 5),
+      (t) => (t.left.op === 'subtract' && t.left.value === 3) || (t.right.op === 'subtract' && t.right.value === 3),
     );
     expect(sub).toBeDefined();
-    const side = sub!.left.op === 'subtract' && sub!.left.value === 5 ? sub!.left : sub!.right;
+    const side = sub!.left.op === 'subtract' && sub!.left.value === 3 ? sub!.left : sub!.right;
     const apply = gateApplyFn(side);
-    expect(apply(10)).toBe(5);
-    expect(apply(3)).toBe(1);
+    expect(apply(10)).toBe(7);
+    expect(apply(2)).toBe(1);
   });
 
   it('pickGatePair returns a valid pair', () => {

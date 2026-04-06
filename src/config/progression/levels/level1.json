@@ -8,10 +8,10 @@
 
   "startingWeapon": "pistol",
   "weapons": {
-    "pistol": { "type": "pistol", "name": "PISTOL", "fireRate": 400, "bulletColor": "#ffd43b" },
-    "smg":    { "type": "smg",    "name": "SMG",    "fireRate": 200, "bulletColor": "#00d4ff" },
-    "ar":     { "type": "ar",     "name": "ASSAULT RIFLE", "fireRate": 100, "bulletColor": "#51cf66" },
-    "lmg":    { "type": "lmg",    "name": "LMG",    "fireRate": 45,  "bulletColor": "#ff6b6b" }
+    "pistol": { "type": "pistol", "name": "PISTOL", "fireRate": 800, "bulletColor": "#ffd43b" },
+    "smg":    { "type": "smg",    "name": "SMG",    "fireRate": 450, "bulletColor": "#00d4ff" },
+    "ar":     { "type": "ar",     "name": "ASSAULT RIFLE", "fireRate": 250, "bulletColor": "#51cf66" },
+    "lmg":    { "type": "lmg",    "name": "LMG",    "fireRate": 120, "bulletColor": "#ff6b6b" }
   },
   "weaponOrder": ["pistol", "smg", "ar", "lmg"],
   "weaponCrates": [
@@ -59,15 +59,15 @@
   "gates": {
     "interval": 500,
     "templates": [
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 5  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 10}, "right": { "op": "add",      "value": 5  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "add",      "value": 10 }, "minDistance": 150 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 300 },
-      { "left": { "op": "add",      "value": 20}, "right": { "op": "add",      "value": 5  }, "minDistance": 300 },
-      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 600 },
-      { "left": { "op": "divide",   "value": 2 }, "right": { "op": "multiply", "value": 3  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 900 },
-      { "left": { "op": "add",      "value": 20}, "right": { "op": "subtract", "value": 5  }, "minDistance": 900 }
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "add",      "value": 2  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "add",      "value": 2  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 5  }, "minDistance": 150 },
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 300 },
+      { "left": { "op": "add",      "value": 8 }, "right": { "op": "add",      "value": 3  }, "minDistance": 300 },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 600 },
+      { "left": { "op": "divide",   "value": 2 }, "right": { "op": "multiply", "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 900 },
+      { "left": { "op": "add",      "value": 10}, "right": { "op": "subtract", "value": 3  }, "minDistance": 900 }
     ]
   },
 

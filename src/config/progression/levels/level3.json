@@ -8,10 +8,10 @@
 
   "startingWeapon": "ar",
   "weapons": {
-    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 95,  "bulletColor": "#51cf66" },
-    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 42,  "bulletColor": "#ff6b6b" },
-    "cryo":     { "type": "cryo",     "name": "CRYO CANNON",   "fireRate": 60,  "bulletColor": "#7fdbff" },
-    "railgun":  { "type": "railgun",  "name": "RAILGUN",       "fireRate": 18,  "bulletColor": "#00ffcc" }
+    "ar":       { "type": "ar",       "name": "ASSAULT RIFLE", "fireRate": 240, "bulletColor": "#51cf66" },
+    "lmg":      { "type": "lmg",      "name": "LMG",           "fireRate": 110, "bulletColor": "#ff6b6b" },
+    "cryo":     { "type": "cryo",     "name": "CRYO CANNON",   "fireRate": 150, "bulletColor": "#7fdbff" },
+    "railgun":  { "type": "railgun",  "name": "RAILGUN",       "fireRate": 45,  "bulletColor": "#00ffcc" }
   },
   "weaponOrder": ["ar", "lmg", "cryo", "railgun"],
   "weaponCrates": [
@@ -58,13 +58,13 @@
   "gates": {
     "interval": 480,
     "templates": [
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 10 }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 12}, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 300 },
-      { "left": { "op": "add",      "value": 20}, "right": { "op": "divide",   "value": 2  }, "minDistance": 500 },
-      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "subtract", "value": 10 }, "minDistance": 800 },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "add",      "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 300 },
+      { "left": { "op": "add",      "value": 8 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 500 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 800 },
       { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 1000 },
-      { "left": { "op": "add",      "value": 30}, "right": { "op": "subtract", "value": 8  }, "minDistance": 1200 }
+      { "left": { "op": "add",      "value": 12}, "right": { "op": "subtract", "value": 4  }, "minDistance": 1200 }
     ]
   },
 

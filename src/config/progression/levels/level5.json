@@ -8,10 +8,10 @@
 
   "startingWeapon": "lmg",
   "weapons": {
-    "lmg":       { "type": "lmg",       "name": "LMG",           "fireRate": 40,  "bulletColor": "#ff6b6b" },
-    "plasma":    { "type": "plasma",    "name": "PLASMA RIFLE",  "fireRate": 18,  "bulletColor": "#7bed9f" },
-    "voidbeam":  { "type": "voidbeam",  "name": "VOID BEAM",     "fireRate": 12,  "bulletColor": "#a855f7" },
-    "godslayer": { "type": "godslayer", "name": "GODSLAYER",     "fireRate": 8,   "bulletColor": "#fbbf24" }
+    "lmg":       { "type": "lmg",       "name": "LMG",           "fireRate": 100, "bulletColor": "#ff6b6b" },
+    "plasma":    { "type": "plasma",    "name": "PLASMA RIFLE",  "fireRate": 45,  "bulletColor": "#7bed9f" },
+    "voidbeam":  { "type": "voidbeam",  "name": "VOID BEAM",     "fireRate": 30,  "bulletColor": "#a855f7" },
+    "godslayer": { "type": "godslayer", "name": "GODSLAYER",     "fireRate": 20,  "bulletColor": "#fbbf24" }
   },
   "weaponOrder": ["lmg", "plasma", "voidbeam", "godslayer"],
   "weaponCrates": [
@@ -58,14 +58,14 @@
   "gates": {
     "interval": 400,
     "templates": [
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "add",      "value": 10 }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 20}, "right": { "op": "subtract", "value": 5  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 4 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 15 }, "minDistance": 400 },
-      { "left": { "op": "add",      "value": 30}, "right": { "op": "divide",   "value": 3  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 5 }, "right": { "op": "divide",   "value": 4  }, "minDistance": 800 },
-      { "left": { "op": "multiply", "value": 6 }, "right": { "op": "subtract", "value": 20 }, "minDistance": 1000 },
-      { "left": { "op": "add",      "value": 40}, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 5  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 8 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 8  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 12}, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 800 },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 10 }, "minDistance": 1000 },
+      { "left": { "op": "add",      "value": 15}, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
     ]
   },
 
