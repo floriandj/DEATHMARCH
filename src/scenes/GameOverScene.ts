@@ -132,29 +132,34 @@ export class GameOverScene extends Phaser.Scene {
       }
     }
 
-    // ── Buttons — same size, stacked ──
-    yPos += 30;
+    // ── Buttons — anchored near bottom of screen ──
     const btnW = 360, btnH = 64;
+    const btnCount = canAdvance ? 3 : 2;
+    const btnBlockH = btnCount * (btnH + 16) - 16;
+    // Place buttons at bottom with padding, but not higher than content
+    const btnStartY = Math.max(yPos + 30, GAME_HEIGHT - btnBlockH - 50);
+
+    let btnY = btnStartY;
 
     if (canAdvance) {
-      this.createButton(GAME_WIDTH / 2, yPos, '\u27A1\uFE0F  NEXT LEVEL', btnW, btnH,
+      this.createButton(GAME_WIDTH / 2, btnY, '\u27A1\uFE0F  NEXT LEVEL', btnW, btnH,
         0xffd43b, '#ffd43b', true, () => {
           mgr.advanceLevel();
           localStorage.setItem('deathmarch-level', String(mgr.currentLevelIndex));
           this.fadeToGame();
         }, 700);
-      yPos += btnH + 16;
+      btnY += btnH + 16;
 
-      this.createButton(GAME_WIDTH / 2, yPos, '\u21BB  REPLAY', btnW, btnH,
+      this.createButton(GAME_WIDTH / 2, btnY, '\u21BB  REPLAY', btnW, btnH,
         0x00d4ff, '#00d4ff', false, () => this.fadeToGame(), 800);
-      yPos += btnH + 16;
+      btnY += btnH + 16;
     } else {
-      this.createButton(GAME_WIDTH / 2, yPos, '\u{1F4AA}  TRY AGAIN', btnW, btnH,
+      this.createButton(GAME_WIDTH / 2, btnY, '\u{1F4AA}  TRY AGAIN', btnW, btnH,
         0x00d4ff, '#00d4ff', true, () => this.fadeToGame(), 700);
-      yPos += btnH + 16;
+      btnY += btnH + 16;
     }
 
-    this.createButton(GAME_WIDTH / 2, yPos, '\u2630  LEVELS', btnW, btnH,
+    this.createButton(GAME_WIDTH / 2, btnY, '\u2630  LEVELS', btnW, btnH,
       0x666666, '#999999', false, () => this.scene.start('MenuScene'),
       canAdvance ? 900 : 800);
   }
