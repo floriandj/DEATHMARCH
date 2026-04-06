@@ -1,15 +1,13 @@
 // src/scenes/MenuScene.ts
-// Candy-crush style scrollable level map — supports infinite levels.
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
 
-const NODE_SPACING = 150;
-const LEFT_X = 190;
-const RIGHT_X = 530;
-const WORLD_GAP = 70;
-const NODE_R = 30;
-/** How many locked levels to show beyond the current one */
+const NODE_SPACING = 170;
+const LEFT_X = 180;
+const RIGHT_X = 540;
+const WORLD_GAP = 80;
+const NODE_R = 38;
 const LOOKAHEAD = 8;
 
 export class MenuScene extends Phaser.Scene {
@@ -34,7 +32,6 @@ export class MenuScene extends Phaser.Scene {
     const maxUnlocked = Math.max(0, savedLevel);
     mgr.setLevel(maxUnlocked);
 
-    // How many nodes to render (unlocked + lookahead)
     const visibleCount = maxUnlocked + 1 + LOOKAHEAD;
 
     // Background glow
@@ -46,52 +43,52 @@ export class MenuScene extends Phaser.Scene {
     // ── Title bar (fixed) ──
     const titleBg = this.add.graphics();
     titleBg.fillStyle(0x050510, 0.95);
-    titleBg.fillRect(0, 0, GAME_WIDTH, 110);
+    titleBg.fillRect(0, 0, GAME_WIDTH, 130);
     titleBg.fillStyle(0x050510, 0.6);
-    titleBg.fillRect(0, 110, GAME_WIDTH, 15);
+    titleBg.fillRect(0, 130, GAME_WIDTH, 15);
     titleBg.setDepth(10);
 
-    this.add.text(GAME_WIDTH / 2, 30, 'DEATHMARCH', {
-      fontSize: '36px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
-      stroke: '#ff2040', strokeThickness: 2,
+    this.add.text(GAME_WIDTH / 2, 36, 'DEATHMARCH', {
+      fontSize: '42px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      stroke: '#ff2040', strokeThickness: 3,
     }).setOrigin(0.5).setDepth(11);
 
-    this.add.rectangle(GAME_WIDTH / 2, 55, 160, 2, 0xff4040, 0.4).setDepth(11);
+    this.add.rectangle(GAME_WIDTH / 2, 66, 200, 2, 0xff4040, 0.5).setDepth(11);
 
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add.text(GAME_WIDTH / 2, 74, `BEST: ${highScore}`, {
-      fontSize: '14px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(GAME_WIDTH / 2, 86, `BEST: ${highScore}`, {
+      fontSize: '18px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(11);
 
     const cycleNum = Math.floor(maxUnlocked / 5) + 1;
-    this.add.text(GAME_WIDTH / 2, 94, `LEVEL ${maxUnlocked + 1}  \u2022  CYCLE ${cycleNum}`, {
-      fontSize: '11px', color: '#555555', fontFamily: 'monospace',
+    this.add.text(GAME_WIDTH / 2, 110, `LEVEL ${maxUnlocked + 1}  \u2022  CYCLE ${cycleNum}`, {
+      fontSize: '14px', color: '#666666', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(11);
 
     // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
 
     const nodePositions = this.computeNodePositions(visibleCount);
-    this.totalHeight = nodePositions[nodePositions.length - 1].y + 250;
+    this.totalHeight = nodePositions[nodePositions.length - 1].y + 280;
 
     this.drawPath(nodePositions, maxUnlocked);
     this.drawWorldBanners(nodePositions, visibleCount);
     this.drawNodes(nodePositions, maxUnlocked);
 
-    // ── Settings button (fixed) ──
+    // ── Settings button (fixed, bigger) ──
     const settBg = this.add.graphics();
-    settBg.fillStyle(0xffffff, 0.05);
-    settBg.fillRoundedRect(10, GAME_HEIGHT - 52, 130, 36, 18);
+    settBg.fillStyle(0xffffff, 0.06);
+    settBg.fillRoundedRect(10, GAME_HEIGHT - 60, 160, 44, 22);
     settBg.setDepth(11);
 
     const settBtn = this.add
-      .text(75, GAME_HEIGHT - 34, '\u2699 SETTINGS', {
-        fontSize: '13px', color: '#666666', fontFamily: 'monospace',
+      .text(90, GAME_HEIGHT - 38, '\u2699  SETTINGS', {
+        fontSize: '16px', color: '#777777', fontFamily: 'monospace', fontStyle: 'bold',
       })
       .setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(11);
     settBtn.on('pointerdown', () => this.scene.start('SettingsScene'));
     settBtn.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settBtn.on('pointerout', () => settBtn.setColor('#666666'));
+    settBtn.on('pointerout', () => settBtn.setColor('#777777'));
 
     // ── Scroll to current level ──
     const currentNodeY = nodePositions[Math.min(maxUnlocked, nodePositions.length - 1)].y;
@@ -125,11 +122,9 @@ export class MenuScene extends Phaser.Scene {
     }
   }
 
-  // ── Layout ──
-
   private computeNodePositions(count: number): { x: number; y: number }[] {
     const positions: { x: number; y: number }[] = [];
-    let y = 200;
+    let y = 220;
     for (let i = 0; i < count; i++) {
       if (i > 0 && i % 5 === 0) y += WORLD_GAP;
       const row = Math.floor(i / 2);
@@ -142,13 +137,12 @@ export class MenuScene extends Phaser.Scene {
 
   private drawPath(positions: { x: number; y: number }[], maxUnlocked: number): void {
     const g = this.add.graphics();
-    g.lineStyle(4, 0xffffff, 0.06);
+    g.lineStyle(5, 0xffffff, 0.07);
 
     for (let i = 0; i < positions.length - 1; i++) {
       const a = positions[i];
       const b = positions[i + 1];
       if ((i + 1) % 5 === 0) {
-        // Dotted line between cycles
         for (let s = 0; s < 8; s += 2) {
           const t1 = s / 8, t2 = (s + 1) / 8;
           g.beginPath();
@@ -164,9 +158,8 @@ export class MenuScene extends Phaser.Scene {
       }
     }
 
-    // Bright completed path
     const brightG = this.add.graphics();
-    brightG.lineStyle(5, 0x51cf66, 0.3);
+    brightG.lineStyle(6, 0x51cf66, 0.35);
     for (let i = 0; i < Math.min(maxUnlocked, positions.length - 1); i++) {
       const a = positions[i];
       const b = positions[i + 1];
@@ -180,27 +173,25 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private drawWorldBanners(positions: { x: number; y: number }[], visibleCount: number): void {
-    const maxLevel = visibleCount - 1;
-    const worldInfos = getWorldInfoForLevels(maxLevel);
-
+    const worldInfos = getWorldInfoForLevels(visibleCount - 1);
     for (const world of worldInfos) {
       if (world.startLevel >= positions.length) continue;
       const nodeY = positions[world.startLevel].y;
-      const bannerY = nodeY - 60;
+      const bannerY = nodeY - 65;
 
       const lvl = generateLevel(world.startLevel);
       const accent = lvl.theme.accentColor;
       const accentHex = lvl.theme.accentHex;
 
       const bg = this.add.graphics();
-      bg.fillStyle(accent, 0.06);
-      bg.fillRoundedRect(GAME_WIDTH / 2 - 150, bannerY - 16, 300, 32, 16);
-      bg.lineStyle(1, accent, 0.2);
-      bg.strokeRoundedRect(GAME_WIDTH / 2 - 150, bannerY - 16, 300, 32, 16);
+      bg.fillStyle(accent, 0.08);
+      bg.fillRoundedRect(GAME_WIDTH / 2 - 170, bannerY - 18, 340, 36, 18);
+      bg.lineStyle(1, accent, 0.25);
+      bg.strokeRoundedRect(GAME_WIDTH / 2 - 170, bannerY - 18, 340, 36, 18);
 
       const label = this.add
         .text(GAME_WIDTH / 2, bannerY, world.name.toUpperCase(), {
-          fontSize: '12px', color: accentHex, fontFamily: 'monospace',
+          fontSize: '15px', color: accentHex, fontFamily: 'monospace',
           fontStyle: 'bold', letterSpacing: 3,
         })
         .setOrigin(0.5);
@@ -216,34 +207,33 @@ export class MenuScene extends Phaser.Scene {
       const isCurrent = i === maxUnlocked;
       const isLocked = i > maxUnlocked;
       const lvl = generateLevel(i);
-      const accentHex = lvl.theme.accentHex;
       const accent = lvl.theme.accentColor;
 
-      const nameX = pos.x < GAME_WIDTH / 2 ? pos.x + NODE_R + 16 : pos.x - NODE_R - 16;
+      const nameX = pos.x < GAME_WIDTH / 2 ? pos.x + NODE_R + 18 : pos.x - NODE_R - 18;
       const nameAlign = pos.x < GAME_WIDTH / 2 ? 0 : 1;
 
       const nc = this.add.container(pos.x, pos.y);
 
       if (isCompleted) {
         const circle = this.add.graphics();
-        circle.fillStyle(0x51cf66, 0.15);
+        circle.fillStyle(0x51cf66, 0.18);
         circle.fillCircle(0, 0, NODE_R);
-        circle.lineStyle(2, 0x51cf66, 0.5);
+        circle.lineStyle(3, 0x51cf66, 0.6);
         circle.strokeCircle(0, 0, NODE_R);
         nc.add(circle);
 
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '16px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
+          fontSize: '20px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
 
         nc.add(this.add.text(nameX - pos.x, 0, lvl.name, {
-          fontSize: '11px', color: '#4a9e5e', fontFamily: 'monospace',
+          fontSize: '14px', color: '#5cb86c', fontFamily: 'monospace',
         }).setOrigin(nameAlign, 0.5));
 
       } else if (isCurrent) {
         const glow = this.add.graphics();
-        glow.fillStyle(0xffd43b, 0.12);
-        glow.fillCircle(0, 0, NODE_R + 12);
+        glow.fillStyle(0xffd43b, 0.14);
+        glow.fillCircle(0, 0, NODE_R + 14);
         nc.add(glow);
         this.tweens.add({
           targets: glow, alpha: { from: 0.3, to: 0.7 },
@@ -252,46 +242,45 @@ export class MenuScene extends Phaser.Scene {
         });
 
         const circle = this.add.graphics();
-        circle.fillStyle(0xffd43b, 0.25);
+        circle.fillStyle(0xffd43b, 0.28);
         circle.fillCircle(0, 0, NODE_R);
-        circle.lineStyle(3, 0xffd43b, 0.8);
+        circle.lineStyle(3, 0xffd43b, 0.85);
         circle.strokeCircle(0, 0, NODE_R);
         nc.add(circle);
 
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '20px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+          fontSize: '24px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
 
-        nc.add(this.add.text(nameX - pos.x, -8, lvl.name, {
-          fontSize: '12px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+        nc.add(this.add.text(nameX - pos.x, -10, lvl.name, {
+          fontSize: '15px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(nameAlign, 0.5));
 
-        nc.add(this.add.text(nameX - pos.x, 8, lvl.theme.worldName, {
-          fontSize: '9px', color: '#887730', fontFamily: 'monospace',
+        nc.add(this.add.text(nameX - pos.x, 10, lvl.theme.worldName, {
+          fontSize: '12px', color: '#998840', fontFamily: 'monospace',
         }).setOrigin(nameAlign, 0.5));
 
-        this.createPlayButton(pos.x, pos.y + NODE_R + 38);
+        this.createPlayButton(pos.x, pos.y + NODE_R + 45);
 
       } else {
         const circle = this.add.graphics();
-        circle.fillStyle(accent, 0.04);
+        circle.fillStyle(accent, 0.05);
         circle.fillCircle(0, 0, NODE_R - 4);
-        circle.lineStyle(1, 0x333333, 0.25);
+        circle.lineStyle(2, 0x444444, 0.3);
         circle.strokeCircle(0, 0, NODE_R - 4);
         nc.add(circle);
 
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '14px', color: '#2a2a2a', fontFamily: 'monospace', fontStyle: 'bold',
+          fontSize: '18px', color: '#363636', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
 
         nc.add(this.add.text(nameX - pos.x, 0, lvl.name, {
-          fontSize: '10px', color: '#222222', fontFamily: 'monospace',
+          fontSize: '12px', color: '#2d2d2d', fontFamily: 'monospace',
         }).setOrigin(nameAlign, 0.5));
       }
 
-      // Tappable for unlocked levels
       if (!isLocked) {
-        const hitZone = this.add.zone(0, 0, NODE_R * 2 + 10, NODE_R * 2 + 10)
+        const hitZone = this.add.zone(0, 0, NODE_R * 2 + 16, NODE_R * 2 + 16)
           .setInteractive({ useHandCursor: true });
         nc.add(hitZone);
         hitZone.on('pointerdown', () => {
@@ -309,28 +298,28 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createPlayButton(x: number, y: number): void {
-    const btnW = 150, btnH = 44;
+    const btnW = 200, btnH = 58;
     const container = this.add.container(x, y);
 
     const glow = this.add.graphics();
-    glow.fillStyle(0x51cf66, 0.08);
-    glow.fillRoundedRect(-btnW / 2 - 4, -btnH / 2 - 4, btnW + 8, btnH + 8, btnH / 2 + 4);
+    glow.fillStyle(0x51cf66, 0.1);
+    glow.fillRoundedRect(-btnW / 2 - 5, -btnH / 2 - 5, btnW + 10, btnH + 10, btnH / 2 + 5);
     container.add(glow);
     this.tweens.add({
-      targets: glow, alpha: { from: 0.15, to: 0.4 },
+      targets: glow, alpha: { from: 0.15, to: 0.45 },
       duration: 1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
     const bg = this.add.graphics();
-    bg.fillStyle(0x51cf66, 0.15);
+    bg.fillStyle(0x51cf66, 0.18);
     bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-    bg.lineStyle(2, 0x51cf66, 0.6);
+    bg.lineStyle(2, 0x51cf66, 0.7);
     bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
     container.add(bg);
 
     const text = this.add.text(0, 0, '\u25B6  PLAY', {
-      fontSize: '18px', color: '#51cf66', fontFamily: 'monospace',
-      fontStyle: 'bold', letterSpacing: 4,
+      fontSize: '24px', color: '#51cf66', fontFamily: 'monospace',
+      fontStyle: 'bold', letterSpacing: 5,
     }).setOrigin(0.5);
     container.add(text);
 
@@ -340,17 +329,17 @@ export class MenuScene extends Phaser.Scene {
     hitZone.on('pointerover', () => {
       text.setColor('#ffffff');
       bg.clear();
-      bg.fillStyle(0x51cf66, 0.25);
+      bg.fillStyle(0x51cf66, 0.3);
       bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-      bg.lineStyle(2, 0x51cf66, 0.9);
+      bg.lineStyle(2, 0x51cf66, 0.95);
       bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
     });
     hitZone.on('pointerout', () => {
       text.setColor('#51cf66');
       bg.clear();
-      bg.fillStyle(0x51cf66, 0.15);
+      bg.fillStyle(0x51cf66, 0.18);
       bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-      bg.lineStyle(2, 0x51cf66, 0.6);
+      bg.lineStyle(2, 0x51cf66, 0.7);
       bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
     });
     hitZone.on('pointerdown', () => {
