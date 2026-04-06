@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { SoundManager } from '@/systems/SoundManager';
+import { WalletManager } from '@/systems/WalletManager';
 import { registerSW } from 'virtual:pwa-register';
 
 export class SettingsScene extends Phaser.Scene {
@@ -62,10 +63,10 @@ export class SettingsScene extends Phaser.Scene {
       });
     yPos += 80;
 
-    // ── Reset High Score Section ──
-    yPos = this.addSection(yPos, 'HIGH SCORE', 'Reset your saved high score to zero', 0xff6b6b);
-    this.createPillButton(GAME_WIDTH / 2, yPos, 'RESET', 160, 44, 0xff6b6b, '#ff6b6b',
-      () => this.resetHighScore());
+    // ── Reset All Section ──
+    yPos = this.addSection(yPos, 'RESET GAME', 'Wipe ALL progress: levels, gold, shop, high score', 0xff6b6b);
+    this.createPillButton(GAME_WIDTH / 2, yPos, 'RESET ALL', 180, 44, 0xff6b6b, '#ff6b6b',
+      () => this.resetAll());
     yPos += 80;
 
     // ── Status area ──
@@ -242,13 +243,14 @@ export class SettingsScene extends Phaser.Scene {
     }
   }
 
-  private resetHighScore(): void {
-    const current = localStorage.getItem('deathmarch-highscore');
-    if (!current || current === '0') {
-      this.showStatus('High score is already 0.', '#ffd43b');
-      return;
-    }
-    localStorage.setItem('deathmarch-highscore', '0');
-    this.showStatus(`Score of ${current} reset to 0.`, '#51cf66');
+  private resetAll(): void {
+    localStorage.removeItem('deathmarch-highscore');
+    localStorage.removeItem('deathmarch-level');
+    localStorage.removeItem('deathmarch-muted');
+    WalletManager.reset();
+    this.showStatus('All progress wiped! Restarting...', '#ff6b6b');
+    this.time.delayedCall(1000, () => {
+      this.scene.start('MenuScene');
+    });
   }
 }
