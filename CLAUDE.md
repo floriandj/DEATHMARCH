@@ -93,6 +93,12 @@ import { Something } from '@/systems/ObjectPool';
 - Existing coverage: ObjectPool, Army, Boss, GateSpawner, WaveSpawner, IsoHelper
 - Run a single test file: `npx vitest run tests/ObjectPool.test.ts`
 
+## Git Workflow
+
+- **Push directly to `main`** — do not create pull requests from feature branches.
+- Commit and push finished work straight to `main`.
+- No branch-based PR workflow is used for this project.
+
 ## Code Conventions
 
 - TypeScript strict mode — no implicit `any`, strict null checks
