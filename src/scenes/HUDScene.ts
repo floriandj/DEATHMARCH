@@ -29,6 +29,16 @@ export class HUDScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Reset state on (re)launch
+    this.score = 0;
+    this.distance = 0;
+    this.unitCount = 0;
+    this.killStreak = 0;
+    this.bossHpPercent = -1;
+    this.weaponType = '';
+    this.weaponName = '';
+    this.bossName = '';
+
     // Top bar background with gradient fade
     this.topBarBg = this.add.graphics();
     this.topBarBg.fillStyle(0x000000, 0.5);

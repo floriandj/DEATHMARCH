@@ -40,8 +40,8 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     if (!this.active) return;
     const dt = delta / 1000;
 
-    // Gentle pull toward formation target (keeps the group together)
-    const pullStrength = 3;
+    // Pull toward formation target (keeps the group together)
+    const pullStrength = 10;
     this.x += (this.targetX - this.x) * pullStrength * dt;
     this.y += (this.targetY - this.y) * pullStrength * dt;
 

@@ -7,7 +7,7 @@ export const TILE_HEIGHT = 32;
 
 // Player army
 export const STARTING_UNITS = 1;
-export const MARCH_SPEED = 100; // game-units per second
+export const MARCH_SPEED = 130; // game-units per second
 export const UNIT_FIRE_RATE = 500; // ms between bullets per unit (slower but stronger)
 export const BULLET_SPEED = 400; // pixels per second
 export const BULLET_DAMAGE = 3;
