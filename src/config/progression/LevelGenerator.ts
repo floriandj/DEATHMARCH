@@ -1,8 +1,8 @@
 // src/config/progression/LevelGenerator.ts
-// Procedurally generates 20 levels across 5 themed worlds (4 levels each).
-// Every level starts the player with 1 unit and a base weapon — upgrades are
-// found in the field. Weapon crate distances are offset from gate intervals so
-// they never overlap.
+// Endless procedural level generator.
+// Levels are grouped in cycles of 5 (easy → hard). Each cycle rotates through
+// the 5 world themes. Overall difficulty creeps up with each cycle so later
+// "easy" levels are still harder than earlier ones.
 
 import type {
   LevelConfig,
@@ -16,7 +16,7 @@ import type {
 } from './types';
 
 // ---------------------------------------------------------------------------
-// World definitions
+// World definitions (5 themes that cycle forever)
 // ---------------------------------------------------------------------------
 
 interface WorldThemeDef {
@@ -25,20 +25,6 @@ interface WorldThemeDef {
   glowColors: number[];
   accentColor: number;
   accentHex: string;
-}
-
-interface WorldDef {
-  tag: string; // short world identifier
-  displayName: string; // e.g. "Goblin Wastes"
-  names: string[]; // 4 level names
-  descriptions: string[]; // 4 level descriptions
-  theme: WorldThemeDef;
-  enemies: EnemyTemplate[];
-  weaponOrder: string[];
-  weapons: Record<string, LevelWeaponConfig>;
-  bossSprite: string;
-  bossNames: string[];
-  bossTint?: string;
 }
 
 interface EnemyTemplate {
@@ -50,30 +36,33 @@ interface EnemyTemplate {
   splashRadius: number;
   splashDamage: number;
   color: string;
-  /** Appears at this fraction through the level distance (0-1) */
   introFraction: number;
   scoreValue: number;
 }
 
+interface WorldDef {
+  tag: string;
+  displayName: string;
+  theme: WorldThemeDef;
+  levelNames: string[];
+  enemies: EnemyTemplate[];
+  weaponOrder: string[];
+  weapons: Record<string, LevelWeaponConfig>;
+  bossSprite: string;
+  bossNames: string[];
+  bossTint?: string;
+}
+
 const WORLDS: WorldDef[] = [
-  // ── World 1: Goblin Wastes ─────────────────────────────────────────────
+  // ── World 1: Goblin Wastes ──
   {
     tag: 'goblin',
     displayName: 'Goblin Wastes',
     theme: {
-      groundColor: 0x0c0c18,
-      detailColors: [0x12121e, 0x0e0e1a, 0x161624, 0x1a1a28],
-      glowColors: [0x220033, 0x1a0028, 0x0d001a],
-      accentColor: 0xff6b6b,
-      accentHex: '#ff6b6b',
+      groundColor: 0x0c0c18, detailColors: [0x12121e, 0x0e0e1a, 0x161624, 0x1a1a28],
+      glowColors: [0x220033, 0x1a0028, 0x0d001a], accentColor: 0xff6b6b, accentHex: '#ff6b6b',
     },
-    names: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Demon Gate'],
-    descriptions: [
-      'Your first steps into the wasteland.',
-      'Goblins swarm from every direction.',
-      'Orcs have fortified the mountain pass.',
-      'A demonic rift tears open the sky.',
-    ],
+    levelNames: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Troll Bridge', 'Demon Gate'],
     enemies: [
       { type: 'goblin', baseHp: 1, speed: 70, size: 12, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#ff6b6b', introFraction: 0, scoreValue: 10 },
       { type: 'orc', baseHp: 3, speed: 80, size: 16, contactDamage: 2, splashRadius: 0, splashDamage: 0, color: '#e64980', introFraction: 0.25, scoreValue: 30 },
@@ -88,26 +77,17 @@ const WORLDS: WorldDef[] = [
       lmg: { type: 'lmg', name: 'LMG', fireRate: 120, bulletColor: '#ff6b6b' },
     },
     bossSprite: 'boss_gorath',
-    bossNames: ['Gorath Spawn', 'Gorath the Fierce', 'Gorath the Destroyer', 'Gorath the Undying'],
+    bossNames: ['Gorath Spawn', 'Gorath the Fierce', 'Gorath the Destroyer', 'Gorath Reborn', 'Gorath the Undying'],
   },
-  // ── World 2: Infernal Pits ─────────────────────────────────────────────
+  // ── World 2: Infernal Pits ──
   {
     tag: 'infernal',
     displayName: 'Infernal Pits',
     theme: {
-      groundColor: 0x180808,
-      detailColors: [0x1e0e0e, 0x201010, 0x2a1414, 0x140a0a],
-      glowColors: [0x331100, 0x442200, 0x220000],
-      accentColor: 0xff4400,
-      accentHex: '#ff4400',
+      groundColor: 0x180808, detailColors: [0x1e0e0e, 0x201010, 0x2a1414, 0x140a0a],
+      glowColors: [0x331100, 0x442200, 0x220000], accentColor: 0xff4400, accentHex: '#ff4400',
     },
-    names: ['Ember Fields', 'Crimson Gauntlet', 'Hellfire Trench', 'Inferno Core'],
-    descriptions: [
-      'Heat rises from cracks in the earth.',
-      'Blood-soaked warriors charge from the flames.',
-      'The ground itself is on fire.',
-      'The Inferno Titan awaits in the molten heart.',
-    ],
+    levelNames: ['Ember Fields', 'Crimson Gauntlet', 'Hellfire Trench', 'Molten Core', 'Inferno Heart'],
     enemies: [
       { type: 'orc', baseHp: 4, speed: 90, size: 16, contactDamage: 2, splashRadius: 0, splashDamage: 0, color: '#e64980', introFraction: 0, scoreValue: 25 },
       { type: 'berserker', baseHp: 2, speed: 150, size: 14, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#ff4444', introFraction: 0.2, scoreValue: 40 },
@@ -122,26 +102,17 @@ const WORLDS: WorldDef[] = [
       minigun: { type: 'minigun', name: 'MINIGUN', fireRate: 55, bulletColor: '#ff00ff' },
     },
     bossSprite: 'boss_inferno',
-    bossNames: ['Flame Wraith', 'Inferno Beast', 'Molten Colossus', 'Inferno Titan'],
+    bossNames: ['Flame Wraith', 'Inferno Beast', 'Molten Colossus', 'Magma Lord', 'Inferno Titan'],
   },
-  // ── World 3: Frozen Abyss ─────────────────────────────────────────────
+  // ── World 3: Frozen Abyss ──
   {
     tag: 'frost',
     displayName: 'Frozen Abyss',
     theme: {
-      groundColor: 0x080c18,
-      detailColors: [0x0e1220, 0x101828, 0x0c1424, 0x141e30],
-      glowColors: [0x002244, 0x003355, 0x001133],
-      accentColor: 0x74c0fc,
-      accentHex: '#74c0fc',
+      groundColor: 0x080c18, detailColors: [0x0e1220, 0x101828, 0x0c1424, 0x141e30],
+      glowColors: [0x002244, 0x003355, 0x001133], accentColor: 0x74c0fc, accentHex: '#74c0fc',
     },
-    names: ['Frostbite Pass', 'Glacier Ruins', 'Banshee Hollow', 'The Frozen Throne'],
-    descriptions: [
-      'Ice and silence stretch to the horizon.',
-      'Ancient ruins crackle with frost magic.',
-      'Ghostly wails echo through the canyon.',
-      'The Frost Wyrm stirs beneath the glacier.',
-    ],
+    levelNames: ['Frostbite Pass', 'Glacier Ruins', 'Banshee Hollow', 'Ice Citadel', 'The Frozen Throne'],
     enemies: [
       { type: 'frostbite', baseHp: 2, speed: 100, size: 11, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#74c0fc', introFraction: 0, scoreValue: 15 },
       { type: 'ice_golem', baseHp: 15, speed: 35, size: 26, contactDamage: 5, splashRadius: 0, splashDamage: 0, color: '#4dabf7', introFraction: 0.25, scoreValue: 70 },
@@ -156,26 +127,17 @@ const WORLDS: WorldDef[] = [
       railgun: { type: 'railgun', name: 'RAILGUN', fireRate: 45, bulletColor: '#00ffcc' },
     },
     bossSprite: 'boss_frost',
-    bossNames: ['Ice Shade', 'Frost Troll King', 'Glacier Beast', 'Frost Wyrm'],
+    bossNames: ['Ice Shade', 'Frost Troll King', 'Glacier Beast', 'Blizzard Wyrm', 'Frost Wyrm'],
   },
-  // ── World 4: Plague Wastes ─────────────────────────────────────────────
+  // ── World 4: Plague Wastes ──
   {
     tag: 'plague',
     displayName: 'Plague Wastes',
     theme: {
-      groundColor: 0x0a100a,
-      detailColors: [0x101a0e, 0x0e160c, 0x142010, 0x0c1208],
-      glowColors: [0x113300, 0x224400, 0x002211],
-      accentColor: 0x2ecc71,
-      accentHex: '#2ecc71',
+      groundColor: 0x0a100a, detailColors: [0x101a0e, 0x0e160c, 0x142010, 0x0c1208],
+      glowColors: [0x113300, 0x224400, 0x002211], accentColor: 0x2ecc71, accentHex: '#2ecc71',
     },
-    names: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Plague Heart'],
-    descriptions: [
-      'Vermin pour from the sewers below.',
-      'Toxic swamps breed monstrosities.',
-      'Spore clouds choke the air thick.',
-      'The Plague Hydra regenerates endlessly.',
-    ],
+    levelNames: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Toxic Depths', 'Plague Heart'],
     enemies: [
       { type: 'rat_swarm', baseHp: 1, speed: 130, size: 10, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#a0522d', introFraction: 0, scoreValue: 8 },
       { type: 'blighted', baseHp: 6, speed: 70, size: 18, contactDamage: 3, splashRadius: 45, splashDamage: 1, color: '#2ecc71', introFraction: 0.2, scoreValue: 45 },
@@ -190,26 +152,17 @@ const WORLDS: WorldDef[] = [
       plasma: { type: 'plasma', name: 'PLASMA RIFLE', fireRate: 40, bulletColor: '#7bed9f' },
     },
     bossSprite: 'boss_plague',
-    bossNames: ['Plague Rat King', 'Toxic Hulk', 'Spore Lord', 'Plague Hydra'],
+    bossNames: ['Plague Rat King', 'Toxic Hulk', 'Spore Lord', 'Blight Titan', 'Plague Hydra'],
   },
-  // ── World 5: Throne of Ash ─────────────────────────────────────────────
+  // ── World 5: Throne of Ash ──
   {
     tag: 'ash',
     displayName: 'Throne of Ash',
     theme: {
-      groundColor: 0x100808,
-      detailColors: [0x1a0e0e, 0x140a0a, 0x201212, 0x0e0808],
-      glowColors: [0x330011, 0x220022, 0x440011],
-      accentColor: 0xc0392b,
-      accentHex: '#c0392b',
+      groundColor: 0x100808, detailColors: [0x1a0e0e, 0x140a0a, 0x201212, 0x0e0808],
+      glowColors: [0x330011, 0x220022, 0x440011], accentColor: 0xc0392b, accentHex: '#c0392b',
     },
-    names: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Throne of Ash'],
-    descriptions: [
-      'Shadow knights march in lockstep.',
-      'Ash falls like snow on a dying world.',
-      'Reality tears as void creatures emerge.',
-      'The Lich King commands an army of shadow and flame.',
-    ],
+    levelNames: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Dark Sanctum', 'Throne of Ash'],
     enemies: [
       { type: 'shadow_knight', baseHp: 8, speed: 100, size: 18, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#2c3e50', introFraction: 0, scoreValue: 50 },
       { type: 'ashwalker', baseHp: 5, speed: 160, size: 14, contactDamage: 3, splashRadius: 50, splashDamage: 2, color: '#e74c3c', introFraction: 0.2, scoreValue: 65 },
@@ -224,8 +177,7 @@ const WORLDS: WorldDef[] = [
       godslayer: { type: 'godslayer', name: 'GODSLAYER', fireRate: 20, bulletColor: '#fbbf24' },
     },
     bossSprite: 'boss_lich',
-    bossNames: ['Shadow Lord', 'Ash Demon', 'Void Prince', 'Lich King'],
-    bossTint: undefined,
+    bossNames: ['Shadow Lord', 'Ash Demon', 'Void Prince', 'Dark Sovereign', 'Lich King'],
   },
 ];
 
@@ -233,54 +185,49 @@ const WORLDS: WorldDef[] = [
 // Scaling helpers
 // ---------------------------------------------------------------------------
 
-/** levelIndex 0-19 → difficulty multiplier 1.0 – 3.0 */
-function difficultyScale(levelIndex: number): number {
-  return 1 + (levelIndex / 19) * 2;
-}
-
-/** Position within world (0-3) → intra-world ramp 1.0 – 1.6 */
-function worldRamp(posInWorld: number): number {
-  return 1 + posInWorld * 0.2;
+/**
+ * Each cycle of 5 levels goes easy→hard (posInCycle 0–4).
+ * The cycle number itself adds a global creep so later "easy" is still tougher.
+ */
+function difficultyScale(cycle: number, posInCycle: number): number {
+  const globalCreep = 1 + cycle * 0.4;        // +40% per full cycle
+  const localRamp = 1 + posInCycle * 0.25;     // +25% per step within cycle
+  return globalCreep * localRamp;
 }
 
 /** Offset a distance so it doesn't land on a gate-interval multiple */
 function offsetFromGates(distance: number, gateInterval: number): number {
   const remainder = distance % gateInterval;
-  const minGap = gateInterval * 0.2; // stay at least 20% of interval away
-  if (remainder < minGap) {
-    return distance + (minGap - remainder);
-  }
-  if (remainder > gateInterval - minGap) {
-    return distance - (remainder - (gateInterval - minGap));
-  }
+  const minGap = gateInterval * 0.2;
+  if (remainder < minGap) return distance + (minGap - remainder);
+  if (remainder > gateInterval - minGap) return distance - (remainder - (gateInterval - minGap));
   return distance;
 }
 
 // ---------------------------------------------------------------------------
-// Level generation
+// Public: generate a single level by index (0-based, unbounded)
 // ---------------------------------------------------------------------------
 
-function generateLevel(levelIndex: number): LevelConfig {
-  const worldIdx = Math.floor(levelIndex / 4);
-  const posInWorld = levelIndex % 4;
+export function generateLevel(levelIndex: number): LevelConfig {
+  const cycle = Math.floor(levelIndex / 5);      // which 5-level group
+  const posInCycle = levelIndex % 5;              // 0=easy … 4=hard
+  const worldIdx = cycle % WORLDS.length;         // rotate through worlds
   const world = WORLDS[worldIdx];
-  const diff = difficultyScale(levelIndex);
-  const ramp = worldRamp(posInWorld);
+  const diff = difficultyScale(cycle, posInCycle);
 
-  // Distance to boss scales with difficulty
-  const triggerDistance = Math.round(2000 + levelIndex * 150);
-  const gateInterval = Math.round(500 - levelIndex * 5); // slightly closer gates later
-  const marchSpeed = Math.round(130 + levelIndex * 2);
+  // Core tuning knobs
+  const triggerDistance = Math.round(2000 + cycle * 200 + posInCycle * 150);
+  const gateInterval = Math.max(250, Math.round(500 - cycle * 10 - posInCycle * 10));
+  const marchSpeed = Math.round(130 + cycle * 3 + posInCycle * 2);
 
   // ── Enemies ──
   const enemies: Record<string, LevelEnemyConfig> = {};
   const enemyKills: Record<string, number> = {};
   for (const tmpl of world.enemies) {
-    const hpScale = diff * ramp;
     enemies[tmpl.type] = {
       type: tmpl.type,
-      hp: Math.max(1, Math.round(tmpl.baseHp * hpScale)),
-      speed: Math.round(tmpl.speed * (1 + posInWorld * 0.05)),
+      hp: Math.max(1, Math.round(tmpl.baseHp * diff)),
+      speed: Math.round(tmpl.speed * (1 + posInCycle * 0.04)),
       size: tmpl.size,
       contactDamage: tmpl.contactDamage,
       splashRadius: tmpl.splashRadius,
@@ -292,17 +239,17 @@ function generateLevel(levelIndex: number): LevelConfig {
     enemyKills[tmpl.type] = Math.round(tmpl.scoreValue * diff);
   }
 
-  // ── Weapons (in-field crates) ──
+  // ── Weapons ──
   const weaponOrder = world.weaponOrder;
-  const weapons: Record<string, LevelWeaponConfig> = { ...world.weapons };
-  // Slightly faster fire rates for later levels in a world
-  for (const key of Object.keys(weapons)) {
+  const weapons: Record<string, LevelWeaponConfig> = {};
+  for (const key of Object.keys(world.weapons)) {
     weapons[key] = {
-      ...weapons[key],
-      fireRate: Math.max(15, Math.round(weapons[key].fireRate * (1 - posInWorld * 0.05))),
+      ...world.weapons[key],
+      fireRate: Math.max(12, Math.round(world.weapons[key].fireRate * (1 - posInCycle * 0.04))),
     };
   }
 
+  // ── Weapon crates (offset from gate intervals) ──
   const weaponCrates: WeaponCrateConfig[] = [];
   for (let i = 0; i < weaponOrder.length - 1; i++) {
     const fraction = (i + 1) / weaponOrder.length;
@@ -312,40 +259,39 @@ function generateLevel(levelIndex: number): LevelConfig {
       currentWeapon: weaponOrder[i],
       nextWeapon: weaponOrder[i + 1],
       distance: dist,
-      hp: Math.round((15 + i * 12) * ramp),
+      hp: Math.round((15 + i * 12) * (1 + posInCycle * 0.15)),
     });
   }
 
-  // ── Waves ──
-  const baseInterval = Math.max(40, 120 - levelIndex * 4);
+  // ── Waves (easy levels = sparse, hard levels = dense) ──
+  const baseInterval = Math.max(30, 120 - cycle * 5 - posInCycle * 8);
   const brackets: WaveBracket[] = [
-    { maxDistance: Math.round(triggerDistance * 0.1), clusterMin: 1, clusterMax: 1 + Math.floor(posInWorld * 0.5), intervalMin: baseInterval, intervalMax: baseInterval + 60 },
-    { maxDistance: Math.round(triggerDistance * 0.2), clusterMin: 1, clusterMax: 2 + Math.floor(posInWorld * 0.5), intervalMin: Math.round(baseInterval * 0.7), intervalMax: Math.round((baseInterval + 40) * 0.8) },
-    { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 1 + Math.floor(posInWorld * 0.5), clusterMax: 3 + posInWorld, intervalMin: Math.round(baseInterval * 0.5), intervalMax: Math.round(baseInterval * 0.7) },
-    { maxDistance: Math.round(triggerDistance * 0.5), clusterMin: 2, clusterMax: 4 + posInWorld, intervalMin: Math.round(baseInterval * 0.4), intervalMax: Math.round(baseInterval * 0.55) },
-    { maxDistance: Math.round(triggerDistance * 0.7), clusterMin: 2 + Math.floor(posInWorld * 0.5), clusterMax: 5 + posInWorld, intervalMin: Math.round(baseInterval * 0.3), intervalMax: Math.round(baseInterval * 0.4) },
-    { maxDistance: Math.round(triggerDistance * 0.85), clusterMin: 3 + posInWorld, clusterMax: 6 + posInWorld, intervalMin: Math.round(baseInterval * 0.22), intervalMax: Math.round(baseInterval * 0.32) },
-    { maxDistance: 99999, clusterMin: 4 + posInWorld, clusterMax: 7 + posInWorld + Math.floor(levelIndex / 5), intervalMin: Math.max(10, Math.round(baseInterval * 0.15)), intervalMax: Math.max(16, Math.round(baseInterval * 0.25)) },
+    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 1 + Math.floor(posInCycle * 0.3), intervalMin: baseInterval, intervalMax: baseInterval + 60 },
+    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.3), intervalMin: Math.round(baseInterval * 0.7), intervalMax: Math.round((baseInterval + 40) * 0.8) },
+    { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 1 + Math.floor(posInCycle * 0.4), clusterMax: 3 + posInCycle, intervalMin: Math.round(baseInterval * 0.5), intervalMax: Math.round(baseInterval * 0.7) },
+    { maxDistance: Math.round(triggerDistance * 0.50), clusterMin: 2, clusterMax: 4 + posInCycle, intervalMin: Math.round(baseInterval * 0.4), intervalMax: Math.round(baseInterval * 0.55) },
+    { maxDistance: Math.round(triggerDistance * 0.70), clusterMin: 2 + Math.floor(posInCycle * 0.4), clusterMax: 5 + posInCycle, intervalMin: Math.round(baseInterval * 0.3), intervalMax: Math.round(baseInterval * 0.4) },
+    { maxDistance: Math.round(triggerDistance * 0.85), clusterMin: 3 + posInCycle, clusterMax: 6 + posInCycle, intervalMin: Math.round(baseInterval * 0.22), intervalMax: Math.round(baseInterval * 0.32) },
+    { maxDistance: 99999, clusterMin: 4 + posInCycle, clusterMax: 7 + posInCycle + cycle, intervalMin: Math.max(10, Math.round(baseInterval * 0.15)), intervalMax: Math.max(16, Math.round(baseInterval * 0.25)) },
   ];
 
   // ── Gates ──
-  const gateTemplates: GateTemplateConfig[] = buildGateTemplates(levelIndex, triggerDistance);
+  const gateTemplates = buildGateTemplates(triggerDistance);
 
   // ── Boss ──
-  const bossHp = Math.round((300 + levelIndex * 80) * ramp);
-  const phases = buildBossPhases(posInWorld, levelIndex);
-  const enrageThreshold = 0.2 + posInWorld * 0.04;
-  const chargeSpeed = 300 + levelIndex * 10;
+  const bossHp = Math.round((300 + cycle * 120 + posInCycle * 100) * (1 + posInCycle * 0.15));
+  const phases = buildBossPhases(posInCycle, cycle);
+  const chargeSpeed = 300 + cycle * 15 + posInCycle * 12;
 
   // ── Scoring ──
-  const perMeter = 1 + Math.floor(levelIndex / 4);
-  const perSurvivingUnit = 100 + levelIndex * 15;
-  const bossKill = 3000 + levelIndex * 1000;
+  const perMeter = 1 + cycle;
+  const perSurvivingUnit = 100 + cycle * 20 + posInCycle * 10;
+  const bossKill = 3000 + cycle * 1500 + posInCycle * 500;
 
   return {
     id: `level_${levelIndex + 1}`,
-    name: world.names[posInWorld],
-    description: world.descriptions[posInWorld],
+    name: world.levelNames[posInCycle],
+    description: `Cycle ${cycle + 1} — ${world.displayName}`,
     theme: {
       groundColor: world.theme.groundColor,
       detailColors: world.theme.detailColors,
@@ -362,61 +308,47 @@ function generateLevel(levelIndex: number): LevelConfig {
     weaponCrates,
     enemies,
     waves: {
-      gracePeriod: Math.max(60, 120 - levelIndex * 3),
+      gracePeriod: Math.max(50, 120 - cycle * 4 - posInCycle * 6),
       brackets,
     },
-    gates: {
-      interval: gateInterval,
-      templates: gateTemplates,
-    },
+    gates: { interval: gateInterval, templates: gateTemplates },
     boss: {
-      name: world.bossNames[posInWorld],
+      name: world.bossNames[posInCycle],
       sprite: world.bossSprite,
       tint: world.bossTint,
-      scale: 1.5 + posInWorld * 0.1,
+      scale: 1.5 + posInCycle * 0.08,
       hp: bossHp,
       triggerDistance,
       phases,
-      enrageThreshold,
-      enrageDurationMultiplier: Math.max(0.3, 0.55 - posInWorld * 0.05),
-      slamWarning: Math.max(700, 1500 - levelIndex * 30),
-      enrageWarning: Math.max(350, 800 - levelIndex * 20),
+      enrageThreshold: 0.2 + posInCycle * 0.03,
+      enrageDurationMultiplier: Math.max(0.25, 0.55 - posInCycle * 0.05),
+      slamWarning: Math.max(600, 1500 - cycle * 30 - posInCycle * 60),
+      enrageWarning: Math.max(300, 800 - cycle * 20 - posInCycle * 40),
       chargeSpeed,
       enrageChargeSpeed: Math.round(chargeSpeed * 1.5),
     },
-    scoring: {
-      perMeter,
-      perSurvivingUnit,
-      bossKill,
-      enemyKills,
-    },
+    scoring: { perMeter, perSurvivingUnit, bossKill, enemyKills },
   };
 }
 
-function buildGateTemplates(levelIndex: number, triggerDistance: number): GateTemplateConfig[] {
-  // Max multiply scales down as levels progress to keep armies small
-  const maxMult = levelIndex < 8 ? 3 : 2;
-  const templates: GateTemplateConfig[] = [
-    // Early gates: small additions
+function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
+  return [
     { left: { op: 'add', value: 3 }, right: { op: 'add', value: 2 }, minDistance: 0 },
     { left: { op: 'add', value: 5 }, right: { op: 'add', value: 2 }, minDistance: 0 },
-    // Mid gates: multiply with risk
     { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 5 }, minDistance: Math.round(triggerDistance * 0.1) },
     { left: { op: 'add', value: 3 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
     { left: { op: 'add', value: 8 }, right: { op: 'add', value: 3 }, minDistance: Math.round(triggerDistance * 0.2) },
-    // Late gates: bigger risk/reward
-    { left: { op: 'multiply', value: maxMult }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.35) },
+    { left: { op: 'multiply', value: 3 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.35) },
     { left: { op: 'divide', value: 2 }, right: { op: 'multiply', value: 2 }, minDistance: Math.round(triggerDistance * 0.4) },
     { left: { op: 'multiply', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.55) },
     { left: { op: 'add', value: 10 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.65) },
   ];
-  return templates;
 }
 
-function buildBossPhases(posInWorld: number, levelIndex: number): BossPhaseConfig[] {
-  const vulnDuration = Math.max(2000, 5000 - levelIndex * 100);
-  const slamDuration = Math.max(2000, 3000 + posInWorld * 200);
-  const chargeDuration = Math.max(2500, 4000 - posInWorld * 200);
+function buildBossPhases(posInCycle: number, _cycle: number): BossPhaseConfig[] {
+  const vulnDuration = Math.max(1800, 5000 - posInCycle * 500);
+  const slamDuration = Math.max(2000, 3000 + posInCycle * 200);
+  const chargeDuration = Math.max(2500, 4000 - posInCycle * 200);
 
   const phases: BossPhaseConfig[] = [
     { name: 'vulnerable', duration: vulnDuration, damageReduction: 0 },
@@ -424,14 +356,13 @@ function buildBossPhases(posInWorld: number, levelIndex: number): BossPhaseConfi
     { name: 'charge', duration: chargeDuration, damageReduction: 1 },
   ];
 
-  // Later levels in a world get extra phases
-  if (posInWorld >= 2) {
+  if (posInCycle >= 2) {
     phases.push(
       { name: 'vulnerable', duration: Math.round(vulnDuration * 0.7), damageReduction: 0 },
       { name: 'slam', duration: Math.round(slamDuration * 0.8), damageReduction: 0.6 },
     );
   }
-  if (posInWorld === 3) {
+  if (posInCycle >= 4) {
     phases.push(
       { name: 'charge', duration: Math.round(chargeDuration * 0.8), damageReduction: 1 },
     );
@@ -441,27 +372,41 @@ function buildBossPhases(posInWorld: number, levelIndex: number): BossPhaseConfi
 }
 
 // ---------------------------------------------------------------------------
-// Public API
+// World info helper (for menu display)
 // ---------------------------------------------------------------------------
 
-/** World metadata for the menu map */
 export interface WorldInfo {
   name: string;
-  startLevel: number; // 0-based index into the level array
+  startLevel: number;
   levelCount: number;
 }
 
-export const WORLD_INFO: WorldInfo[] = WORLDS.map((w, i) => ({
-  name: w.displayName,
-  startLevel: i * 4,
-  levelCount: 4,
-}));
+/** Get world info for a given range of levels */
+export function getWorldInfoForLevels(maxLevel: number): WorldInfo[] {
+  const infos: WorldInfo[] = [];
+  const totalLevels = maxLevel + 1;
+  const totalCycles = Math.ceil(totalLevels / 5);
 
-/** Generate all 20 levels */
-export function generateAllLevels(): LevelConfig[] {
-  const levels: LevelConfig[] = [];
-  for (let i = 0; i < 20; i++) {
-    levels.push(generateLevel(i));
+  for (let c = 0; c < totalCycles; c++) {
+    const worldIdx = c % WORLDS.length;
+    const world = WORLDS[worldIdx];
+    const start = c * 5;
+    const count = Math.min(5, totalLevels - start);
+    const cycleLabel = totalCycles > WORLDS.length ? ` ${toRoman(c + 1)}` : '';
+    infos.push({
+      name: `${world.displayName}${cycleLabel}`,
+      startLevel: start,
+      levelCount: count,
+    });
   }
-  return levels;
+
+  return infos;
+}
+
+function toRoman(n: number): string {
+  if (n <= 5) {
+    const map = ['', 'I', 'II', 'III', 'IV', 'V'];
+    return map[n];
+  }
+  return String(n);
 }

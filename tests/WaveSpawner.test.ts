@@ -16,29 +16,41 @@ describe('WaveSpawner', () => {
     }
   });
 
-  it('only spawns goblins before 700m', () => {
+  it('only spawns first enemy type before second enemy appears', () => {
     const spawner = new WaveSpawner();
+    const mgr = LevelManager.instance;
+    const enemies = Object.values(mgr.enemies);
+    // Find the distance at which the second enemy type appears
+    const sorted = [...enemies].sort((a, b) => a.appearsAtDistance - b.appearsAtDistance);
+    const secondAppears = sorted[1]?.appearsAtDistance ?? 500;
+    const safeDistance = Math.max(50, secondAppears - 50);
+
     const allSpawns = [];
-    for (let d = 10; d <= 600; d += 10) {
+    for (let d = 10; d <= safeDistance; d += 10) {
       allSpawns.push(...spawner.update(d));
     }
     for (const s of allSpawns) {
-      expect(s.type).toBe('goblin');
+      expect(s.type).toBe(sorted[0].type);
     }
   });
 
-  it('can spawn orcs after 700m', () => {
+  it('can spawn second enemy type after its intro distance', () => {
     const spawner = new WaveSpawner();
-    for (let d = 10; d <= 700; d += 10) {
+    const mgr = LevelManager.instance;
+    const enemies = Object.values(mgr.enemies);
+    const sorted = [...enemies].sort((a, b) => a.appearsAtDistance - b.appearsAtDistance);
+    const secondAppears = sorted[1]?.appearsAtDistance ?? 500;
+
+    for (let d = 10; d <= secondAppears; d += 10) {
       spawner.update(d);
     }
     const types = new Set<string>();
-    for (let d = 710; d <= 1200; d += 10) {
+    for (let d = secondAppears + 10; d <= secondAppears + 600; d += 10) {
       for (const s of spawner.update(d)) {
         types.add(s.type);
       }
     }
-    expect(types.has('orc')).toBe(true);
+    expect(types.has(sorted[1].type)).toBe(true);
   });
 
   it('increases spawn density with distance', () => {
@@ -63,10 +75,12 @@ describe('WaveSpawner', () => {
 
   it('stops spawning after boss trigger distance', () => {
     const spawner = new WaveSpawner();
-    for (let d = 10; d <= 3010; d += 10) {
+    const mgr = LevelManager.instance;
+    const triggerDist = mgr.bossConfig.triggerDistance;
+    for (let d = 10; d <= triggerDist + 10; d += 10) {
       spawner.update(d);
     }
-    const postBoss = spawner.update(3020);
+    const postBoss = spawner.update(triggerDist + 20);
     expect(postBoss).toHaveLength(0);
   });
 });

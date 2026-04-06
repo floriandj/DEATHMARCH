@@ -1,6 +1,9 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
-import { LevelManager } from '@/config/progression';
+import { LevelManager, generateLevel } from '@/config/progression';
+
+/** We only need to load assets for the 5 world themes (they cycle). */
+const WORLDS_COUNT = 5;
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -8,7 +11,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Player unit spritesheet (2 frames, 20×20 each)
+    // Player unit spritesheet (2 frames, 20x20 each)
     this.load.spritesheet('unit', 'assets/sprites/unit.svg', {
       frameWidth: 20,
       frameHeight: 20,
@@ -17,12 +20,11 @@ export class BootScene extends Phaser.Scene {
     // Bullet
     this.load.image('bullet', 'assets/sprites/bullet.svg');
 
-    // Enemy spritesheets — load from ALL levels so switching levels works
+    // Enemy spritesheets — load one representative level per world (first of each cycle)
     const loadedTypes = new Set<string>();
-    const mgr = LevelManager.instance;
-    for (let i = 0; i < mgr.totalLevels; i++) {
-      mgr.setLevel(i);
-      for (const [type, stats] of Object.entries(mgr.enemies)) {
+    for (let w = 0; w < WORLDS_COUNT; w++) {
+      const lvl = generateLevel(w * 5); // first level of each world
+      for (const [type, stats] of Object.entries(lvl.enemies)) {
         if (loadedTypes.has(type)) continue;
         loadedTypes.add(type);
         const size = stats.size * 2;
@@ -32,13 +34,12 @@ export class BootScene extends Phaser.Scene {
         });
       }
     }
-    mgr.setLevel(0); // reset to first level
 
-    // Boss spritesheets — load per-level boss sprites
+    // Boss spritesheets — one per world theme
     const loadedBosses = new Set<string>();
-    for (let i = 0; i < mgr.totalLevels; i++) {
-      mgr.setLevel(i);
-      const bossSprite = mgr.bossConfig.sprite;
+    for (let w = 0; w < WORLDS_COUNT; w++) {
+      const lvl = generateLevel(w * 5);
+      const bossSprite = lvl.boss.sprite;
       if (!loadedBosses.has(bossSprite)) {
         loadedBosses.add(bossSprite);
         this.load.spritesheet(bossSprite, `assets/sprites/${bossSprite}.svg`, {
@@ -47,12 +48,11 @@ export class BootScene extends Phaser.Scene {
         });
       }
     }
-    // Also load legacy 'boss' key for backwards compat
+    // Legacy 'boss' key
     this.load.spritesheet('boss', 'assets/sprites/boss.svg', {
       frameWidth: 88,
       frameHeight: 88,
     });
-    mgr.setLevel(0);
 
     // Weapon icon SVGs
     const weaponIcons = [
@@ -68,15 +68,9 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    // Generate gate textures procedurally (simple colored blocks, no art needed)
     this.generateGateTextures();
-
-    // Generate VFX textures
     this.generateVfxTextures();
-
-    // Create animations
     this.createAnimations();
-
     this.scene.start('SplashScene');
   }
 
@@ -101,28 +95,24 @@ export class BootScene extends Phaser.Scene {
   }
 
   private generateVfxTextures(): void {
-    // Hit spark (small bright square)
     const spark = this.add.graphics();
     spark.fillStyle(0xffffff, 1);
     spark.fillRect(0, 0, 3, 3);
     spark.generateTexture('vfx_spark', 3, 3);
     spark.destroy();
 
-    // Slam shockwave ring segment
     const ring = this.add.graphics();
     ring.fillStyle(0xff0000, 1);
     ring.fillRect(0, 0, 6, 6);
     ring.generateTexture('vfx_ring', 6, 6);
     ring.destroy();
 
-    // Charge trail particle
     const trail = this.add.graphics();
     trail.fillStyle(0xff4400, 1);
     trail.fillRect(0, 0, 5, 5);
     trail.generateTexture('vfx_trail', 5, 5);
     trail.destroy();
 
-    // Enrage burst particle
     const burst = this.add.graphics();
     burst.fillStyle(0xff0000, 1);
     burst.fillRect(0, 0, 4, 4);
@@ -139,12 +129,11 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    // Enemy walk animations — create for all loaded types
-    const mgr = LevelManager.instance;
+    // Enemy walk animations — one per unique enemy type across all worlds
     const createdAnims = new Set<string>();
-    for (let i = 0; i < mgr.totalLevels; i++) {
-      mgr.setLevel(i);
-      for (const type of Object.keys(mgr.enemies)) {
+    for (let w = 0; w < WORLDS_COUNT; w++) {
+      const lvl = generateLevel(w * 5);
+      for (const type of Object.keys(lvl.enemies)) {
         const animKey = `enemy_${type}_walk`;
         if (createdAnims.has(animKey)) continue;
         createdAnims.add(animKey);
@@ -156,19 +145,19 @@ export class BootScene extends Phaser.Scene {
         });
       }
     }
-    mgr.setLevel(0);
 
-    // Boss idle animations — one per boss sprite
+    // Boss idle animations
     this.anims.create({
       key: 'boss_idle',
       frames: this.anims.generateFrameNumbers('boss', { start: 0, end: 1 }),
       frameRate: 2,
       repeat: -1,
     });
+
     const createdBossAnims = new Set<string>();
-    for (let i = 0; i < mgr.totalLevels; i++) {
-      mgr.setLevel(i);
-      const spriteKey = mgr.bossConfig.sprite;
+    for (let w = 0; w < WORLDS_COUNT; w++) {
+      const lvl = generateLevel(w * 5);
+      const spriteKey = lvl.boss.sprite;
       const animKey = `${spriteKey}_idle`;
       if (!createdBossAnims.has(animKey)) {
         createdBossAnims.add(animKey);
@@ -180,6 +169,5 @@ export class BootScene extends Phaser.Scene {
         });
       }
     }
-    mgr.setLevel(0);
   }
 }

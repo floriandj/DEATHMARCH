@@ -9,12 +9,7 @@ import type {
   GateTemplateConfig,
   BossConfig,
 } from './types';
-import { generateAllLevels } from './LevelGenerator';
-
-// ---------------------------------------------------------------------------
-// Registry — generated procedurally from LevelGenerator
-// ---------------------------------------------------------------------------
-const LEVEL_REGISTRY: LevelConfig[] = generateAllLevels();
+import { generateLevel } from './LevelGenerator';
 
 // ---------------------------------------------------------------------------
 // Helpers: convert JSON-friendly values to runtime values
@@ -52,18 +47,17 @@ export function gateColor(opt: GateOptionConfig): number {
 }
 
 // ---------------------------------------------------------------------------
-// LevelManager — singleton that manages level progression
+// LevelManager — singleton with lazy infinite level generation
 // ---------------------------------------------------------------------------
 
 export class LevelManager {
   private static _instance: LevelManager | null = null;
 
-  private levels: LevelConfig[];
+  /** Cache of generated levels (generated on demand) */
+  private cache: Map<number, LevelConfig> = new Map();
   private currentIndex: number = 0;
 
-  private constructor() {
-    this.levels = [...LEVEL_REGISTRY];
-  }
+  private constructor() {}
 
   static get instance(): LevelManager {
     if (!LevelManager._instance) {
@@ -77,33 +71,45 @@ export class LevelManager {
     LevelManager._instance = null;
   }
 
+  // -- Level generation on demand -------------------------------------------
+
+  /** Get or generate a level config by index */
+  getLevel(index: number): LevelConfig {
+    let config = this.cache.get(index);
+    if (!config) {
+      config = generateLevel(index);
+      this.cache.set(index, config);
+    }
+    return config;
+  }
+
   // -- Level navigation -----------------------------------------------------
 
   get current(): LevelConfig {
-    return this.levels[this.currentIndex];
+    return this.getLevel(this.currentIndex);
   }
 
   get currentLevelIndex(): number {
     return this.currentIndex;
   }
 
+  /** Endless — always has a next level */
   get totalLevels(): number {
-    return this.levels.length;
+    // Return a number large enough for any practical use
+    // but tests and menus can reference it; actual levels generated on demand
+    return Infinity;
   }
 
   get hasNextLevel(): boolean {
-    return this.currentIndex < this.levels.length - 1;
+    return true; // always — game is endless
   }
 
   setLevel(index: number): void {
-    if (index < 0 || index >= this.levels.length) {
-      throw new Error(`Invalid level index: ${index}`);
-    }
+    if (index < 0) throw new Error(`Invalid level index: ${index}`);
     this.currentIndex = index;
   }
 
   advanceLevel(): boolean {
-    if (!this.hasNextLevel) return false;
     this.currentIndex++;
     return true;
   }
