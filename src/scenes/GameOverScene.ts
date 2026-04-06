@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager } from '@/config/progression';
+import { SoundManager } from '@/systems/SoundManager';
 
 interface GameOverData {
   score: number;
@@ -29,6 +30,11 @@ export class GameOverScene extends Phaser.Scene {
     const canAdvance = data.bossDefeated && mgr.hasNextLevel;
     const accentColor = level.theme.accentColor;
     const accentHex = level.theme.accentHex;
+
+    // Play result sound
+    if (data.bossDefeated) {
+      SoundManager.play('victory');
+    }
 
     // Background glow
     const bgGlow = this.add.graphics();
@@ -199,7 +205,10 @@ export class GameOverScene extends Phaser.Scene {
       bg.lineStyle(2, bgColor, 0.55);
       bg.strokeRoundedRect(-w / 2, -h / 2, w, h, r);
     });
-    hitZone.on('pointerdown', callback);
+    hitZone.on('pointerdown', () => {
+      SoundManager.play('button_click');
+      callback();
+    });
 
     this.tweens.add({
       targets: container, alpha: 1, y: { from: y + 15, to: y },

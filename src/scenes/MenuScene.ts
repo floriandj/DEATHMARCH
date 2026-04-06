@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
+import { SoundManager } from '@/systems/SoundManager';
 
 const NODE_SPACING = 170;
 const LEFT_X = 180;
@@ -26,6 +27,8 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor('#050510');
     this.cameras.main.fadeIn(400, 0, 0, 0);
+
+    SoundManager.init();
 
     const mgr = LevelManager.instance;
     const savedLevel = parseInt(localStorage.getItem('deathmarch-level') || '0', 10);
@@ -352,6 +355,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private startGame(): void {
+    SoundManager.play('button_click');
     this.cameras.main.fadeOut(200, 0, 0, 0);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       this.scene.start('GameScene');

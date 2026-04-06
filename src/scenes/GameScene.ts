@@ -20,6 +20,7 @@ import { Enemy } from '@/entities/Enemy';
 import { Gate } from '@/entities/Gate';
 import { WeaponCrate } from '@/entities/WeaponCrate';
 import { HUDScene } from '@/scenes/HUDScene';
+import { SoundManager } from '@/systems/SoundManager';
 
 export class GameScene extends Phaser.Scene {
   private input_handler!: InputHandler;
@@ -53,6 +54,7 @@ export class GameScene extends Phaser.Scene {
 
   // Track active unit count to know when to respawn vs reposition
   private activeUnitCount: number = 0;
+  private shootSoundTimer: number = 0;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -71,6 +73,10 @@ export class GameScene extends Phaser.Scene {
     this.nextGateDistance = level.gates.interval;
     this.currentWeapon = level.startingWeapon;
     this.crateSpawned = false;
+    this.shootSoundTimer = 0;
+
+    SoundManager.init();
+    SoundManager.play('level_start');
 
     this.input_handler = new InputHandler(this);
     this.waveSpawner = new WaveSpawner();
@@ -223,6 +229,7 @@ export class GameScene extends Phaser.Scene {
           bullet.despawn();
           const killed = enemy.takeDamage(bullet.damage);
           if (killed) {
+            SoundManager.play('enemy_death');
             this.score += enemy.scoreValue;
             const now = this.time.now;
             if (now - this.lastKillTime < 2000) {
@@ -246,8 +253,9 @@ export class GameScene extends Phaser.Scene {
             bullet.despawn();
             const newWeapon = crate.takeDamage(bullet.damage);
             if (newWeapon) {
+              SoundManager.play('weapon_upgrade');
               this.currentWeapon = newWeapon;
-              this.crateSpawned = false; // allow next tier's crate
+              this.crateSpawned = false;
               this.showWeaponUpgrade(crate.x, crate.y, newWeapon);
             }
             break;
@@ -321,6 +329,7 @@ export class GameScene extends Phaser.Scene {
           const oldCount = this.unitCount;
           this.unitCount = result.apply(this.unitCount);
           this.unitCount = Math.max(1, this.unitCount);
+          SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
           this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
           gate.despawn();
           this.respawnArmy();
@@ -336,12 +345,17 @@ export class GameScene extends Phaser.Scene {
 
     // 9. Fire bullets (weapon fire rate)
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
+    this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
           bullet.fire(unit.x, unit.y);
+          if (this.shootSoundTimer > 150) {
+            SoundManager.play('shoot');
+            this.shootSoundTimer = 0;
+          }
         }
       }
     }
@@ -500,6 +514,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private gameOver(): void {
+    SoundManager.play('defeat');
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
     this.scene.start('GameOverScene', {

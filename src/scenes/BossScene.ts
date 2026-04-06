@@ -14,6 +14,7 @@ import { PlayerUnit } from '@/entities/PlayerUnit';
 import { Bullet } from '@/entities/Bullet';
 import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
+import { SoundManager } from '@/systems/SoundManager';
 
 interface BossSceneData {
   score: number;
@@ -45,6 +46,7 @@ export class BossScene extends Phaser.Scene {
   private slamActive: boolean = false;
   private slamZoneX: number[] = []; // X positions of danger zones
   private entranceComplete: boolean = false;
+  private shootSoundTimer: number = 0;
 
   // Boss visual config
   private bossScale: number = 1.5;
@@ -198,12 +200,17 @@ export class BossScene extends Phaser.Scene {
 
     // 5. Fire bullets at boss
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
+    this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
           bullet.fire(unit.x, unit.y);
+          if (this.shootSoundTimer > 150) {
+            SoundManager.play('shoot');
+            this.shootSoundTimer = 0;
+          }
         }
       }
     }
@@ -225,6 +232,7 @@ export class BossScene extends Phaser.Scene {
       if (Math.sqrt(dx * dx + dy * dy) < 50) {
         bullet.despawn();
         this.bossState.takeDamage(bullet.damage);
+        SoundManager.play('boss_hit');
 
         // Hit spark VFX
         this.spawnHitSpark(bullet.x, bullet.y);
@@ -317,6 +325,7 @@ export class BossScene extends Phaser.Scene {
 
   /** Explosive burst when boss enters enrage mode */
   private playEnrageBurst(): void {
+    SoundManager.play('boss_enrage');
     this.cameras.main.shake(500, 0.05);
     this.cameras.main.flash(400, 255, 50, 50);
 
@@ -427,6 +436,7 @@ export class BossScene extends Phaser.Scene {
   }
 
   private executeSlamDamage(): void {
+    SoundManager.play('boss_slam');
     this.slamActive = true;
 
     // Flash zones red
@@ -477,6 +487,7 @@ export class BossScene extends Phaser.Scene {
   private chargeHit: boolean = false;
 
   private startCharge(): void {
+    SoundManager.play('boss_charge');
     this.chargeHit = false;
     this.chargeTrailTimer = 0;
     this.chargeDirection = Math.random() < 0.5 ? -1 : 1;
@@ -577,6 +588,7 @@ export class BossScene extends Phaser.Scene {
   // ---------- End states ----------
 
   private bossDefeated(): void {
+    SoundManager.play('boss_death');
     const level = LevelManager.instance.current;
 
     // Epic death explosion — multi-wave particle burst
@@ -644,6 +656,7 @@ export class BossScene extends Phaser.Scene {
   }
 
   private gameOver(): void {
+    SoundManager.play('defeat');
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
     this.scene.start('GameOverScene', {

@@ -1,6 +1,7 @@
 // src/scenes/SettingsScene.ts
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
+import { SoundManager } from '@/systems/SoundManager';
 import { registerSW } from 'virtual:pwa-register';
 
 export class SettingsScene extends Phaser.Scene {
@@ -47,6 +48,18 @@ export class SettingsScene extends Phaser.Scene {
     yPos = this.addSection(yPos, 'CLEAR CACHE', 'Wipe service worker cache and reload', 0xffd43b);
     this.createPillButton(GAME_WIDTH / 2, yPos, 'CLEAR', 160, 44, 0xffd43b, '#ffd43b',
       () => this.clearCache());
+    yPos += 80;
+
+    // ── Sound Section ──
+    yPos = this.addSection(yPos, 'SOUND', SoundManager.isMuted ? 'Sound is OFF' : 'Sound is ON', 0x51cf66);
+    const muteLabel = SoundManager.isMuted ? 'UNMUTE' : 'MUTE';
+    const muteBtn = this.createPillButton(GAME_WIDTH / 2, yPos, muteLabel, 160, 44, 0x51cf66, '#51cf66',
+      () => {
+        const nowMuted = SoundManager.toggleMute();
+        const btnText = muteBtn.getAt(1) as Phaser.GameObjects.Text;
+        btnText.setText(nowMuted ? 'UNMUTE' : 'MUTE');
+        if (!nowMuted) SoundManager.play('button_click');
+      });
     yPos += 80;
 
     // ── Reset High Score Section ──
