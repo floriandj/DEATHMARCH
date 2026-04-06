@@ -59,13 +59,8 @@ export class GameScene extends Phaser.Scene {
   private dmgNumberTimer: number = 0;
   private dmgNumberAccum: number = 0;
 
-  // Boss gate
-  private bossGateWorldY: number = 0;
-  private bossGateSpawned: boolean = false;
-  private bossGatePassed: boolean = false;
-  private bossGateLocked: boolean = true;
-  private bossGateSprite: Phaser.GameObjects.Sprite | null = null;
-  private bossGateLabel: Phaser.GameObjects.Text | null = null;
+  // Boss trigger — fires when all enemies dead after spawning is complete
+  private spawningComplete: boolean = false;
 
   // Gold
   private levelGold: number = 0;
@@ -97,12 +92,7 @@ export class GameScene extends Phaser.Scene {
     this.crateSpawned = false;
     this.shootSoundTimer = 0;
 
-    // Boss gate (world Y is negative since army marches upward)
-    this.bossGateWorldY = -level.boss.triggerDistance;
-    this.bossGateSpawned = false;
-    this.bossGatePassed = false;
-    this.bossGateSprite = null;
-    this.bossGateLabel = null;
+    this.spawningComplete = false;
 
     // Gold tracking
     this.levelGold = 0;
@@ -486,27 +476,13 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 10. Boss gate — spawn when approaching, open when all enemies are dead
-    if (!this.bossGateSpawned) {
-      const camTop = this.cameras.main.scrollY;
-      if (this.bossGateWorldY > camTop - 200) {
-        this.spawnBossGate();
-      }
+    // 10. Boss trigger — once spawning stops and all enemies are dead
+    if (!this.spawningComplete && this.distance >= level.boss.triggerDistance) {
+      this.spawningComplete = true;
     }
-    if (this.bossGateSprite && !this.bossGatePassed) {
-      const enemiesAlive = this.enemies.some(e => e.active);
-      this.updateBossGateLocked(enemiesAlive);
-
-      if (!enemiesAlive) {
-        for (const unit of this.units) {
-          if (!unit.active) continue;
-          if (Math.abs(unit.y - this.bossGateWorldY) < 25) {
-            this.bossGatePassed = true;
-            this.transitionToBoss();
-            return;
-          }
-        }
-      }
+    if (this.spawningComplete && !this.enemies.some(e => e.active)) {
+      this.transitionToBoss();
+      return;
     }
 
     // 11. Update HUD
@@ -685,61 +661,6 @@ export class GameScene extends Phaser.Scene {
       bossDefeated: false,
       goldEarned: this.levelGold + Math.floor(this.pouchGold * 0.5),
     });
-  }
-
-  private spawnBossGate(): void {
-    this.bossGateSpawned = true;
-    this.bossGateLocked = true;
-    const y = this.bossGateWorldY;
-
-    this.bossGateSprite = this.add.sprite(GAME_WIDTH / 2, y, 'gate_boss');
-    this.bossGateSprite.setDepth(2);
-    this.bossGateSprite.setAlpha(0.4);
-    this.bossGateSprite.setTint(0x666666);
-
-    this.bossGateLabel = this.add.text(GAME_WIDTH / 2, y, 'KILL ALL ENEMIES', {
-      fontSize: '22px',
-      color: '#ff6666',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 4,
-    }).setOrigin(0.5).setDepth(3);
-  }
-
-  private updateBossGateLocked(enemiesAlive: boolean): void {
-    if (!enemiesAlive && this.bossGateLocked) {
-      // Unlock the gate
-      this.bossGateLocked = false;
-      const y = this.bossGateWorldY;
-
-      this.bossGateSprite!.clearTint();
-      this.bossGateSprite!.setAlpha(1);
-      this.bossGateLabel!.setText('BOSS FIGHT');
-      this.bossGateLabel!.setStyle({ color: '#ffcc00', fontSize: '28px' });
-
-      // Pulsing glow
-      this.tweens.add({
-        targets: this.bossGateSprite,
-        alpha: { from: 0.7, to: 1 },
-        scaleX: { from: 0.98, to: 1.02 },
-        scaleY: { from: 0.95, to: 1.05 },
-        duration: 500,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut',
-      });
-
-      // Label bob
-      this.tweens.add({
-        targets: this.bossGateLabel,
-        y: { from: y - 5, to: y + 5 },
-        duration: 600,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut',
-      });
-    }
   }
 
   private transitionToBoss(): void {
