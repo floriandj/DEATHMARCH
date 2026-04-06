@@ -138,6 +138,46 @@ export class GameScene extends Phaser.Scene {
 
     // Spawn initial army
     this.respawnArmy();
+
+    // First-play tutorial hint
+    if (!localStorage.getItem('deathmarch-tutorial-seen')) {
+      localStorage.setItem('deathmarch-tutorial-seen', '1');
+      this.showTutorial();
+    }
+  }
+
+  private showTutorial(): void {
+    const overlay = this.add.graphics().setDepth(100);
+    overlay.fillStyle(0x000000, 0.5);
+    overlay.fillRect(0, this.armyWorldY - GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT * 2);
+
+    const hand = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 100, '\u{1F449}', {
+      fontSize: '48px',
+    }).setOrigin(0.5).setDepth(101);
+
+    // Animate hand left-right
+    this.tweens.add({
+      targets: hand,
+      x: { from: GAME_WIDTH / 2 - 80, to: GAME_WIDTH / 2 + 80 },
+      duration: 800, yoyo: true, repeat: 2, ease: 'Sine.easeInOut',
+    });
+
+    const hint = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 180, 'DRAG TO MOVE\nYOUR ARMY!', {
+      fontSize: '28px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      align: 'center',
+    }).setOrigin(0.5).setDepth(101);
+
+    const tap = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 40, 'Tap anywhere to start', {
+      fontSize: '16px', color: '#888888', fontFamily: 'monospace',
+    }).setOrigin(0.5).setDepth(101);
+
+    // Dismiss on tap
+    this.input.once('pointerdown', () => {
+      this.tweens.add({
+        targets: [overlay, hand, hint, tap], alpha: 0, duration: 300,
+        onComplete: () => { overlay.destroy(); hand.destroy(); hint.destroy(); tap.destroy(); },
+      });
+    });
   }
 
   update(_time: number, delta: number): void {

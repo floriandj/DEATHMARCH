@@ -64,16 +64,16 @@ export class MenuScene extends Phaser.Scene {
     this.add.rectangle(GAME_WIDTH / 2, 62, 180, 2, 0xff4040, 0.5).setDepth(11);
 
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add.text(PAD, 84, `\u2605 ${highScore}`, {
+    this.add.text(PAD, 82, `\u2B50 ${highScore}`, {
       fontSize: '18px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5).setDepth(11);
 
-    this.add.text(GAME_WIDTH - PAD, 84, `${WalletManager.gold}g`, {
+    this.add.text(GAME_WIDTH - PAD, 82, `\u{1FA99} ${WalletManager.gold}g`, {
       fontSize: '18px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(1, 0.5).setDepth(11);
 
-    this.add.text(GAME_WIDTH / 2, 100, `LEVEL ${maxUnlocked + 1}`, {
-      fontSize: '14px', color: '#666666', fontFamily: 'monospace',
+    this.add.text(GAME_WIDTH / 2, 100, 'Scroll & tap a level to play!', {
+      fontSize: '13px', color: '#555555', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(11);
 
     // ── Fixed footer with settings ──
@@ -251,20 +251,27 @@ export class MenuScene extends Phaser.Scene {
         cg.strokeCircle(0, 0, NODE_R - 2);
         nc.add(cg);
 
-        nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '20px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
+        // Checkmark + number
+        nc.add(this.add.text(0, -4, '\u2713', {
+          fontSize: '22px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
+        }).setOrigin(0.5));
+        nc.add(this.add.text(0, NODE_R + 10, String(i + 1), {
+          fontSize: '13px', color: '#3a8a4a', fontFamily: 'monospace',
         }).setOrigin(0.5));
 
       } else {
         const cg = this.add.graphics();
-        cg.fillStyle(accent, 0.04);
+        cg.fillStyle(0x111118, 1);
         cg.fillCircle(0, 0, NODE_R - 4);
-        cg.lineStyle(2, 0x333333, 0.25);
+        cg.lineStyle(2, 0x333333, 0.3);
         cg.strokeCircle(0, 0, NODE_R - 4);
         nc.add(cg);
 
-        nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '18px', color: '#333333', fontFamily: 'monospace', fontStyle: 'bold',
+        nc.add(this.add.text(0, -4, '\u{1F512}', {
+          fontSize: '18px',
+        }).setOrigin(0.5).setAlpha(0.4));
+        nc.add(this.add.text(0, NODE_R + 10, String(i + 1), {
+          fontSize: '12px', color: '#333333', fontFamily: 'monospace',
         }).setOrigin(0.5));
       }
 
