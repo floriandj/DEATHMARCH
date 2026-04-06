@@ -1,5 +1,4 @@
 // src/scenes/MenuScene.ts
-// Candy-crush style vertical winding path with level nodes.
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
@@ -7,19 +6,16 @@ import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 
 const PAD = 40;
-const NODE_R = 36;
-const NODE_SPACING_Y = 130;
-const WORLD_GAP = 60;
+const NODE_R = 34;
+const NODE_SPACING_Y = 120;
+const WORLD_GAP = 55;
 const LOOKAHEAD = 8;
-// S-curve X positions (3 columns zigzag)
-const COL_L = 160;
+const COL_L = 155;
 const COL_C = GAME_WIDTH / 2;
-const COL_R = GAME_WIDTH - 160;
+const COL_R = GAME_WIDTH - 155;
 
-/** Generate an S-curve pattern of X positions */
 function getNodeX(index: number): number {
-  const pattern = [COL_L, COL_C, COL_R, COL_C]; // left, center, right, center
-  return pattern[index % 4];
+  return [COL_L, COL_C, COL_R, COL_C][index % 4];
 }
 
 export class MenuScene extends Phaser.Scene {
@@ -36,7 +32,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#050510');
+    this.cameras.main.setBackgroundColor('#080818');
     this.cameras.main.fadeIn(400, 0, 0, 0);
     SoundManager.init();
 
@@ -46,58 +42,69 @@ export class MenuScene extends Phaser.Scene {
     mgr.setLevel(maxUnlocked);
     const visibleCount = maxUnlocked + 1 + LOOKAHEAD;
 
-    // ── Fixed header (on top of scroll) ──
-    const headerH = 120;
+    // ── Header ──
+    const headerH = 110;
+    const hdrBg = this.add.graphics().setDepth(10);
+    hdrBg.fillStyle(0x080818, 1);
+    hdrBg.fillRect(0, 0, GAME_WIDTH, headerH);
+    hdrBg.fillStyle(0x080818, 0.7);
+    hdrBg.fillRect(0, headerH, GAME_WIDTH, 15);
 
-    // Header bg
-    const headerBg = this.add.graphics().setDepth(10);
-    headerBg.fillStyle(0x050510, 1);
-    headerBg.fillRect(0, 0, GAME_WIDTH, headerH);
-    headerBg.fillStyle(0x050510, 0.7);
-    headerBg.fillRect(0, headerH, GAME_WIDTH, 20);
-
-    this.add.text(GAME_WIDTH / 2, 32, 'DEATHMARCH', {
-      fontSize: '40px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+    // Title
+    this.add.text(GAME_WIDTH / 2, 30, 'DEATHMARCH', {
+      fontSize: '36px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
       stroke: '#ff2040', strokeThickness: 3,
     }).setOrigin(0.5).setDepth(11);
 
-    this.add.rectangle(GAME_WIDTH / 2, 62, 180, 2, 0xff4040, 0.5).setDepth(11);
+    // Score pill
+    const scorePill = this.add.graphics().setDepth(11);
+    scorePill.fillStyle(0xffd43b, 0.15);
+    scorePill.fillRoundedRect(PAD, 62, 150, 32, 16);
+    scorePill.lineStyle(2, 0xffd43b, 0.3);
+    scorePill.strokeRoundedRect(PAD, 62, 150, 32, 16);
 
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add.text(PAD, 82, `\u2B50 ${highScore}`, {
-      fontSize: '18px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(PAD + 14, 78, `\u2B50 ${highScore}`, {
+      fontSize: '16px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5).setDepth(11);
 
-    this.add.text(GAME_WIDTH - PAD, 82, `\u{1FA99} ${WalletManager.gold}g`, {
-      fontSize: '18px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+    // Gold pill
+    const goldPill = this.add.graphics().setDepth(11);
+    goldPill.fillStyle(0xffd700, 0.15);
+    goldPill.fillRoundedRect(GAME_WIDTH - PAD - 140, 62, 140, 32, 16);
+    goldPill.lineStyle(2, 0xffd700, 0.3);
+    goldPill.strokeRoundedRect(GAME_WIDTH - PAD - 140, 62, 140, 32, 16);
+
+    this.add.text(GAME_WIDTH - PAD - 14, 78, `\u{1FA99} ${WalletManager.gold}g`, {
+      fontSize: '16px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(1, 0.5).setDepth(11);
 
-    this.add.text(GAME_WIDTH / 2, 100, 'Scroll & tap a level to play!', {
-      fontSize: '13px', color: '#555555', fontFamily: 'monospace',
+    // Hint
+    this.add.text(GAME_WIDTH / 2, 98, 'Tap a level to play!', {
+      fontSize: '12px', color: '#555555', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(11);
 
-    // ── Fixed footer with settings ──
-    const footerBg = this.add.graphics().setDepth(10);
-    footerBg.fillStyle(0x050510, 0.8);
-    footerBg.fillRect(0, GAME_HEIGHT - 60, GAME_WIDTH, 60);
+    // ── Footer ──
+    const footBg = this.add.graphics().setDepth(10);
+    footBg.fillStyle(0x080818, 0.9);
+    footBg.fillRect(0, GAME_HEIGHT - 55, GAME_WIDTH, 55);
 
-    const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 30, '\u2699 SETTINGS', {
-      fontSize: '16px', color: '#666666', fontFamily: 'monospace', fontStyle: 'bold',
+    const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 28, '\u2699  SETTINGS', {
+      fontSize: '15px', color: '#666666', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(11);
     settBtn.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
     settBtn.on('pointerover', () => settBtn.setColor('#ffffff'));
     settBtn.on('pointerout', () => settBtn.setColor('#666666'));
 
-    // ── Scrollable level map ──
+    // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
     const positions = this.buildPositions(visibleCount);
-    this.totalHeight = positions[positions.length - 1].y + 300;
+    this.totalHeight = positions[positions.length - 1].y + 250;
 
     this.drawPaths(positions, maxUnlocked);
     this.drawWorldBanners(positions, visibleCount);
     this.drawNodes(positions, maxUnlocked);
 
-    // Scroll to current level
     const currentY = positions[Math.min(maxUnlocked, positions.length - 1)].y;
     this.scrollContainer.y = -currentY + GAME_HEIGHT * 0.45;
     this.clampScroll();
@@ -105,11 +112,9 @@ export class MenuScene extends Phaser.Scene {
     // ── Scroll input ──
     this.velocity = 0;
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      this.dragging = true;
-      this.dragStartY = p.y;
+      this.dragging = true; this.dragStartY = p.y;
       this.scrollStartY = this.scrollContainer.y;
-      this.velocity = 0;
-      this.lastPointerY = p.y;
+      this.velocity = 0; this.lastPointerY = p.y;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (!this.dragging) return;
@@ -129,11 +134,9 @@ export class MenuScene extends Phaser.Scene {
     }
   }
 
-  // ── Layout ──
-
   private buildPositions(count: number): { x: number; y: number }[] {
     const pos: { x: number; y: number }[] = [];
-    let y = headerOffset();
+    let y = 160;
     for (let i = 0; i < count; i++) {
       if (i > 0 && i % 5 === 0) y += WORLD_GAP;
       pos.push({ x: getNodeX(i), y });
@@ -143,13 +146,11 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private drawPaths(positions: { x: number; y: number }[], maxUnlocked: number): void {
-    // Dark path
     const g = this.add.graphics();
-    g.lineStyle(6, 0xffffff, 0.05);
+    g.lineStyle(5, 0xffffff, 0.06);
     for (let i = 0; i < positions.length - 1; i++) {
       const a = positions[i], b = positions[i + 1];
       if ((i + 1) % 5 === 0) {
-        // Dotted between worlds
         for (let s = 0; s < 6; s += 2) {
           const t1 = s / 6, t2 = (s + 1) / 6;
           g.beginPath();
@@ -158,17 +159,13 @@ export class MenuScene extends Phaser.Scene {
           g.strokePath();
         }
       } else {
-        g.beginPath();
-        g.moveTo(a.x, a.y);
-        g.lineTo(b.x, b.y);
-        g.strokePath();
+        g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.strokePath();
       }
     }
     this.scrollContainer.add(g);
 
-    // Bright completed path
     const bright = this.add.graphics();
-    bright.lineStyle(6, 0x51cf66, 0.35);
+    bright.lineStyle(5, 0x51cf66, 0.4);
     for (let i = 0; i < Math.min(maxUnlocked, positions.length - 1); i++) {
       bright.beginPath();
       bright.moveTo(positions[i].x, positions[i].y);
@@ -182,21 +179,21 @@ export class MenuScene extends Phaser.Scene {
     const worldInfos = getWorldInfoForLevels(visibleCount - 1);
     for (const world of worldInfos) {
       if (world.startLevel >= positions.length) continue;
-      const nodeY = positions[world.startLevel].y - 55;
+      const y = positions[world.startLevel].y - 48;
       const lvl = generateLevel(world.startLevel);
+      const accent = lvl.theme.accentColor;
 
       const bg = this.add.graphics();
-      bg.fillStyle(lvl.theme.accentColor, 0.08);
-      bg.fillRoundedRect(GAME_WIDTH / 2 - 160, nodeY - 16, 320, 32, 16);
-      bg.lineStyle(1, lvl.theme.accentColor, 0.2);
-      bg.strokeRoundedRect(GAME_WIDTH / 2 - 160, nodeY - 16, 320, 32, 16);
+      bg.fillStyle(accent, 0.1);
+      bg.fillRoundedRect(GAME_WIDTH / 2 - 150, y - 14, 300, 28, 14);
+      bg.lineStyle(2, accent, 0.25);
+      bg.strokeRoundedRect(GAME_WIDTH / 2 - 150, y - 14, 300, 28, 14);
       this.scrollContainer.add(bg);
 
-      const label = this.add.text(GAME_WIDTH / 2, nodeY, world.name.toUpperCase(), {
-        fontSize: '14px', color: lvl.theme.accentHex, fontFamily: 'monospace',
+      this.scrollContainer.add(this.add.text(GAME_WIDTH / 2, y, world.name.toUpperCase(), {
+        fontSize: '13px', color: lvl.theme.accentHex, fontFamily: 'monospace',
         fontStyle: 'bold', letterSpacing: 3,
-      }).setOrigin(0.5);
-      this.scrollContainer.add(label);
+      }).setOrigin(0.5));
     }
   }
 
@@ -215,72 +212,63 @@ export class MenuScene extends Phaser.Scene {
         // Glow
         const glow = this.add.graphics();
         glow.fillStyle(0xffd43b, 0.12);
-        glow.fillCircle(0, 0, NODE_R + 14);
+        glow.fillCircle(0, 0, NODE_R + 12);
         nc.add(glow);
         this.tweens.add({
-          targets: glow, alpha: { from: 0.2, to: 0.6 }, scale: { from: 0.95, to: 1.1 },
+          targets: glow, alpha: { from: 0.15, to: 0.5 }, scale: { from: 0.95, to: 1.1 },
           duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
         });
 
-        // Circle
+        // Filled circle
         const cg = this.add.graphics();
-        cg.fillStyle(0x0a0a1a, 1);
+        cg.fillStyle(0xffd43b, 0.8);
         cg.fillCircle(0, 0, NODE_R);
-        cg.lineStyle(3, 0xffd43b, 0.9);
-        cg.strokeCircle(0, 0, NODE_R);
+        // Highlight top half
+        cg.fillStyle(0xffffff, 0.2);
+        cg.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.7);
         nc.add(cg);
 
-        // Number
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '24px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+          fontSize: '22px', color: '#111', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
 
-        // Level name
-        nc.add(this.add.text(0, NODE_R + 16, lvl.name.toUpperCase(), {
-          fontSize: '13px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+        nc.add(this.add.text(0, NODE_R + 14, lvl.name.toUpperCase(), {
+          fontSize: '12px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
 
-        // PLAY button below
-        this.createPlayButton(x, y + NODE_R + 50);
+        // Play button
+        this.createPlayButton(x, y + NODE_R + 44);
 
       } else if (isCompleted) {
         const cg = this.add.graphics();
-        cg.fillStyle(0x51cf66, 0.12);
+        cg.fillStyle(0x51cf66, 0.7);
         cg.fillCircle(0, 0, NODE_R - 2);
-        cg.lineStyle(2, 0x51cf66, 0.5);
-        cg.strokeCircle(0, 0, NODE_R - 2);
+        cg.fillStyle(0xffffff, 0.15);
+        cg.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.6);
         nc.add(cg);
 
-        // Checkmark + number
-        nc.add(this.add.text(0, -4, '\u2713', {
-          fontSize: '22px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
-        }).setOrigin(0.5));
-        nc.add(this.add.text(0, NODE_R + 10, String(i + 1), {
-          fontSize: '13px', color: '#3a8a4a', fontFamily: 'monospace',
+        nc.add(this.add.text(0, -3, '\u2713', {
+          fontSize: '24px', color: '#111', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
 
       } else {
         const cg = this.add.graphics();
-        cg.fillStyle(0x111118, 1);
+        cg.fillStyle(0x1a1a2e, 1);
         cg.fillCircle(0, 0, NODE_R - 4);
-        cg.lineStyle(2, 0x333333, 0.3);
+        cg.lineStyle(2, 0x333344, 0.5);
         cg.strokeCircle(0, 0, NODE_R - 4);
         nc.add(cg);
 
-        nc.add(this.add.text(0, -4, '\u{1F512}', {
-          fontSize: '18px',
-        }).setOrigin(0.5).setAlpha(0.4));
-        nc.add(this.add.text(0, NODE_R + 10, String(i + 1), {
-          fontSize: '12px', color: '#333333', fontFamily: 'monospace',
+        nc.add(this.add.text(0, -2, String(i + 1), {
+          fontSize: '16px', color: '#333344', fontFamily: 'monospace', fontStyle: 'bold',
         }).setOrigin(0.5));
       }
 
-      // Tappable for unlocked levels
       if (!isLocked) {
-        const hitZone = this.add.zone(0, 0, NODE_R * 2 + 16, NODE_R * 2 + 16)
+        const hit = this.add.zone(0, 0, NODE_R * 2 + 16, NODE_R * 2 + 16)
           .setInteractive({ useHandCursor: true });
-        nc.add(hitZone);
-        hitZone.on('pointerdown', () => {
+        nc.add(hit);
+        hit.on('pointerdown', () => {
           this.time.delayedCall(80, () => {
             if (Math.abs(this.velocity) < 3) {
               SoundManager.play('button_click');
@@ -296,54 +284,35 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createPlayButton(x: number, y: number): void {
-    const btnW = 200, btnH = 56;
+    const btnW = 180, btnH = 48;
     const container = this.add.container(x, y);
 
+    const bg = this.add.graphics();
+    bg.fillStyle(0x51cf66, 0.85);
+    bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
+    bg.fillStyle(0xffffff, 0.15);
+    bg.fillRoundedRect(-btnW / 2 + 3, -btnH / 2 + 3, btnW - 6, btnH * 0.4, { tl: btnH / 2 - 2, tr: btnH / 2 - 2, bl: 0, br: 0 });
+    container.add(bg);
+
     const glow = this.add.graphics();
-    glow.fillStyle(0x51cf66, 0.08);
+    glow.fillStyle(0x51cf66, 0.15);
     glow.fillRoundedRect(-btnW / 2 - 4, -btnH / 2 - 4, btnW + 8, btnH + 8, btnH / 2 + 4);
-    container.add(glow);
+    container.addAt(glow, 0);
     this.tweens.add({
-      targets: glow, alpha: { from: 0.12, to: 0.4 },
+      targets: glow, alpha: { from: 0.1, to: 0.35 },
       duration: 1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
-    const bg = this.add.graphics();
-    bg.fillStyle(0x51cf66, 0.18);
-    bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-    bg.lineStyle(2, 0x51cf66, 0.7);
-    bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-    container.add(bg);
+    container.add(this.add.text(0, 0, '\u25B6  PLAY', {
+      fontSize: '22px', color: '#111', fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 4,
+    }).setOrigin(0.5));
 
-    const text = this.add.text(0, 0, '\u25B6  PLAY', {
-      fontSize: '24px', color: '#51cf66', fontFamily: 'monospace',
-      fontStyle: 'bold', letterSpacing: 5,
-    }).setOrigin(0.5);
-    container.add(text);
-
-    const hitZone = this.add.zone(0, 0, btnW, btnH).setInteractive({ useHandCursor: true });
-    container.add(hitZone);
-
-    hitZone.on('pointerover', () => {
-      text.setColor('#ffffff');
-      bg.clear();
-      bg.fillStyle(0x51cf66, 0.3);
-      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-      bg.lineStyle(2, 0x51cf66, 0.95);
-      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-    });
-    hitZone.on('pointerout', () => {
-      text.setColor('#51cf66');
-      bg.clear();
-      bg.fillStyle(0x51cf66, 0.18);
-      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-      bg.lineStyle(2, 0x51cf66, 0.7);
-      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-    });
-    hitZone.on('pointerdown', () => {
+    const hit = this.add.zone(0, 0, btnW, btnH).setInteractive({ useHandCursor: true });
+    container.add(hit);
+    hit.on('pointerdown', () => {
       SoundManager.play('button_click');
       this.tweens.add({
-        targets: container, scale: 0.92, duration: 60, yoyo: true, ease: 'Power2',
+        targets: container, scale: 0.93, duration: 60, yoyo: true, ease: 'Power2',
         onComplete: () => { container.setScale(1); this.startGame(); },
       });
     });
@@ -362,8 +331,4 @@ export class MenuScene extends Phaser.Scene {
     const minY = -(this.totalHeight - GAME_HEIGHT + 80);
     this.scrollContainer.y = Phaser.Math.Clamp(this.scrollContainer.y, minY, 60);
   }
-}
-
-function headerOffset(): number {
-  return 180; // first node starts below the fixed header
 }

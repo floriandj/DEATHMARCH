@@ -12,13 +12,17 @@ interface GameOverData {
   goldEarned: number;
 }
 
+// Consistent padding from edges
+const PAD = 40;
+const CW = GAME_WIDTH - PAD * 2; // content width
+
 export class GameOverScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameOverScene' });
   }
 
   create(data: GameOverData): void {
-    this.cameras.main.setBackgroundColor('#050510');
+    this.cameras.main.setBackgroundColor('#080818');
 
     const prev = parseInt(localStorage.getItem('deathmarch-highscore') || '0', 10);
     const isNewHigh = data.score > prev;
@@ -29,235 +33,224 @@ export class GameOverScene extends Phaser.Scene {
     const levelIndex = mgr.currentLevelIndex;
     const canAdvance = data.bossDefeated && mgr.hasNextLevel;
     const accentHex = level.theme.accentHex;
-    const accentColor = level.theme.accentColor;
     const goldEarned = data.goldEarned || 0;
     const showShop = !data.bossDefeated;
 
     if (data.bossDefeated) SoundManager.play('victory');
 
-    // Background glow
-    const bgGlow = this.add.graphics();
-    bgGlow.fillStyle(data.bossDefeated ? 0x51cf66 : 0xff4040, 0.06);
-    bgGlow.fillCircle(GAME_WIDTH / 2, 120, 250);
+    let y = 30;
 
-    let yPos = 40;
+    // ── Header card (title + level info) ──
+    const headerColor = data.bossDefeated ? 0x51cf66 : 0xff4040;
+    const headerH = 140;
+    this.drawCard(PAD, y, CW, headerH, headerColor, 0.15, 3);
 
-    // ── Result title with emoji ──
     const emoji = data.bossDefeated ? '\u{1F3C6}' : '\u{1F480}';
     const titleText = data.bossDefeated ? 'VICTORY!' : 'DEFEATED';
     const titleColor = data.bossDefeated ? '#51cf66' : '#ff6b6b';
-    const subtitle = data.bossDefeated ? 'Boss destroyed!' : 'Your army was wiped out';
 
-    const title = this.add.text(GAME_WIDTH / 2, yPos, `${emoji} ${titleText}`, {
-      fontSize: '42px', color: titleColor, fontFamily: 'monospace', fontStyle: 'bold',
+    const title = this.add.text(GAME_WIDTH / 2, y + 40, `${emoji}  ${titleText}`, {
+      fontSize: '38px', color: titleColor, fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5).setScale(0.5).setAlpha(0);
     this.tweens.add({ targets: title, scale: 1, alpha: 1, duration: 500, ease: 'Back.easeOut' });
 
-    yPos += 50;
-    this.add.text(GAME_WIDTH / 2, yPos, subtitle, {
-      fontSize: '16px', color: '#888888', fontFamily: 'monospace',
+    const subtitle = data.bossDefeated ? 'Boss destroyed!' : 'Your army was wiped out';
+    this.add.text(GAME_WIDTH / 2, y + 80, subtitle, {
+      fontSize: '15px', color: '#aaaaaa', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
-    yPos += 30;
-
-    // Level pill
-    this.add.text(GAME_WIDTH / 2, yPos, `Level ${levelIndex + 1} \u2022 ${level.name}`, {
-      fontSize: '15px', color: accentHex, fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(GAME_WIDTH / 2, y + 108, `Level ${levelIndex + 1} \u2022 ${level.name}`, {
+      fontSize: '14px', color: accentHex, fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    yPos += 30;
+    y += headerH + 14;
 
-    // ── Stats cards — big prominent numbers ──
-    const cardW = 500;
-    const cardX = (GAME_WIDTH - cardW) / 2;
-    const cardPad = 20;
+    // ── Score card (big, gold) ──
+    this.drawCard(PAD, y, CW, 80, 0xffd43b, 0.12, 2);
 
-    // Score card (biggest, most prominent)
-    const scoreBg = this.add.graphics();
-    scoreBg.fillStyle(0xffd43b, 0.06);
-    scoreBg.fillRoundedRect(cardX, yPos, cardW, 70, 16);
-    scoreBg.lineStyle(1, 0xffd43b, 0.15);
-    scoreBg.strokeRoundedRect(cardX, yPos, cardW, 70, 16);
-
-    this.add.text(cardX + cardPad, yPos + 35, '\u2B50  SCORE', {
-      fontSize: '16px', color: '#aa8833', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(PAD + 20, y + 26, '\u2B50', { fontSize: '28px' }).setOrigin(0, 0.5);
+    this.add.text(PAD + 56, y + 22, 'SCORE', {
+      fontSize: '13px', color: '#ccaa44', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
 
-    const scoreVal = this.add.text(cardX + cardW - cardPad, yPos + 35, '0', {
-      fontSize: '32px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    const scoreVal = this.add.text(PAD + CW - 20, y + 44, '0', {
+      fontSize: '36px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
 
-    // Score count-up
     if (data.score > 0) {
-      const counter = { val: 0 };
+      const ctr = { val: 0 };
       this.tweens.add({
-        targets: counter, val: data.score,
+        targets: ctr, val: data.score,
         duration: Math.min(1200, 500 + data.score / 10), delay: 300, ease: 'Power2',
-        onUpdate: () => scoreVal.setText(String(Math.floor(counter.val))),
+        onUpdate: () => scoreVal.setText(String(Math.floor(ctr.val))),
         onComplete: () => scoreVal.setText(String(data.score)),
       });
-    } else {
-      scoreVal.setText(String(data.score));
-    }
+    } else scoreVal.setText('0');
 
-    yPos += 80;
+    y += 90;
 
-    // Distance + Gold row (side by side)
-    const halfW = (cardW - 10) / 2;
+    // ── Distance + Gold (side by side) ──
+    const halfW = (CW - 10) / 2;
 
-    // Distance card
-    const distBg = this.add.graphics();
-    distBg.fillStyle(0x00d4ff, 0.06);
-    distBg.fillRoundedRect(cardX, yPos, halfW, 64, 14);
-    distBg.lineStyle(1, 0x00d4ff, 0.12);
-    distBg.strokeRoundedRect(cardX, yPos, halfW, 64, 14);
-
-    this.add.text(cardX + 14, yPos + 18, '\u{1F3C3} DISTANCE', {
-      fontSize: '11px', color: '#0088aa', fontFamily: 'monospace', fontStyle: 'bold',
+    this.drawCard(PAD, y, halfW, 72, 0x00d4ff, 0.12, 2);
+    this.add.text(PAD + 14, y + 20, '\u{1F3C3}', { fontSize: '18px' }).setOrigin(0, 0.5);
+    this.add.text(PAD + 38, y + 20, 'DISTANCE', {
+      fontSize: '11px', color: '#0099bb', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
-
-    this.add.text(cardX + halfW - 14, yPos + 42, `${data.distance}m`, {
-      fontSize: '22px', color: '#00d4ff', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(PAD + halfW - 14, y + 48, `${data.distance}m`, {
+      fontSize: '24px', color: '#00d4ff', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
 
-    // Gold card
-    const goldX = cardX + halfW + 10;
-    const goldBg = this.add.graphics();
-    goldBg.fillStyle(0xffd700, 0.06);
-    goldBg.fillRoundedRect(goldX, yPos, halfW, 64, 14);
-    goldBg.lineStyle(1, 0xffd700, 0.12);
-    goldBg.strokeRoundedRect(goldX, yPos, halfW, 64, 14);
-
-    this.add.text(goldX + 14, yPos + 18, '\u{1FA99} GOLD', {
-      fontSize: '11px', color: '#aa8800', fontFamily: 'monospace', fontStyle: 'bold',
+    const goldX = PAD + halfW + 10;
+    this.drawCard(goldX, y, halfW, 72, 0xffd700, 0.12, 2);
+    this.add.text(goldX + 14, y + 20, '\u{1FA99}', { fontSize: '18px' }).setOrigin(0, 0.5);
+    this.add.text(goldX + 38, y + 20, 'GOLD', {
+      fontSize: '11px', color: '#bb8800', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
-
-    this.add.text(goldX + halfW - 14, yPos + 42, `+${goldEarned}`, {
-      fontSize: '22px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(goldX + halfW - 14, y + 48, `+${goldEarned}`, {
+      fontSize: '24px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
 
-    yPos += 76;
+    y += 82;
 
     if (isNewHigh) {
-      const newBest = this.add.text(GAME_WIDTH / 2, yPos, '\u2728 NEW HIGH SCORE! \u2728', {
-        fontSize: '20px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+      const nb = this.add.text(GAME_WIDTH / 2, y + 10, '\u2728 NEW HIGH SCORE! \u2728', {
+        fontSize: '18px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
       }).setOrigin(0.5);
       this.tweens.add({
-        targets: newBest, alpha: { from: 0.5, to: 1 }, scale: { from: 0.95, to: 1.05 },
+        targets: nb, alpha: { from: 0.5, to: 1 }, scale: { from: 0.96, to: 1.04 },
         duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
-      yPos += 35;
+      y += 36;
     }
 
     // ── Shop (only on death) ──
     if (showShop) {
-      yPos += 10;
-      const shopCardW = 480;
-      const shopCardX = (GAME_WIDTH - shopCardW) / 2;
+      y += 8;
+      this.drawCard(PAD, y, CW, 280, 0xffd43b, 0.06, 2);
 
-      const shopBg = this.add.graphics();
-      shopBg.fillStyle(0xffd700, 0.04);
-      shopBg.fillRoundedRect(shopCardX, yPos, shopCardW, 290, 20);
-      shopBg.lineStyle(1, 0xffd700, 0.15);
-      shopBg.strokeRoundedRect(shopCardX, yPos, shopCardW, 290, 20);
-
-      yPos += 16;
-      this.add.text(GAME_WIDTH / 2, yPos, '\u{1F6D2} POWER UP!', {
+      this.add.text(GAME_WIDTH / 2, y + 22, '\u{1F6D2}  POWER UP!', {
         fontSize: '20px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 3,
       }).setOrigin(0.5);
 
-      yPos += 24;
-      this.add.text(GAME_WIDTH / 2, yPos, `You have ${WalletManager.gold} gold`, {
-        fontSize: '16px', color: '#aa8800', fontFamily: 'monospace',
+      // Gold balance pill
+      const balPillW = 140;
+      const balG = this.add.graphics();
+      balG.fillStyle(0xffd700, 0.15);
+      balG.fillRoundedRect(GAME_WIDTH / 2 - balPillW / 2, y + 38, balPillW, 28, 14);
+      balG.lineStyle(1, 0xffd700, 0.3);
+      balG.strokeRoundedRect(GAME_WIDTH / 2 - balPillW / 2, y + 38, balPillW, 28, 14);
+      this.add.text(GAME_WIDTH / 2, y + 52, `\u{1FA99} ${WalletManager.gold}g`, {
+        fontSize: '15px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
       }).setOrigin(0.5);
 
-      yPos += 30;
+      y += 74;
 
       const items = WalletManager.getShopItems();
-      const shopIcons = ['\u{1F6E1}\uFE0F', '\u{1F52B}', '\u{1F6E1}\uFE0F', '\u{1FA99}'];
-      const shopHints = [
+      const icons = ['\u{1F6E1}\uFE0F', '\u{1F52B}', '\u{1F6E1}\uFE0F', '\u{1FA99}'];
+      const iconColors = [0x00d4ff, 0xff6b6b, 0x51cf66, 0xffd700];
+      const hints = [
         'Start with 3 extra soldiers',
         'Begin with a stronger weapon',
         'Block 1 enemy hit for free',
         'Earn 50% more gold forever!',
       ];
       for (let i = 0; i < items.length; i++) {
-        this.addShopItem(yPos, shopIcons[i], items[i], shopHints[i]);
-        yPos += 52;
+        this.addShopItem(y, icons[i], iconColors[i], items[i], hints[i]);
+        y += 48;
       }
     }
 
-    // ── Buttons — anchored near bottom of screen ──
-    const btnW = 360, btnH = 64;
+    // ── Buttons (always at bottom) ──
+    const btnW = CW;
+    const btnH = 60;
     const btnCount = canAdvance ? 3 : 2;
-    const btnBlockH = btnCount * (btnH + 16) - 16;
-    // Place buttons at bottom with padding, but not higher than content
-    const btnStartY = Math.max(yPos + 30, GAME_HEIGHT - btnBlockH - 50);
-
-    let btnY = btnStartY;
+    const btnBlockH = btnCount * (btnH + 12) - 12;
+    let btnY = Math.max(y + 30, GAME_HEIGHT - btnBlockH - 40);
 
     if (canAdvance) {
       this.createButton(GAME_WIDTH / 2, btnY, '\u27A1\uFE0F  NEXT LEVEL', btnW, btnH,
-        0xffd43b, '#ffd43b', true, () => {
+        0xffd43b, '#111', true, () => {
           mgr.advanceLevel();
           localStorage.setItem('deathmarch-level', String(mgr.currentLevelIndex));
           this.fadeToGame();
-        }, 700);
-      btnY += btnH + 16;
+        }, 600);
+      btnY += btnH + 12;
 
       this.createButton(GAME_WIDTH / 2, btnY, '\u21BB  REPLAY', btnW, btnH,
-        0x00d4ff, '#00d4ff', false, () => this.fadeToGame(), 800);
-      btnY += btnH + 16;
+        0x00d4ff, '#111', false, () => this.fadeToGame(), 700);
+      btnY += btnH + 12;
     } else {
       this.createButton(GAME_WIDTH / 2, btnY, '\u{1F4AA}  TRY AGAIN', btnW, btnH,
-        0x00d4ff, '#00d4ff', true, () => this.fadeToGame(), 700);
-      btnY += btnH + 16;
+        0x00d4ff, '#111', true, () => this.fadeToGame(), 600);
+      btnY += btnH + 12;
     }
 
     this.createButton(GAME_WIDTH / 2, btnY, '\u2630  LEVELS', btnW, btnH,
-      0x666666, '#999999', false, () => this.scene.start('MenuScene'),
-      canAdvance ? 900 : 800);
+      0x444466, '#cccccc', false, () => this.scene.start('MenuScene'),
+      canAdvance ? 800 : 700);
   }
 
   // ── Helpers ──
 
-  private addShopItem(y: number, icon: string, item: ReturnType<typeof WalletManager.getShopItems>[0], hint: string): void {
+  private drawCard(x: number, y: number, w: number, h: number, color: number, alpha: number, borderW: number): void {
+    const g = this.add.graphics();
+    g.fillStyle(color, alpha * 0.3);
+    g.fillRoundedRect(x, y, w, h, 16);
+    g.lineStyle(borderW, color, alpha + 0.15);
+    g.strokeRoundedRect(x, y, w, h, 16);
+  }
+
+  private addShopItem(y: number, icon: string, iconColor: number, item: ReturnType<typeof WalletManager.getShopItems>[0], hint: string): void {
     const canBuy = item.canBuy();
     const cost = item.cost();
-    const costStr = cost === Infinity ? 'OWNED' : `${cost}g`;
+    const costStr = cost === Infinity ? 'MAX' : `${cost}g`;
 
-    // Icon
-    this.add.text(70, y + 8, icon, { fontSize: '24px' }).setOrigin(0, 0.5);
+    // Icon circle
+    const iconG = this.add.graphics();
+    iconG.fillStyle(iconColor, canBuy ? 0.2 : 0.06);
+    iconG.fillCircle(PAD + 26, y + 12, 18);
+    iconG.lineStyle(1, iconColor, canBuy ? 0.4 : 0.1);
+    iconG.strokeCircle(PAD + 26, y + 12, 18);
 
-    // Name + description
-    this.add.text(105, y, item.name, {
-      fontSize: '16px', color: canBuy ? '#ffffff' : '#555555', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(PAD + 26, y + 12, icon, {
+      fontSize: '16px',
+    }).setOrigin(0.5).setAlpha(canBuy ? 1 : 0.4);
+
+    this.add.text(PAD + 52, y + 4, item.name, {
+      fontSize: '15px', color: canBuy ? '#ffffff' : '#555555', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
-    this.add.text(105, y + 20, hint, {
-      fontSize: '11px', color: '#666666', fontFamily: 'monospace',
+    this.add.text(PAD + 52, y + 22, hint, {
+      fontSize: '10px', color: '#777777', fontFamily: 'monospace',
     }).setOrigin(0, 0.5);
 
     // Buy button
-    const btnW = 80, btnH = 36;
-    const btnX = GAME_WIDTH - 90;
-    const container = this.add.container(btnX, y + 8);
+    const btnW = 80, btnH = 34;
+    const btnX = PAD + CW - 54;
+    const container = this.add.container(btnX, y + 12);
 
     const bg = this.add.graphics();
-    const bgC = canBuy ? 0xffd700 : 0x444444;
-    bg.fillStyle(bgC, canBuy ? 0.2 : 0.06);
-    bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
-    bg.lineStyle(1, bgC, canBuy ? 0.5 : 0.15);
-    bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
+    if (canBuy) {
+      bg.fillStyle(0xffd700, 0.3);
+      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
+      bg.lineStyle(2, 0xffd700, 0.6);
+      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
+    } else {
+      bg.fillStyle(0x333333, 0.2);
+      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
+      bg.lineStyle(1, 0x333333, 0.2);
+      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
+    }
     container.add(bg);
 
     container.add(this.add.text(0, 0, costStr, {
-      fontSize: '15px', color: canBuy ? '#ffd700' : '#444444', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '14px', color: canBuy ? '#ffd700' : '#444', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5));
 
     if (canBuy) {
-      const hitZone = this.add.zone(0, 0, btnW + 20, btnH + 10).setInteractive({ useHandCursor: true });
-      container.add(hitZone);
-      hitZone.on('pointerdown', () => {
+      const hit = this.add.zone(0, 0, btnW + 20, btnH + 10).setInteractive({ useHandCursor: true });
+      container.add(hit);
+      hit.on('pointerdown', () => {
         item.buy();
         SoundManager.play('shop_buy');
         this.tweens.add({
@@ -276,55 +269,43 @@ export class GameOverScene extends Phaser.Scene {
     const container = this.add.container(x, y).setAlpha(0);
     const r = h / 2;
 
+    // Button fill
+    const bg = this.add.graphics();
+    bg.fillStyle(color, 0.85);
+    bg.fillRoundedRect(-w / 2, -r, w, h, r);
+    // Top highlight
+    bg.fillStyle(0xffffff, 0.15);
+    bg.fillRoundedRect(-w / 2 + 4, -r + 3, w - 8, h * 0.4, { tl: r - 2, tr: r - 2, bl: 0, br: 0 });
+    container.add(bg);
+
     if (pulse) {
       const glow = this.add.graphics();
-      glow.fillStyle(color, 0.1);
-      glow.fillRoundedRect(-w / 2 - 6, -r - 6, w + 12, h + 12, r + 6);
-      container.add(glow);
+      glow.fillStyle(color, 0.15);
+      glow.fillRoundedRect(-w / 2 - 4, -r - 4, w + 8, h + 8, r + 4);
+      container.addAt(glow, 0);
       this.tweens.add({
         targets: glow, alpha: { from: 0.1, to: 0.4 },
         duration: 1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
       });
     }
 
-    const bg = this.add.graphics();
-    bg.fillStyle(color, 0.15);
-    bg.fillRoundedRect(-w / 2, -r, w, h, r);
-    bg.lineStyle(2, color, 0.5);
-    bg.strokeRoundedRect(-w / 2, -r, w, h, r);
-    container.add(bg);
-
     container.add(this.add.text(0, 0, label, {
-      fontSize: '24px', color: textColor, fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 3,
+      fontSize: '22px', color: textColor, fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 3,
     }).setOrigin(0.5));
 
-    const hitZone = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
-    container.add(hitZone);
+    const hit = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
+    container.add(hit);
 
-    hitZone.on('pointerover', () => {
-      bg.clear();
-      bg.fillStyle(color, 0.25);
-      bg.fillRoundedRect(-w / 2, -r, w, h, r);
-      bg.lineStyle(2, color, 0.8);
-      bg.strokeRoundedRect(-w / 2, -r, w, h, r);
-    });
-    hitZone.on('pointerout', () => {
-      bg.clear();
-      bg.fillStyle(color, 0.15);
-      bg.fillRoundedRect(-w / 2, -r, w, h, r);
-      bg.lineStyle(2, color, 0.5);
-      bg.strokeRoundedRect(-w / 2, -r, w, h, r);
-    });
-    hitZone.on('pointerdown', () => {
+    hit.on('pointerdown', () => {
       SoundManager.play('button_click');
       this.tweens.add({
-        targets: container, scale: 0.92, duration: 60, yoyo: true, ease: 'Power2',
+        targets: container, scale: 0.94, duration: 60, yoyo: true, ease: 'Power2',
         onComplete: () => { container.setScale(1); callback(); },
       });
     });
 
     this.tweens.add({
-      targets: container, alpha: 1, y: { from: y + 12, to: y },
+      targets: container, alpha: 1, y: { from: y + 10, to: y },
       duration: 350, delay, ease: 'Power2',
     });
   }
