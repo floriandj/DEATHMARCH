@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { EnemyStats } from '@/config/EnemyConfig';
-import { getBaseBodyForType } from '@/systems/ProceduralEnemy';
+import { getSpriteForType, getTintForType } from '@/systems/ProceduralEnemy';
 
 export class Enemy extends Phaser.GameObjects.Sprite {
   levelIndex: number = 0;
@@ -50,17 +50,22 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.isDashing = false;
     this.shieldHp = this.isShielded() ? Math.ceil(stats.hp * 0.3) : 0;
 
-    // Set texture: procedural enemies use base body + color tint
+    // Set texture: procedural enemies reuse SVG sprites with color tint
     if (stats.type.startsWith('proc_')) {
-      const baseBody = getBaseBodyForType(stats.type, this.levelIndex);
-      this.setTexture(baseBody);
-      this.setTint(this.enemyColor);
-      const animKey = `${baseBody}_walk`;
-      if (this.scene.anims.exists(animKey)) this.play(animKey);
+      const spriteBase = getSpriteForType(stats.type, this.levelIndex);
+      const texKey = `enemy_${spriteBase}`;
+      const tint = getTintForType(stats.type, this.levelIndex);
+      if (this.scene.textures.exists(texKey)) {
+        this.setTexture(texKey);
+        this.setTint(tint);
+        const animKey = `enemy_${spriteBase}_walk`;
+        if (this.scene.anims.exists(animKey)) this.play(animKey);
+      }
     } else {
       const texKey = `enemy_${stats.type}`;
       if (this.scene.textures.exists(texKey)) {
         this.setTexture(texKey);
+        this.clearTint();
         const animKey = `enemy_${stats.type}_walk`;
         if (this.scene.anims.exists(animKey)) this.play(animKey);
       }

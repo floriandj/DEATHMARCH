@@ -1,7 +1,6 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
 import { LevelManager, generateLevel } from '@/config/progression';
-import { generateBaseBodyTextures } from '@/systems/ProceduralEnemy';
 
 /** We only need to load assets for the 5 world themes (they cycle). */
 const WORLDS_COUNT = 5;
@@ -75,7 +74,6 @@ export class BootScene extends Phaser.Scene {
     this.generateGateTextures();
     this.generateVfxTextures();
     this.createAnimations();
-    generateBaseBodyTextures(this); // 6 base mob shapes for procedural enemies
     this.scene.start('SplashScene');
   }
 
