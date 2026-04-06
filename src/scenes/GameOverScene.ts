@@ -91,30 +91,34 @@ export class GameOverScene extends Phaser.Scene {
 
     // ── Shop Section ──
     const shopY = GAME_HEIGHT * 0.42;
-    const shopBg = this.add.graphics();
-    shopBg.fillStyle(0xffd700, 0.03);
-    shopBg.fillRoundedRect(GAME_WIDTH / 2 - 230, shopY - 10, 460, 260, 20);
-    shopBg.lineStyle(1, 0xffd700, 0.12);
-    shopBg.strokeRoundedRect(GAME_WIDTH / 2 - 230, shopY - 10, 460, 260, 20);
+    // ── Shop Section (only on death — not after victory) ──
+    const showShop = !data.bossDefeated;
+    if (showShop) {
+      const shopBg = this.add.graphics();
+      shopBg.fillStyle(0xffd700, 0.03);
+      shopBg.fillRoundedRect(GAME_WIDTH / 2 - 230, shopY - 10, 460, 260, 20);
+      shopBg.lineStyle(1, 0xffd700, 0.12);
+      shopBg.strokeRoundedRect(GAME_WIDTH / 2 - 230, shopY - 10, 460, 260, 20);
 
-    this.add.text(GAME_WIDTH / 2, shopY + 8, 'SHOP', {
-      fontSize: '16px', color: '#ffd700', fontFamily: 'monospace',
-      fontStyle: 'bold', letterSpacing: 6,
-    }).setOrigin(0.5);
+      this.add.text(GAME_WIDTH / 2, shopY + 8, 'SHOP', {
+        fontSize: '16px', color: '#ffd700', fontFamily: 'monospace',
+        fontStyle: 'bold', letterSpacing: 6,
+      }).setOrigin(0.5);
 
-    this.add.text(GAME_WIDTH / 2, shopY + 28, `${WalletManager.gold}g`, {
-      fontSize: '22px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(0.5);
+      this.add.text(GAME_WIDTH / 2, shopY + 28, `${WalletManager.gold}g`, {
+        fontSize: '22px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+      }).setOrigin(0.5);
 
-    const items = WalletManager.getShopItems();
-    let itemY = shopY + 60;
-    for (const item of items) {
-      this.createShopRow(itemY, item);
-      itemY += 48;
+      const items = WalletManager.getShopItems();
+      let itemY = shopY + 60;
+      for (const item of items) {
+        this.createShopRow(itemY, item);
+        itemY += 48;
+      }
     }
 
     // ── Action Buttons ──
-    let btnY = GAME_HEIGHT * 0.77;
+    let btnY = showShop ? GAME_HEIGHT * 0.77 : GAME_HEIGHT * 0.50;
 
     if (canAdvance) {
       this.createPillButton(GAME_WIDTH / 2, btnY,
