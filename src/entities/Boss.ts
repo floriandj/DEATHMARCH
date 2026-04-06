@@ -5,6 +5,8 @@ export enum BossPhase {
   Vulnerable = 'vulnerable',
   Slam = 'slam',
   Charge = 'charge',
+  Rocket = 'rocket',
+  Barrage = 'barrage',
 }
 
 export class BossState {

@@ -51,6 +51,12 @@ export class BossScene extends Phaser.Scene {
   // Boss visual config
   private bossScale: number = 1.5;
 
+  // Boss projectiles (rockets + barrage)
+  private bossProjectiles: { sprite: Phaser.GameObjects.Sprite; vx: number; vy: number; type: 'rocket' | 'barrage'; radius: number }[] = [];
+  private rocketTimer: number = 0;
+  private rocketsFired: number = 0;
+  private barrageTimer: number = 0;
+
   // VFX tracking
   private enrageTriggered: boolean = false;
   private chargeTrailTimer: number = 0;
@@ -76,6 +82,10 @@ export class BossScene extends Phaser.Scene {
     this.chargeTrailTimer = 0;
     this.bossAuraParticles = [];
     this.auraTimer = 0;
+    this.bossProjectiles = [];
+    this.rocketTimer = 0;
+    this.rocketsFired = 0;
+    this.barrageTimer = 0;
 
     this.input_handler = new InputHandler(this);
 
@@ -197,6 +207,31 @@ export class BossScene extends Phaser.Scene {
     if (this.bossState.phase === BossPhase.Charge) {
       this.updateCharge(delta);
     }
+
+    // 3b. Handle rocket phase — fire rockets at timed intervals
+    if (this.bossState.phase === BossPhase.Rocket) {
+      this.rocketTimer += delta;
+      const rocketInterval = this.bossState.enraged ? 600 : 900;
+      const maxRockets = this.bossState.enraged ? 4 : 3;
+      if (this.rocketTimer >= rocketInterval && this.rocketsFired < maxRockets) {
+        this.rocketTimer = 0;
+        this.rocketsFired++;
+        this.fireRocket();
+      }
+    }
+
+    // 3c. Handle barrage phase — rapid small shots
+    if (this.bossState.phase === BossPhase.Barrage) {
+      this.barrageTimer += delta;
+      const barrageInterval = this.bossState.enraged ? 120 : 200;
+      if (this.barrageTimer >= barrageInterval) {
+        this.barrageTimer = 0;
+        this.fireBarrageShot();
+      }
+    }
+
+    // 3d. Update boss projectiles
+    this.updateBossProjectiles(delta);
 
     // 5. Fire bullets at boss
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
@@ -399,6 +434,30 @@ export class BossScene extends Phaser.Scene {
       this.startCharge();
     }
 
+    if (this.bossState.phase === BossPhase.Rocket) {
+      this.rocketTimer = 0;
+      this.rocketsFired = 0;
+      // Move boss to center for rocket attack
+      this.tweens.add({
+        targets: this.bossSprite,
+        x: GAME_WIDTH / 2,
+        y: 180,
+        duration: 400,
+        ease: 'Power2',
+      });
+    }
+
+    if (this.bossState.phase === BossPhase.Barrage) {
+      this.barrageTimer = 0;
+      this.tweens.add({
+        targets: this.bossSprite,
+        x: GAME_WIDTH / 2,
+        y: 200,
+        duration: 300,
+        ease: 'Power2',
+      });
+    }
+
     // Phase transition flash
     if (this.bossState.phase === BossPhase.Vulnerable) {
       this.cameras.main.flash(150, 100, 100, 255, true);
@@ -563,6 +622,167 @@ export class BossScene extends Phaser.Scene {
     ) {
       this.bossSprite.setPosition(GAME_WIDTH / 2, 200);
     }
+  }
+
+  // ---------- Boss projectile attacks ----------
+
+  private fireRocket(): void {
+    SoundManager.play('boss_rocket_launch');
+
+    const armyScreenX = GAME_WIDTH / 2 + this.armyX;
+    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+
+    // Create rocket sprite
+    const rocket = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 30, 'vfx_ring');
+    rocket.setTint(0xff4400);
+    rocket.setScale(2.5);
+    rocket.setAlpha(0.9);
+
+    // Aim at army with some spread
+    const spread = (Math.random() - 0.5) * 120;
+    const targetX = armyScreenX + spread;
+    const targetY = armyScreenY;
+    const dx = targetX - rocket.x;
+    const dy = targetY - rocket.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const speed = 250;
+
+    this.bossProjectiles.push({
+      sprite: rocket,
+      vx: (dx / dist) * speed,
+      vy: (dy / dist) * speed,
+      type: 'rocket',
+      radius: 70,
+    });
+
+    // Trail effect on rocket
+    const trailTimer = this.time.addEvent({
+      delay: 40,
+      repeat: -1,
+      callback: () => {
+        if (!rocket.active) { trailTimer.destroy(); return; }
+        const t = this.add.sprite(rocket.x, rocket.y, 'vfx_trail');
+        t.setTint(0xff6600);
+        t.setAlpha(0.6);
+        t.setScale(1.5);
+        this.tweens.add({
+          targets: t, alpha: 0, scale: 0.3,
+          duration: 200, onComplete: () => t.destroy(),
+        });
+      },
+    });
+  }
+
+  private fireBarrageShot(): void {
+    SoundManager.play('boss_barrage');
+
+    const armyScreenX = GAME_WIDTH / 2 + this.armyX;
+    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+
+    const shot = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 20, 'vfx_spark');
+    shot.setTint(0xff00ff);
+    shot.setScale(2);
+    shot.setAlpha(0.8);
+
+    // Aim with wider spread
+    const spread = (Math.random() - 0.5) * 200;
+    const targetX = armyScreenX + spread;
+    const targetY = armyScreenY + (Math.random() - 0.5) * 60;
+    const dx = targetX - shot.x;
+    const dy = targetY - shot.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const speed = 350;
+
+    this.bossProjectiles.push({
+      sprite: shot,
+      vx: (dx / dist) * speed,
+      vy: (dy / dist) * speed,
+      type: 'barrage',
+      radius: 30,
+    });
+  }
+
+  private updateBossProjectiles(delta: number): void {
+    const dt = delta / 1000;
+    const armyScreenX = GAME_WIDTH / 2 + this.armyX;
+    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+
+    for (let i = this.bossProjectiles.length - 1; i >= 0; i--) {
+      const proj = this.bossProjectiles[i];
+      if (!proj.sprite.active) {
+        this.bossProjectiles.splice(i, 1);
+        continue;
+      }
+
+      proj.sprite.x += proj.vx * dt;
+      proj.sprite.y += proj.vy * dt;
+
+      // Off-screen cleanup
+      if (proj.sprite.y > GAME_HEIGHT + 50 || proj.sprite.y < -50 ||
+          proj.sprite.x < -50 || proj.sprite.x > GAME_WIDTH + 50) {
+        proj.sprite.destroy();
+        this.bossProjectiles.splice(i, 1);
+        continue;
+      }
+
+      // Check impact with army area
+      const dx = proj.sprite.x - armyScreenX;
+      const dy = proj.sprite.y - armyScreenY;
+      const distToArmy = Math.sqrt(dx * dx + dy * dy);
+
+      if (proj.type === 'rocket' && distToArmy < proj.radius) {
+        // Rocket explodes — kill some units + stun nearby
+        this.rocketExplode(proj.sprite.x, proj.sprite.y);
+        proj.sprite.destroy();
+        this.bossProjectiles.splice(i, 1);
+      } else if (proj.type === 'barrage') {
+        // Barrage shots check against individual units
+        for (const unit of this.units) {
+          if (!unit.active) continue;
+          const ux = proj.sprite.x - unit.x;
+          const uy = proj.sprite.y - unit.y;
+          if (Math.sqrt(ux * ux + uy * uy) < 20) {
+            // Hit a unit — stun it briefly
+            unit.stun(800);
+            SoundManager.play('stun_hit');
+            // Small impact spark
+            this.spawnHitSpark(proj.sprite.x, proj.sprite.y);
+            proj.sprite.destroy();
+            this.bossProjectiles.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  private rocketExplode(x: number, y: number): void {
+    SoundManager.play('boss_rocket_explode');
+    this.cameras.main.shake(300, 0.025);
+
+    // Explosion VFX
+    this.spawnImpactParticles(x, y, 10, 0xff4400);
+    this.spawnImpactParticles(x, y, 6, 0xffaa00);
+
+    // Kill 1-2 units
+    const unitsToKill = Math.max(1, Math.min(2, Math.ceil(this.unitCount * 0.04)));
+    this.unitCount = Math.max(0, this.unitCount - unitsToKill);
+
+    // Stun nearby surviving units for 1.2 seconds
+    for (const unit of this.units) {
+      if (!unit.active) continue;
+      const dx = unit.x - x;
+      const dy = unit.y - y;
+      if (Math.sqrt(dx * dx + dy * dy) < 100) {
+        unit.stun(1200);
+      }
+    }
+
+    if (this.unitCount <= 0) {
+      this.gameOver();
+      return;
+    }
+    this.respawnArmy();
   }
 
   // ---------- Army management ----------

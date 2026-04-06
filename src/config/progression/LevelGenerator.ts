@@ -345,26 +345,44 @@ function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
   ];
 }
 
-function buildBossPhases(posInCycle: number, _cycle: number): BossPhaseConfig[] {
+function buildBossPhases(posInCycle: number, cycle: number): BossPhaseConfig[] {
   const vulnDuration = Math.max(1800, 5000 - posInCycle * 500);
   const slamDuration = Math.max(2000, 3000 + posInCycle * 200);
   const chargeDuration = Math.max(2500, 4000 - posInCycle * 200);
+  const rocketDuration = Math.max(2000, 3000 + posInCycle * 300);
+  const barrageDuration = Math.max(1500, 2500 + posInCycle * 200);
 
+  // Base pattern: vulnerable → slam → rocket → vulnerable → charge
   const phases: BossPhaseConfig[] = [
     { name: 'vulnerable', duration: vulnDuration, damageReduction: 0 },
     { name: 'slam', duration: slamDuration, damageReduction: 0.5 },
-    { name: 'charge', duration: chargeDuration, damageReduction: 1 },
   ];
 
-  if (posInCycle >= 2) {
+  // Rocket phase unlocks from level 2 onward (posInCycle >= 1)
+  if (posInCycle >= 1 || cycle >= 1) {
     phases.push(
-      { name: 'vulnerable', duration: Math.round(vulnDuration * 0.7), damageReduction: 0 },
-      { name: 'slam', duration: Math.round(slamDuration * 0.8), damageReduction: 0.6 },
+      { name: 'rocket', duration: rocketDuration, damageReduction: 0.7 },
     );
   }
+
+  phases.push(
+    { name: 'vulnerable', duration: Math.round(vulnDuration * 0.8), damageReduction: 0 },
+    { name: 'charge', duration: chargeDuration, damageReduction: 1 },
+  );
+
+  // Barrage phase unlocks from level 3 onward (posInCycle >= 2)
+  if (posInCycle >= 2 || cycle >= 1) {
+    phases.push(
+      { name: 'barrage', duration: barrageDuration, damageReduction: 0.5 },
+      { name: 'vulnerable', duration: Math.round(vulnDuration * 0.6), damageReduction: 0 },
+    );
+  }
+
+  // Hard levels get an extra slam+rocket combo
   if (posInCycle >= 4) {
     phases.push(
-      { name: 'charge', duration: Math.round(chargeDuration * 0.8), damageReduction: 1 },
+      { name: 'slam', duration: Math.round(slamDuration * 0.7), damageReduction: 0.6 },
+      { name: 'rocket', duration: Math.round(rocketDuration * 0.8), damageReduction: 0.8 },
     );
   }
 

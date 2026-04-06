@@ -202,6 +202,36 @@ const sounds: Record<string, () => void> = {
     osc('sine', 1200, 0.2, 0.18, out(), t + 0.21);
   },
 
+  boss_rocket_launch: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sawtooth', 100, 0.2, 0.18, out(), t, 500);
+    noise(0.15, 0.12, out(), t, 2000);
+    osc('sine', 200, 0.15, 0.08, out(), t + 0.05, 600);
+  },
+
+  boss_rocket_explode: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 80, 0.3, 0.25, out(), t, 25);
+    noise(0.25, 0.2, out(), t, 600);
+    osc('square', 100, 0.15, 0.1, out(), t + 0.05, 40);
+  },
+
+  boss_barrage: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('square', 500, 0.04, 0.1, out(), t, 200);
+    noise(0.03, 0.06, out(), t, 4000);
+  },
+
+  stun_hit: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 1200, 0.08, 0.12, out(), t, 400);
+    osc('triangle', 800, 0.1, 0.06, out(), t + 0.03, 300);
+  },
+
   boss_hit: () => {
     const c = getCtx();
     const t = c.currentTime;

@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 export class PlayerUnit extends Phaser.GameObjects.Sprite {
   active: boolean = false;
   fireTimer: number = 0;
+  stunTimer: number = 0;
   /** Target position this unit moves toward */
   targetX: number = 0;
   targetY: number = 0;
@@ -17,6 +18,15 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.fireOffset = (index * 37) % 200; // spread across base fire rate
   }
 
+  get isStunned(): boolean {
+    return this.stunTimer > 0;
+  }
+
+  stun(durationMs: number): void {
+    this.stunTimer = durationMs;
+    this.setTint(0xffff00);
+  }
+
   spawn(x: number, y: number): void {
     this.setPosition(x, y);
     this.targetX = x;
@@ -24,6 +34,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.setVisible(true);
     this.setActive(true);
     this.fireTimer = this.fireOffset;
+    this.stunTimer = 0;
     this.setAlpha(1);
     this.setScale(1.5);
     this.play('unit_march');
@@ -38,6 +49,16 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
   /** Physics: gentle pull toward target + strong separation = organic blob */
   updatePhysics(delta: number, allUnits: PlayerUnit[]): void {
     if (!this.active) return;
+
+    // Tick stun timer
+    if (this.stunTimer > 0) {
+      this.stunTimer -= delta;
+      if (this.stunTimer <= 0) {
+        this.stunTimer = 0;
+        this.clearTint();
+      }
+    }
+
     const dt = delta / 1000;
 
     // Pull toward formation target (keeps the group together)
@@ -101,7 +122,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
   }
 
   updateFiring(delta: number, fireRate: number): boolean {
-    if (!this.active) return false;
+    if (!this.active || this.isStunned) return false;
     this.fireTimer += delta;
     if (this.fireTimer >= fireRate) {
       this.fireTimer -= fireRate;
