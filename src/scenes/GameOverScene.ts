@@ -65,23 +65,78 @@ export class GameOverScene extends Phaser.Scene {
       fontSize: '15px', color: accentHex, fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    yPos += 40;
+    yPos += 30;
 
-    // ── Stats with big icons ──
-    const cardW = 440;
+    // ── Stats cards — big prominent numbers ──
+    const cardW = 500;
     const cardX = (GAME_WIDTH - cardW) / 2;
-    const card = this.add.graphics();
-    card.fillStyle(0xffffff, 0.04);
-    card.fillRoundedRect(cardX, yPos, cardW, 130, 20);
+    const cardPad = 20;
 
-    yPos += 20;
-    this.addStatLine(yPos, '\u2B50', 'SCORE', String(data.score), '#ffd43b', data.score);
-    yPos += 38;
-    this.addStatLine(yPos, '\u{1F3C3}', 'DISTANCE', `${data.distance}m`, '#00d4ff');
-    yPos += 38;
-    this.addStatLine(yPos, '\u{1FA99}', 'GOLD EARNED', `+${goldEarned}`, '#ffd700');
+    // Score card (biggest, most prominent)
+    const scoreBg = this.add.graphics();
+    scoreBg.fillStyle(0xffd43b, 0.06);
+    scoreBg.fillRoundedRect(cardX, yPos, cardW, 70, 16);
+    scoreBg.lineStyle(1, 0xffd43b, 0.15);
+    scoreBg.strokeRoundedRect(cardX, yPos, cardW, 70, 16);
 
-    yPos += 50;
+    this.add.text(cardX + cardPad, yPos + 35, '\u2B50  SCORE', {
+      fontSize: '16px', color: '#aa8833', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0, 0.5);
+
+    const scoreVal = this.add.text(cardX + cardW - cardPad, yPos + 35, '0', {
+      fontSize: '32px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
+
+    // Score count-up
+    if (data.score > 0) {
+      const counter = { val: 0 };
+      this.tweens.add({
+        targets: counter, val: data.score,
+        duration: Math.min(1200, 500 + data.score / 10), delay: 300, ease: 'Power2',
+        onUpdate: () => scoreVal.setText(String(Math.floor(counter.val))),
+        onComplete: () => scoreVal.setText(String(data.score)),
+      });
+    } else {
+      scoreVal.setText(String(data.score));
+    }
+
+    yPos += 80;
+
+    // Distance + Gold row (side by side)
+    const halfW = (cardW - 10) / 2;
+
+    // Distance card
+    const distBg = this.add.graphics();
+    distBg.fillStyle(0x00d4ff, 0.06);
+    distBg.fillRoundedRect(cardX, yPos, halfW, 64, 14);
+    distBg.lineStyle(1, 0x00d4ff, 0.12);
+    distBg.strokeRoundedRect(cardX, yPos, halfW, 64, 14);
+
+    this.add.text(cardX + 14, yPos + 18, '\u{1F3C3} DISTANCE', {
+      fontSize: '11px', color: '#0088aa', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0, 0.5);
+
+    this.add.text(cardX + halfW - 14, yPos + 42, `${data.distance}m`, {
+      fontSize: '22px', color: '#00d4ff', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
+
+    // Gold card
+    const goldX = cardX + halfW + 10;
+    const goldBg = this.add.graphics();
+    goldBg.fillStyle(0xffd700, 0.06);
+    goldBg.fillRoundedRect(goldX, yPos, halfW, 64, 14);
+    goldBg.lineStyle(1, 0xffd700, 0.12);
+    goldBg.strokeRoundedRect(goldX, yPos, halfW, 64, 14);
+
+    this.add.text(goldX + 14, yPos + 18, '\u{1FA99} GOLD', {
+      fontSize: '11px', color: '#aa8800', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0, 0.5);
+
+    this.add.text(goldX + halfW - 14, yPos + 42, `+${goldEarned}`, {
+      fontSize: '22px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
+
+    yPos += 76;
 
     if (isNewHigh) {
       const newBest = this.add.text(GAME_WIDTH / 2, yPos, '\u2728 NEW HIGH SCORE! \u2728', {
@@ -165,27 +220,6 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   // ── Helpers ──
-
-  private addStatLine(y: number, icon: string, label: string, value: string, color: string, countUp?: number): void {
-    this.add.text(80, y, icon, { fontSize: '22px' }).setOrigin(0, 0.5);
-    this.add.text(115, y, label, {
-      fontSize: '15px', color: '#aaaaaa', fontFamily: 'monospace',
-    }).setOrigin(0, 0.5);
-
-    const val = this.add.text(GAME_WIDTH - 80, y, countUp !== undefined ? '0' : value, {
-      fontSize: '24px', color, fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(1, 0.5);
-
-    if (countUp !== undefined && countUp > 0) {
-      const counter = { val: 0 };
-      this.tweens.add({
-        targets: counter, val: countUp,
-        duration: Math.min(1000, 400 + countUp / 5), delay: 300, ease: 'Power2',
-        onUpdate: () => val.setText(String(Math.floor(counter.val))),
-        onComplete: () => val.setText(String(countUp)),
-      });
-    }
-  }
 
   private addShopItem(y: number, icon: string, item: ReturnType<typeof WalletManager.getShopItems>[0], hint: string): void {
     const canBuy = item.canBuy();
