@@ -190,8 +190,8 @@ const WORLDS: WorldDef[] = [
  * The cycle number itself adds a global creep so later "easy" is still tougher.
  */
 function difficultyScale(cycle: number, posInCycle: number): number {
-  const globalCreep = 1 + cycle * 0.4;        // +40% per full cycle
-  const localRamp = 1 + posInCycle * 0.25;     // +25% per step within cycle
+  const globalCreep = 1 + cycle * 0.25;        // +25% per full cycle
+  const localRamp = 1 + posInCycle * 0.15;     // +15% per step within cycle
   return globalCreep * localRamp;
 }
 
@@ -264,22 +264,22 @@ export function generateLevel(levelIndex: number): LevelConfig {
   }
 
   // ── Waves (easy levels = sparse, hard levels = dense) ──
-  const baseInterval = Math.max(30, 120 - cycle * 5 - posInCycle * 8);
+  const baseInterval = Math.max(40, 140 - cycle * 4 - posInCycle * 6);
   const brackets: WaveBracket[] = [
-    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 1 + Math.floor(posInCycle * 0.3), intervalMin: baseInterval, intervalMax: baseInterval + 60 },
-    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.3), intervalMin: Math.round(baseInterval * 0.7), intervalMax: Math.round((baseInterval + 40) * 0.8) },
-    { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 1 + Math.floor(posInCycle * 0.4), clusterMax: 3 + posInCycle, intervalMin: Math.round(baseInterval * 0.5), intervalMax: Math.round(baseInterval * 0.7) },
-    { maxDistance: Math.round(triggerDistance * 0.50), clusterMin: 2, clusterMax: 4 + posInCycle, intervalMin: Math.round(baseInterval * 0.4), intervalMax: Math.round(baseInterval * 0.55) },
-    { maxDistance: Math.round(triggerDistance * 0.70), clusterMin: 2 + Math.floor(posInCycle * 0.4), clusterMax: 5 + posInCycle, intervalMin: Math.round(baseInterval * 0.3), intervalMax: Math.round(baseInterval * 0.4) },
-    { maxDistance: Math.round(triggerDistance * 0.85), clusterMin: 3 + posInCycle, clusterMax: 6 + posInCycle, intervalMin: Math.round(baseInterval * 0.22), intervalMax: Math.round(baseInterval * 0.32) },
-    { maxDistance: 99999, clusterMin: 4 + posInCycle, clusterMax: 7 + posInCycle + cycle, intervalMin: Math.max(10, Math.round(baseInterval * 0.15)), intervalMax: Math.max(16, Math.round(baseInterval * 0.25)) },
+    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 1, intervalMin: baseInterval, intervalMax: baseInterval + 80 },
+    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 1 + Math.floor(posInCycle * 0.3), intervalMin: Math.round(baseInterval * 0.75), intervalMax: Math.round((baseInterval + 50) * 0.85) },
+    { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.55), intervalMax: Math.round(baseInterval * 0.75) },
+    { maxDistance: Math.round(triggerDistance * 0.50), clusterMin: 1, clusterMax: 3 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.45), intervalMax: Math.round(baseInterval * 0.6) },
+    { maxDistance: Math.round(triggerDistance * 0.70), clusterMin: 2, clusterMax: 4 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.35), intervalMax: Math.round(baseInterval * 0.48) },
+    { maxDistance: Math.round(triggerDistance * 0.85), clusterMin: 2 + Math.floor(posInCycle * 0.5), clusterMax: 5 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.28), intervalMax: Math.round(baseInterval * 0.38) },
+    { maxDistance: 99999, clusterMin: 3 + Math.floor(posInCycle * 0.5), clusterMax: 5 + posInCycle, intervalMin: Math.max(14, Math.round(baseInterval * 0.2)), intervalMax: Math.max(22, Math.round(baseInterval * 0.3)) },
   ];
 
   // ── Gates ──
   const gateTemplates = buildGateTemplates(triggerDistance);
 
   // ── Boss ──
-  const bossHp = Math.round((300 + cycle * 120 + posInCycle * 100) * (1 + posInCycle * 0.15));
+  const bossHp = Math.round((250 + cycle * 80 + posInCycle * 70) * (1 + posInCycle * 0.1));
   const phases = buildBossPhases(posInCycle, cycle);
   const chargeSpeed = 300 + cycle * 15 + posInCycle * 12;
 
@@ -333,15 +333,15 @@ export function generateLevel(levelIndex: number): LevelConfig {
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
   return [
-    { left: { op: 'add', value: 3 }, right: { op: 'add', value: 2 }, minDistance: 0 },
-    { left: { op: 'add', value: 5 }, right: { op: 'add', value: 2 }, minDistance: 0 },
+    { left: { op: 'add', value: 5 }, right: { op: 'add', value: 3 }, minDistance: 0 },
+    { left: { op: 'add', value: 8 }, right: { op: 'add', value: 3 }, minDistance: 0 },
     { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 5 }, minDistance: Math.round(triggerDistance * 0.1) },
-    { left: { op: 'add', value: 3 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
-    { left: { op: 'add', value: 8 }, right: { op: 'add', value: 3 }, minDistance: Math.round(triggerDistance * 0.2) },
+    { left: { op: 'add', value: 5 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
+    { left: { op: 'add', value: 10 }, right: { op: 'add', value: 5 }, minDistance: Math.round(triggerDistance * 0.2) },
     { left: { op: 'multiply', value: 3 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.35) },
     { left: { op: 'divide', value: 2 }, right: { op: 'multiply', value: 2 }, minDistance: Math.round(triggerDistance * 0.4) },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.55) },
-    { left: { op: 'add', value: 10 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.65) },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 8 }, minDistance: Math.round(triggerDistance * 0.55) },
+    { left: { op: 'add', value: 12 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.65) },
   ];
 }
 
