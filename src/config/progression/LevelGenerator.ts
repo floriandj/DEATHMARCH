@@ -190,8 +190,8 @@ const WORLDS: WorldDef[] = [
  * The cycle number itself adds a global creep so later "easy" is still tougher.
  */
 function difficultyScale(cycle: number, posInCycle: number): number {
-  const globalCreep = 1 + cycle * 0.25;        // +25% per full cycle
-  const localRamp = 1 + posInCycle * 0.15;     // +15% per step within cycle
+  const globalCreep = 1 + cycle * 0.2;         // +20% per full cycle
+  const localRamp = 1 + posInCycle * 0.12;     // +12% per step within cycle
   return globalCreep * localRamp;
 }
 
@@ -249,17 +249,17 @@ export function generateLevel(levelIndex: number): LevelConfig {
     };
   }
 
-  // ── Weapon crates (offset from gate intervals) ──
+  // ── Weapon crates (offset from gate intervals) — appear early, break fast ──
   const weaponCrates: WeaponCrateConfig[] = [];
   for (let i = 0; i < weaponOrder.length - 1; i++) {
     const fraction = (i + 1) / weaponOrder.length;
-    const rawDist = Math.round(triggerDistance * fraction * 0.85);
+    const rawDist = Math.round(triggerDistance * fraction * 0.65);
     const dist = Math.round(offsetFromGates(rawDist, gateInterval));
     weaponCrates.push({
       currentWeapon: weaponOrder[i],
       nextWeapon: weaponOrder[i + 1],
       distance: dist,
-      hp: Math.round((15 + i * 12) * (1 + posInCycle * 0.15)),
+      hp: Math.round((8 + i * 6) * (1 + posInCycle * 0.1)),
     });
   }
 
