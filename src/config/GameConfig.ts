@@ -16,6 +16,10 @@ export const BULLET_POOL_SIZE = 3000;
 // Army formation
 export const FORMATION_SPACING = 30; // pixels between units in formation
 
+// Army movement (shared between GameScene and BossScene)
+export const ARMY_INPUT_Y_RANGE = 300; // drag range for Y input normalization
+export const ARMY_Y_OFFSET_MAX = 200; // max pixels the army can nudge forward/back
+
 // Gates
 export const GATE_INTERVAL = 500; // meters between gate pairs
 export const GATE_WIDTH = 120; // pixels wide per gate side

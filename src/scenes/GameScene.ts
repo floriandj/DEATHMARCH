@@ -6,6 +6,8 @@ import {
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
   ENEMY_POOL_SIZE,
+  ARMY_INPUT_Y_RANGE,
+  ARMY_Y_OFFSET_MAX,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
 import { Background } from '@/systems/Background';
@@ -130,8 +132,8 @@ export class GameScene extends Phaser.Scene {
     // 3. Update army position from input (X: left/right, Y: forward/back)
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
-    const normalizedY = this.input_handler.getNormalizedY(300);
-    this.armyYOffset = normalizedY * 200; // up to 200px forward or back
+    const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
+    this.armyYOffset = normalizedY * ARMY_Y_OFFSET_MAX;
     this.respawnArmy();
 
     // 3b. Unit physics

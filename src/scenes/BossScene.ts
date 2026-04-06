@@ -5,6 +5,8 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
+  ARMY_INPUT_Y_RANGE,
+  ARMY_Y_OFFSET_MAX,
 } from '@/config/GameConfig';
 import { LevelManager } from '@/config/progression';
 import { InputHandler } from '@/systems/InputHandler';
@@ -26,6 +28,7 @@ export class BossScene extends Phaser.Scene {
   private hud!: HUDScene;
 
   private armyX: number = 0;
+  private armyYOffset: number = 0;
   private score: number = 0;
   private distance: number = 0;
   private unitCount: number = 0;
@@ -65,6 +68,7 @@ export class BossScene extends Phaser.Scene {
     this.activeUnitCount = 0;
     this.currentWeapon = data.weapon || LevelManager.instance.current.startingWeapon;
     this.armyX = 0;
+    this.armyYOffset = 0;
     this.entranceComplete = false;
     this.enrageTriggered = false;
     this.chargeTrailTimer = 0;
@@ -154,9 +158,11 @@ export class BossScene extends Phaser.Scene {
 
     const bossCfg = LevelManager.instance.bossConfig;
 
-    // 1. Update army position
+    // 1. Update army position (X + Y, same as GameScene)
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
+    const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
+    this.armyYOffset = normalizedY * ARMY_Y_OFFSET_MAX;
     this.respawnArmy();
 
     // 1b. Unit physics
@@ -526,7 +532,7 @@ export class BossScene extends Phaser.Scene {
 
   private respawnArmy(): void {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200;
+    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
 
     if (this.unitCount !== this.activeUnitCount) {
       const shrinking = this.unitCount < this.activeUnitCount;
