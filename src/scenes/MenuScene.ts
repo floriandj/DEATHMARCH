@@ -347,7 +347,14 @@ export class MenuScene extends Phaser.Scene {
     });
     hitZone.on('pointerdown', () => {
       this.time.delayedCall(50, () => {
-        if (Math.abs(this.velocity) < 3) this.startGame();
+        if (Math.abs(this.velocity) < 3) {
+          SoundManager.play('button_click');
+          this.tweens.add({
+            targets: container, scale: 0.92, duration: 60,
+            yoyo: true, ease: 'Power2',
+            onComplete: () => { container.setScale(1); this.startGame(); },
+          });
+        }
       });
     });
 

@@ -270,13 +270,13 @@ export class GameScene extends Phaser.Scene {
 
       const distToArmy = Math.abs(enemy.y - this.armyWorldY);
 
-      // Despawn if army passed it
-      if (enemy.y > this.armyWorldY + 200) {
+      // Despawn only if very far behind AND out of aggro range
+      if (enemy.y > this.armyWorldY + 500 && distToArmy > AGGRO_RANGE) {
         enemy.despawn();
         continue;
       }
 
-      // Only move when army is within aggro range
+      // Move when army is within aggro range (includes enemies behind)
       if (distToArmy < AGGRO_RANGE) {
         let nearestX = GAME_WIDTH / 2 + this.armyX;
         let nearestY = this.armyWorldY;
@@ -353,7 +353,7 @@ export class GameScene extends Phaser.Scene {
         if (bullet) {
           bullet.fire(unit.x, unit.y);
           if (this.shootSoundTimer > 150) {
-            SoundManager.play('shoot');
+            SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
           }
         }

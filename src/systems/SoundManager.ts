@@ -78,11 +78,83 @@ function noise(duration: number, volume: number, dest: AudioNode, startTime: num
 // ---------------------------------------------------------------------------
 
 const sounds: Record<string, () => void> = {
+  // Generic fallback shoot
   shoot: () => {
     const c = getCtx();
     const t = c.currentTime;
     osc('square', 800, 0.06, 0.15, out(), t, 200);
     noise(0.03, 0.08, out(), t, 4000);
+  },
+
+  // ── Per-weapon shoot sounds ──
+  shoot_pistol: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('square', 900, 0.06, 0.14, out(), t, 250);
+    noise(0.04, 0.07, out(), t, 5000);
+  },
+  shoot_smg: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('square', 1100, 0.04, 0.1, out(), t, 400);
+    noise(0.025, 0.06, out(), t, 6000);
+  },
+  shoot_ar: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('square', 700, 0.05, 0.13, out(), t, 200);
+    noise(0.04, 0.08, out(), t, 4000);
+    osc('sawtooth', 350, 0.03, 0.04, out(), t, 150);
+  },
+  shoot_lmg: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sawtooth', 500, 0.06, 0.14, out(), t, 150);
+    noise(0.05, 0.1, out(), t, 3000);
+  },
+  shoot_minigun: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sawtooth', 600, 0.03, 0.08, out(), t, 300);
+    noise(0.03, 0.06, out(), t, 5000);
+  },
+  shoot_cryo: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 1400, 0.07, 0.1, out(), t, 800);
+    osc('triangle', 2000, 0.04, 0.05, out(), t, 1200);
+  },
+  shoot_railgun: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sawtooth', 200, 0.12, 0.18, out(), t, 1500);
+    noise(0.06, 0.08, out(), t, 8000);
+  },
+  shoot_flamer: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    noise(0.08, 0.12, out(), t, 1500);
+    osc('sawtooth', 120, 0.08, 0.06, out(), t, 80);
+  },
+  shoot_plasma: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 600, 0.08, 0.12, out(), t, 1200);
+    osc('triangle', 900, 0.06, 0.06, out(), t + 0.02, 1500);
+  },
+  shoot_voidbeam: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 300, 0.1, 0.15, out(), t, 2000);
+    osc('square', 150, 0.08, 0.06, out(), t, 600);
+    noise(0.05, 0.04, out(), t + 0.02, 10000);
+  },
+  shoot_godslayer: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sawtooth', 200, 0.15, 0.2, out(), t, 3000);
+    osc('sine', 100, 0.12, 0.1, out(), t, 400);
+    noise(0.08, 0.08, out(), t, 6000);
   },
 
   enemy_hit: () => {

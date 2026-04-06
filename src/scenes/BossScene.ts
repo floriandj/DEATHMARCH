@@ -208,7 +208,7 @@ export class BossScene extends Phaser.Scene {
         if (bullet) {
           bullet.fire(unit.x, unit.y);
           if (this.shootSoundTimer > 150) {
-            SoundManager.play('shoot');
+            SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
           }
         }

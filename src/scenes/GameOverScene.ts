@@ -84,7 +84,7 @@ export class GameOverScene extends Phaser.Scene {
     this.tweens.add({ targets: card, alpha: 1, duration: 400, delay: 200 });
 
     let statY = cardY + 40;
-    this.createStatRow(statY, '\u2605  SCORE', String(data.score), '#ffd43b', 300);
+    this.createStatRow(statY, '\u2605  SCORE', String(data.score), '#ffd43b', 300, data.score);
     statY += rowH;
     this.createStatRow(statY, '\u279C  DISTANCE', `${data.distance}m`, '#00d4ff', 400);
     statY += rowH;
@@ -138,19 +138,34 @@ export class GameOverScene extends Phaser.Scene {
     );
   }
 
-  private createStatRow(y: number, label: string, value: string, color: string, delay: number): void {
+  private createStatRow(y: number, label: string, value: string, color: string, delay: number, countUp?: number): void {
     const row = this.add.container(0, y);
 
     row.add(this.add.text(GAME_WIDTH / 2 - 180, 0, label, {
       fontSize: '18px', color: '#bbbbbb', fontFamily: 'monospace',
     }).setOrigin(0, 0.5));
 
-    row.add(this.add.text(GAME_WIDTH / 2 + 180, 0, value, {
+    const valueText = this.add.text(GAME_WIDTH / 2 + 180, 0, countUp !== undefined ? '0' : value, {
       fontSize: '28px', color, fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(1, 0.5));
+    }).setOrigin(1, 0.5);
+    row.add(valueText);
 
     row.setAlpha(0);
     this.tweens.add({ targets: row, alpha: 1, x: { from: 20, to: 0 }, duration: 400, delay, ease: 'Power2' });
+
+    // Count-up animation for numeric values
+    if (countUp !== undefined && countUp > 0) {
+      const counter = { val: 0 };
+      this.tweens.add({
+        targets: counter,
+        val: countUp,
+        duration: Math.min(1200, 400 + countUp / 5),
+        delay: delay + 200,
+        ease: 'Power2',
+        onUpdate: () => { valueText.setText(String(Math.floor(counter.val))); },
+        onComplete: () => { valueText.setText(String(countUp)); },
+      });
+    }
   }
 
   private createPillButton(
@@ -207,7 +222,15 @@ export class GameOverScene extends Phaser.Scene {
     });
     hitZone.on('pointerdown', () => {
       SoundManager.play('button_click');
-      callback();
+      // Tap feedback: quick scale bounce
+      this.tweens.add({
+        targets: container,
+        scale: 0.92,
+        duration: 60,
+        yoyo: true,
+        ease: 'Power2',
+        onComplete: () => { container.setScale(1); callback(); },
+      });
     });
 
     this.tweens.add({
