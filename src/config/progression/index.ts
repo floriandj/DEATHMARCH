@@ -3,6 +3,7 @@ export { WORLD_INFO } from './LevelGenerator';
 export type { WorldInfo } from './LevelGenerator';
 export type {
   LevelConfig,
+  LevelTheme,
   LevelEnemyConfig,
   LevelWeaponConfig,
   WeaponCrateConfig,

@@ -3,16 +3,20 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, WORLD_INFO } from '@/config/progression';
+import { generateAllLevels } from '@/config/progression/LevelGenerator';
 
 /** Vertical spacing between level nodes */
-const NODE_SPACING = 140;
+const NODE_SPACING = 150;
 /** Left / right X positions for the zigzag */
-const LEFT_X = 200;
-const RIGHT_X = 520;
+const LEFT_X = 190;
+const RIGHT_X = 530;
 /** Extra vertical gap before each world banner */
-const WORLD_GAP = 60;
+const WORLD_GAP = 70;
 /** Radius of a level node */
-const NODE_R = 32;
+const NODE_R = 30;
+
+/** Cache of all level configs for name display */
+const ALL_LEVELS = generateAllLevels();
 
 export class MenuScene extends Phaser.Scene {
   private scrollContainer!: Phaser.GameObjects.Container;
@@ -21,7 +25,7 @@ export class MenuScene extends Phaser.Scene {
   private dragStartY: number = 0;
   private scrollStartY: number = 0;
   private velocity: number = 0;
-  private selectedLevel: number = -1;
+  private lastPointerY: number = 0;
 
   constructor() {
     super({ key: 'MenuScene' });
@@ -38,26 +42,23 @@ export class MenuScene extends Phaser.Scene {
     if (maxUnlocked >= 0 && maxUnlocked < mgr.totalLevels) {
       mgr.setLevel(maxUnlocked);
     }
-    this.selectedLevel = maxUnlocked;
 
     // Background subtle glow
     const bgGlow = this.add.graphics();
-    bgGlow.fillStyle(0xff2040, 0.04);
+    bgGlow.fillStyle(0xff2040, 0.03);
     bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.15, 300);
-    bgGlow.fillStyle(0x0040ff, 0.02);
-    bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.7, 400);
     bgGlow.setDepth(0);
 
-    // ── Title (fixed at top) ──
+    // ── Title bar (fixed at top) ──
     const titleBg = this.add.graphics();
     titleBg.fillStyle(0x050510, 0.95);
-    titleBg.fillRect(0, 0, GAME_WIDTH, 100);
+    titleBg.fillRect(0, 0, GAME_WIDTH, 110);
     titleBg.fillStyle(0x050510, 0.6);
-    titleBg.fillRect(0, 100, GAME_WIDTH, 20);
+    titleBg.fillRect(0, 110, GAME_WIDTH, 15);
     titleBg.setDepth(10);
 
     this.add
-      .text(GAME_WIDTH / 2, 35, 'DEATHMARCH', {
+      .text(GAME_WIDTH / 2, 30, 'DEATHMARCH', {
         fontSize: '36px',
         color: '#ffffff',
         fontFamily: 'monospace',
@@ -68,14 +69,25 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(11);
 
-    this.add.rectangle(GAME_WIDTH / 2, 60, 160, 2, 0xff4040, 0.4).setDepth(11);
+    this.add.rectangle(GAME_WIDTH / 2, 55, 160, 2, 0xff4040, 0.4).setDepth(11);
 
     // High score
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
     this.add
-      .text(GAME_WIDTH / 2, 80, `HIGH SCORE: ${highScore}`, {
-        fontSize: '12px',
+      .text(GAME_WIDTH / 2, 74, `BEST: ${highScore}`, {
+        fontSize: '14px',
         color: '#ffd43b',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(11);
+
+    // Level count
+    this.add
+      .text(GAME_WIDTH / 2, 94, `${maxUnlocked + 1} / ${mgr.totalLevels} LEVELS`, {
+        fontSize: '11px',
+        color: '#555555',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5)
@@ -86,24 +98,25 @@ export class MenuScene extends Phaser.Scene {
     this.scrollContainer.setDepth(5);
 
     const nodePositions = this.computeNodePositions(mgr.totalLevels);
-    this.totalHeight = nodePositions[nodePositions.length - 1].y + 200;
+    this.totalHeight = nodePositions[nodePositions.length - 1].y + 250;
 
-    // Draw the path connecting nodes
-    this.drawPath(nodePositions);
-
-    // Draw world banners
+    this.drawPath(nodePositions, maxUnlocked);
     this.drawWorldBanners(nodePositions);
-
-    // Draw level nodes
     this.drawNodes(nodePositions, maxUnlocked);
 
     // ── Settings button (fixed bottom-left) ──
+    const settBg = this.add.graphics();
+    settBg.fillStyle(0xffffff, 0.05);
+    settBg.fillRoundedRect(10, GAME_HEIGHT - 52, 130, 36, 18);
+    settBg.setDepth(11);
+
     const settBtn = this.add
-      .text(20, GAME_HEIGHT - 40, '\u2699 SETTINGS', {
-        fontSize: '14px',
+      .text(75, GAME_HEIGHT - 34, '\u2699 SETTINGS', {
+        fontSize: '13px',
         color: '#666666',
         fontFamily: 'monospace',
       })
+      .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setDepth(11);
     settBtn.on('pointerdown', () => this.scene.start('SettingsScene'));
@@ -112,33 +125,35 @@ export class MenuScene extends Phaser.Scene {
 
     // Version
     this.add
-      .text(GAME_WIDTH - 20, GAME_HEIGHT - 40, 'v2.0', {
+      .text(GAME_WIDTH - 20, GAME_HEIGHT - 34, 'v2.0', {
         fontSize: '11px',
         color: '#333333',
         fontFamily: 'monospace',
       })
-      .setOrigin(1, 0)
+      .setOrigin(1, 0.5)
       .setDepth(11);
 
     // ── Scroll to current level ──
     const currentNodeY = nodePositions[maxUnlocked].y;
-    // Center the current level on screen
     this.scrollContainer.y = -currentNodeY + GAME_HEIGHT * 0.5;
     this.clampScroll();
 
     // ── Input: drag to scroll ──
+    this.velocity = 0;
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.dragging = true;
       this.dragStartY = pointer.y;
       this.scrollStartY = this.scrollContainer.y;
       this.velocity = 0;
+      this.lastPointerY = pointer.y;
     });
 
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (!this.dragging) return;
       const dy = pointer.y - this.dragStartY;
       this.scrollContainer.y = this.scrollStartY + dy;
-      this.velocity = dy;
+      this.velocity = pointer.y - this.lastPointerY;
+      this.lastPointerY = pointer.y;
       this.clampScroll();
     });
 
@@ -150,7 +165,7 @@ export class MenuScene extends Phaser.Scene {
   update(): void {
     // Inertia scrolling
     if (!this.dragging && Math.abs(this.velocity) > 0.5) {
-      this.scrollContainer.y += this.velocity * 0.05;
+      this.scrollContainer.y += this.velocity * 0.3;
       this.velocity *= 0.92;
       this.clampScroll();
     }
@@ -162,7 +177,7 @@ export class MenuScene extends Phaser.Scene {
 
   private computeNodePositions(count: number): { x: number; y: number }[] {
     const positions: { x: number; y: number }[] = [];
-    let y = 200; // start below title area
+    let y = 200;
 
     for (let i = 0; i < count; i++) {
       // Add world gap before first level of each world (except world 1)
@@ -170,7 +185,7 @@ export class MenuScene extends Phaser.Scene {
         y += WORLD_GAP;
       }
 
-      // Zigzag: alternate left/right, with pairs going L-R then R-L
+      // Zigzag: alternate left/right
       const row = Math.floor(i / 2);
       const isLeft = (row % 2 === 0) ? (i % 2 === 0) : (i % 2 !== 0);
       const x = isLeft ? LEFT_X : RIGHT_X;
@@ -182,15 +197,14 @@ export class MenuScene extends Phaser.Scene {
     return positions;
   }
 
-  private drawPath(positions: { x: number; y: number }[]): void {
+  private drawPath(positions: { x: number; y: number }[], maxUnlocked: number): void {
     const g = this.add.graphics();
-    g.lineStyle(4, 0xffffff, 0.08);
+    g.lineStyle(4, 0xffffff, 0.06);
 
     for (let i = 0; i < positions.length - 1; i++) {
       const a = positions[i];
       const b = positions[i + 1];
 
-      // Skip path across world boundaries (drawn as dashed)
       if ((i + 1) % 4 === 0) {
         // Dotted line between worlds
         const steps = 8;
@@ -198,20 +212,11 @@ export class MenuScene extends Phaser.Scene {
           const t1 = s / steps;
           const t2 = (s + 1) / steps;
           g.beginPath();
-          g.moveTo(
-            a.x + (b.x - a.x) * t1,
-            a.y + (b.y - a.y) * t1,
-          );
-          g.lineTo(
-            a.x + (b.x - a.x) * t2,
-            a.y + (b.y - a.y) * t2,
-          );
+          g.moveTo(a.x + (b.x - a.x) * t1, a.y + (b.y - a.y) * t1);
+          g.lineTo(a.x + (b.x - a.x) * t2, a.y + (b.y - a.y) * t2);
           g.strokePath();
         }
       } else {
-        // Curved connection
-        const midX = (a.x + b.x) / 2;
-        const cpX = a.x === b.x ? midX + 60 : midX;
         g.beginPath();
         g.moveTo(a.x, a.y);
         g.lineTo(b.x, b.y);
@@ -219,12 +224,10 @@ export class MenuScene extends Phaser.Scene {
       }
     }
 
-    // Brighter path for completed section (draw on top)
+    // Bright completed path
     const brightG = this.add.graphics();
-    brightG.lineStyle(4, 0x51cf66, 0.25);
-    const savedLevel = parseInt(localStorage.getItem('deathmarch-level') || '0', 10);
-
-    for (let i = 0; i < Math.min(savedLevel, positions.length - 1); i++) {
+    brightG.lineStyle(5, 0x51cf66, 0.3);
+    for (let i = 0; i < Math.min(maxUnlocked, positions.length - 1); i++) {
       const a = positions[i];
       const b = positions[i + 1];
       brightG.beginPath();
@@ -237,24 +240,29 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private drawWorldBanners(positions: { x: number; y: number }[]): void {
-    for (const world of WORLD_INFO) {
+    for (let wi = 0; wi < WORLD_INFO.length; wi++) {
+      const world = WORLD_INFO[wi];
       const nodeY = positions[world.startLevel].y;
-      const bannerY = nodeY - 55;
+      const bannerY = nodeY - 60;
 
-      // Banner background
+      // Get accent color from the first level of this world
+      const lvl = ALL_LEVELS[world.startLevel];
+      const accent = lvl.theme.accentColor;
+      const accentHex = lvl.theme.accentHex;
+
       const bg = this.add.graphics();
-      bg.fillStyle(0xffffff, 0.04);
-      bg.fillRoundedRect(GAME_WIDTH / 2 - 130, bannerY - 14, 260, 28, 14);
-      bg.lineStyle(1, 0xffffff, 0.1);
-      bg.strokeRoundedRect(GAME_WIDTH / 2 - 130, bannerY - 14, 260, 28, 14);
+      bg.fillStyle(accent, 0.06);
+      bg.fillRoundedRect(GAME_WIDTH / 2 - 140, bannerY - 16, 280, 32, 16);
+      bg.lineStyle(1, accent, 0.2);
+      bg.strokeRoundedRect(GAME_WIDTH / 2 - 140, bannerY - 16, 280, 32, 16);
 
       const label = this.add
         .text(GAME_WIDTH / 2, bannerY, world.name.toUpperCase(), {
           fontSize: '13px',
-          color: '#888888',
+          color: accentHex,
           fontFamily: 'monospace',
           fontStyle: 'bold',
-          letterSpacing: 4,
+          letterSpacing: 3,
         })
         .setOrigin(0.5);
 
@@ -266,56 +274,60 @@ export class MenuScene extends Phaser.Scene {
     positions: { x: number; y: number }[],
     maxUnlocked: number,
   ): void {
-    const mgr = LevelManager.instance;
-
     for (let i = 0; i < positions.length; i++) {
       const pos = positions[i];
       const isCompleted = i < maxUnlocked;
       const isCurrent = i === maxUnlocked;
       const isLocked = i > maxUnlocked;
+      const lvl = ALL_LEVELS[i];
+      const accent = lvl.theme.accentColor;
+      const accentHex = lvl.theme.accentHex;
 
-      // Node container
+      // Name label position: to the side opposite of the node
+      const nameX = pos.x < GAME_WIDTH / 2 ? pos.x + NODE_R + 16 : pos.x - NODE_R - 16;
+      const nameAlign = pos.x < GAME_WIDTH / 2 ? 0 : 1;
+
       const nodeContainer = this.add.container(pos.x, pos.y);
 
       if (isCompleted) {
-        // ── Completed: gold circle with check ──
+        // ── Completed: accent-colored circle with check ──
         const circle = this.add.graphics();
-        circle.fillStyle(0x51cf66, 0.2);
+        circle.fillStyle(0x51cf66, 0.15);
         circle.fillCircle(0, 0, NODE_R);
-        circle.lineStyle(2, 0x51cf66, 0.6);
+        circle.lineStyle(2, 0x51cf66, 0.5);
         circle.strokeCircle(0, 0, NODE_R);
         nodeContainer.add(circle);
 
-        const check = this.add
-          .text(0, -1, '\u2713', {
-            fontSize: '24px',
+        const num = this.add
+          .text(0, -2, String(i + 1), {
+            fontSize: '16px',
             color: '#51cf66',
             fontFamily: 'monospace',
             fontStyle: 'bold',
           })
           .setOrigin(0.5);
-        nodeContainer.add(check);
-
-        // Level number below
-        const num = this.add
-          .text(0, NODE_R + 14, String(i + 1), {
-            fontSize: '12px',
-            color: '#51cf66',
-            fontFamily: 'monospace',
-          })
-          .setOrigin(0.5);
         nodeContainer.add(num);
 
+        // Level name to the side
+        const name = this.add
+          .text(nameX - pos.x, 0, lvl.name, {
+            fontSize: '11px',
+            color: '#4a9e5e',
+            fontFamily: 'monospace',
+          })
+          .setOrigin(nameAlign, 0.5);
+        nodeContainer.add(name);
+
       } else if (isCurrent) {
-        // ── Current: glowing animated circle ──
+        // ── Current: glowing animated circle with accent ──
         const glow = this.add.graphics();
-        glow.fillStyle(0xffd43b, 0.15);
-        glow.fillCircle(0, 0, NODE_R + 10);
+        glow.fillStyle(0xffd43b, 0.12);
+        glow.fillCircle(0, 0, NODE_R + 12);
         nodeContainer.add(glow);
 
         this.tweens.add({
           targets: glow,
-          alpha: { from: 0.3, to: 0.8 },
+          alpha: { from: 0.3, to: 0.7 },
           scale: { from: 0.9, to: 1.15 },
           duration: 1000,
           yoyo: true,
@@ -324,15 +336,15 @@ export class MenuScene extends Phaser.Scene {
         });
 
         const circle = this.add.graphics();
-        circle.fillStyle(0xffd43b, 0.3);
+        circle.fillStyle(0xffd43b, 0.25);
         circle.fillCircle(0, 0, NODE_R);
-        circle.lineStyle(3, 0xffd43b, 0.9);
+        circle.lineStyle(3, 0xffd43b, 0.8);
         circle.strokeCircle(0, 0, NODE_R);
         nodeContainer.add(circle);
 
         const num = this.add
-          .text(0, -1, String(i + 1), {
-            fontSize: '22px',
+          .text(0, -2, String(i + 1), {
+            fontSize: '20px',
             color: '#ffd43b',
             fontFamily: 'monospace',
             fontStyle: 'bold',
@@ -340,45 +352,58 @@ export class MenuScene extends Phaser.Scene {
           .setOrigin(0.5);
         nodeContainer.add(num);
 
-        // Level name below
+        // Level name to the side (brighter)
         const name = this.add
-          .text(0, NODE_R + 14, mgr.current.name, {
-            fontSize: '11px',
+          .text(nameX - pos.x, -8, lvl.name, {
+            fontSize: '12px',
             color: '#ffd43b',
             fontFamily: 'monospace',
+            fontStyle: 'bold',
           })
-          .setOrigin(0.5);
+          .setOrigin(nameAlign, 0.5);
         nodeContainer.add(name);
 
-        // Play button below name
-        this.createPlayButton(pos.x, pos.y + NODE_R + 40);
+        // World subtitle
+        const worldSub = this.add
+          .text(nameX - pos.x, 8, lvl.theme.worldName, {
+            fontSize: '9px',
+            color: '#887730',
+            fontFamily: 'monospace',
+          })
+          .setOrigin(nameAlign, 0.5);
+        nodeContainer.add(worldSub);
+
+        // Play button below
+        this.createPlayButton(pos.x, pos.y + NODE_R + 38);
 
       } else {
-        // ── Locked: dark gray with lock ──
+        // ── Locked: dark with accent tint ──
         const circle = this.add.graphics();
-        circle.fillStyle(0xffffff, 0.03);
+        circle.fillStyle(accent, 0.04);
         circle.fillCircle(0, 0, NODE_R - 4);
-        circle.lineStyle(2, 0x333333, 0.3);
+        circle.lineStyle(1, 0x333333, 0.25);
         circle.strokeCircle(0, 0, NODE_R - 4);
         nodeContainer.add(circle);
 
-        const lock = this.add
-          .text(0, -1, '\u{1F512}', {
-            fontSize: '16px',
-            color: '#333333',
-            fontFamily: 'monospace',
-          })
-          .setOrigin(0.5);
-        nodeContainer.add(lock);
-
         const num = this.add
-          .text(0, NODE_R + 10, String(i + 1), {
-            fontSize: '11px',
-            color: '#333333',
+          .text(0, -2, String(i + 1), {
+            fontSize: '14px',
+            color: '#2a2a2a',
             fontFamily: 'monospace',
+            fontStyle: 'bold',
           })
           .setOrigin(0.5);
         nodeContainer.add(num);
+
+        // Level name (dimmed)
+        const name = this.add
+          .text(nameX - pos.x, 0, lvl.name, {
+            fontSize: '10px',
+            color: '#222222',
+            fontFamily: 'monospace',
+          })
+          .setOrigin(nameAlign, 0.5);
+        nodeContainer.add(name);
       }
 
       // Make completed and current nodes tappable
@@ -387,10 +412,9 @@ export class MenuScene extends Phaser.Scene {
           .setInteractive({ useHandCursor: true });
         nodeContainer.add(hitZone);
 
-        hitZone.on('pointerdown', (_pointer: Phaser.Input.Pointer) => {
-          // Only treat as tap if not dragging significantly
+        hitZone.on('pointerdown', () => {
           this.time.delayedCall(100, () => {
-            if (Math.abs(this.velocity) < 2) {
+            if (Math.abs(this.velocity) < 3) {
               this.selectLevel(i);
             }
           });
@@ -408,32 +432,29 @@ export class MenuScene extends Phaser.Scene {
   private selectLevel(index: number): void {
     const mgr = LevelManager.instance;
     mgr.setLevel(index);
-    this.selectedLevel = index;
     this.startGame();
   }
 
   private createPlayButton(x: number, y: number): void {
-    const btnW = 160;
-    const btnH = 46;
+    const btnW = 150;
+    const btnH = 44;
 
     const container = this.add.container(x, y);
 
-    // Glow
     const glow = this.add.graphics();
-    glow.fillStyle(0x51cf66, 0.1);
+    glow.fillStyle(0x51cf66, 0.08);
     glow.fillRoundedRect(-btnW / 2 - 4, -btnH / 2 - 4, btnW + 8, btnH + 8, btnH / 2 + 4);
     container.add(glow);
 
     this.tweens.add({
       targets: glow,
-      alpha: { from: 0.2, to: 0.5 },
+      alpha: { from: 0.15, to: 0.4 },
       duration: 1000,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
 
-    // Button bg
     const bg = this.add.graphics();
     bg.fillStyle(0x51cf66, 0.15);
     bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
@@ -442,12 +463,12 @@ export class MenuScene extends Phaser.Scene {
     container.add(bg);
 
     const text = this.add
-      .text(0, 0, 'PLAY', {
-        fontSize: '22px',
+      .text(0, 0, '\u25B6  PLAY', {
+        fontSize: '18px',
         color: '#51cf66',
         fontFamily: 'monospace',
         fontStyle: 'bold',
-        letterSpacing: 6,
+        letterSpacing: 4,
       })
       .setOrigin(0.5);
     container.add(text);
@@ -474,7 +495,7 @@ export class MenuScene extends Phaser.Scene {
     });
     hitZone.on('pointerdown', () => {
       this.time.delayedCall(50, () => {
-        if (Math.abs(this.velocity) < 2) {
+        if (Math.abs(this.velocity) < 3) {
           this.startGame();
         }
       });

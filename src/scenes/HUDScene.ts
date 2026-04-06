@@ -1,6 +1,7 @@
 // src/scenes/HUDScene.ts
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '@/config/GameConfig';
+import { LevelManager } from '@/config/progression';
 
 export class HUDScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
@@ -13,7 +14,7 @@ export class HUDScene extends Phaser.Scene {
   private weaponIcon!: Phaser.GameObjects.Sprite;
   private weaponLabel!: Phaser.GameObjects.Text;
   private weaponPill!: Phaser.GameObjects.Graphics;
-  private topBarBg!: Phaser.GameObjects.Graphics;
+  private levelBanner!: Phaser.GameObjects.Container;
 
   score: number = 0;
   distance: number = 0;
@@ -39,24 +40,86 @@ export class HUDScene extends Phaser.Scene {
     this.weaponName = '';
     this.bossName = '';
 
-    // Top bar background with gradient fade
-    this.topBarBg = this.add.graphics();
-    this.topBarBg.fillStyle(0x000000, 0.5);
-    this.topBarBg.fillRect(0, 0, GAME_WIDTH, 90);
-    this.topBarBg.fillStyle(0x000000, 0.25);
-    this.topBarBg.fillRect(0, 90, GAME_WIDTH, 20);
+    const level = LevelManager.instance.current;
+    const levelIndex = LevelManager.instance.currentLevelIndex;
+    const accentHex = level.theme.accentHex;
+    const accentColor = level.theme.accentColor;
 
-    // Left stat cluster - Score
+    // ── Level banner (animated intro, fades out) ──
+    this.levelBanner = this.add.container(GAME_WIDTH / 2, 160);
+    this.levelBanner.setDepth(20);
+
+    const bannerBg = this.add.graphics();
+    bannerBg.fillStyle(0x000000, 0.6);
+    bannerBg.fillRoundedRect(-180, -40, 360, 80, 20);
+    bannerBg.lineStyle(2, accentColor, 0.5);
+    bannerBg.strokeRoundedRect(-180, -40, 360, 80, 20);
+    this.levelBanner.add(bannerBg);
+
+    const levelNum = this.add
+      .text(0, -18, `LEVEL ${levelIndex + 1}`, {
+        fontSize: '13px',
+        color: accentHex,
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+        letterSpacing: 4,
+      })
+      .setOrigin(0.5);
+    this.levelBanner.add(levelNum);
+
+    const levelName = this.add
+      .text(0, 8, level.name.toUpperCase(), {
+        fontSize: '20px',
+        color: '#ffffff',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    this.levelBanner.add(levelName);
+
+    const worldName = this.add
+      .text(0, 30, level.theme.worldName, {
+        fontSize: '10px',
+        color: '#666666',
+        fontFamily: 'monospace',
+        letterSpacing: 3,
+      })
+      .setOrigin(0.5);
+    this.levelBanner.add(worldName);
+
+    // Animate banner: fade in, hold, fade out
+    this.levelBanner.setAlpha(0);
+    this.tweens.add({
+      targets: this.levelBanner,
+      alpha: 1,
+      y: { from: 140, to: 160 },
+      duration: 500,
+      ease: 'Power2',
+    });
+    this.tweens.add({
+      targets: this.levelBanner,
+      alpha: 0,
+      y: 140,
+      duration: 600,
+      delay: 2500,
+      ease: 'Power2',
+    });
+
+    // ── Top bar background ──
+    const topBarBg = this.add.graphics();
+    topBarBg.fillStyle(0x000000, 0.5);
+    topBarBg.fillRect(0, 0, GAME_WIDTH, 90);
+    topBarBg.fillStyle(0x000000, 0.25);
+    topBarBg.fillRect(0, 90, GAME_WIDTH, 20);
+
+    // ── Left stat cluster - Score ──
     const leftPill = this.add.graphics();
     leftPill.fillStyle(0xffd43b, 0.1);
     leftPill.fillRoundedRect(12, 12, 180, 30, 15);
     leftPill.lineStyle(1, 0xffd43b, 0.2);
     leftPill.strokeRoundedRect(12, 12, 180, 30, 15);
 
-    this.add.text(24, 20, '\u2605', {
-      fontSize: '14px',
-      color: '#ffd43b',
-    }).setOrigin(0, 0.5);
+    this.add.text(24, 20, '\u2605', { fontSize: '14px', color: '#ffd43b' }).setOrigin(0, 0.5);
 
     this.scoreText = this.add.text(42, 20, '0', {
       fontSize: '16px',
@@ -65,7 +128,7 @@ export class HUDScene extends Phaser.Scene {
       fontStyle: 'bold',
     }).setOrigin(0, 0.5);
 
-    // Left stat cluster - Distance
+    // ── Left stat cluster - Distance ──
     const distPill = this.add.graphics();
     distPill.fillStyle(0xffffff, 0.06);
     distPill.fillRoundedRect(12, 48, 150, 26, 13);
@@ -76,7 +139,7 @@ export class HUDScene extends Phaser.Scene {
       fontFamily: 'monospace',
     }).setOrigin(0, 0.5);
 
-    // Right stat cluster - Units
+    // ── Right stat cluster - Units ──
     const rightPill = this.add.graphics();
     rightPill.fillStyle(0x00d4ff, 0.1);
     rightPill.fillRoundedRect(GAME_WIDTH - 152, 12, 140, 30, 15);
@@ -90,12 +153,9 @@ export class HUDScene extends Phaser.Scene {
       fontStyle: 'bold',
     }).setOrigin(1, 0.5);
 
-    this.add.text(GAME_WIDTH - 140, 20, '\u2694', {
-      fontSize: '14px',
-      color: '#00d4ff',
-    }).setOrigin(0, 0.5);
+    this.add.text(GAME_WIDTH - 140, 20, '\u2694', { fontSize: '14px', color: '#00d4ff' }).setOrigin(0, 0.5);
 
-    // Right stat cluster - Kill streak
+    // ── Right stat cluster - Kill streak ──
     const streakPill = this.add.graphics();
     streakPill.fillStyle(0xff6b6b, 0.08);
     streakPill.fillRoundedRect(GAME_WIDTH - 130, 48, 118, 26, 13);
@@ -107,12 +167,9 @@ export class HUDScene extends Phaser.Scene {
       fontStyle: 'bold',
     }).setOrigin(1, 0.5);
 
-    this.add.text(GAME_WIDTH - 118, 54, '\u26A1', {
-      fontSize: '11px',
-      color: '#ff6b6b',
-    }).setOrigin(0, 0.5);
+    this.add.text(GAME_WIDTH - 118, 54, '\u26A1', { fontSize: '11px', color: '#ff6b6b' }).setOrigin(0, 0.5);
 
-    // Boss HP bar (hidden by default)
+    // ── Boss HP bar (hidden by default) ──
     const barWidth = 400;
     const barX = (GAME_WIDTH - barWidth) / 2;
     const barY = 52;
@@ -129,13 +186,12 @@ export class HUDScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(false);
 
-    // Draw boss bar background shape once
     this.bossHpBg.fillStyle(0xffffff, 0.08);
     this.bossHpBg.fillRoundedRect(barX - 4, barY, barWidth + 8, 24, 12);
     this.bossHpBg.lineStyle(1, 0xff6b6b, 0.3);
     this.bossHpBg.strokeRoundedRect(barX - 4, barY, barWidth + 8, 24, 12);
 
-    // Weapon indicator pill (bottom-center ish, hidden by default)
+    // ── Weapon indicator pill ──
     this.weaponPill = this.add.graphics().setVisible(false);
     this.weaponIcon = this.add.sprite(GAME_WIDTH / 2 - 50, 86, 'weapon_svg_pistol')
       .setDisplaySize(20, 20)
@@ -166,12 +222,10 @@ export class HUDScene extends Phaser.Scene {
       const fillWidth = barWidth * this.bossHpPercent;
 
       this.bossHpBar.clear();
-      // Bar fill with color based on HP
       const hpColor = this.bossHpPercent > 0.5 ? 0xff4040 :
                        this.bossHpPercent > 0.2 ? 0xff6b00 : 0xff2020;
       this.bossHpBar.fillStyle(hpColor, 0.8);
       this.bossHpBar.fillRoundedRect(barX, barY + 2, fillWidth, 20, 10);
-      // Highlight on top
       this.bossHpBar.fillStyle(0xffffff, 0.15);
       this.bossHpBar.fillRoundedRect(barX + 4, barY + 4, Math.max(fillWidth - 8, 0), 8, 4);
 
@@ -186,7 +240,6 @@ export class HUDScene extends Phaser.Scene {
       this.weaponLabel.setVisible(true);
       this.weaponLabel.setText(this.weaponName);
 
-      // Redraw weapon pill
       const pillW = 120;
       this.weaponPill.clear();
       this.weaponPill.fillStyle(0xffffff, 0.06);

@@ -93,11 +93,24 @@ export interface ScoringConfig {
   enemyKills: Record<string, number>; // enemy type -> score
 }
 
+/** Visual theme for a level's background and UI accents */
+export interface LevelTheme {
+  groundColor: number;       // base ground fill
+  detailColors: number[];    // terrain detail variation
+  glowColors: number[];      // ambient fog/glow patches
+  accentColor: number;       // UI accent (HUD banner, etc.)
+  accentHex: string;         // same as accentColor but as "#rrggbb"
+  worldName: string;         // e.g. "Goblin Wastes"
+}
+
 /** Top-level level definition */
 export interface LevelConfig {
   id: string;
   name: string;
   description: string;
+
+  // Visual
+  theme: LevelTheme;
 
   // Army
   startingUnits: number;

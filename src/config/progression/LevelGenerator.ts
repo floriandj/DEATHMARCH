@@ -6,6 +6,7 @@
 
 import type {
   LevelConfig,
+  LevelTheme,
   LevelEnemyConfig,
   LevelWeaponConfig,
   WeaponCrateConfig,
@@ -18,10 +19,20 @@ import type {
 // World definitions
 // ---------------------------------------------------------------------------
 
+interface WorldThemeDef {
+  groundColor: number;
+  detailColors: number[];
+  glowColors: number[];
+  accentColor: number;
+  accentHex: string;
+}
+
 interface WorldDef {
   tag: string; // short world identifier
+  displayName: string; // e.g. "Goblin Wastes"
   names: string[]; // 4 level names
   descriptions: string[]; // 4 level descriptions
+  theme: WorldThemeDef;
   enemies: EnemyTemplate[];
   weaponOrder: string[];
   weapons: Record<string, LevelWeaponConfig>;
@@ -48,6 +59,14 @@ const WORLDS: WorldDef[] = [
   // ── World 1: Goblin Wastes ─────────────────────────────────────────────
   {
     tag: 'goblin',
+    displayName: 'Goblin Wastes',
+    theme: {
+      groundColor: 0x0c0c18,
+      detailColors: [0x12121e, 0x0e0e1a, 0x161624, 0x1a1a28],
+      glowColors: [0x220033, 0x1a0028, 0x0d001a],
+      accentColor: 0xff6b6b,
+      accentHex: '#ff6b6b',
+    },
     names: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Demon Gate'],
     descriptions: [
       'Your first steps into the wasteland.',
@@ -74,6 +93,14 @@ const WORLDS: WorldDef[] = [
   // ── World 2: Infernal Pits ─────────────────────────────────────────────
   {
     tag: 'infernal',
+    displayName: 'Infernal Pits',
+    theme: {
+      groundColor: 0x180808,
+      detailColors: [0x1e0e0e, 0x201010, 0x2a1414, 0x140a0a],
+      glowColors: [0x331100, 0x442200, 0x220000],
+      accentColor: 0xff4400,
+      accentHex: '#ff4400',
+    },
     names: ['Ember Fields', 'Crimson Gauntlet', 'Hellfire Trench', 'Inferno Core'],
     descriptions: [
       'Heat rises from cracks in the earth.',
@@ -100,6 +127,14 @@ const WORLDS: WorldDef[] = [
   // ── World 3: Frozen Abyss ─────────────────────────────────────────────
   {
     tag: 'frost',
+    displayName: 'Frozen Abyss',
+    theme: {
+      groundColor: 0x080c18,
+      detailColors: [0x0e1220, 0x101828, 0x0c1424, 0x141e30],
+      glowColors: [0x002244, 0x003355, 0x001133],
+      accentColor: 0x74c0fc,
+      accentHex: '#74c0fc',
+    },
     names: ['Frostbite Pass', 'Glacier Ruins', 'Banshee Hollow', 'The Frozen Throne'],
     descriptions: [
       'Ice and silence stretch to the horizon.',
@@ -126,6 +161,14 @@ const WORLDS: WorldDef[] = [
   // ── World 4: Plague Wastes ─────────────────────────────────────────────
   {
     tag: 'plague',
+    displayName: 'Plague Wastes',
+    theme: {
+      groundColor: 0x0a100a,
+      detailColors: [0x101a0e, 0x0e160c, 0x142010, 0x0c1208],
+      glowColors: [0x113300, 0x224400, 0x002211],
+      accentColor: 0x2ecc71,
+      accentHex: '#2ecc71',
+    },
     names: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Plague Heart'],
     descriptions: [
       'Vermin pour from the sewers below.',
@@ -152,6 +195,14 @@ const WORLDS: WorldDef[] = [
   // ── World 5: Throne of Ash ─────────────────────────────────────────────
   {
     tag: 'ash',
+    displayName: 'Throne of Ash',
+    theme: {
+      groundColor: 0x100808,
+      detailColors: [0x1a0e0e, 0x140a0a, 0x201212, 0x0e0808],
+      glowColors: [0x330011, 0x220022, 0x440011],
+      accentColor: 0xc0392b,
+      accentHex: '#c0392b',
+    },
     names: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Throne of Ash'],
     descriptions: [
       'Shadow knights march in lockstep.',
@@ -295,6 +346,14 @@ function generateLevel(levelIndex: number): LevelConfig {
     id: `level_${levelIndex + 1}`,
     name: world.names[posInWorld],
     description: world.descriptions[posInWorld],
+    theme: {
+      groundColor: world.theme.groundColor,
+      detailColors: world.theme.detailColors,
+      glowColors: world.theme.glowColors,
+      accentColor: world.theme.accentColor,
+      accentHex: world.theme.accentHex,
+      worldName: world.displayName,
+    },
     startingUnits: 1,
     marchSpeed,
     startingWeapon: weaponOrder[0],
@@ -393,17 +452,10 @@ export interface WorldInfo {
 }
 
 export const WORLD_INFO: WorldInfo[] = WORLDS.map((w, i) => ({
-  name: w.tag.charAt(0).toUpperCase() + w.tag.slice(1) + ' Realm',
+  name: w.displayName,
   startLevel: i * 4,
   levelCount: 4,
 }));
-
-// Give worlds nicer display names
-WORLD_INFO[0].name = 'Goblin Wastes';
-WORLD_INFO[1].name = 'Infernal Pits';
-WORLD_INFO[2].name = 'Frozen Abyss';
-WORLD_INFO[3].name = 'Plague Wastes';
-WORLD_INFO[4].name = 'Throne of Ash';
 
 /** Generate all 20 levels */
 export function generateAllLevels(): LevelConfig[] {
