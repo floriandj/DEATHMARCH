@@ -41,7 +41,7 @@ export class WeaponCrate extends Phaser.GameObjects.Container {
     this.label = scene.add.text(0, 32, '?', {
       fontSize: '11px',
       color: '#ffffff',
-      fontFamily: 'monospace',
+      fontFamily: 'Arial, Helvetica, sans-serif',
       fontStyle: 'bold',
       stroke: '#000000',
       strokeThickness: 2,

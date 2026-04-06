@@ -166,12 +166,12 @@ export class GameScene extends Phaser.Scene {
     });
 
     const hint = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 180, 'DRAG TO MOVE\nYOUR ARMY!', {
-      fontSize: '28px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '28px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       align: 'center',
     }).setOrigin(0.5).setDepth(101);
 
     const tap = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 40, 'Tap anywhere to start', {
-      fontSize: '16px', color: '#888888', fontFamily: 'monospace',
+      fontSize: '16px', color: '#888888', fontFamily: 'Arial, Helvetica, sans-serif',
     }).setOrigin(0.5).setDepth(101);
 
     // Dismiss on tap
@@ -304,7 +304,7 @@ export class GameScene extends Phaser.Scene {
           SoundManager.play('gold_pouch');
           // Float-up text
           const txt = this.add.text(pouch.x, pouch.y, `+${value}g`, {
-            fontSize: '20px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+            fontSize: '20px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
             stroke: '#000000', strokeThickness: 3,
           }).setOrigin(0.5);
           this.tweens.add({
@@ -556,7 +556,7 @@ export class GameScene extends Phaser.Scene {
     this.dmgNumberTimer = 100; // 100ms throttle
 
     const txt = this.add.text(x + (Math.random() - 0.5) * 20, y, String(this.dmgNumberAccum), {
-      fontSize: '16px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '16px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5).setDepth(10);
 
@@ -572,7 +572,7 @@ export class GameScene extends Phaser.Scene {
     const text = this.add.text(x, y, label + '!', {
       fontSize: '56px',
       color,
-      fontFamily: 'monospace',
+      fontFamily: 'Arial, Helvetica, sans-serif',
       fontStyle: 'bold',
       stroke: '#000000',
       strokeThickness: 5,
@@ -622,7 +622,7 @@ export class GameScene extends Phaser.Scene {
     const label = this.add.text(x, y + 40, stats.name, {
       fontSize: '22px',
       color: '#ffffff',
-      fontFamily: 'monospace',
+      fontFamily: 'Arial, Helvetica, sans-serif',
       fontStyle: 'bold',
       stroke: '#000000',
       strokeThickness: 4,

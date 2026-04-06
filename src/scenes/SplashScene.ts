@@ -8,7 +8,7 @@ export class SplashScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#050510');
+    this.cameras.main.setBackgroundColor('#0f1923');
 
     // Layered radial gradient background
     const bgGlow = this.add.graphics();
@@ -73,7 +73,7 @@ export class SplashScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.38, 'DEATHMARCH', {
         fontSize: '64px',
         color: '#ffffff',
-        fontFamily: 'monospace',
+        fontFamily: 'Arial, Helvetica, sans-serif',
         fontStyle: 'bold',
         stroke: '#ff2040',
         strokeThickness: 3,
@@ -96,7 +96,7 @@ export class SplashScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.50, 'ENDLESS WAR AWAITS', {
         fontSize: '15px',
         color: '#ff6b6b',
-        fontFamily: 'monospace',
+        fontFamily: 'Arial, Helvetica, sans-serif',
         letterSpacing: 10,
       })
       .setOrigin(0.5)
@@ -122,7 +122,7 @@ export class SplashScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.53 + 12, 'v1.0.0', {
         fontSize: '11px',
         color: '#666666',
-        fontFamily: 'monospace',
+        fontFamily: 'Arial, Helvetica, sans-serif',
       })
       .setOrigin(0.5)
       .setAlpha(0);
@@ -139,7 +139,7 @@ export class SplashScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, GAME_HEIGHT * 0.75, 'TAP TO CONTINUE', {
         fontSize: '16px',
         color: '#ffffff',
-        fontFamily: 'monospace',
+        fontFamily: 'Arial, Helvetica, sans-serif',
         letterSpacing: 4,
       })
       .setOrigin(0.5)

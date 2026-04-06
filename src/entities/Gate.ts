@@ -25,13 +25,13 @@ export class Gate extends Phaser.GameObjects.Container {
     this.leftLabel = scene.add.text(leftX, 0, '', {
       fontSize: '24px',
       color: '#000000',
-      fontFamily: 'monospace',
+      fontFamily: 'Arial, Helvetica, sans-serif',
       fontStyle: 'bold',
     }).setOrigin(0.5);
     this.rightLabel = scene.add.text(rightX, 0, '', {
       fontSize: '24px',
       color: '#000000',
-      fontFamily: 'monospace',
+      fontFamily: 'Arial, Helvetica, sans-serif',
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
