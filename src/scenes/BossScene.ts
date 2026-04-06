@@ -485,21 +485,47 @@ export class BossScene extends Phaser.Scene {
   private chargeDirection: number = 1;
   private chargeStartX: number = 0;
   private chargeHit: boolean = false;
+  private chargeWarning: boolean = false;
 
   private startCharge(): void {
     SoundManager.play('boss_charge');
     this.chargeHit = false;
+    this.chargeWarning = true;
     this.chargeTrailTimer = 0;
     this.chargeDirection = Math.random() < 0.5 ? -1 : 1;
     this.chargeStartX = this.chargeDirection === 1 ? -100 : GAME_WIDTH + 100;
     this.bossSprite.x = this.chargeStartX;
-    this.bossSprite.y = GAME_HEIGHT * 0.45; // mid-screen, above the army
+    this.bossSprite.y = GAME_HEIGHT * 0.45;
 
-    // Charge wind-up flash
-    this.cameras.main.flash(100, 255, 100, 0, true);
+    // Show warning line across the charge path for 600ms before boss moves
+    const warningY = this.bossSprite.y;
+    const warningLine = this.add.rectangle(GAME_WIDTH / 2, warningY, GAME_WIDTH, 60, 0xff0000, 0.15);
+    const warningText = this.add.text(GAME_WIDTH / 2, warningY, '! CHARGE !', {
+      fontSize: '20px', color: '#ff4444', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5).setAlpha(0.7);
+
+    // Flash the warning
+    this.tweens.add({
+      targets: [warningLine, warningText],
+      alpha: 0,
+      duration: 150,
+      yoyo: true,
+      repeat: 2,
+    });
+
+    // After warning delay, start actual charge
+    this.time.delayedCall(600, () => {
+      warningLine.destroy();
+      warningText.destroy();
+      this.chargeWarning = false;
+      this.cameras.main.flash(100, 255, 100, 0, true);
+    });
   }
 
   private updateCharge(delta: number): void {
+    // Don't move during warning phase — give player time to dodge
+    if (this.chargeWarning) return;
+
     const speed = this.bossState.chargeSpeed;
     this.bossSprite.x += this.chargeDirection * speed * (delta / 1000);
 

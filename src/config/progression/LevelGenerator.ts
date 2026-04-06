@@ -281,7 +281,7 @@ export function generateLevel(levelIndex: number): LevelConfig {
   // ── Boss ──
   const bossHp = Math.round((250 + cycle * 80 + posInCycle * 70) * (1 + posInCycle * 0.1));
   const phases = buildBossPhases(posInCycle, cycle);
-  const chargeSpeed = 300 + cycle * 15 + posInCycle * 12;
+  const chargeSpeed = 220 + cycle * 10 + posInCycle * 8;
 
   // ── Scoring ──
   const perMeter = 1 + cycle;
@@ -325,7 +325,7 @@ export function generateLevel(levelIndex: number): LevelConfig {
       slamWarning: Math.max(600, 1500 - cycle * 30 - posInCycle * 60),
       enrageWarning: Math.max(300, 800 - cycle * 20 - posInCycle * 40),
       chargeSpeed,
-      enrageChargeSpeed: Math.round(chargeSpeed * 1.5),
+      enrageChargeSpeed: Math.round(chargeSpeed * 1.3),
     },
     scoring: { perMeter, perSurvivingUnit, bossKill, enemyKills },
   };
