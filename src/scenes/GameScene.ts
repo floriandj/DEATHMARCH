@@ -56,6 +56,8 @@ export class GameScene extends Phaser.Scene {
   // Track active unit count to know when to respawn vs reposition
   private activeUnitCount: number = 0;
   private shootSoundTimer: number = 0;
+  private dmgNumberTimer: number = 0;
+  private dmgNumberAccum: number = 0;
 
   // Gold
   private levelGold: number = 0;
@@ -140,6 +142,7 @@ export class GameScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     const dt = delta / 1000;
+    if (this.dmgNumberTimer > 0) this.dmgNumberTimer -= delta;
     const AGGRO_RANGE = 500; // enemies start moving when army is this close
     const level = LevelManager.instance.current;
     const marchSpeed = level.marchSpeed;
@@ -293,6 +296,8 @@ export class GameScene extends Phaser.Scene {
         const dy = bullet.y - enemy.y;
         if (Math.sqrt(dx * dx + dy * dy) < enemy.displayWidth / 2 + 5) {
           bullet.despawn();
+          // Floating damage number
+          this.showDamageNumber(bullet.x, bullet.y - 10, bullet.damage);
           const killed = enemy.takeDamage(bullet.damage);
           if (killed) {
             SoundManager.play('enemy_death');
@@ -499,6 +504,24 @@ export class GameScene extends Phaser.Scene {
       );
       activeIdx++;
     }
+  }
+
+  /** Throttled floating damage numbers — batches rapid hits */
+  private showDamageNumber(x: number, y: number, damage: number): void {
+    this.dmgNumberAccum += damage;
+    if (this.dmgNumberTimer > 0) return; // throttled
+    this.dmgNumberTimer = 100; // 100ms throttle
+
+    const txt = this.add.text(x + (Math.random() - 0.5) * 20, y, String(this.dmgNumberAccum), {
+      fontSize: '16px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(10);
+
+    this.tweens.add({
+      targets: txt, y: y - 40, alpha: 0, scale: 0.6,
+      duration: 400, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+    this.dmgNumberAccum = 0;
   }
 
   private showGateEffect(x: number, y: number, label: string, isPositive: boolean): void {

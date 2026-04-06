@@ -117,31 +117,35 @@ export class GameOverScene extends Phaser.Scene {
       }
     }
 
-    // ── Action Buttons ──
-    let btnY = showShop ? GAME_HEIGHT * 0.77 : GAME_HEIGHT * 0.50;
+    // ── Action Buttons (bottom-anchored for consistent muscle memory) ──
+    const btnBase = GAME_HEIGHT - 60;
 
-    if (canAdvance) {
-      this.createPillButton(GAME_WIDTH / 2, btnY,
-        'NEXT LEVEL  \u25B6', 300, 64, 0xffd43b, '#ffd43b', '#ffffff', true,
-        () => {
+    this.createPillButton(GAME_WIDTH / 2, btnBase - 148,
+      canAdvance ? 'NEXT LEVEL  \u25B6' : (data.bossDefeated ? '\u21BB REPLAY' : '\u21BB TRY AGAIN'),
+      300, 64,
+      canAdvance ? 0xffd43b : 0x00d4ff,
+      canAdvance ? '#ffd43b' : '#00d4ff',
+      '#ffffff', true,
+      () => {
+        if (canAdvance) {
           mgr.advanceLevel();
           localStorage.setItem('deathmarch-level', String(mgr.currentLevelIndex));
-          this.cameras.main.fadeOut(300, 0, 0, 0);
-          this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-            this.scene.start('GameScene');
-          });
-        }, 700);
-      btnY += 78;
+        }
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+          this.scene.start('GameScene');
+        });
+      }, 700);
+
+    if (canAdvance) {
+      // Secondary replay below
+      this.createPillButton(GAME_WIDTH / 2, btnBase - 76,
+        '\u21BB REPLAY', 240, 52, 0x00d4ff, '#00d4ff', '#ffffff', false,
+        () => this.scene.start('GameScene'), 800);
     }
 
-    this.createPillButton(GAME_WIDTH / 2, btnY,
-      data.bossDefeated ? '\u21BB REPLAY' : '\u21BB TRY AGAIN', 260, 56,
-      0x00d4ff, '#00d4ff', '#ffffff', false,
-      () => this.scene.start('GameScene'), canAdvance ? 800 : 700);
-    btnY += 68;
-
-    this.createPillButton(GAME_WIDTH / 2, btnY,
-      '\u2630 LEVELS', 200, 50, 0x999999, '#999999', '#ffffff', false,
+    this.createPillButton(GAME_WIDTH / 2, btnBase,
+      '\u2630 LEVELS', 200, 48, 0x666666, '#999999', '#ffffff', false,
       () => this.scene.start('MenuScene'), canAdvance ? 900 : 800);
   }
 

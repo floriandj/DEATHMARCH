@@ -1,25 +1,32 @@
 // src/scenes/MenuScene.ts
+// Horizontal level carousel — simpler and better for endless games.
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 
-const NODE_SPACING = 170;
-const LEFT_X = 180;
-const RIGHT_X = 540;
-const WORLD_GAP = 80;
-const NODE_R = 38;
-const LOOKAHEAD = 8;
+const NODE_R = 52;       // current level node radius
+const NODE_R_SM = 36;    // neighbor node radius
+const CAROUSEL_Y = 560;  // vertical center of the carousel
+const NODE_GAP = 160;    // horizontal gap between nodes
+const VISIBLE = 5;       // max visible nodes (2 left, current, 2 right)
 
 export class MenuScene extends Phaser.Scene {
-  private scrollContainer!: Phaser.GameObjects.Container;
-  private totalHeight: number = 0;
+  private carouselContainer!: Phaser.GameObjects.Container;
+  private currentIndex: number = 0;
+  private maxUnlocked: number = 0;
   private dragging: boolean = false;
-  private dragStartY: number = 0;
-  private scrollStartY: number = 0;
+  private dragStartX: number = 0;
+  private offsetX: number = 0;
+  private baseOffsetX: number = 0;
   private velocity: number = 0;
-  private lastPointerY: number = 0;
+  private lastPointerX: number = 0;
+
+  // Refreshable UI elements
+  private levelNameText!: Phaser.GameObjects.Text;
+  private worldNameText!: Phaser.GameObjects.Text;
+  private cycleText!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: 'MenuScene' });
@@ -33,289 +40,216 @@ export class MenuScene extends Phaser.Scene {
 
     const mgr = LevelManager.instance;
     const savedLevel = parseInt(localStorage.getItem('deathmarch-level') || '0', 10);
-    const maxUnlocked = Math.max(0, savedLevel);
-    mgr.setLevel(maxUnlocked);
+    this.maxUnlocked = Math.max(0, savedLevel);
+    this.currentIndex = this.maxUnlocked;
+    mgr.setLevel(this.currentIndex);
 
-    const visibleCount = maxUnlocked + 1 + LOOKAHEAD;
-
-    // Background glow
+    // ── Background ──
     const bgGlow = this.add.graphics();
     bgGlow.fillStyle(0xff2040, 0.03);
-    bgGlow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.15, 300);
-    bgGlow.setDepth(0);
+    bgGlow.fillCircle(GAME_WIDTH / 2, 200, 300);
 
-    // ── Title bar (fixed) ──
-    const titleBg = this.add.graphics();
-    titleBg.fillStyle(0x050510, 0.95);
-    titleBg.fillRect(0, 0, GAME_WIDTH, 130);
-    titleBg.fillStyle(0x050510, 0.6);
-    titleBg.fillRect(0, 130, GAME_WIDTH, 15);
-    titleBg.setDepth(10);
-
-    this.add.text(GAME_WIDTH / 2, 36, 'DEATHMARCH', {
-      fontSize: '42px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+    // ── Title ──
+    this.add.text(GAME_WIDTH / 2, 60, 'DEATHMARCH', {
+      fontSize: '44px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
       stroke: '#ff2040', strokeThickness: 3,
-    }).setOrigin(0.5).setDepth(11);
+    }).setOrigin(0.5);
 
-    this.add.rectangle(GAME_WIDTH / 2, 66, 200, 2, 0xff4040, 0.5).setDepth(11);
+    this.add.rectangle(GAME_WIDTH / 2, 92, 200, 3, 0xff4040, 0.5);
 
+    // ── Stats row ──
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add.text(GAME_WIDTH / 2 - 80, 86, `BEST: ${highScore}`, {
+    this.add.text(GAME_WIDTH / 2 - 120, 120, `BEST ${highScore}`, {
       fontSize: '16px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(0.5).setDepth(11);
+    }).setOrigin(0.5);
 
-    this.add.text(GAME_WIDTH / 2 + 100, 86, `${WalletManager.gold}g`, {
+    this.add.text(GAME_WIDTH / 2 + 120, 120, `${WalletManager.gold}g`, {
       fontSize: '16px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(0.5).setDepth(11);
+    }).setOrigin(0.5);
 
-    const cycleNum = Math.floor(maxUnlocked / 5) + 1;
-    this.add.text(GAME_WIDTH / 2, 110, `LEVEL ${maxUnlocked + 1}  \u2022  CYCLE ${cycleNum}`, {
-      fontSize: '14px', color: '#666666', fontFamily: 'monospace',
-    }).setOrigin(0.5).setDepth(11);
+    // ── World name banner (above carousel) ──
+    this.worldNameText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y - 120, '', {
+      fontSize: '14px', color: '#666666', fontFamily: 'monospace', letterSpacing: 4,
+    }).setOrigin(0.5);
 
-    // ── Scrollable map ──
-    this.scrollContainer = this.add.container(0, 0).setDepth(5);
+    // ── Carousel ──
+    this.carouselContainer = this.add.container(0, 0);
+    this.offsetX = 0;
+    this.rebuildCarousel();
 
-    const nodePositions = this.computeNodePositions(visibleCount);
-    this.totalHeight = nodePositions[nodePositions.length - 1].y + 280;
+    // ── Level name (below carousel) ──
+    this.levelNameText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 90, '', {
+      fontSize: '22px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5);
 
-    this.drawPath(nodePositions, maxUnlocked);
-    this.drawWorldBanners(nodePositions, visibleCount);
-    this.drawNodes(nodePositions, maxUnlocked);
+    this.cycleText = this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 120, '', {
+      fontSize: '13px', color: '#555555', fontFamily: 'monospace',
+    }).setOrigin(0.5);
 
-    // ── Settings button (fixed, bigger) ──
+    this.updateLabels();
+
+    // ── Swipe hint ──
+    this.add.text(GAME_WIDTH / 2, CAROUSEL_Y + 160, '\u25C0  SWIPE  \u25B6', {
+      fontSize: '13px', color: '#333333', fontFamily: 'monospace',
+    }).setOrigin(0.5);
+
+    // ── PLAY button (fixed, always visible) ──
+    this.createPlayButton(GAME_WIDTH / 2, GAME_HEIGHT - 220);
+
+    // ── Settings button ──
     const settBg = this.add.graphics();
     settBg.fillStyle(0xffffff, 0.06);
-    settBg.fillRoundedRect(10, GAME_HEIGHT - 60, 160, 44, 22);
-    settBg.setDepth(11);
+    settBg.fillRoundedRect(GAME_WIDTH / 2 - 80, GAME_HEIGHT - 110, 160, 48, 24);
 
-    const settBtn = this.add
-      .text(90, GAME_HEIGHT - 38, '\u2699  SETTINGS', {
-        fontSize: '16px', color: '#777777', fontFamily: 'monospace', fontStyle: 'bold',
-      })
-      .setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(11);
-    settBtn.on('pointerdown', () => this.scene.start('SettingsScene'));
+    const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 86, '\u2699  SETTINGS', {
+      fontSize: '15px', color: '#666666', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    settBtn.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
     settBtn.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settBtn.on('pointerout', () => settBtn.setColor('#777777'));
+    settBtn.on('pointerout', () => settBtn.setColor('#666666'));
 
-    // ── Scroll to current level ──
-    const currentNodeY = nodePositions[Math.min(maxUnlocked, nodePositions.length - 1)].y;
-    this.scrollContainer.y = -currentNodeY + GAME_HEIGHT * 0.5;
-    this.clampScroll();
-
-    // ── Input ──
+    // ── Swipe input ──
     this.velocity = 0;
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.dragging = true;
-      this.dragStartY = p.y;
-      this.scrollStartY = this.scrollContainer.y;
+      this.dragStartX = p.x;
+      this.baseOffsetX = this.offsetX;
       this.velocity = 0;
-      this.lastPointerY = p.y;
+      this.lastPointerX = p.x;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (!this.dragging) return;
-      this.scrollContainer.y = this.scrollStartY + (p.y - this.dragStartY);
-      this.velocity = p.y - this.lastPointerY;
-      this.lastPointerY = p.y;
-      this.clampScroll();
+      this.offsetX = this.baseOffsetX + (p.x - this.dragStartX);
+      this.velocity = p.x - this.lastPointerX;
+      this.lastPointerX = p.x;
+      this.rebuildCarousel();
     });
-    this.input.on('pointerup', () => { this.dragging = false; });
+    this.input.on('pointerup', (p: Phaser.Input.Pointer) => {
+      if (!this.dragging) return;
+      this.dragging = false;
+      const swipeDist = p.x - this.dragStartX;
+
+      // Determine snap target
+      if (Math.abs(swipeDist) > 40 || Math.abs(this.velocity) > 4) {
+        if (swipeDist > 0 && this.currentIndex > 0) {
+          this.currentIndex--;
+        } else if (swipeDist < 0 && this.currentIndex < this.maxUnlocked) {
+          this.currentIndex++;
+        }
+      }
+
+      // Snap to current index
+      this.snapToIndex();
+    });
   }
 
   update(): void {
-    if (!this.dragging && Math.abs(this.velocity) > 0.5) {
-      this.scrollContainer.y += this.velocity * 0.3;
-      this.velocity *= 0.92;
-      this.clampScroll();
-    }
+    // Inertia handled by snap tween
   }
 
-  private computeNodePositions(count: number): { x: number; y: number }[] {
-    const positions: { x: number; y: number }[] = [];
-    let y = 220;
-    for (let i = 0; i < count; i++) {
-      if (i > 0 && i % 5 === 0) y += WORLD_GAP;
-      const row = Math.floor(i / 2);
-      const isLeft = (row % 2 === 0) ? (i % 2 === 0) : (i % 2 !== 0);
-      positions.push({ x: isLeft ? LEFT_X : RIGHT_X, y });
-      y += NODE_SPACING;
-    }
-    return positions;
+  private snapToIndex(): void {
+    const targetOffset = 0; // current index is always at center
+    this.tweens.add({
+      targets: this,
+      offsetX: targetOffset,
+      duration: 250,
+      ease: 'Power2',
+      onUpdate: () => this.rebuildCarousel(),
+      onComplete: () => {
+        LevelManager.instance.setLevel(this.currentIndex);
+        this.updateLabels();
+      },
+    });
   }
 
-  private drawPath(positions: { x: number; y: number }[], maxUnlocked: number): void {
-    const g = this.add.graphics();
-    g.lineStyle(5, 0xffffff, 0.07);
-
-    for (let i = 0; i < positions.length - 1; i++) {
-      const a = positions[i];
-      const b = positions[i + 1];
-      if ((i + 1) % 5 === 0) {
-        for (let s = 0; s < 8; s += 2) {
-          const t1 = s / 8, t2 = (s + 1) / 8;
-          g.beginPath();
-          g.moveTo(a.x + (b.x - a.x) * t1, a.y + (b.y - a.y) * t1);
-          g.lineTo(a.x + (b.x - a.x) * t2, a.y + (b.y - a.y) * t2);
-          g.strokePath();
-        }
-      } else {
-        g.beginPath();
-        g.moveTo(a.x, a.y);
-        g.lineTo(b.x, b.y);
-        g.strokePath();
-      }
-    }
-
-    const brightG = this.add.graphics();
-    brightG.lineStyle(6, 0x51cf66, 0.35);
-    for (let i = 0; i < Math.min(maxUnlocked, positions.length - 1); i++) {
-      const a = positions[i];
-      const b = positions[i + 1];
-      brightG.beginPath();
-      brightG.moveTo(a.x, a.y);
-      brightG.lineTo(b.x, b.y);
-      brightG.strokePath();
-    }
-
-    this.scrollContainer.add([g, brightG]);
+  private updateLabels(): void {
+    const lvl = generateLevel(this.currentIndex);
+    this.levelNameText.setText(lvl.name.toUpperCase());
+    this.worldNameText.setText(lvl.theme.worldName.toUpperCase());
+    this.worldNameText.setColor(lvl.theme.accentHex);
+    const cycle = Math.floor(this.currentIndex / 5) + 1;
+    this.cycleText.setText(`LEVEL ${this.currentIndex + 1}  \u2022  CYCLE ${cycle}`);
   }
 
-  private drawWorldBanners(positions: { x: number; y: number }[], visibleCount: number): void {
-    const worldInfos = getWorldInfoForLevels(visibleCount - 1);
-    for (const world of worldInfos) {
-      if (world.startLevel >= positions.length) continue;
-      const nodeY = positions[world.startLevel].y;
-      const bannerY = nodeY - 65;
+  private rebuildCarousel(): void {
+    this.carouselContainer.removeAll(true);
 
-      const lvl = generateLevel(world.startLevel);
-      const accent = lvl.theme.accentColor;
-      const accentHex = lvl.theme.accentHex;
+    // Render nodes around the current index
+    const startIdx = Math.max(0, this.currentIndex - 3);
+    const endIdx = this.currentIndex + 4;
 
-      const bg = this.add.graphics();
-      bg.fillStyle(accent, 0.08);
-      bg.fillRoundedRect(GAME_WIDTH / 2 - 170, bannerY - 18, 340, 36, 18);
-      bg.lineStyle(1, accent, 0.25);
-      bg.strokeRoundedRect(GAME_WIDTH / 2 - 170, bannerY - 18, 340, 36, 18);
+    for (let i = startIdx; i <= endIdx; i++) {
+      const offset = i - this.currentIndex;
+      const screenX = GAME_WIDTH / 2 + offset * NODE_GAP + this.offsetX;
 
-      const label = this.add
-        .text(GAME_WIDTH / 2, bannerY, world.name.toUpperCase(), {
-          fontSize: '15px', color: accentHex, fontFamily: 'monospace',
-          fontStyle: 'bold', letterSpacing: 3,
-        })
-        .setOrigin(0.5);
+      // Skip if far off-screen
+      if (screenX < -100 || screenX > GAME_WIDTH + 100) continue;
 
-      this.scrollContainer.add([bg, label]);
-    }
-  }
-
-  private drawNodes(positions: { x: number; y: number }[], maxUnlocked: number): void {
-    for (let i = 0; i < positions.length; i++) {
-      const pos = positions[i];
-      const isCompleted = i < maxUnlocked;
-      const isCurrent = i === maxUnlocked;
-      const isLocked = i > maxUnlocked;
+      const isCurrent = i === this.currentIndex;
+      const isCompleted = i < this.maxUnlocked;
+      const isLocked = i > this.maxUnlocked;
       const lvl = generateLevel(i);
       const accent = lvl.theme.accentColor;
 
-      const nameX = pos.x < GAME_WIDTH / 2 ? pos.x + NODE_R + 18 : pos.x - NODE_R - 18;
-      const nameAlign = pos.x < GAME_WIDTH / 2 ? 0 : 1;
+      const r = isCurrent ? NODE_R : NODE_R_SM;
 
-      const nc = this.add.container(pos.x, pos.y);
+      // Distance from center for scaling
+      const distFromCenter = Math.abs(screenX - GAME_WIDTH / 2);
+      const scaleFactor = Math.max(0.6, 1 - distFromCenter / 500);
 
-      if (isCompleted) {
-        const circle = this.add.graphics();
-        circle.fillStyle(0x51cf66, 0.18);
-        circle.fillCircle(0, 0, NODE_R);
-        circle.lineStyle(3, 0x51cf66, 0.6);
-        circle.strokeCircle(0, 0, NODE_R);
-        nc.add(circle);
+      const nodeG = this.add.graphics();
 
-        nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '20px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
-        }).setOrigin(0.5));
-
-        nc.add(this.add.text(nameX - pos.x, 0, lvl.name, {
-          fontSize: '14px', color: '#5cb86c', fontFamily: 'monospace',
-        }).setOrigin(nameAlign, 0.5));
-
-      } else if (isCurrent) {
-        const glow = this.add.graphics();
-        glow.fillStyle(0xffd43b, 0.14);
-        glow.fillCircle(0, 0, NODE_R + 14);
-        nc.add(glow);
-        this.tweens.add({
-          targets: glow, alpha: { from: 0.3, to: 0.7 },
-          scale: { from: 0.9, to: 1.15 }, duration: 1000,
-          yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
-        });
-
-        const circle = this.add.graphics();
-        circle.fillStyle(0xffd43b, 0.28);
-        circle.fillCircle(0, 0, NODE_R);
-        circle.lineStyle(3, 0xffd43b, 0.85);
-        circle.strokeCircle(0, 0, NODE_R);
-        nc.add(circle);
-
-        nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '24px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
-        }).setOrigin(0.5));
-
-        nc.add(this.add.text(nameX - pos.x, -10, lvl.name, {
-          fontSize: '15px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
-        }).setOrigin(nameAlign, 0.5));
-
-        nc.add(this.add.text(nameX - pos.x, 10, lvl.theme.worldName, {
-          fontSize: '12px', color: '#998840', fontFamily: 'monospace',
-        }).setOrigin(nameAlign, 0.5));
-
-        this.createPlayButton(pos.x, pos.y + NODE_R + 45);
-
+      if (isCurrent) {
+        // Glowing ring
+        nodeG.fillStyle(accent, 0.08);
+        nodeG.fillCircle(screenX, CAROUSEL_Y, r + 12);
+        // Main circle
+        nodeG.fillStyle(0x0a0a1a, 1);
+        nodeG.fillCircle(screenX, CAROUSEL_Y, r);
+        nodeG.lineStyle(3, accent, 0.9);
+        nodeG.strokeCircle(screenX, CAROUSEL_Y, r);
+      } else if (isCompleted) {
+        nodeG.fillStyle(0x0a0a1a, 1);
+        nodeG.fillCircle(screenX, CAROUSEL_Y, r * scaleFactor);
+        nodeG.lineStyle(2, 0x51cf66, 0.5 * scaleFactor);
+        nodeG.strokeCircle(screenX, CAROUSEL_Y, r * scaleFactor);
       } else {
-        const circle = this.add.graphics();
-        circle.fillStyle(accent, 0.05);
-        circle.fillCircle(0, 0, NODE_R - 4);
-        circle.lineStyle(2, 0x444444, 0.3);
-        circle.strokeCircle(0, 0, NODE_R - 4);
-        nc.add(circle);
-
-        nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '18px', color: '#363636', fontFamily: 'monospace', fontStyle: 'bold',
-        }).setOrigin(0.5));
-
-        nc.add(this.add.text(nameX - pos.x, 0, lvl.name, {
-          fontSize: '12px', color: '#2d2d2d', fontFamily: 'monospace',
-        }).setOrigin(nameAlign, 0.5));
+        nodeG.fillStyle(0x0a0a1a, 0.8);
+        nodeG.fillCircle(screenX, CAROUSEL_Y, r * scaleFactor);
+        nodeG.lineStyle(2, 0x333333, 0.3 * scaleFactor);
+        nodeG.strokeCircle(screenX, CAROUSEL_Y, r * scaleFactor);
       }
+      this.carouselContainer.add(nodeG);
 
-      if (!isLocked) {
-        const hitZone = this.add.zone(0, 0, NODE_R * 2 + 16, NODE_R * 2 + 16)
-          .setInteractive({ useHandCursor: true });
-        nc.add(hitZone);
-        hitZone.on('pointerdown', () => {
-          this.time.delayedCall(100, () => {
-            if (Math.abs(this.velocity) < 3) {
-              LevelManager.instance.setLevel(i);
-              this.startGame();
-            }
-          });
-        });
+      // Number
+      const numSize = isCurrent ? '28px' : `${Math.round(18 * scaleFactor)}px`;
+      const numColor = isCurrent ? '#ffffff' : isCompleted ? '#51cf66' : '#333333';
+      const num = this.add.text(screenX, CAROUSEL_Y, String(i + 1), {
+        fontSize: numSize, color: numColor, fontFamily: 'monospace', fontStyle: 'bold',
+      }).setOrigin(0.5).setAlpha(scaleFactor);
+      this.carouselContainer.add(num);
+
+      // Lock icon for locked levels
+      if (isLocked) {
+        const lock = this.add.text(screenX, CAROUSEL_Y + r * scaleFactor + 12, '\u{1F512}', {
+          fontSize: '12px', color: '#333333',
+        }).setOrigin(0.5).setAlpha(scaleFactor * 0.6);
+        this.carouselContainer.add(lock);
       }
-
-      this.scrollContainer.add(nc);
     }
   }
 
   private createPlayButton(x: number, y: number): void {
-    const btnW = 200, btnH = 58;
+    const btnW = 320, btnH = 72;
     const container = this.add.container(x, y);
 
     const glow = this.add.graphics();
-    glow.fillStyle(0x51cf66, 0.1);
-    glow.fillRoundedRect(-btnW / 2 - 5, -btnH / 2 - 5, btnW + 10, btnH + 10, btnH / 2 + 5);
+    glow.fillStyle(0x51cf66, 0.08);
+    glow.fillRoundedRect(-btnW / 2 - 6, -btnH / 2 - 6, btnW + 12, btnH + 12, btnH / 2 + 6);
     container.add(glow);
     this.tweens.add({
-      targets: glow, alpha: { from: 0.15, to: 0.45 },
-      duration: 1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+      targets: glow, alpha: { from: 0.12, to: 0.4 },
+      duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
     const bg = this.add.graphics();
@@ -326,8 +260,8 @@ export class MenuScene extends Phaser.Scene {
     container.add(bg);
 
     const text = this.add.text(0, 0, '\u25B6  PLAY', {
-      fontSize: '24px', color: '#51cf66', fontFamily: 'monospace',
-      fontStyle: 'bold', letterSpacing: 5,
+      fontSize: '28px', color: '#51cf66', fontFamily: 'monospace',
+      fontStyle: 'bold', letterSpacing: 6,
     }).setOrigin(0.5);
     container.add(text);
 
@@ -351,31 +285,18 @@ export class MenuScene extends Phaser.Scene {
       bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, btnH / 2);
     });
     hitZone.on('pointerdown', () => {
-      this.time.delayedCall(50, () => {
-        if (Math.abs(this.velocity) < 3) {
-          SoundManager.play('button_click');
-          this.tweens.add({
-            targets: container, scale: 0.92, duration: 60,
-            yoyo: true, ease: 'Power2',
-            onComplete: () => { container.setScale(1); this.startGame(); },
+      SoundManager.play('button_click');
+      this.tweens.add({
+        targets: container, scale: 0.92, duration: 60, yoyo: true, ease: 'Power2',
+        onComplete: () => {
+          container.setScale(1);
+          LevelManager.instance.setLevel(this.currentIndex);
+          this.cameras.main.fadeOut(200, 0, 0, 0);
+          this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+            this.scene.start('GameScene');
           });
-        }
+        },
       });
     });
-
-    this.scrollContainer.add(container);
-  }
-
-  private startGame(): void {
-    SoundManager.play('button_click');
-    this.cameras.main.fadeOut(200, 0, 0, 0);
-    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.scene.start('GameScene');
-    });
-  }
-
-  private clampScroll(): void {
-    const minY = -(this.totalHeight - GAME_HEIGHT + 50);
-    this.scrollContainer.y = Phaser.Math.Clamp(this.scrollContainer.y, minY, 50);
   }
 }
