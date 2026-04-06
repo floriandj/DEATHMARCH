@@ -1,4 +1,5 @@
 import './pwa';
+import { WakeLock } from '@/systems/WakeLock';
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { BootScene } from '@/scenes/BootScene';
@@ -23,3 +24,4 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 new Phaser.Game(config);
+WakeLock.enable();
