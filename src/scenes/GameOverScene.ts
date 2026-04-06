@@ -132,9 +132,9 @@ export class GameOverScene extends Phaser.Scene {
       }
     }
 
-    // ── Buttons (always at bottom, clear hierarchy) ──
-    // Primary action — big and obvious
-    const primaryY = GAME_HEIGHT - 150;
+    // ── Buttons — flow from content, not bottom-anchored ──
+    yPos += 30;
+    const primaryY = yPos;
 
     if (canAdvance) {
       this.createBigButton(GAME_WIDTH / 2, primaryY,
@@ -145,18 +145,18 @@ export class GameOverScene extends Phaser.Scene {
           this.fadeToGame();
         }, true);
 
-      // Small replay
-      this.createSmallButton(GAME_WIDTH / 2 - 110, GAME_HEIGHT - 60,
+      // Small replay + levels below
+      this.createSmallButton(GAME_WIDTH / 2 - 110, primaryY + 55,
         '\u21BB Replay', 0x00d4ff, '#00d4ff', () => this.fadeToGame());
 
-      this.createSmallButton(GAME_WIDTH / 2 + 110, GAME_HEIGHT - 60,
+      this.createSmallButton(GAME_WIDTH / 2 + 110, primaryY + 55,
         '\u2630 Levels', 0x666666, '#999999', () => this.scene.start('MenuScene'));
     } else {
       this.createBigButton(GAME_WIDTH / 2, primaryY,
         '\u{1F4AA} TRY AGAIN', 360, 72, 0x00d4ff, '#00d4ff',
         () => this.fadeToGame(), true);
 
-      this.createSmallButton(GAME_WIDTH / 2, GAME_HEIGHT - 60,
+      this.createSmallButton(GAME_WIDTH / 2, primaryY + 55,
         '\u2630 Back to Levels', 0x666666, '#999999', () => this.scene.start('MenuScene'));
     }
   }

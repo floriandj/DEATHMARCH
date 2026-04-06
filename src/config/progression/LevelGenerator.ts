@@ -264,15 +264,15 @@ export function generateLevel(levelIndex: number): LevelConfig {
   }
 
   // ── Waves (easy levels = sparse, hard levels = dense) ──
-  const baseInterval = Math.max(40, 140 - cycle * 4 - posInCycle * 6);
+  const baseInterval = Math.max(30, 100 - cycle * 4 - posInCycle * 5);
   const brackets: WaveBracket[] = [
-    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 1, intervalMin: baseInterval, intervalMax: baseInterval + 80 },
-    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 1 + Math.floor(posInCycle * 0.3), intervalMin: Math.round(baseInterval * 0.75), intervalMax: Math.round((baseInterval + 50) * 0.85) },
-    { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.55), intervalMax: Math.round(baseInterval * 0.75) },
-    { maxDistance: Math.round(triggerDistance * 0.50), clusterMin: 1, clusterMax: 3 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.45), intervalMax: Math.round(baseInterval * 0.6) },
-    { maxDistance: Math.round(triggerDistance * 0.70), clusterMin: 2, clusterMax: 4 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.35), intervalMax: Math.round(baseInterval * 0.48) },
-    { maxDistance: Math.round(triggerDistance * 0.85), clusterMin: 2 + Math.floor(posInCycle * 0.5), clusterMax: 5 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.28), intervalMax: Math.round(baseInterval * 0.38) },
-    { maxDistance: 99999, clusterMin: 3 + Math.floor(posInCycle * 0.5), clusterMax: 5 + posInCycle, intervalMin: Math.max(14, Math.round(baseInterval * 0.2)), intervalMax: Math.max(22, Math.round(baseInterval * 0.3)) },
+    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 2, intervalMin: Math.round(baseInterval * 0.8), intervalMax: baseInterval + 40 },
+    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.6), intervalMax: Math.round(baseInterval * 0.8) },
+    { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 2, clusterMax: 3 + posInCycle, intervalMin: Math.round(baseInterval * 0.45), intervalMax: Math.round(baseInterval * 0.6) },
+    { maxDistance: Math.round(triggerDistance * 0.50), clusterMin: 2, clusterMax: 4 + posInCycle, intervalMin: Math.round(baseInterval * 0.35), intervalMax: Math.round(baseInterval * 0.5) },
+    { maxDistance: Math.round(triggerDistance * 0.70), clusterMin: 3, clusterMax: 5 + posInCycle, intervalMin: Math.round(baseInterval * 0.25), intervalMax: Math.round(baseInterval * 0.38) },
+    { maxDistance: Math.round(triggerDistance * 0.85), clusterMin: 3 + posInCycle, clusterMax: 6 + posInCycle, intervalMin: Math.round(baseInterval * 0.2), intervalMax: Math.round(baseInterval * 0.3) },
+    { maxDistance: 99999, clusterMin: 4 + posInCycle, clusterMax: 7 + posInCycle + cycle, intervalMin: Math.max(10, Math.round(baseInterval * 0.14)), intervalMax: Math.max(18, Math.round(baseInterval * 0.22)) },
   ];
 
   // ── Gates ──

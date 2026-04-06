@@ -65,6 +65,9 @@ export class BootScene extends Phaser.Scene {
 
     // Death particle
     this.load.image('death_particle', 'assets/sprites/death_particle.svg');
+
+    // Gold pouch
+    this.load.image('gold_pouch', 'assets/sprites/gold_pouch.svg');
   }
 
   create(): void {
@@ -75,22 +78,46 @@ export class BootScene extends Phaser.Scene {
   }
 
   private generateGateTextures(): void {
+    const w = 120, h = 60, r = 14;
+
+    // Multiply gate — bright green, inviting, rounded with glow
     const gGreen = this.add.graphics();
+    gGreen.fillStyle(0x2a8a3e, 1);
+    gGreen.fillRoundedRect(0, 0, w, h, r);
     gGreen.fillStyle(0x51cf66, 1);
-    gGreen.fillRect(0, 0, 120, 60);
-    gGreen.generateTexture('gate_multiply', 120, 60);
+    gGreen.fillRoundedRect(3, 3, w - 6, h - 6, r - 2);
+    // Inner shine
+    gGreen.fillStyle(0x7ddf8a, 0.5);
+    gGreen.fillRoundedRect(6, 6, w - 12, h / 2 - 6, r - 4);
+    gGreen.generateTexture('gate_multiply', w, h);
     gGreen.destroy();
 
+    // Add gate — bright blue, friendly, rounded with glow
     const gBlue = this.add.graphics();
+    gBlue.fillStyle(0x0088aa, 1);
+    gBlue.fillRoundedRect(0, 0, w, h, r);
     gBlue.fillStyle(0x00d4ff, 1);
-    gBlue.fillRect(0, 0, 120, 60);
-    gBlue.generateTexture('gate_add', 120, 60);
+    gBlue.fillRoundedRect(3, 3, w - 6, h - 6, r - 2);
+    gBlue.fillStyle(0x66e4ff, 0.5);
+    gBlue.fillRoundedRect(6, 6, w - 12, h / 2 - 6, r - 4);
+    gBlue.generateTexture('gate_add', w, h);
     gBlue.destroy();
 
+    // Subtract/divide gate — dark red, spiky border, warning feel
     const gRed = this.add.graphics();
-    gRed.fillStyle(0xff6b6b, 1);
-    gRed.fillRect(0, 0, 120, 60);
-    gRed.generateTexture('gate_subtract', 120, 60);
+    gRed.fillStyle(0x881111, 1);
+    gRed.fillRoundedRect(0, 0, w, h, r);
+    gRed.fillStyle(0xcc2222, 1);
+    gRed.fillRoundedRect(3, 3, w - 6, h - 6, r - 2);
+    // Danger stripes
+    gRed.fillStyle(0x991111, 0.6);
+    for (let sx = 10; sx < w; sx += 16) {
+      gRed.fillRect(sx, 3, 8, h - 6);
+    }
+    // Dark top
+    gRed.fillStyle(0xaa1515, 0.4);
+    gRed.fillRoundedRect(6, 6, w - 12, h / 2 - 6, r - 4);
+    gRed.generateTexture('gate_subtract', w, h);
     gRed.destroy();
   }
 

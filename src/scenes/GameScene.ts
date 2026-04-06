@@ -272,10 +272,9 @@ export class GameScene extends Phaser.Scene {
     if (this.distance >= this.nextPouchDistance && this.distance < level.boss.triggerDistance) {
       const pouchX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
       const pouchY = this.armyWorldY - GAME_HEIGHT - 80;
-      const pouch = this.add.sprite(pouchX, pouchY, 'vfx_spark');
-      pouch.setTint(0xffd700);
-      pouch.setScale(4);
-      pouch.setAlpha(0.9);
+      const pouch = this.add.sprite(pouchX, pouchY, 'gold_pouch');
+      pouch.setScale(2);
+      pouch.setAlpha(1);
       (pouch as any).goldValue = Math.round(10 + Math.random() * 15);
       this.goldPouches.push(pouch);
       this.nextPouchDistance = this.distance + 250 + Math.random() * 200;

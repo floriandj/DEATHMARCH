@@ -12,7 +12,7 @@ export class Bullet extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
-    this.setScale(2.5);
+    this.setScale(1.5);
   }
 
   fire(fromX: number, fromY: number, tint?: number): void {
