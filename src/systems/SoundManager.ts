@@ -302,6 +302,37 @@ const sounds: Record<string, () => void> = {
     osc('sine', 900, 0.06, 0.08, out(), t + 0.03);
   },
 
+  gold_pickup: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 1000, 0.06, 0.12, out(), t);
+    osc('sine', 1400, 0.08, 0.1, out(), t + 0.04);
+  },
+
+  gold_pouch: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 800, 0.06, 0.15, out(), t);
+    osc('sine', 1100, 0.06, 0.15, out(), t + 0.05);
+    osc('sine', 1500, 0.1, 0.12, out(), t + 0.1);
+  },
+
+  shop_buy: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 600, 0.08, 0.15, out(), t);
+    osc('sine', 900, 0.08, 0.15, out(), t + 0.06);
+    osc('sine', 1200, 0.12, 0.18, out(), t + 0.12);
+    osc('triangle', 600, 0.15, 0.06, out(), t + 0.12);
+  },
+
+  shield_absorb: () => {
+    const c = getCtx();
+    const t = c.currentTime;
+    osc('sine', 500, 0.15, 0.15, out(), t, 1000);
+    osc('triangle', 800, 0.1, 0.08, out(), t + 0.05, 1200);
+  },
+
   level_start: () => {
     const c = getCtx();
     const t = c.currentTime;

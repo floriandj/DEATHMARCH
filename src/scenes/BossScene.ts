@@ -15,12 +15,15 @@ import { Bullet } from '@/entities/Bullet';
 import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
+import { WalletManager } from '@/systems/WalletManager';
 
 interface BossSceneData {
   score: number;
   distance: number;
   unitCount: number;
   weapon: string;
+  levelGold: number;
+  pouchGold: number;
 }
 
 export class BossScene extends Phaser.Scene {
@@ -35,6 +38,8 @@ export class BossScene extends Phaser.Scene {
   private unitCount: number = 0;
   private activeUnitCount: number = 0;
   private currentWeapon: string = 'pistol';
+  private levelGold: number = 0;
+  private pouchGold: number = 0;
 
   private units: PlayerUnit[] = [];
   private bullets: Bullet[] = [];
@@ -75,6 +80,8 @@ export class BossScene extends Phaser.Scene {
     this.unitCount = data.unitCount;
     this.activeUnitCount = 0;
     this.currentWeapon = data.weapon || LevelManager.instance.current.startingWeapon;
+    this.levelGold = data.levelGold || 0;
+    this.pouchGold = data.pouchGold || 0;
     this.armyX = 0;
     this.armyYOffset = 0;
     this.entranceComplete = false;
@@ -868,10 +875,12 @@ export class BossScene extends Phaser.Scene {
         this.score += this.unitCount * level.scoring.perSurvivingUnit;
 
         this.scene.stop('HUDScene');
+        const goldEarned = WalletManager.earnLevelGold(this.levelGold, this.pouchGold);
         this.scene.start('GameOverScene', {
           score: Math.floor(this.score),
           distance: Math.floor(this.distance),
           bossDefeated: true,
+          goldEarned,
         });
       },
     });
@@ -905,10 +914,12 @@ export class BossScene extends Phaser.Scene {
     SoundManager.play('defeat');
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
+    const goldEarned = WalletManager.earnLevelGold(this.levelGold, Math.floor(this.pouchGold * 0.5));
     this.scene.start('GameOverScene', {
       score: Math.floor(this.score),
       distance: Math.floor(this.distance),
       bossDefeated: false,
+      goldEarned,
     });
   }
 }

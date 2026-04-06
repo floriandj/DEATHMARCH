@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
+import { WalletManager } from '@/systems/WalletManager';
 
 const NODE_SPACING = 170;
 const LEFT_X = 180;
@@ -59,8 +60,12 @@ export class MenuScene extends Phaser.Scene {
     this.add.rectangle(GAME_WIDTH / 2, 66, 200, 2, 0xff4040, 0.5).setDepth(11);
 
     const highScore = localStorage.getItem('deathmarch-highscore') || '0';
-    this.add.text(GAME_WIDTH / 2, 86, `BEST: ${highScore}`, {
-      fontSize: '18px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    this.add.text(GAME_WIDTH / 2 - 80, 86, `BEST: ${highScore}`, {
+      fontSize: '16px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(11);
+
+    this.add.text(GAME_WIDTH / 2 + 100, 86, `${WalletManager.gold}g`, {
+      fontSize: '16px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(11);
 
     const cycleNum = Math.floor(maxUnlocked / 5) + 1;

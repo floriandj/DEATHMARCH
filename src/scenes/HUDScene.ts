@@ -16,10 +16,13 @@ export class HUDScene extends Phaser.Scene {
   private weaponPill!: Phaser.GameObjects.Graphics;
   private levelBanner!: Phaser.GameObjects.Container;
 
+  private goldText!: Phaser.GameObjects.Text;
+
   score: number = 0;
   distance: number = 0;
   unitCount: number = 0;
   killStreak: number = 0;
+  levelGold: number = 0;
   bossHpPercent: number = -1;
   weaponType: string = '';
   weaponName: string = '';
@@ -35,6 +38,7 @@ export class HUDScene extends Phaser.Scene {
     this.unitCount = 0;
     this.killStreak = 0;
     this.bossHpPercent = -1;
+    this.levelGold = 0;
     this.weaponType = '';
     this.weaponName = '';
     this.bossName = '';
@@ -100,8 +104,13 @@ export class HUDScene extends Phaser.Scene {
     distPill.fillRoundedRect(12, 60, 180, 34, 17);
 
     this.distanceText = this.add.text(26, 70, '0m', {
-      fontSize: '18px', color: '#cccccc', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '16px', color: '#cccccc', fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
+
+    // Gold earned this level (right side of distance pill)
+    this.goldText = this.add.text(185, 70, '0g', {
+      fontSize: '16px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
 
     // ── Units (top-right) ──
     const rightPill = this.add.graphics();
@@ -157,6 +166,7 @@ export class HUDScene extends Phaser.Scene {
     this.distanceText.setText(`${Math.floor(this.distance)}m`);
     this.unitText.setText(String(this.unitCount));
     this.killStreakText.setText(`x${this.killStreak}`);
+    this.goldText.setText(`${this.levelGold}g`);
 
     const showBoss = this.bossHpPercent >= 0;
     this.bossHpBg.setVisible(showBoss);

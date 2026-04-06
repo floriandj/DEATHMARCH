@@ -21,6 +21,7 @@ import { Gate } from '@/entities/Gate';
 import { WeaponCrate } from '@/entities/WeaponCrate';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
+import { WalletManager } from '@/systems/WalletManager';
 
 export class GameScene extends Phaser.Scene {
   private input_handler!: InputHandler;
@@ -56,6 +57,12 @@ export class GameScene extends Phaser.Scene {
   private activeUnitCount: number = 0;
   private shootSoundTimer: number = 0;
 
+  // Gold
+  private levelGold: number = 0;
+  private pouchGold: number = 0;
+  private nextPouchDistance: number = 300;
+  private goldPouches: Phaser.GameObjects.Sprite[] = [];
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -66,14 +73,23 @@ export class GameScene extends Phaser.Scene {
     this.armyX = 0;
     this.distance = 0;
     this.score = 0;
-    this.unitCount = level.startingUnits;
+    this.unitCount = level.startingUnits + WalletManager.extraStartUnits;
     this.activeUnitCount = 0;
     this.killStreak = 0;
     this.lastKillTime = 0;
     this.nextGateDistance = level.gates.interval;
-    this.currentWeapon = level.startingWeapon;
-    this.crateSpawned = false;
+
+    // Apply weapon tier upgrade from shop
+    const weaponTier = Math.min(WalletManager.startWeaponTier, level.weaponOrder.length - 1);
+    this.currentWeapon = level.weaponOrder[weaponTier];
+    this.crateSpawned = weaponTier > 0; // skip crates for tiers we already have
     this.shootSoundTimer = 0;
+
+    // Gold tracking
+    this.levelGold = 0;
+    this.pouchGold = 0;
+    this.nextPouchDistance = 200 + Math.random() * 200;
+    this.goldPouches = [];
 
     SoundManager.init();
     SoundManager.play('level_start');
@@ -207,6 +223,54 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
+    // 5d. Spawn gold pouches at intervals
+    if (this.distance >= this.nextPouchDistance && this.distance < level.boss.triggerDistance) {
+      const pouchX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
+      const pouchY = this.armyWorldY - GAME_HEIGHT - 80;
+      const pouch = this.add.sprite(pouchX, pouchY, 'vfx_spark');
+      pouch.setTint(0xffd700);
+      pouch.setScale(4);
+      pouch.setAlpha(0.9);
+      (pouch as any).goldValue = Math.round(10 + Math.random() * 15);
+      this.goldPouches.push(pouch);
+      this.nextPouchDistance = this.distance + 250 + Math.random() * 200;
+    }
+
+    // 5e. Check gold pouch collection
+    for (let i = this.goldPouches.length - 1; i >= 0; i--) {
+      const pouch = this.goldPouches[i];
+      if (!pouch.active) { this.goldPouches.splice(i, 1); continue; }
+      // Despawn if past army
+      if (pouch.y > this.armyWorldY + 200) {
+        pouch.destroy();
+        this.goldPouches.splice(i, 1);
+        continue;
+      }
+      // Check if any unit is close enough to collect
+      for (const unit of this.units) {
+        if (!unit.active) continue;
+        const dx = unit.x - pouch.x;
+        const dy = unit.y - pouch.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 35) {
+          const value = (pouch as any).goldValue || 15;
+          this.pouchGold += value;
+          SoundManager.play('gold_pouch');
+          // Float-up text
+          const txt = this.add.text(pouch.x, pouch.y, `+${value}g`, {
+            fontSize: '20px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+            stroke: '#000000', strokeThickness: 3,
+          }).setOrigin(0.5);
+          this.tweens.add({
+            targets: txt, y: pouch.y - 80, alpha: 0,
+            duration: 600, onComplete: () => txt.destroy(),
+          });
+          pouch.destroy();
+          this.goldPouches.splice(i, 1);
+          break;
+        }
+      }
+    }
+
     // 6. Update bullets (world space)
     const camTop = this.cameras.main.scrollY;
     const camBottom = camTop + GAME_HEIGHT;
@@ -230,6 +294,7 @@ export class GameScene extends Phaser.Scene {
           const killed = enemy.takeDamage(bullet.damage);
           if (killed) {
             SoundManager.play('enemy_death');
+            this.levelGold += 1;
             this.score += enemy.scoreValue;
             const now = this.time.now;
             if (now - this.lastKillTime < 2000) {
@@ -295,9 +360,15 @@ export class GameScene extends Phaser.Scene {
 
         const reached = enemy.updateMovement(delta, nearestX, nearestY, this.armyWorldY);
         if (reached) {
-          this.unitCount = Math.max(0, this.unitCount - enemy.contactDamage);
-          if (enemy.splashRadius > 0) {
-            this.unitCount = Math.max(0, this.unitCount - enemy.splashDamage);
+          if (WalletManager.useShield()) {
+            // Shield absorbed the hit
+            SoundManager.play('shield_absorb');
+            this.cameras.main.flash(200, 100, 200, 255, true);
+          } else {
+            this.unitCount = Math.max(0, this.unitCount - enemy.contactDamage);
+            if (enemy.splashRadius > 0) {
+              this.unitCount = Math.max(0, this.unitCount - enemy.splashDamage);
+            }
           }
           enemy.despawn();
           if (this.unitCount <= 0) {
@@ -374,6 +445,7 @@ export class GameScene extends Phaser.Scene {
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
     this.hud.killStreak = this.killStreak;
+    this.hud.levelGold = this.levelGold + this.pouchGold;
     this.hud.weaponType = this.currentWeapon;
     this.hud.weaponName = weaponStats.name;
   }
@@ -517,10 +589,13 @@ export class GameScene extends Phaser.Scene {
     SoundManager.play('defeat');
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
+    // Earn gold (partial on death)
+    WalletManager.earnLevelGold(this.levelGold, Math.floor(this.pouchGold * 0.5));
     this.scene.start('GameOverScene', {
       score: Math.floor(this.score),
       distance: Math.floor(this.distance),
       bossDefeated: false,
+      goldEarned: this.levelGold + Math.floor(this.pouchGold * 0.5),
     });
   }
 
@@ -550,6 +625,8 @@ export class GameScene extends Phaser.Scene {
         distance: Math.floor(this.distance),
         unitCount: this.unitCount,
         weapon: this.currentWeapon,
+        levelGold: this.levelGold,
+        pouchGold: this.pouchGold,
       });
     });
   }
