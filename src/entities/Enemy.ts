@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { EnemyStats } from '@/config/EnemyConfig';
+import { getBaseBodyForType } from '@/systems/ProceduralEnemy';
 
 export class Enemy extends Phaser.GameObjects.Sprite {
+  levelIndex: number = 0;
   active: boolean = false;
   hp: number = 0;
   speed: number = 0;
@@ -48,13 +50,19 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.isDashing = false;
     this.shieldHp = this.isShielded() ? Math.ceil(stats.hp * 0.3) : 0;
 
-    // Try to set texture — procedural enemies may have generated textures
-    const texKey = `enemy_${stats.type}`;
-    if (this.scene.textures.exists(texKey)) {
-      this.setTexture(texKey);
-      const animKey = `enemy_${stats.type}_walk`;
-      if (this.scene.anims.exists(animKey)) {
-        this.play(animKey);
+    // Set texture: procedural enemies use base body + color tint
+    if (stats.type.startsWith('proc_')) {
+      const baseBody = getBaseBodyForType(stats.type, this.levelIndex);
+      this.setTexture(baseBody);
+      this.setTint(this.enemyColor);
+      const animKey = `${baseBody}_walk`;
+      if (this.scene.anims.exists(animKey)) this.play(animKey);
+    } else {
+      const texKey = `enemy_${stats.type}`;
+      if (this.scene.textures.exists(texKey)) {
+        this.setTexture(texKey);
+        const animKey = `enemy_${stats.type}_walk`;
+        if (this.scene.anims.exists(animKey)) this.play(animKey);
       }
     }
   }

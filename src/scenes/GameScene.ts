@@ -22,7 +22,6 @@ import { WeaponCrate } from '@/entities/WeaponCrate';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
-import { ensureEnemyTexturesForLevel } from '@/systems/ProceduralEnemy';
 
 export class GameScene extends Phaser.Scene {
   private input_handler!: InputHandler;
@@ -99,9 +98,6 @@ export class GameScene extends Phaser.Scene {
     SoundManager.init();
     SoundManager.play('level_start');
 
-    // Generate procedural enemy textures for this level (lazy, only current 4 enemies)
-    ensureEnemyTexturesForLevel(this, LevelManager.instance.currentLevelIndex);
-
     this.input_handler = new InputHandler(this);
     this.waveSpawner = new WaveSpawner();
     this.background = new Background(this);
@@ -118,8 +114,11 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.enemies = [];
+    const currentLevelIdx = LevelManager.instance.currentLevelIndex;
     for (let i = 0; i < ENEMY_POOL_SIZE; i++) {
-      this.enemies.push(new Enemy(this));
+      const e = new Enemy(this);
+      e.levelIndex = currentLevelIdx;
+      this.enemies.push(e);
     }
 
     this.gates = [];

@@ -1,20 +1,23 @@
 // src/systems/ProceduralEnemy.ts
-// Generates unique enemy types from a seed with procedural visuals and behaviors.
+// Simple, robust procedural mob generator.
+// Generates base body-part textures at boot (fast, only ~30 textures).
+// Each procedural enemy type is a combination of: body shape + color tint.
+// No per-enemy texture generation — just tint a base shape at spawn time.
 
 import type { LevelEnemyConfig } from '@/config/progression';
 
 // ---------------------------------------------------------------------------
-// Types
+// Body part templates (generated once at boot as base textures)
 // ---------------------------------------------------------------------------
 
-type BodyShape = 'circle' | 'triangle' | 'diamond' | 'hexagon' | 'square' | 'star';
-const BODY_SHAPES: BodyShape[] = ['circle', 'triangle', 'diamond', 'hexagon', 'square', 'star'];
+const BASE_BODIES = ['mob_round', 'mob_tall', 'mob_wide', 'mob_spiky', 'mob_diamond', 'mob_hulk'] as const;
+type BaseBody = typeof BASE_BODIES[number];
 
 export type EnemyTrait = 'normal' | 'zigzag' | 'dasher' | 'splitter' | 'shielded' | 'bomber';
-const TRAIT_POOL: EnemyTrait[] = ['normal', 'normal', 'zigzag', 'dasher', 'splitter', 'shielded', 'bomber'];
 
-type Feature = 'horns' | 'spikes' | 'wings' | 'eye' | 'crest' | 'none';
-const FEATURES: Feature[] = ['none', 'horns', 'spikes', 'wings', 'eye', 'crest'];
+// ---------------------------------------------------------------------------
+// Color palettes per world
+// ---------------------------------------------------------------------------
 
 const WORLD_PALETTES: number[][] = [
   [0xff6b6b, 0xe64980, 0xbe4bdb, 0xff4444, 0xcc3366],
@@ -27,14 +30,11 @@ const WORLD_PALETTES: number[][] = [
 const PREFIXES = [
   'Shadow', 'Flame', 'Frost', 'Venom', 'Storm', 'Blood', 'Iron', 'Chaos',
   'Doom', 'Dark', 'Rot', 'Thorn', 'Bone', 'Ash', 'Void', 'Grim',
-  'Fell', 'Dire', 'Hex', 'Blight', 'Warp', 'Dread', 'Rage', 'Fang',
 ];
-
 const SUFFIXES = [
-  'crawler', 'brute', 'fiend', 'lurker', 'stalker', 'imp', 'beast',
-  'runner', 'hulk', 'drone', 'wraith', 'spawn', 'chomper', 'swarmer',
-  'golem', 'wisp', 'charger', 'howler', 'creep', 'shade', 'maw',
-  'slime', 'worm', 'spike', 'claw', 'fist', 'wing', 'eye',
+  'Crawler', 'Brute', 'Fiend', 'Lurker', 'Stalker', 'Imp', 'Beast',
+  'Runner', 'Hulk', 'Drone', 'Wraith', 'Spawn', 'Chomper', 'Swarmer',
+  'Golem', 'Charger', 'Howler', 'Shade', 'Ogre', 'Troll', 'Grunt',
 ];
 
 // ---------------------------------------------------------------------------
@@ -50,17 +50,142 @@ function seededRng(seed: number): () => number {
 }
 
 // ---------------------------------------------------------------------------
+// Boot-time: generate base body textures (called once, fast)
+// ---------------------------------------------------------------------------
+
+export function generateBaseBodyTextures(scene: Phaser.Scene): void {
+  const s = 32; // texture size
+  const c = s / 2;
+
+  // mob_round: round ogre body with stubby legs
+  drawAndSave(scene, 'mob_round', s, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(c, c - 2, 12); // body
+    g.fillCircle(c - 5, c - 12, 5); // left ear/horn
+    g.fillCircle(c + 5, c - 12, 5);
+    g.fillRect(c - 8, c + 8, 5, 7); // left leg
+    g.fillRect(c + 3, c + 8, 5, 7); // right leg
+    g.fillRect(c - 13, c - 2, 5, 6); // left arm
+    g.fillRect(c + 8, c - 2, 5, 6); // right arm
+    // Face
+    g.fillStyle(0x000000, 0.7);
+    g.fillCircle(c - 4, c - 4, 2); // left eye
+    g.fillCircle(c + 4, c - 4, 2); // right eye
+    g.fillRect(c - 3, c + 1, 6, 2); // mouth
+  });
+
+  // mob_tall: tall skinny humanoid
+  drawAndSave(scene, 'mob_tall', s, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(c, c - 8, 6); // head
+    g.fillRect(c - 4, c - 3, 8, 12); // torso
+    g.fillRect(c - 7, c + 8, 4, 8); // left leg
+    g.fillRect(c + 3, c + 8, 4, 8); // right leg
+    g.fillRect(c - 10, c - 2, 4, 8); // left arm
+    g.fillRect(c + 6, c - 2, 4, 8); // right arm
+    g.fillStyle(0x000000, 0.7);
+    g.fillCircle(c - 2, c - 9, 1.5);
+    g.fillCircle(c + 2, c - 9, 1.5);
+  });
+
+  // mob_wide: fat ogre
+  drawAndSave(scene, 'mob_wide', s, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillEllipse(c, c, 26, 18); // wide body
+    g.fillCircle(c, c - 10, 7); // head
+    g.fillRect(c - 9, c + 7, 6, 7); // left leg
+    g.fillRect(c + 3, c + 7, 6, 7); // right leg
+    g.fillStyle(0x000000, 0.7);
+    g.fillCircle(c - 3, c - 11, 2);
+    g.fillCircle(c + 3, c - 11, 2);
+    g.fillRect(c - 2, c - 7, 4, 2);
+  });
+
+  // mob_spiky: spiky monster
+  drawAndSave(scene, 'mob_spiky', s, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(c, c, 10);
+    // Spikes
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const x1 = c + Math.cos(a) * 8;
+      const y1 = c + Math.sin(a) * 8;
+      const x2 = c + Math.cos(a) * 15;
+      const y2 = c + Math.sin(a) * 15;
+      g.fillTriangle(
+        x1 + Math.cos(a + 0.4) * 3, y1 + Math.sin(a + 0.4) * 3,
+        x1 + Math.cos(a - 0.4) * 3, y1 + Math.sin(a - 0.4) * 3,
+        x2, y2,
+      );
+    }
+    g.fillStyle(0x000000, 0.8);
+    g.fillCircle(c - 3, c - 2, 2.5);
+    g.fillCircle(c + 3, c - 2, 2.5);
+    g.fillStyle(0xff0000, 0.5);
+    g.fillCircle(c - 3, c - 2, 1);
+    g.fillCircle(c + 3, c - 2, 1);
+  });
+
+  // mob_diamond: floating diamond creature
+  drawAndSave(scene, 'mob_diamond', s, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillTriangle(c, c - 13, c - 10, c, c + 10, c);
+    g.fillTriangle(c, c + 13, c - 10, c, c + 10, c);
+    g.fillStyle(0x000000, 0.6);
+    g.fillCircle(c - 3, c - 2, 2);
+    g.fillCircle(c + 3, c - 2, 2);
+  });
+
+  // mob_hulk: large bulky humanoid with big arms
+  drawAndSave(scene, 'mob_hulk', s, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(c, c - 6, 7); // head
+    g.fillRect(c - 7, c - 1, 14, 10); // torso
+    g.fillRect(c - 6, c + 8, 5, 7); // left leg
+    g.fillRect(c + 1, c + 8, 5, 7); // right leg
+    // Big arms
+    g.fillEllipse(c - 12, c + 2, 8, 12);
+    g.fillEllipse(c + 12, c + 2, 8, 12);
+    // Fists
+    g.fillCircle(c - 12, c + 8, 4);
+    g.fillCircle(c + 12, c + 8, 4);
+    g.fillStyle(0x000000, 0.7);
+    g.fillCircle(c - 3, c - 7, 2);
+    g.fillCircle(c + 3, c - 7, 2);
+    g.fillRect(c - 3, c - 3, 6, 2);
+  });
+
+  // Create simple walk animations for each base body
+  for (const body of BASE_BODIES) {
+    if (!scene.anims.exists(`${body}_walk`)) {
+      scene.anims.create({
+        key: `${body}_walk`,
+        frames: [{ key: body, frame: 0 }],
+        frameRate: 1,
+        repeat: -1,
+      });
+    }
+  }
+}
+
+function drawAndSave(scene: Phaser.Scene, key: string, size: number, draw: (g: Phaser.GameObjects.Graphics) => void): void {
+  if (scene.textures.exists(key)) return;
+  const g = scene.add.graphics();
+  draw(g);
+  g.generateTexture(key, size, size);
+  g.destroy();
+}
+
+// ---------------------------------------------------------------------------
 // Procedural enemy definition
 // ---------------------------------------------------------------------------
 
 export interface ProceduralEnemyDef {
   type: string;
   name: string;
-  body: BodyShape;
+  baseBody: BaseBody;
   color: number;
   colorHex: string;
-  secondaryColor: number;
-  feature: Feature;
   trait: EnemyTrait;
   size: number;
   baseHp: number;
@@ -72,7 +197,7 @@ export interface ProceduralEnemyDef {
 }
 
 // ---------------------------------------------------------------------------
-// Generator
+// Generate a set of 4 enemies for a level
 // ---------------------------------------------------------------------------
 
 export function generateEnemySet(seed: number, worldIndex: number): ProceduralEnemyDef[] {
@@ -82,61 +207,47 @@ export function generateEnemySet(seed: number, worldIndex: number): ProceduralEn
   const usedNames = new Set<string>();
 
   for (let tier = 0; tier < 4; tier++) {
-    enemies.push(generateOneEnemy(rng, palette, tier, seed, usedNames));
+    const body = BASE_BODIES[(Math.floor(rng() * BASE_BODIES.length) + tier) % BASE_BODIES.length];
+    const color = palette[Math.floor(rng() * palette.length)];
+
+    let trait: EnemyTrait = 'normal';
+    if (tier >= 1 && rng() > 0.4) {
+      const traits: EnemyTrait[] = ['zigzag', 'dasher', 'splitter', 'shielded', 'bomber'];
+      trait = traits[Math.floor(rng() * traits.length)];
+    }
+
+    let name = '';
+    for (let a = 0; a < 10; a++) {
+      name = PREFIXES[Math.floor(rng() * PREFIXES.length)] + ' ' + SUFFIXES[Math.floor(rng() * SUFFIXES.length)];
+      if (!usedNames.has(name)) break;
+    }
+    usedNames.add(name);
+
+    const typeId = `proc_${name.toLowerCase().replace(/\s+/g, '_')}_${seed % 1000}`;
+    const tierScale = [1, 2.5, 4, 7][tier];
+    const sizeBase = [10, 14, 18, 24][tier];
+    const speedBase = [90, 70, 50, 40][tier];
+
+    let hpMod = 1, speedMod = 1, splashR = 0, splashD = 0;
+    if (trait === 'zigzag') speedMod = 1.3;
+    if (trait === 'dasher') { speedMod = 2.0; hpMod = 0.6; }
+    if (trait === 'splitter') hpMod = 0.8;
+    if (trait === 'shielded') { hpMod = 2.0; speedMod = 0.7; }
+    if (trait === 'bomber') { splashR = 50 + tier * 10; splashD = 1 + tier; hpMod = 0.7; }
+
+    enemies.push({
+      type: typeId, name, baseBody: body, color,
+      colorHex: '#' + color.toString(16).padStart(6, '0'),
+      trait,
+      size: sizeBase + Math.floor(rng() * 6),
+      baseHp: Math.max(1, Math.round(tierScale * hpMod)),
+      baseSpeed: Math.max(30, Math.round((speedBase + rng() * 40 - 20) * speedMod)),
+      contactDamage: Math.max(1, 1 + tier),
+      splashRadius: splashR, splashDamage: splashD,
+      scoreValue: Math.round(10 + tier * 20 + rng() * 10),
+    });
   }
   return enemies;
-}
-
-function generateOneEnemy(
-  rng: () => number, palette: number[], tier: number, seed: number, usedNames: Set<string>,
-): ProceduralEnemyDef {
-  const body = BODY_SHAPES[(Math.floor(rng() * BODY_SHAPES.length) + tier) % BODY_SHAPES.length];
-  const colorIdx = Math.floor(rng() * palette.length);
-  const color = palette[colorIdx];
-  const secondaryColor = palette[(colorIdx + 1 + Math.floor(rng() * (palette.length - 1))) % palette.length];
-  const feature = tier === 0 ? 'none' : FEATURES[Math.floor(rng() * FEATURES.length)];
-
-  let trait: EnemyTrait = 'normal';
-  if (tier >= 1) trait = TRAIT_POOL[Math.floor(rng() * TRAIT_POOL.length)];
-  if (tier >= 3) {
-    const special: EnemyTrait[] = ['zigzag', 'dasher', 'splitter', 'shielded', 'bomber'];
-    trait = special[Math.floor(rng() * special.length)];
-  }
-
-  let name = '';
-  for (let attempt = 0; attempt < 10; attempt++) {
-    const prefix = PREFIXES[Math.floor(rng() * PREFIXES.length)];
-    const suffix = SUFFIXES[Math.floor(rng() * SUFFIXES.length)];
-    name = `${prefix} ${suffix.charAt(0).toUpperCase() + suffix.slice(1)}`;
-    if (!usedNames.has(name)) break;
-  }
-  usedNames.add(name);
-
-  const typeId = `proc_${name.toLowerCase().replace(/\s+/g, '_')}_${seed % 1000}`;
-  const tierScale = [1, 2.5, 4, 7][tier];
-  const sizeBase = [10, 14, 18, 24][tier];
-  const speedBase = [90, 70, 50, 40][tier];
-
-  let hpMod = 1, speedMod = 1, splashRadius = 0, splashDamage = 0;
-  switch (trait) {
-    case 'zigzag': speedMod = 1.3; break;
-    case 'dasher': speedMod = 2.0; hpMod = 0.6; break;
-    case 'splitter': hpMod = 0.8; break;
-    case 'shielded': hpMod = 2.0; speedMod = 0.7; break;
-    case 'bomber': splashRadius = 50 + tier * 10; splashDamage = 1 + tier; hpMod = 0.7; break;
-  }
-
-  return {
-    type: typeId, name, body, color,
-    colorHex: '#' + color.toString(16).padStart(6, '0'),
-    secondaryColor, feature, trait,
-    size: sizeBase + Math.floor(rng() * 6),
-    baseHp: Math.max(1, Math.round(tierScale * hpMod)),
-    baseSpeed: Math.max(30, Math.round((speedBase + rng() * 40 - 20) * speedMod)),
-    contactDamage: Math.max(1, 1 + tier),
-    splashRadius, splashDamage,
-    scoreValue: Math.round(10 + tier * 20 + rng() * 10),
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -166,154 +277,21 @@ export function toEnemyConfigs(
 }
 
 // ---------------------------------------------------------------------------
-// Lazy texture generation — call at level start
+// Get the base body texture key for a procedural enemy type in a level
 // ---------------------------------------------------------------------------
 
-const generatedTextures = new Set<string>();
+const bodyCache = new Map<string, BaseBody>();
 
-/** Generate textures for procedural enemies of a specific level */
-export function ensureEnemyTexturesForLevel(scene: Phaser.Scene, levelIndex: number): void {
+/** Look up which base body a procedural enemy type uses */
+export function getBaseBodyForType(type: string, levelIndex: number): BaseBody {
+  if (bodyCache.has(type)) return bodyCache.get(type)!;
+
   const cycle = Math.floor(levelIndex / 5);
-  if (cycle === 0) return; // cycle 0 uses hand-crafted SVGs
-
   const worldIdx = cycle % 5;
   const seed = levelIndex * 7919 + 42;
   const defs = generateEnemySet(seed, worldIdx);
-
   for (const def of defs) {
-    const texKey = `enemy_${def.type}`;
-    if (generatedTextures.has(texKey)) continue;
-    if (scene.textures.exists(texKey)) { generatedTextures.add(texKey); continue; }
-    generateEnemyTexture(scene, def);
-    generatedTextures.add(texKey);
+    bodyCache.set(def.type, def.baseBody);
   }
-}
-
-
-// ---------------------------------------------------------------------------
-// Texture drawing
-// ---------------------------------------------------------------------------
-
-export function generateEnemyTexture(scene: Phaser.Scene, def: ProceduralEnemyDef): void {
-  const size = def.size * 2;
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = def.size * 0.8;
-  const g = scene.add.graphics();
-
-  // Body
-  switch (def.body) {
-    case 'circle':
-      g.fillStyle(def.color, 1);
-      g.fillCircle(cx, cy, r);
-      g.fillStyle(def.secondaryColor, 0.3);
-      g.fillCircle(cx - r * 0.2, cy - r * 0.2, r * 0.5);
-      break;
-    case 'triangle':
-      g.fillStyle(def.color, 1);
-      g.fillTriangle(cx, cy - r, cx - r, cy + r * 0.7, cx + r, cy + r * 0.7);
-      break;
-    case 'diamond':
-      g.fillStyle(def.color, 1);
-      g.fillTriangle(cx, cy - r, cx - r * 0.7, cy, cx + r * 0.7, cy);
-      g.fillTriangle(cx, cy + r, cx - r * 0.7, cy, cx + r * 0.7, cy);
-      break;
-    case 'hexagon': {
-      g.fillStyle(def.color, 1);
-      g.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-        if (i === 0) g.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
-        else g.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
-      }
-      g.closePath();
-      g.fillPath();
-      break;
-    }
-    case 'square':
-      g.fillStyle(def.color, 1);
-      g.fillRect(cx - r * 0.7, cy - r * 0.7, r * 1.4, r * 1.4);
-      break;
-    case 'star': {
-      g.fillStyle(def.color, 1);
-      g.beginPath();
-      for (let i = 0; i < 10; i++) {
-        const a = (i / 10) * Math.PI * 2 - Math.PI / 2;
-        const rad = i % 2 === 0 ? r : r * 0.5;
-        if (i === 0) g.moveTo(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
-        else g.lineTo(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
-      }
-      g.closePath();
-      g.fillPath();
-      break;
-    }
-  }
-
-  // Features
-  switch (def.feature) {
-    case 'horns':
-      g.fillStyle(def.secondaryColor, 1);
-      g.fillTriangle(cx - r * 0.5, cy - r * 0.3, cx - r * 0.7, cy - r * 1.1, cx - r * 0.2, cy - r * 0.6);
-      g.fillTriangle(cx + r * 0.5, cy - r * 0.3, cx + r * 0.7, cy - r * 1.1, cx + r * 0.2, cy - r * 0.6);
-      break;
-    case 'spikes':
-      g.fillStyle(def.secondaryColor, 0.8);
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2;
-        g.fillTriangle(
-          cx + Math.cos(a) * r * 0.7, cy + Math.sin(a) * r * 0.7,
-          cx + Math.cos(a - 0.15) * r * 1.3, cy + Math.sin(a - 0.15) * r * 1.3,
-          cx + Math.cos(a + 0.15) * r * 1.3, cy + Math.sin(a + 0.15) * r * 1.3,
-        );
-      }
-      break;
-    case 'wings':
-      g.fillStyle(def.secondaryColor, 0.6);
-      g.fillEllipse(cx - r, cy, r * 0.6, r * 0.4);
-      g.fillEllipse(cx + r, cy, r * 0.6, r * 0.4);
-      break;
-    case 'eye':
-      g.fillStyle(0xffffff, 0.9);
-      g.fillCircle(cx, cy - r * 0.1, r * 0.35);
-      g.fillStyle(0x000000, 1);
-      g.fillCircle(cx, cy - r * 0.1, r * 0.18);
-      break;
-    case 'crest':
-      g.fillStyle(def.secondaryColor, 0.8);
-      g.fillTriangle(cx, cy - r * 1.3, cx - r * 0.3, cy - r * 0.4, cx + r * 0.3, cy - r * 0.4);
-      break;
-  }
-
-  // Eyes (if no big eye feature)
-  if (def.feature !== 'eye') {
-    g.fillStyle(0xffffff, 0.8);
-    g.fillCircle(cx - r * 0.25, cy - r * 0.15, r * 0.15);
-    g.fillCircle(cx + r * 0.25, cy - r * 0.15, r * 0.15);
-    g.fillStyle(0x000000, 1);
-    g.fillCircle(cx - r * 0.25, cy - r * 0.15, r * 0.08);
-    g.fillCircle(cx + r * 0.25, cy - r * 0.15, r * 0.08);
-  }
-
-  // Trait visual indicators
-  if (def.trait === 'shielded') {
-    g.lineStyle(2, 0x4444ff, 0.6);
-    g.strokeCircle(cx, cy, r + 2);
-  }
-  if (def.trait === 'bomber') {
-    g.fillStyle(0xff0000, 0.5);
-    g.fillCircle(cx, cy + r * 0.5, r * 0.2);
-  }
-
-  g.generateTexture(`enemy_${def.type}`, size, size);
-  g.destroy();
-
-  // Create single-frame walk animation
-  if (!scene.anims.exists(`enemy_${def.type}_walk`)) {
-    scene.anims.create({
-      key: `enemy_${def.type}_walk`,
-      frames: [{ key: `enemy_${def.type}`, frame: 0 }],
-      frameRate: 1,
-      repeat: -1,
-    });
-  }
+  return bodyCache.get(type) ?? 'mob_round';
 }
