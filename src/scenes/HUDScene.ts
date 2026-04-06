@@ -65,13 +65,13 @@ export class HUDScene extends Phaser.Scene {
     bannerBg.strokeRoundedRect(-220, -50, 440, 100, 24);
     this.levelBanner.add(bannerBg);
     this.levelBanner.add(this.add.text(0, -22, `LEVEL ${levelIndex + 1}`, {
-      fontSize: '18px', color: accentHex, fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 5,
+      fontSize: '18px', color: accentHex, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', letterSpacing: 5,
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 8, level.name.toUpperCase(), {
-      fontSize: '26px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '26px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 36, level.theme.worldName, {
-      fontSize: '13px', color: '#888888', fontFamily: 'monospace', letterSpacing: 3,
+      fontSize: '13px', color: '#888888', fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: 3,
     }).setOrigin(0.5));
     this.levelBanner.setAlpha(0);
     this.tweens.add({ targets: this.levelBanner, alpha: 1, y: { from: 160, to: 180 }, duration: 500, ease: 'Power2' });
@@ -94,13 +94,13 @@ export class HUDScene extends Phaser.Scene {
     this.topElements.add(scorePill);
     this.topElements.add(this.add.text(PAD + 12, 22, '\u2605', { fontSize: '18px', color: '#ffd43b' }).setOrigin(0, 0.5));
     this.scoreText = this.add.text(PAD + 34, 22, '0', {
-      fontSize: '20px', color: '#ffd43b', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '20px', color: '#ffd43b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.scoreText);
 
     // Distance (top-center, subtle)
     this.distanceText = this.add.text(GAME_WIDTH / 2, 22, '0m', {
-      fontSize: '14px', color: '#888888', fontFamily: 'monospace',
+      fontSize: '14px', color: '#888888', fontFamily: 'Arial, Helvetica, sans-serif',
     }).setOrigin(0.5);
     this.topElements.add(this.distanceText);
 
@@ -111,13 +111,13 @@ export class HUDScene extends Phaser.Scene {
     this.topElements.add(unitPill);
     this.topElements.add(this.add.text(GAME_WIDTH - PAD - 128, 22, '\u2694', { fontSize: '18px', color: '#00d4ff' }).setOrigin(0, 0.5));
     this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 22, '0', {
-      fontSize: '20px', color: '#00d4ff', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '20px', color: '#00d4ff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
     this.topElements.add(this.unitText);
 
     // Gold (below score, small)
     this.goldText = this.add.text(PAD + 12, 50, '0g', {
-      fontSize: '13px', color: '#ffd700', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '13px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
 
@@ -131,7 +131,7 @@ export class HUDScene extends Phaser.Scene {
     this.bossHpBg = this.add.graphics().setVisible(false);
     this.bossHpBar = this.add.graphics().setVisible(false);
     this.bossHpLabel = this.add.text(GAME_WIDTH / 2, barY + 16, '', {
-      fontSize: '16px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '16px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0.5).setVisible(false);
 
     this.bossHpBg.fillStyle(0xffffff, 0.1);
@@ -143,7 +143,7 @@ export class HUDScene extends Phaser.Scene {
     this.weaponIcon = this.add.sprite(PAD + 16, GAME_HEIGHT - 80, 'weapon_svg_pistol')
       .setDisplaySize(32, 32).setAlpha(0).setOrigin(0.5);
     this.weaponLabel = this.add.text(PAD + 38, GAME_HEIGHT - 80, '', {
-      fontSize: '14px', color: '#cccccc', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '14px', color: '#cccccc', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5).setAlpha(0);
 
     // ── Pause button (top-right, above unit count) ──
@@ -176,7 +176,7 @@ export class HUDScene extends Phaser.Scene {
     overlay.setDepth(30);
 
     const title = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT * 0.35, 'PAUSED', {
-      fontSize: '44px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '44px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       letterSpacing: 8,
     }).setOrigin(0.5).setDepth(31);
 
@@ -189,7 +189,7 @@ export class HUDScene extends Phaser.Scene {
     rBg.strokeRoundedRect(-140, -32, 280, 64, 32);
     resumeContainer.add(rBg);
     resumeContainer.add(this.add.text(0, 0, '\u25B6  RESUME', {
-      fontSize: '24px', color: '#51cf66', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '24px', color: '#51cf66', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0.5));
     const rHit = this.add.zone(0, 0, 280, 64).setInteractive({ useHandCursor: true });
     resumeContainer.add(rHit);
@@ -203,7 +203,7 @@ export class HUDScene extends Phaser.Scene {
     qBg.strokeRoundedRect(-120, -26, 240, 52, 26);
     quitContainer.add(qBg);
     quitContainer.add(this.add.text(0, 0, '\u2630  QUIT', {
-      fontSize: '20px', color: '#ff6b6b', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: '20px', color: '#ff6b6b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0.5));
     const qHit = this.add.zone(0, 0, 240, 52).setInteractive({ useHandCursor: true });
     quitContainer.add(qHit);
@@ -303,7 +303,7 @@ export class HUDScene extends Phaser.Scene {
     const y = GAME_HEIGHT * 0.45;
     const size = Math.min(48, 24 + streak * 3);
     const txt = this.add.text(x, y, `x${streak}`, {
-      fontSize: `${size}px`, color: '#ff6b6b', fontFamily: 'monospace', fontStyle: 'bold',
+      fontSize: `${size}px`, color: '#ff6b6b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(15);
 
