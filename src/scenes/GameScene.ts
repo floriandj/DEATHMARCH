@@ -483,11 +483,12 @@ export class GameScene extends Phaser.Scene {
 
     // 10. Check boss trigger
     if (this.distance >= level.boss.triggerDistance) {
-      const activeEnemies = this.enemies.filter((e) => e.active).length;
-      if (activeEnemies === 0) {
-        this.transitionToBoss();
-        return;
+      // Force-despawn any remaining enemies so boss fight can start
+      for (const enemy of this.enemies) {
+        if (enemy.active) enemy.despawn();
       }
+      this.transitionToBoss();
+      return;
     }
 
     // 11. Update HUD

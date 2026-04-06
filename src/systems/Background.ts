@@ -92,51 +92,34 @@ export class Background {
       const type = rng(i * 3 + 4);
 
       if (type < 0.25) {
-        // Cracked earth patch
+        // Terrain patch (dirt/grass variation)
         const color = t.detailColors[Math.floor(rng(i * 3 + 3) * t.detailColors.length)];
-        const w = 20 + rng(i * 3 + 5) * 70;
-        const h = 10 + rng(i * 3 + 6) * 35;
-        const patch = this.scene.add.ellipse(x, y, w, h, color, 0.5);
-        container.add(patch);
-        const crack = this.scene.add.rectangle(x, y, w * 0.6, 1, 0x080810, 0.6);
-        crack.setAngle(rng(i * 3 + 11) * 60 - 30);
-        container.add(crack);
+        const w = 20 + rng(i * 3 + 5) * 60;
+        const h = 10 + rng(i * 3 + 6) * 30;
+        container.add(this.scene.add.ellipse(x, y, w, h, color, 0.5));
       } else if (type < 0.45) {
-        // Rocks
-        const size = 3 + rng(i * 3 + 7) * 10;
-        const rock = this.scene.add.circle(x, y, size, t.detailColors[0], 0.6);
-        container.add(rock);
-        const highlight = this.scene.add.circle(x - size * 0.2, y - size * 0.2, size * 0.4, t.detailColors[2] ?? t.detailColors[0], 0.4);
-        container.add(highlight);
-      } else if (type < 0.65) {
-        // Dead grass / thorns — tinted with a hint of the accent color
-        const bladeColor = this.blendColor(0x1a2810, t.accentColor, 0.15);
-        const g = this.scene.add.rectangle(x, y, 2, 8 + rng(i * 3 + 8) * 8, bladeColor, 0.5);
-        g.setAngle(rng(i * 3 + 12) * 20 - 10);
-        container.add(g);
-        if (rng(i * 3 + 9) > 0.4) {
-          const g2 = this.scene.add.rectangle(x + 4, y + 1, 2, 6 + rng(i * 3 + 10) * 6, bladeColor, 0.4);
-          g2.setAngle(rng(i * 3 + 13) * 30 - 15);
-          container.add(g2);
+        // Pebbles / rocks
+        const size = 2 + rng(i * 3 + 7) * 8;
+        container.add(this.scene.add.circle(x, y, size, t.detailColors[0], 0.5));
+        container.add(this.scene.add.circle(x - size * 0.2, y - size * 0.2, size * 0.3, t.glowColors[0], 0.3));
+      } else if (type < 0.7) {
+        // Grass blades
+        const grassColor = this.blendColor(t.groundColor, t.glowColors[0], 0.4);
+        for (let b = 0; b < 3; b++) {
+          const blade = this.scene.add.rectangle(x + b * 3 - 3, y, 2, 6 + rng(i * 3 + 8 + b) * 8, grassColor, 0.6);
+          blade.setAngle(rng(i * 3 + 12 + b) * 30 - 15);
+          container.add(blade);
         }
-        if (rng(i * 3 + 14) > 0.6) {
-          const g3 = this.scene.add.rectangle(x - 3, y + 2, 2, 5 + rng(i * 3 + 15) * 5, bladeColor, 0.35);
-          g3.setAngle(rng(i * 3 + 16) * 20 + 5);
-          container.add(g3);
+      } else if (type < 0.85) {
+        // Small flowers / dots of color
+        const flowerColor = t.glowColors[Math.floor(rng(i * 3 + 20) * t.glowColors.length)];
+        container.add(this.scene.add.circle(x, y, 2 + rng(i * 3 + 21) * 2, flowerColor, 0.6));
+        if (rng(i * 3 + 22) > 0.5) {
+          container.add(this.scene.add.circle(x + 3, y - 2, 1.5, 0xffffff, 0.3));
         }
-      } else if (type < 0.8) {
-        // Skull / bone fragments
-        const boneColor = t.detailColors[t.detailColors.length - 1];
-        const bone = this.scene.add.circle(x, y, 3 + rng(i * 3 + 17) * 3, boneColor, 0.35);
-        container.add(bone);
-        const frag = this.scene.add.rectangle(x + 5, y + 1, 6 + rng(i * 3 + 18) * 4, 2, boneColor, 0.3);
-        frag.setAngle(rng(i * 3 + 19) * 90);
-        container.add(frag);
       } else {
-        // Embers / faint glow dots — use glow colors
-        const emberColor = t.glowColors[Math.floor(rng(i * 3 + 20) * t.glowColors.length)];
-        const ember = this.scene.add.circle(x, y, 2 + rng(i * 3 + 21) * 3, emberColor, 0.35);
-        container.add(ember);
+        // Shadow patches
+        container.add(this.scene.add.ellipse(x, y, 30 + rng(i * 3 + 23) * 40, 15, 0x000000, 0.08));
       }
     }
 
