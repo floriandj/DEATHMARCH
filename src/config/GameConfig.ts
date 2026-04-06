@@ -11,7 +11,7 @@ export const MARCH_SPEED = 130; // game-units per second
 export const UNIT_FIRE_RATE = 500; // ms between bullets per unit (slower but stronger)
 export const BULLET_SPEED = 400; // pixels per second
 export const BULLET_DAMAGE = 3;
-export const BULLET_POOL_SIZE = 3000;
+export const BULLET_POOL_SIZE = 500;
 
 // Army formation
 export const FORMATION_SPACING = 30; // pixels between units in formation

@@ -8,7 +8,7 @@ import {
   ARMY_INPUT_Y_RANGE,
   ARMY_Y_OFFSET_MAX,
 } from '@/config/GameConfig';
-import { LevelManager } from '@/config/progression';
+import { LevelManager, hexToNum } from '@/config/progression';
 import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { Bullet } from '@/entities/Bullet';
@@ -242,13 +242,14 @@ export class BossScene extends Phaser.Scene {
 
     // 5. Fire bullets at boss
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
+    const bulletColor = hexToNum(weaponStats.bulletColor);
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
-          bullet.fire(unit.x, unit.y);
+          bullet.fire(unit.x, unit.y, bulletColor);
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -844,45 +845,158 @@ export class BossScene extends Phaser.Scene {
     SoundManager.play('boss_death');
     const level = LevelManager.instance.current;
 
-    // Epic death explosion — multi-wave particle burst
     const x = this.bossSprite.x;
     const y = this.bossSprite.y;
 
-    // Wave 1: Immediate burst
-    this.cameras.main.shake(600, 0.04);
-    this.cameras.main.flash(500, 255, 255, 255);
-    this.spawnDeathExplosion(x, y, 16, 0xff4400);
+    // Stop all boss projectiles
+    for (const proj of this.bossProjectiles) {
+      if (proj.sprite.active) proj.sprite.destroy();
+    }
+    this.bossProjectiles = [];
 
-    // Wave 2: Delayed secondary burst
-    this.time.delayedCall(200, () => {
-      this.spawnDeathExplosion(x, y, 12, 0xffcc00);
-      this.cameras.main.shake(400, 0.03);
-    });
+    // ── Stage 1: Initial hit — freeze + white flash (0ms) ──
+    this.cameras.main.flash(300, 255, 255, 255);
+    this.cameras.main.shake(500, 0.04);
+    this.bossSprite.setTint(0xffffff);
 
-    // Wave 3: Final white burst
-    this.time.delayedCall(450, () => {
-      this.spawnDeathExplosion(x, y, 20, 0xffffff);
-      this.cameras.main.flash(300, 255, 200, 100);
-    });
-
+    // Boss stutters/vibrates in place
     this.tweens.add({
       targets: this.bossSprite,
-      alpha: 0,
-      scale: 3,
-      duration: 800,
-      onComplete: () => {
-        this.score += level.scoring.bossKill;
-        this.score += this.unitCount * level.scoring.perSurvivingUnit;
+      x: { from: x - 6, to: x + 6 },
+      duration: 40,
+      yoyo: true,
+      repeat: 10,
+    });
 
-        this.scene.stop('HUDScene');
-        const goldEarned = WalletManager.earnLevelGold(this.levelGold, this.pouchGold);
-        this.scene.start('GameOverScene', {
-          score: Math.floor(this.score),
-          distance: Math.floor(this.distance),
-          bossDefeated: true,
-          goldEarned,
+    // ── Stage 2: Fire explosion ring (400ms) ──
+    this.time.delayedCall(400, () => {
+      this.spawnDeathExplosion(x, y, 20, 0xff4400);
+      this.spawnDeathExplosion(x, y, 12, 0xff8800);
+      this.cameras.main.shake(400, 0.03);
+      SoundManager.play('boss_rocket_explode');
+      this.bossSprite.setTint(0xff4400);
+
+      // Expanding shockwave ring
+      const ring = this.add.circle(x, y, 10, 0xff6600, 0.4);
+      this.tweens.add({
+        targets: ring,
+        radius: 200,
+        alpha: 0,
+        duration: 600,
+        onUpdate: () => {
+          ring.setRadius(ring.radius);
+        },
+        onComplete: () => ring.destroy(),
+      });
+    });
+
+    // ── Stage 3: Boss cracks — multi-directional beams of light (900ms) ──
+    this.time.delayedCall(900, () => {
+      this.cameras.main.flash(200, 255, 200, 100);
+      SoundManager.play('boss_slam');
+
+      // Light beams shoot out from boss
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const beam = this.add.rectangle(x, y, 4, 0, 0xffffaa, 0.8);
+        beam.setAngle(Phaser.Math.RadToDeg(angle) + 90);
+        this.tweens.add({
+          targets: beam,
+          displayHeight: 300 + Math.random() * 200,
+          x: x + Math.cos(angle) * 100,
+          y: y + Math.sin(angle) * 100,
+          alpha: 0,
+          duration: 500 + Math.random() * 200,
+          onComplete: () => beam.destroy(),
         });
-      },
+      }
+
+      this.bossSprite.setTint(0xffcc00);
+      this.tweens.add({
+        targets: this.bossSprite,
+        scale: this.bossScale * 1.4,
+        duration: 400,
+        ease: 'Power2',
+      });
+    });
+
+    // ── Stage 4: Secondary explosion wave (1500ms) ──
+    this.time.delayedCall(1500, () => {
+      this.spawnDeathExplosion(x, y - 30, 16, 0xffcc00);
+      this.spawnDeathExplosion(x + 20, y + 10, 12, 0xffffff);
+      this.spawnDeathExplosion(x - 20, y + 20, 10, 0xff4400);
+      this.cameras.main.shake(600, 0.05);
+      this.cameras.main.flash(200, 255, 150, 50);
+      SoundManager.play('boss_rocket_explode');
+
+      // Boss starts fading and expanding
+      this.tweens.add({
+        targets: this.bossSprite,
+        alpha: 0.5,
+        scale: this.bossScale * 2,
+        duration: 600,
+        ease: 'Power2',
+      });
+    });
+
+    // ── Stage 5: Final massive explosion + screen white-out (2200ms) ──
+    this.time.delayedCall(2200, () => {
+      this.cameras.main.flash(800, 255, 255, 255);
+      this.cameras.main.shake(800, 0.06);
+      SoundManager.play('victory');
+
+      // Massive particle burst
+      this.spawnDeathExplosion(x, y, 30, 0xffffff);
+      this.spawnDeathExplosion(x, y, 20, 0xffcc00);
+      this.spawnDeathExplosion(x, y, 15, 0xff4400);
+
+      // Debris flying outward
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2 + Math.random() * 0.3;
+        const chunk = this.add.sprite(x, y, 'vfx_ring');
+        chunk.setTint(i % 2 === 0 ? 0xff4400 : 0xffaa00);
+        chunk.setScale(2 + Math.random() * 2);
+        const dist = 200 + Math.random() * 250;
+        this.tweens.add({
+          targets: chunk,
+          x: x + Math.cos(angle) * dist,
+          y: y + Math.sin(angle) * dist,
+          alpha: 0,
+          scale: 0.3,
+          rotation: Math.random() * 6,
+          duration: 800 + Math.random() * 400,
+          ease: 'Power2',
+          onComplete: () => chunk.destroy(),
+        });
+      }
+
+      // Boss sprite final vanish
+      this.tweens.add({
+        targets: this.bossSprite,
+        alpha: 0,
+        scale: 4,
+        duration: 600,
+        ease: 'Power3',
+      });
+    });
+
+    // ── Transition to results (3500ms) ──
+    this.time.delayedCall(3200, () => {
+      this.cameras.main.fade(500, 0, 0, 0);
+    });
+
+    this.time.delayedCall(3700, () => {
+      this.score += level.scoring.bossKill;
+      this.score += this.unitCount * level.scoring.perSurvivingUnit;
+
+      this.scene.stop('HUDScene');
+      const goldEarned = WalletManager.earnLevelGold(this.levelGold, this.pouchGold);
+      this.scene.start('GameOverScene', {
+        score: Math.floor(this.score),
+        distance: Math.floor(this.distance),
+        bossDefeated: true,
+        goldEarned,
+      });
     });
   }
 
@@ -894,16 +1008,16 @@ export class BossScene extends Phaser.Scene {
       const p = this.add.sprite(x, y, tex);
       p.setTint(color);
       p.setAlpha(1);
-      p.setScale(1 + Math.random() * 1.5);
-      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
-      const dist = 50 + Math.random() * 100;
+      p.setScale(1.5 + Math.random() * 2);
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+      const dist = 40 + Math.random() * 120;
       this.tweens.add({
         targets: p,
         x: x + Math.cos(angle) * dist,
         y: y + Math.sin(angle) * dist,
         alpha: 0,
         scale: 0.1,
-        duration: 500 + Math.random() * 400,
+        duration: 500 + Math.random() * 500,
         ease: 'Power2',
         onComplete: () => p.destroy(),
       });

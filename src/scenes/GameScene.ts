@@ -418,13 +418,14 @@ export class GameScene extends Phaser.Scene {
 
     // 9. Fire bullets (weapon fire rate)
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
+    const bulletColor = hexToNum(weaponStats.bulletColor);
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
         const bullet = this.bullets.find((b) => !b.active);
         if (bullet) {
-          bullet.fire(unit.x, unit.y);
+          bullet.fire(unit.x, unit.y, bulletColor);
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
