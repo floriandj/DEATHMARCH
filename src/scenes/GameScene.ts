@@ -383,7 +383,6 @@ export class GameScene extends Phaser.Scene {
         }
       }
     });
-    this.bullets.draw();
 
     // 7. Update enemies — idle until army is close, then aggro
     for (const enemy of this.enemies) {

@@ -1,11 +1,11 @@
 // src/systems/BulletPool.ts
-// Lightweight data-driven bullet pool.  All bullets are rendered in a single
-// Graphics draw call instead of using one Phaser Sprite per bullet.
+// Data-driven bullet pool with O(1) spawn/despawn.
+// Uses a tiny procedural texture + Phaser Sprites for efficient batched rendering.
 
 import Phaser from 'phaser';
 import { BULLET_SPEED, BULLET_DAMAGE } from '@/config/GameConfig';
 
-/** Per-bullet state — plain data, no Phaser overhead. */
+/** Per-bullet state. */
 export interface BulletData {
   x: number;
   y: number;
@@ -15,19 +15,37 @@ export interface BulletData {
   active: boolean;
 }
 
+/** Texture key for the shared procedural bullet sprite. */
+const TEX_KEY = '__bullet_pool';
+
 export class BulletPool {
   private pool: BulletData[];
+  private sprites: Phaser.GameObjects.Sprite[];
   private freeStack: number[];
-  private gfx: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, capacity: number, depth: number = 5) {
-    this.gfx = scene.add.graphics().setDepth(depth);
+    // Generate a tiny white pill texture once (tinted per-bullet at fire time)
+    if (!scene.textures.exists(TEX_KEY)) {
+      const g = scene.add.graphics();
+      g.fillStyle(0xffffff, 1);
+      g.fillRoundedRect(0, 0, 4, 8, 2);
+      g.generateTexture(TEX_KEY, 4, 8);
+      g.destroy();
+    }
 
     this.pool = new Array(capacity);
+    this.sprites = new Array(capacity);
     this.freeStack = new Array(capacity);
+
     for (let i = 0; i < capacity; i++) {
       this.pool[i] = { x: 0, y: 0, vy: 0, damage: BULLET_DAMAGE, color: 0xffd43b, active: false };
-      this.freeStack[i] = capacity - 1 - i; // top of stack = index 0
+      this.freeStack[i] = capacity - 1 - i;
+
+      const s = scene.add.sprite(0, 0, TEX_KEY);
+      s.setVisible(false);
+      s.setActive(false);
+      s.setDepth(depth);
+      this.sprites[i] = s;
     }
   }
 
@@ -42,6 +60,12 @@ export class BulletPool {
     b.damage = BULLET_DAMAGE;
     b.color = color;
     b.active = true;
+
+    const s = this.sprites[idx];
+    s.setPosition(x, y);
+    s.setTint(color);
+    s.setVisible(true);
+    s.setActive(true);
     return true;
   }
 
@@ -51,10 +75,13 @@ export class BulletPool {
     if (b.active) {
       b.active = false;
       this.freeStack.push(idx);
+      const s = this.sprites[idx];
+      s.setVisible(false);
+      s.setActive(false);
     }
   }
 
-  /** Move all active bullets. */
+  /** Move all active bullets and sync sprite positions. */
   update(delta: number): void {
     const dt = delta / 1000;
     const len = this.pool.length;
@@ -62,23 +89,7 @@ export class BulletPool {
       const b = this.pool[i];
       if (!b.active) continue;
       b.y += b.vy * dt;
-    }
-  }
-
-  /** Render every active bullet via the single shared Graphics object. */
-  draw(): void {
-    const g = this.gfx;
-    g.clear();
-    const len = this.pool.length;
-    for (let i = 0; i < len; i++) {
-      const b = this.pool[i];
-      if (!b.active) continue;
-      // Colored body — small rounded pill shape
-      g.fillStyle(b.color, 1);
-      g.fillRoundedRect(b.x - 2, b.y - 4, 4, 8, 2);
-      // Bright tip
-      g.fillStyle(0xffffff, 0.7);
-      g.fillCircle(b.x, b.y - 3, 1.5);
+      this.sprites[i].y = b.y;
     }
   }
 
@@ -94,6 +105,6 @@ export class BulletPool {
   }
 
   destroy(): void {
-    this.gfx.destroy();
+    for (const s of this.sprites) s.destroy();
   }
 }

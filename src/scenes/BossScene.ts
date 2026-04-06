@@ -292,7 +292,6 @@ export class BossScene extends Phaser.Scene {
         }
       }
     });
-    this.bullets.draw();
     if (bossKilled) {
       this.bossDefeated();
       return;
