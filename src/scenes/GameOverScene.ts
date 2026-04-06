@@ -132,33 +132,31 @@ export class GameOverScene extends Phaser.Scene {
       }
     }
 
-    // ── Buttons — flow from content, not bottom-anchored ──
+    // ── Buttons — same size, stacked ──
     yPos += 30;
-    const primaryY = yPos;
+    const btnW = 360, btnH = 64;
 
     if (canAdvance) {
-      this.createBigButton(GAME_WIDTH / 2, primaryY,
-        '\u27A1\uFE0F  NEXT LEVEL', 360, 72, 0xffd43b, '#ffd43b',
-        () => {
+      this.createButton(GAME_WIDTH / 2, yPos, '\u27A1\uFE0F  NEXT LEVEL', btnW, btnH,
+        0xffd43b, '#ffd43b', true, () => {
           mgr.advanceLevel();
           localStorage.setItem('deathmarch-level', String(mgr.currentLevelIndex));
           this.fadeToGame();
-        }, true);
+        }, 700);
+      yPos += btnH + 16;
 
-      // Small replay + levels below
-      this.createSmallButton(GAME_WIDTH / 2 - 110, primaryY + 55,
-        '\u21BB Replay', 0x00d4ff, '#00d4ff', () => this.fadeToGame());
-
-      this.createSmallButton(GAME_WIDTH / 2 + 110, primaryY + 55,
-        '\u2630 Levels', 0x666666, '#999999', () => this.scene.start('MenuScene'));
+      this.createButton(GAME_WIDTH / 2, yPos, '\u21BB  REPLAY', btnW, btnH,
+        0x00d4ff, '#00d4ff', false, () => this.fadeToGame(), 800);
+      yPos += btnH + 16;
     } else {
-      this.createBigButton(GAME_WIDTH / 2, primaryY,
-        '\u{1F4AA} TRY AGAIN', 360, 72, 0x00d4ff, '#00d4ff',
-        () => this.fadeToGame(), true);
-
-      this.createSmallButton(GAME_WIDTH / 2, primaryY + 55,
-        '\u2630 Back to Levels', 0x666666, '#999999', () => this.scene.start('MenuScene'));
+      this.createButton(GAME_WIDTH / 2, yPos, '\u{1F4AA}  TRY AGAIN', btnW, btnH,
+        0x00d4ff, '#00d4ff', true, () => this.fadeToGame(), 700);
+      yPos += btnH + 16;
     }
+
+    this.createButton(GAME_WIDTH / 2, yPos, '\u2630  LEVELS', btnW, btnH,
+      0x666666, '#999999', false, () => this.scene.start('MenuScene'),
+      canAdvance ? 900 : 800);
   }
 
   // ── Helpers ──
@@ -231,11 +229,12 @@ export class GameOverScene extends Phaser.Scene {
     }
   }
 
-  private createBigButton(
+  private createButton(
     x: number, y: number, label: string, w: number, h: number,
-    color: number, textColor: string, callback: () => void, pulse: boolean,
+    color: number, textColor: string, pulse: boolean,
+    callback: () => void, delay: number,
   ): void {
-    const container = this.add.container(x, y);
+    const container = this.add.container(x, y).setAlpha(0);
     const r = h / 2;
 
     if (pulse) {
@@ -250,19 +249,33 @@ export class GameOverScene extends Phaser.Scene {
     }
 
     const bg = this.add.graphics();
-    bg.fillStyle(color, 0.18);
+    bg.fillStyle(color, 0.15);
     bg.fillRoundedRect(-w / 2, -r, w, h, r);
-    bg.lineStyle(2, color, 0.6);
+    bg.lineStyle(2, color, 0.5);
     bg.strokeRoundedRect(-w / 2, -r, w, h, r);
     container.add(bg);
 
     container.add(this.add.text(0, 0, label, {
-      fontSize: '26px', color: textColor, fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 3,
+      fontSize: '24px', color: textColor, fontFamily: 'monospace', fontStyle: 'bold', letterSpacing: 3,
     }).setOrigin(0.5));
 
     const hitZone = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
     container.add(hitZone);
 
+    hitZone.on('pointerover', () => {
+      bg.clear();
+      bg.fillStyle(color, 0.25);
+      bg.fillRoundedRect(-w / 2, -r, w, h, r);
+      bg.lineStyle(2, color, 0.8);
+      bg.strokeRoundedRect(-w / 2, -r, w, h, r);
+    });
+    hitZone.on('pointerout', () => {
+      bg.clear();
+      bg.fillStyle(color, 0.15);
+      bg.fillRoundedRect(-w / 2, -r, w, h, r);
+      bg.lineStyle(2, color, 0.5);
+      bg.strokeRoundedRect(-w / 2, -r, w, h, r);
+    });
     hitZone.on('pointerdown', () => {
       SoundManager.play('button_click');
       this.tweens.add({
@@ -270,22 +283,11 @@ export class GameOverScene extends Phaser.Scene {
         onComplete: () => { container.setScale(1); callback(); },
       });
     });
-  }
 
-  private createSmallButton(
-    x: number, y: number, label: string,
-    color: number, textColor: string, callback: () => void,
-  ): void {
-    const btn = this.add.text(x, y, label, {
-      fontSize: '16px', color: textColor, fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-    btn.on('pointerdown', () => {
-      SoundManager.play('button_click');
-      callback();
+    this.tweens.add({
+      targets: container, alpha: 1, y: { from: y + 12, to: y },
+      duration: 350, delay, ease: 'Power2',
     });
-    btn.on('pointerover', () => btn.setColor('#ffffff'));
-    btn.on('pointerout', () => btn.setColor(textColor));
   }
 
   private fadeToGame(): void {
