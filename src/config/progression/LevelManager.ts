@@ -9,22 +9,12 @@ import type {
   GateTemplateConfig,
   BossConfig,
 } from './types';
-import level1 from './levels/level1.json';
-import level2 from './levels/level2.json';
-import level3 from './levels/level3.json';
-import level4 from './levels/level4.json';
-import level5 from './levels/level5.json';
+import { generateAllLevels } from './LevelGenerator';
 
 // ---------------------------------------------------------------------------
-// Registry — add new levels here (or load dynamically in the future)
+// Registry — generated procedurally from LevelGenerator
 // ---------------------------------------------------------------------------
-const LEVEL_REGISTRY: LevelConfig[] = [
-  level1 as LevelConfig,
-  level2 as LevelConfig,
-  level3 as LevelConfig,
-  level4 as LevelConfig,
-  level5 as LevelConfig,
-];
+const LEVEL_REGISTRY: LevelConfig[] = generateAllLevels();
 
 // ---------------------------------------------------------------------------
 // Helpers: convert JSON-friendly values to runtime values
@@ -47,7 +37,7 @@ export function gateApplyFn(opt: GateOptionConfig): (count: number) => number {
 
 /** Build gate label string from config */
 export function gateLabel(opt: GateOptionConfig): string {
-  const symbols = { multiply: '×', divide: '÷', add: '+', subtract: '-' };
+  const symbols = { multiply: '\u00d7', divide: '\u00f7', add: '+', subtract: '-' };
   return `${symbols[opt.op]}${opt.value}`;
 }
 

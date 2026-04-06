@@ -177,14 +177,19 @@ export class GameScene extends Phaser.Scene {
     }
 
     // 5b. Spawn weapon crate (one per tier, at fixed distance)
+    // Crates are delayed if a gate is too close to prevent visual overlap
     const crateCfg = LevelManager.instance.getCrateForWeapon(this.currentWeapon);
     if (!this.crateSpawned && crateCfg && this.distance >= crateCfg.distance) {
-      const crate = this.crates.find((c) => !c.active);
-      if (crate) {
-        const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.4;
-        const crateY = this.armyWorldY - GAME_HEIGHT - 50;
-        crate.spawn(crateX, crateY, this.currentWeapon as any);
-        this.crateSpawned = true;
+      const gateProximity = this.distance % level.gates.interval;
+      const tooCloseToGate = gateProximity < 80 || gateProximity > level.gates.interval - 80;
+      if (!tooCloseToGate) {
+        const crate = this.crates.find((c) => !c.active);
+        if (crate) {
+          const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.4;
+          const crateY = this.armyWorldY - GAME_HEIGHT - 50;
+          crate.spawn(crateX, crateY, this.currentWeapon as any);
+          this.crateSpawned = true;
+        }
       }
     }
 
