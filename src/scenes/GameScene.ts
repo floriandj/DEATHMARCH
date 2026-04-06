@@ -73,14 +73,16 @@ export class GameScene extends Phaser.Scene {
     this.armyX = 0;
     this.distance = 0;
     this.score = 0;
-    this.unitCount = level.startingUnits + WalletManager.extraStartUnits;
+    // Consume single-use boosts from shop
+    const boosts = WalletManager.consumeBoosts();
+    this.unitCount = level.startingUnits + boosts.extraUnits;
     this.activeUnitCount = 0;
     this.killStreak = 0;
     this.lastKillTime = 0;
     this.nextGateDistance = level.gates.interval;
 
-    // Apply weapon tier upgrade from shop
-    const weaponTier = Math.min(WalletManager.startWeaponTier, level.weaponOrder.length - 1);
+    // Apply weapon tier boost
+    const weaponTier = Math.min(boosts.weaponTier, level.weaponOrder.length - 1);
     this.currentWeapon = level.weaponOrder[weaponTier];
     this.crateSpawned = weaponTier > 0; // skip crates for tiers we already have
     this.shootSoundTimer = 0;
@@ -587,6 +589,7 @@ export class GameScene extends Phaser.Scene {
 
   private gameOver(): void {
     SoundManager.play('defeat');
+    WalletManager.consumeShield();
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
     // Earn gold (partial on death)

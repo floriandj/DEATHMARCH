@@ -1,18 +1,20 @@
 // src/systems/WalletManager.ts
-// Persists gold currency and shop upgrade state to localStorage.
+// Gold currency with single-use shop upgrades.
+// Bought items apply to the NEXT level only, then reset.
 
 const STORAGE_KEY = 'deathmarch-wallet';
 
 interface WalletData {
   gold: number;
-  extraStartUnits: number;   // +N starting units per level
-  startWeaponTier: number;   // 0=default, 1=skip to 2nd weapon, etc.
-  goldMagnet: boolean;       // gold pouches worth 2x
-  shield: number;            // absorb N hits before taking damage (consumed per level)
+  // Single-use boosts (consumed when a level starts)
+  pendingExtraUnits: number;
+  pendingWeaponTier: number;  // 0=default, 1/2/3=skip tiers
+  pendingShield: number;
+  goldMagnet: boolean;        // permanent (only exception)
 }
 
 function defaultData(): WalletData {
-  return { gold: 0, extraStartUnits: 0, startWeaponTier: 0, goldMagnet: false, shield: 0 };
+  return { gold: 0, pendingExtraUnits: 0, pendingWeaponTier: 0, pendingShield: 0, goldMagnet: false };
 }
 
 function load(): WalletData {
@@ -35,18 +37,9 @@ export interface ShopItem {
   id: string;
   name: string;
   description: string;
-  cost: () => number;     // dynamic cost based on current upgrade level
-  canBuy: () => boolean;  // false if maxed
+  cost: () => number;
+  canBuy: () => boolean;
   buy: () => void;
-}
-
-function unitUpgradeCost(data: WalletData): number {
-  return 50 * Math.pow(2, data.extraStartUnits); // 50, 100, 200, 400, 800...
-}
-
-function weaponUpgradeCost(data: WalletData): number {
-  const costs = [150, 400, 800];
-  return data.startWeaponTier < costs.length ? costs[data.startWeaponTier] : Infinity;
 }
 
 // ---------------------------------------------------------------------------
@@ -68,7 +61,6 @@ export const WalletManager = {
     save(d);
   },
 
-  /** Earn gold for a completed/failed level. Returns amount added. */
   earnLevelGold(enemyKillGold: number, pouchGold: number): number {
     const d = load();
     const total = enemyKillGold + pouchGold;
@@ -78,12 +70,14 @@ export const WalletManager = {
     return multiplied;
   },
 
+  // -- Pending boosts (consumed on level start) --
+
   get extraStartUnits(): number {
-    return load().extraStartUnits;
+    return load().pendingExtraUnits;
   },
 
   get startWeaponTier(): number {
-    return load().startWeaponTier;
+    return load().pendingWeaponTier;
   },
 
   get hasGoldMagnet(): boolean {
@@ -91,70 +85,89 @@ export const WalletManager = {
   },
 
   get shieldCharges(): number {
-    return load().shield;
+    return load().pendingShield;
   },
 
   useShield(): boolean {
     const d = load();
-    if (d.shield > 0) {
-      d.shield--;
+    if (d.pendingShield > 0) {
+      d.pendingShield--;
       save(d);
       return true;
     }
     return false;
   },
 
+  /** Call at the start of a level to consume pending boosts (except shield which is consumed on hit) */
+  consumeBoosts(): { extraUnits: number; weaponTier: number } {
+    const d = load();
+    const result = { extraUnits: d.pendingExtraUnits, weaponTier: d.pendingWeaponTier };
+    // Reset single-use boosts after consuming
+    d.pendingExtraUnits = 0;
+    d.pendingWeaponTier = 0;
+    // Shield is consumed on hit, not here
+    save(d);
+    return result;
+  },
+
+  /** Consume remaining shield at level end (unused shields are lost) */
+  consumeShield(): void {
+    const d = load();
+    d.pendingShield = 0;
+    save(d);
+  },
+
   getShopItems(): ShopItem[] {
     return [
       {
         id: 'extra_units',
-        name: '+1 START UNIT',
-        description: `Begin each level with more units`,
-        cost: () => unitUpgradeCost(load()),
-        canBuy: () => {
-          const d = load();
-          return d.gold >= unitUpgradeCost(d) && d.extraStartUnits < 8;
-        },
+        name: '+3 UNITS',
+        description: 'Start next level with 3 extra units',
+        cost: () => 50,
+        canBuy: () => load().gold >= 50,
         buy: () => {
           const d = load();
-          const cost = unitUpgradeCost(d);
-          if (d.gold >= cost && d.extraStartUnits < 8) {
-            d.gold -= cost;
-            d.extraStartUnits++;
+          if (d.gold >= 50) {
+            d.gold -= 50;
+            d.pendingExtraUnits += 3;
             save(d);
           }
         },
       },
       {
         id: 'weapon_tier',
-        name: 'BETTER START GUN',
-        description: `Start with a higher weapon tier`,
-        cost: () => weaponUpgradeCost(load()),
+        name: 'GUN BOOST',
+        description: 'Start next level with a better weapon',
+        cost: () => {
+          const tier = load().pendingWeaponTier;
+          return tier < 1 ? 100 : tier < 2 ? 200 : 400;
+        },
         canBuy: () => {
           const d = load();
-          return d.gold >= weaponUpgradeCost(d) && d.startWeaponTier < 3;
+          const cost = d.pendingWeaponTier < 1 ? 100 : d.pendingWeaponTier < 2 ? 200 : 400;
+          return d.gold >= cost && d.pendingWeaponTier < 3;
         },
         buy: () => {
           const d = load();
-          const cost = weaponUpgradeCost(d);
-          if (d.gold >= cost && d.startWeaponTier < 3) {
+          const cost = d.pendingWeaponTier < 1 ? 100 : d.pendingWeaponTier < 2 ? 200 : 400;
+          if (d.gold >= cost && d.pendingWeaponTier < 3) {
             d.gold -= cost;
-            d.startWeaponTier++;
+            d.pendingWeaponTier++;
             save(d);
           }
         },
       },
       {
         id: 'shield',
-        name: 'SHIELD +1',
-        description: `Absorb 1 enemy hit without losing units`,
-        cost: () => 100,
-        canBuy: () => load().gold >= 100,
+        name: 'SHIELD',
+        description: 'Absorb 1 enemy hit next level',
+        cost: () => 75,
+        canBuy: () => load().gold >= 75,
         buy: () => {
           const d = load();
-          if (d.gold >= 100) {
-            d.gold -= 100;
-            d.shield++;
+          if (d.gold >= 75) {
+            d.gold -= 75;
+            d.pendingShield++;
             save(d);
           }
         },
@@ -162,7 +175,7 @@ export const WalletManager = {
       {
         id: 'gold_magnet',
         name: 'GOLD MAGNET',
-        description: `All gold earnings increased by 50%`,
+        description: 'All gold earnings +50% (permanent)',
         cost: () => 300,
         canBuy: () => {
           const d = load();
@@ -180,7 +193,6 @@ export const WalletManager = {
     ];
   },
 
-  /** Reset wallet (for settings) */
   reset(): void {
     save(defaultData());
   },
