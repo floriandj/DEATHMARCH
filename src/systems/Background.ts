@@ -42,7 +42,6 @@ export class Background {
     const container = this.scene.add.container(0, index * CHUNK_HEIGHT);
     container.setDepth(-100);
 
-    // Seed RNG from chunk index for consistent regeneration
     const seed = Math.abs(index * 7919 + 1327);
     const rng = (n: number) => {
       const x = Math.sin(seed + n * 9973) * 43758.5453;
@@ -57,79 +56,105 @@ export class Background {
     );
     container.add(bg);
 
-    // Subtle terrain color variation bands
-    const bandCount = 2 + Math.floor(rng(50) * 3);
+    // Road/path down center
+    const pathColor = this.blendColor(t.groundColor, 0x000000, 0.15);
+    const road = this.scene.add.rectangle(
+      GAME_WIDTH / 2, CHUNK_HEIGHT / 2,
+      60, CHUNK_HEIGHT,
+      pathColor, 0.3,
+    );
+    container.add(road);
+    const roadEdgeL = this.scene.add.rectangle(GAME_WIDTH / 2 - 30, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathColor, 0.15);
+    const roadEdgeR = this.scene.add.rectangle(GAME_WIDTH / 2 + 30, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathColor, 0.15);
+    container.add(roadEdgeL);
+    container.add(roadEdgeR);
+
+    // Color variation bands (richer)
+    const bandCount = 3 + Math.floor(rng(50) * 4);
     for (let b = 0; b < bandCount; b++) {
       const bandY = rng(60 + b) * CHUNK_HEIGHT;
-      const bandH = 40 + rng(70 + b) * 100;
+      const bandH = 30 + rng(70 + b) * 120;
       const bandColor = t.detailColors[Math.floor(rng(80 + b) * t.detailColors.length)];
       const band = this.scene.add.rectangle(
         GAME_WIDTH / 2, bandY,
         GAME_WIDTH, bandH,
-        bandColor, 0.3,
+        bandColor, 0.25,
       );
       container.add(band);
     }
 
-    // Ambient glow patches (faint colored fog)
-    if (rng(90) < 0.4) {
+    // Ambient glow patches
+    if (rng(90) < 0.5) {
       const glowColor = t.glowColors[Math.floor(rng(91) * t.glowColors.length)];
       const glowX = rng(92) * GAME_WIDTH;
       const glowY = rng(93) * CHUNK_HEIGHT;
       const glow = this.scene.add.ellipse(
         glowX, glowY,
-        120 + rng(94) * 200, 80 + rng(95) * 120,
-        glowColor, 0.18,
+        140 + rng(94) * 220, 90 + rng(95) * 140,
+        glowColor, 0.15,
       );
       container.add(glow);
     }
 
-    // Scattered ground details
-    const detailCount = 10 + Math.floor(rng(0) * 12);
+    // Ground details (procedural shapes)
+    const detailCount = 8 + Math.floor(rng(0) * 10);
     for (let i = 0; i < detailCount; i++) {
       const x = rng(i * 3 + 1) * GAME_WIDTH;
       const y = rng(i * 3 + 2) * CHUNK_HEIGHT;
       const type = rng(i * 3 + 4);
 
-      if (type < 0.25) {
-        // Terrain patch (dirt/grass variation)
+      if (type < 0.2) {
         const color = t.detailColors[Math.floor(rng(i * 3 + 3) * t.detailColors.length)];
         const w = 20 + rng(i * 3 + 5) * 60;
         const h = 10 + rng(i * 3 + 6) * 30;
-        container.add(this.scene.add.ellipse(x, y, w, h, color, 0.5));
-      } else if (type < 0.45) {
-        // Pebbles / rocks
+        container.add(this.scene.add.ellipse(x, y, w, h, color, 0.4));
+      } else if (type < 0.35) {
         const size = 2 + rng(i * 3 + 7) * 8;
-        container.add(this.scene.add.circle(x, y, size, t.detailColors[0], 0.5));
-        container.add(this.scene.add.circle(x - size * 0.2, y - size * 0.2, size * 0.3, t.glowColors[0], 0.3));
-      } else if (type < 0.7) {
-        // Grass blades
+        container.add(this.scene.add.circle(x, y, size, t.detailColors[0], 0.4));
+        container.add(this.scene.add.circle(x - size * 0.2, y - size * 0.2, size * 0.3, t.glowColors[0], 0.25));
+      } else if (type < 0.55) {
         const grassColor = this.blendColor(t.groundColor, t.glowColors[0], 0.4);
         for (let b = 0; b < 3; b++) {
-          const blade = this.scene.add.rectangle(x + b * 3 - 3, y, 2, 6 + rng(i * 3 + 8 + b) * 8, grassColor, 0.6);
+          const blade = this.scene.add.rectangle(x + b * 3 - 3, y, 2, 6 + rng(i * 3 + 8 + b) * 8, grassColor, 0.5);
           blade.setAngle(rng(i * 3 + 12 + b) * 30 - 15);
           container.add(blade);
         }
-      } else if (type < 0.85) {
-        // Small flowers / dots of color
+      } else if (type < 0.7) {
         const flowerColor = t.glowColors[Math.floor(rng(i * 3 + 20) * t.glowColors.length)];
-        container.add(this.scene.add.circle(x, y, 2 + rng(i * 3 + 21) * 2, flowerColor, 0.6));
-        if (rng(i * 3 + 22) > 0.5) {
-          container.add(this.scene.add.circle(x + 3, y - 2, 1.5, 0xffffff, 0.3));
-        }
+        container.add(this.scene.add.circle(x, y, 2 + rng(i * 3 + 21) * 2, flowerColor, 0.5));
       } else {
-        // Shadow patches
-        container.add(this.scene.add.ellipse(x, y, 30 + rng(i * 3 + 23) * 40, 15, 0x000000, 0.08));
+        container.add(this.scene.add.ellipse(x, y, 30 + rng(i * 3 + 23) * 40, 15, 0x000000, 0.06));
       }
     }
 
-    // Occasional worn path / trail
-    if (rng(99) < 0.3) {
-      const pathX = GAME_WIDTH * 0.25 + rng(100) * GAME_WIDTH * 0.5;
+    // Decoration sprites (trees, rocks, bushes)
+    const decorCount = 2 + Math.floor(rng(200) * 3);
+    const decorKeys = ['decor_tree', 'decor_rock', 'decor_bush'];
+    for (let d = 0; d < decorCount; d++) {
+      const dx = rng(210 + d * 3);
+      // Avoid center road area
+      const decorX = dx < 0.5
+        ? rng(211 + d * 3) * GAME_WIDTH * 0.35
+        : GAME_WIDTH * 0.65 + rng(211 + d * 3) * GAME_WIDTH * 0.35;
+      const decorY = rng(212 + d * 3) * CHUNK_HEIGHT;
+      const key = decorKeys[Math.floor(rng(213 + d * 3) * decorKeys.length)];
+
+      if (this.scene.textures.exists(key)) {
+        const sprite = this.scene.add.image(decorX, decorY, key);
+        sprite.setAlpha(0.5 + rng(214 + d * 3) * 0.3);
+        sprite.setScale(0.6 + rng(215 + d * 3) * 0.6);
+        sprite.setTint(t.detailColors[Math.floor(rng(216 + d * 3) * t.detailColors.length)]);
+        container.add(sprite);
+      }
+    }
+
+    // Worn path (occasional)
+    if (rng(99) < 0.25) {
+      const pathX = GAME_WIDTH * 0.2 + rng(100) * GAME_WIDTH * 0.6;
       const pathW = 10 + rng(101) * 16;
-      const pathColor = t.detailColors[1] ?? t.detailColors[0];
-      const path = this.scene.add.rectangle(pathX, CHUNK_HEIGHT / 2, pathW, CHUNK_HEIGHT, pathColor, 0.2);
-      container.add(path);
+      const pc = t.detailColors[1] ?? t.detailColors[0];
+      const p = this.scene.add.rectangle(pathX, CHUNK_HEIGHT / 2, pathW, CHUNK_HEIGHT, pc, 0.15);
+      container.add(p);
     }
 
     this.chunks.set(index, container);
