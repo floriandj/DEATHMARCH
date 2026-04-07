@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="12" height="8" shape-rendering="geometricPrecision">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="48" height="32" shape-rendering="geometricPrecision">
   <defs>
     <radialGradient id="bullet-glow" cx="0.4" cy="0.5" r="0.6">
       <stop offset="0%" stop-color="#ffffff"/>
