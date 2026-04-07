@@ -1,73 +1,143 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 36" width="72" height="36" shape-rendering="crispEdges">
-  <!-- Frame 0: Shadow Knight - dark armored warrior with glowing visor -->
-  <g>
-    <!-- Helmet -->
-    <rect x="9" y="0" width="18" height="4" fill="#1a1a2e"/>
-    <rect x="7" y="3" width="22" height="8" fill="#2c3e50"/>
-    <rect x="8" y="4" width="20" height="6" fill="#1a1a2e"/>
-    <!-- Visor (glowing red slit) -->
-    <rect x="10" y="6" width="16" height="2" fill="#ff0040"/>
-    <rect x="12" y="6" width="4" height="1" fill="#ff4466"/>
-    <rect x="20" y="6" width="4" height="1" fill="#ff4466"/>
-    <!-- Shoulder pauldrons -->
-    <rect x="2" y="8" width="8" height="6" fill="#34495e"/>
-    <rect x="3" y="9" width="6" height="4" fill="#2c3e50"/>
-    <rect x="26" y="8" width="8" height="6" fill="#34495e"/>
-    <rect x="27" y="9" width="6" height="4" fill="#2c3e50"/>
-    <!-- Spikes on shoulders -->
-    <rect x="2" y="6" width="2" height="3" fill="#555"/>
-    <rect x="32" y="6" width="2" height="3" fill="#555"/>
-    <!-- Body armor -->
-    <rect x="8" y="11" width="20" height="12" fill="#2c3e50"/>
-    <rect x="10" y="12" width="16" height="10" fill="#1a1a2e"/>
-    <!-- Dark energy core -->
-    <rect x="15" y="14" width="6" height="4" fill="#2d0040"/>
-    <rect x="16" y="15" width="4" height="2" fill="#8800aa"/>
-    <!-- Sword (right hand) -->
-    <rect x="33" y="4" width="2" height="20" fill="#aaa"/>
-    <rect x="32" y="3" width="4" height="2" fill="#888"/>
-    <rect x="33" y="2" width="2" height="2" fill="#ff0040"/>
-    <!-- Shield (left hand) -->
-    <rect x="0" y="12" width="6" height="10" fill="#34495e"/>
-    <rect x="1" y="13" width="4" height="8" fill="#2c3e50"/>
-    <rect x="2" y="15" width="2" height="4" fill="#ff0040"/>
-    <!-- Legs (armored) -->
-    <rect x="10" y="23" width="6" height="8" fill="#2c3e50"/>
-    <rect x="20" y="23" width="6" height="8" fill="#2c3e50"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 36" width="72" height="36" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="sk-armor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#263238"/>
+      <stop offset="100%" stop-color="#000a12"/>
+    </linearGradient>
+    <linearGradient id="sk-armor-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#37474f"/>
+      <stop offset="100%" stop-color="#102027"/>
+    </linearGradient>
+    <radialGradient id="sk-sword-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#e040fb" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#6a0080" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sk-sword-blade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ce93d8"/>
+      <stop offset="50%" stop-color="#e040fb"/>
+      <stop offset="100%" stop-color="#9c27b0"/>
+    </linearGradient>
+    <radialGradient id="sk-visor" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ff5252"/>
+      <stop offset="100%" stop-color="#b71c1c"/>
+    </radialGradient>
+    <linearGradient id="sk-cape" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a0030"/>
+      <stop offset="100%" stop-color="#0a0010"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Frame 0: Guard stance (sword across body) -->
+  <g stroke="#1a1a2e" stroke-width="1.2" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="18" cy="34.5" rx="10" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Tattered cape (behind body) -->
+    <path d="M10,10 Q5,18 7,28 Q9,32 10,35 Q11,33 11,30 Q13,34 14,36 Q14,27 13,22 Q15,26 16,30 Q17,26 16,20Z" fill="url(#sk-cape)" opacity="0.85" stroke="#0a0010" stroke-width="0.7"/>
+    <!-- Legs -->
+    <ellipse cx="14" cy="28" rx="4" ry="5" fill="url(#sk-armor)"/>
+    <ellipse cx="22" cy="28" rx="4" ry="5" fill="url(#sk-armor)"/>
     <!-- Boots -->
-    <rect x="9" y="30" width="7" height="6" fill="#1a1a2e"/>
-    <rect x="20" y="30" width="7" height="6" fill="#1a1a2e"/>
+    <ellipse cx="13" cy="33" rx="4.5" ry="2.5" fill="#000a12"/>
+    <ellipse cx="22" cy="33" rx="4.5" ry="2.5" fill="#000a12"/>
+    <!-- Body armor -->
+    <ellipse cx="18" cy="20" rx="9" ry="8" fill="url(#sk-armor)"/>
+    <!-- Chest plate highlight -->
+    <ellipse cx="16" cy="17" rx="5" ry="4" fill="url(#sk-armor-mid)" opacity="0.7" stroke="none"/>
+    <!-- Energy core on chest -->
+    <ellipse cx="18" cy="20" rx="2.5" ry="2.5" fill="#2d0040"/>
+    <ellipse cx="18" cy="20" rx="1.5" ry="1.5" fill="#9c27b0" opacity="0.9"/>
+    <ellipse cx="17.5" cy="19.5" rx="0.6" ry="0.6" fill="#e040fb" stroke="none"/>
+    <!-- Left shoulder pauldron -->
+    <ellipse cx="9" cy="16" rx="5" ry="4" fill="url(#sk-armor-mid)"/>
+    <path d="M6,13 Q9,11 12,13" fill="#37474f" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Right shoulder pauldron -->
+    <ellipse cx="27" cy="16" rx="5" ry="4" fill="url(#sk-armor-mid)"/>
+    <path d="M24,13 Q27,11 30,13" fill="#37474f" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Left arm (holding sword across) -->
+    <path d="M10,18 Q8,22 9,26" stroke="#263238" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M10,18 Q8,22 9,26" stroke="#37474f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Right arm (holding sword) -->
+    <path d="M26,18 Q28,22 27,26" stroke="#263238" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M26,18 Q28,22 27,26" stroke="#37474f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Sword glow aura (guard stance — diagonal) -->
+    <path d="M8,24 Q14,18 26,14" stroke="#9c27b0" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.3"/>
+    <!-- Sword blade -->
+    <path d="M8,24 Q14,18 26,14" stroke="url(#sk-sword-blade)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Sword crossguard -->
+    <path d="M13,21 Q15,19 17,17" stroke="#ce93d8" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Sword handle -->
+    <path d="M7,26 Q8,25 9,24" stroke="#5d4037" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <ellipse cx="18" cy="11" rx="4" ry="3" fill="url(#sk-armor)"/>
+    <!-- Helmet -->
+    <ellipse cx="18" cy="7" rx="9" ry="8" fill="url(#sk-armor)"/>
+    <!-- Helmet crest/top spike -->
+    <path d="M16,0 Q18,-2 20,0 Q19,2 18,3 Q17,2 16,0Z" fill="#37474f"/>
+    <!-- Helmet highlight -->
+    <ellipse cx="15" cy="4" rx="4" ry="3" fill="#37474f" opacity="0.4" stroke="none"/>
+    <!-- Visor slit (red glowing) -->
+    <path d="M10,7 Q18,6 26,7" stroke="#ff1744" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.15"/>
+    <path d="M10,7 Q14,6 18,6.5 Q22,6 26,7" stroke="url(#sk-visor)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M11,7 Q15,6.5 18,7 Q21,6.5 25,7" stroke="#ff5252" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- Chin guard -->
+    <path d="M11,10 Q14,12 18,12 Q22,12 25,10" fill="#000a12" stroke="#1a1a2e" stroke-width="0.8"/>
   </g>
-  <!-- Frame 1: Marching -->
-  <g transform="translate(36,0)">
-    <rect x="9" y="0" width="18" height="4" fill="#1a1a2e"/>
-    <rect x="7" y="3" width="22" height="8" fill="#2c3e50"/>
-    <rect x="8" y="4" width="20" height="6" fill="#1a1a2e"/>
-    <rect x="10" y="6" width="16" height="2" fill="#ff0040"/>
-    <rect x="12" y="6" width="4" height="1" fill="#ff4466"/>
-    <rect x="20" y="6" width="4" height="1" fill="#ff4466"/>
-    <rect x="2" y="8" width="8" height="6" fill="#34495e"/>
-    <rect x="3" y="9" width="6" height="4" fill="#2c3e50"/>
-    <rect x="26" y="8" width="8" height="6" fill="#34495e"/>
-    <rect x="27" y="9" width="6" height="4" fill="#2c3e50"/>
-    <rect x="2" y="6" width="2" height="3" fill="#555"/>
-    <rect x="32" y="6" width="2" height="3" fill="#555"/>
-    <rect x="8" y="11" width="20" height="12" fill="#2c3e50"/>
-    <rect x="10" y="12" width="16" height="10" fill="#1a1a2e"/>
-    <rect x="15" y="14" width="6" height="4" fill="#2d0040"/>
-    <rect x="16" y="15" width="4" height="2" fill="#8800aa"/>
-    <!-- Sword forward -->
-    <rect x="33" y="6" width="2" height="18" fill="#aaa"/>
-    <rect x="32" y="5" width="4" height="2" fill="#888"/>
-    <rect x="33" y="3" width="2" height="3" fill="#ff0040"/>
-    <!-- Shield raised -->
-    <rect x="0" y="10" width="6" height="10" fill="#34495e"/>
-    <rect x="1" y="11" width="4" height="8" fill="#2c3e50"/>
-    <rect x="2" y="13" width="2" height="4" fill="#ff0040"/>
-    <!-- Legs stride -->
-    <rect x="8" y="23" width="6" height="7" fill="#2c3e50"/>
-    <rect x="22" y="24" width="6" height="8" fill="#2c3e50"/>
-    <rect x="7" y="29" width="7" height="6" fill="#1a1a2e"/>
-    <rect x="22" y="31" width="7" height="5" fill="#1a1a2e"/>
+
+  <!-- Frame 1: Sword slash (sword extended outward) -->
+  <g transform="translate(36,0)" stroke="#1a1a2e" stroke-width="1.2" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="18" cy="34.5" rx="10" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Tattered cape flaring in motion -->
+    <path d="M10,10 Q3,14 2,22 Q3,28 5,32 Q7,29 7,26 Q9,31 10,35 Q12,28 12,22 Q14,27 15,31 Q16,25 15,18Z" fill="url(#sk-cape)" opacity="0.85" stroke="#0a0010" stroke-width="0.7"/>
+    <!-- Legs (stride) -->
+    <ellipse cx="13" cy="27" rx="4" ry="5" fill="url(#sk-armor)"/>
+    <ellipse cx="23" cy="29" rx="4" ry="5" fill="url(#sk-armor)"/>
+    <!-- Boots -->
+    <ellipse cx="11" cy="32" rx="5" ry="2.5" fill="#000a12"/>
+    <ellipse cx="24" cy="34" rx="4.5" ry="2" fill="#000a12"/>
+    <!-- Body armor -->
+    <ellipse cx="18" cy="20" rx="9" ry="8" fill="url(#sk-armor)" transform="rotate(-8,18,20)"/>
+    <!-- Chest plate highlight -->
+    <ellipse cx="16" cy="17" rx="5" ry="4" fill="url(#sk-armor-mid)" opacity="0.7" stroke="none"/>
+    <!-- Energy core -->
+    <ellipse cx="18" cy="20" rx="2.5" ry="2.5" fill="#2d0040"/>
+    <ellipse cx="18" cy="20" rx="1.5" ry="1.5" fill="#ce93d8" opacity="0.9"/>
+    <ellipse cx="17.5" cy="19.5" rx="0.6" ry="0.6" fill="#fff" stroke="none"/>
+    <!-- Left shoulder -->
+    <ellipse cx="9" cy="15" rx="5" ry="4" fill="url(#sk-armor-mid)"/>
+    <path d="M6,12 Q9,10 12,12" fill="#37474f" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Right shoulder -->
+    <ellipse cx="27" cy="15" rx="5" ry="4" fill="url(#sk-armor-mid)"/>
+    <path d="M24,12 Q27,10 30,12" fill="#37474f" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Left arm (thrust back) -->
+    <path d="M10,17 Q7,19 6,23" stroke="#263238" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M10,17 Q7,19 6,23" stroke="#37474f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Right arm (extended in slash direction) -->
+    <path d="M26,17 Q31,14 33,11" stroke="#263238" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M26,17 Q31,14 33,11" stroke="#37474f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Extended sword glow (brighter during slash) -->
+    <path d="M6,22 Q14,15 33,8" stroke="#9c27b0" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.35"/>
+    <!-- Sword blade -->
+    <path d="M6,22 Q14,15 33,8" stroke="url(#sk-sword-blade)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Energy sparks at tip -->
+    <circle cx="33" cy="8" r="2.5" fill="#e040fb" opacity="0.7" stroke="none"/>
+    <circle cx="33" cy="8" r="1.2" fill="#fff" stroke="none"/>
+    <!-- Crossguard -->
+    <path d="M12,20 Q14,17 16,15" stroke="#ce93d8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Handle -->
+    <path d="M5,24 Q6,23 7,22" stroke="#5d4037" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <ellipse cx="18" cy="11" rx="4" ry="3" fill="url(#sk-armor)"/>
+    <!-- Helmet -->
+    <ellipse cx="18" cy="7" rx="9" ry="8" fill="url(#sk-armor)"/>
+    <!-- Helmet crest -->
+    <path d="M16,0 Q18,-2 20,0 Q19,2 18,3 Q17,2 16,0Z" fill="#37474f"/>
+    <ellipse cx="15" cy="4" rx="4" ry="3" fill="#37474f" opacity="0.4" stroke="none"/>
+    <!-- Visor slit (bright during combat) -->
+    <path d="M10,7 Q18,6 26,7" stroke="#ff1744" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.2"/>
+    <path d="M10,7 Q14,6 18,6.5 Q22,6 26,7" stroke="url(#sk-visor)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M11,7 Q15,6.5 18,7 Q21,6.5 25,7" stroke="#ff5252" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.8"/>
+    <!-- Chin guard -->
+    <path d="M11,10 Q14,12 18,12 Q22,12 25,10" fill="#000a12" stroke="#1a1a2e" stroke-width="0.8"/>
   </g>
 </svg>

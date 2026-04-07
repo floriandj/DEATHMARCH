@@ -1,72 +1,187 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 56" width="112" height="56" shape-rendering="crispEdges">
-  <!-- Frame 0: Abomination - massive stitched-together horror -->
-  <g>
-    <!-- Head (tiny for body) -->
-    <rect x="18" y="2" width="20" height="10" fill="#8e44ad"/>
-    <rect x="20" y="3" width="16" height="8" fill="#6c3483"/>
-    <!-- Eyes (mismatched) -->
-    <rect x="22" y="5" width="4" height="3" fill="#ff0000"/>
-    <rect x="23" y="6" width="2" height="1" fill="#ff6666"/>
-    <rect x="32" y="4" width="3" height="4" fill="#ffe100"/>
-    <rect x="33" y="5" width="1" height="2" fill="#000"/>
-    <!-- Mouth (stitched) -->
-    <rect x="24" y="9" width="10" height="2" fill="#441155"/>
-    <rect x="25" y="9" width="1" height="2" fill="#888"/>
-    <rect x="28" y="9" width="1" height="2" fill="#888"/>
-    <rect x="31" y="9" width="1" height="2" fill="#888"/>
-    <!-- Massive body -->
-    <rect x="6" y="12" width="44" height="24" fill="#8e44ad"/>
-    <rect x="8" y="14" width="40" height="20" fill="#6c3483"/>
-    <!-- Stitches across body -->
-    <rect x="26" y="14" width="2" height="20" fill="#555"/>
-    <rect x="12" y="22" width="32" height="2" fill="#555"/>
-    <!-- Exposed innards -->
-    <rect x="14" y="16" width="10" height="8" fill="#aa3377"/>
-    <rect x="16" y="18" width="6" height="4" fill="#cc4488"/>
-    <rect x="32" y="18" width="8" height="6" fill="#aa3377"/>
-    <rect x="34" y="20" width="4" height="2" fill="#cc4488"/>
-    <!-- Left arm (huge) -->
-    <rect x="0" y="14" width="8" height="18" fill="#6c3483"/>
-    <rect x="0" y="30" width="10" height="8" fill="#5b2c6f"/>
-    <!-- Right arm (different size - asymmetric) -->
-    <rect x="48" y="16" width="6" height="14" fill="#6c3483"/>
-    <rect x="47" y="28" width="8" height="6" fill="#5b2c6f"/>
-    <!-- Legs (thick) -->
-    <rect x="10" y="36" width="12" height="12" fill="#6c3483"/>
-    <rect x="34" y="36" width="12" height="12" fill="#6c3483"/>
-    <!-- Feet -->
-    <rect x="8" y="46" width="14" height="10" fill="#4a235a"/>
-    <rect x="34" y="46" width="14" height="10" fill="#4a235a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 56" width="112" height="56" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="ab-flesh" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8e24aa"/>
+      <stop offset="100%" stop-color="#4a148c"/>
+    </linearGradient>
+    <linearGradient id="ab-flesh-hi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ba68c8"/>
+      <stop offset="100%" stop-color="#7b1fa2"/>
+    </linearGradient>
+    <linearGradient id="ab-flesh-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6a1b9a"/>
+      <stop offset="100%" stop-color="#2d0050"/>
+    </linearGradient>
+    <radialGradient id="ab-drool" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ccff90"/>
+      <stop offset="100%" stop-color="#33691e"/>
+    </radialGradient>
+    <linearGradient id="ab-bone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffff0"/>
+      <stop offset="100%" stop-color="#e0e0d0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Frame 0: Lurching to one side (asymmetric, grotesque) -->
+  <g stroke="#1a1a2e" stroke-width="1.2" stroke-linejoin="round">
+    <!-- Shadow (irregular) -->
+    <ellipse cx="26" cy="53" rx="20" ry="2.5" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Massive asymmetric body (lurching left) -->
+    <!-- Left thick leg -->
+    <ellipse cx="16" cy="44" rx="9" ry="10" fill="url(#ab-flesh)"/>
+    <!-- Right thinner leg -->
+    <ellipse cx="34" cy="46" rx="6" ry="8" fill="url(#ab-flesh)"/>
+    <!-- Foot lumps -->
+    <ellipse cx="13" cy="53" rx="11" ry="3.5" fill="url(#ab-flesh-dark)"/>
+    <ellipse cx="33" cy="53" rx="7" ry="3" fill="url(#ab-flesh-dark)"/>
+    <!-- Main torso (massive, lopsided) -->
+    <path d="M4,18 Q4,10 14,8 Q24,6 36,10 Q46,14 46,22 Q46,36 38,42 Q28,46 16,44 Q4,40 4,30 Q4,24 4,18Z" fill="url(#ab-flesh)"/>
+    <!-- Body highlight (mottled) -->
+    <ellipse cx="18" cy="22" rx="12" ry="10" fill="url(#ab-flesh-hi)" opacity="0.3" stroke="none"/>
+    <!-- Exposed bone patches -->
+    <path d="M8,28 Q10,24 14,26 Q12,30 8,28Z" fill="url(#ab-bone)" stroke="#ccc" stroke-width="0.6"/>
+    <path d="M36,20 Q40,18 42,22 Q40,24 36,22 Q36,20 36,20Z" fill="url(#ab-bone)" stroke="#ccc" stroke-width="0.6"/>
+    <!-- Stitch lines across body (dashed paths) -->
+    <path d="M22,10 Q24,20 22,30 Q20,38 22,44" stroke="#555" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+    <path d="M6,24 Q16,22 26,24 Q36,26 44,24" stroke="#555" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+    <path d="M10,34 Q18,32 28,34 Q36,36 42,34" stroke="#444" stroke-width="0.8" fill="none" stroke-dasharray="1.5,2"/>
+    <!-- Large left arm (primary, massive) -->
+    <path d="M5,22 Q0,26 -1,34" stroke="#4a148c" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M5,22 Q0,26 -1,34" stroke="#8e24aa" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- Left fist/claws -->
+    <ellipse cx="-1" cy="35" rx="6" ry="5" fill="url(#ab-flesh)"/>
+    <path d="M-4,35 Q-6,38 -7,42" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M-2,36 Q-3,40 -3,43" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M1,36 Q1,40 2,43" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M4,35 Q5,38 6,41" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Medium right arm (different size) -->
+    <path d="M44,20 Q50,24 52,30" stroke="#4a148c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M44,20 Q50,24 52,30" stroke="#8e24aa" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Right hand/claws -->
+    <ellipse cx="52" cy="31" rx="5" ry="4" fill="url(#ab-flesh)"/>
+    <path d="M50,32 Q48,36 47,39" stroke="#1a1a2e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M52,33 Q52,37 52,40" stroke="#1a1a2e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M54,32 Q56,36 56,38" stroke="#1a1a2e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <!-- Third small vestigial arm (grotesque extra limb) -->
+    <path d="M30,14 Q34,10 36,6" stroke="#4a148c" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M30,14 Q34,10 36,6" stroke="#7b1fa2" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Tiny clawed end -->
+    <path d="M36,6 Q38,4 39,3" stroke="#1a1a2e" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M36,6 Q37,4 36,2" stroke="#1a1a2e" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <!-- Head (small for the body size) -->
+    <ellipse cx="26" cy="10" rx="12" ry="10" fill="url(#ab-flesh)"/>
+    <!-- Head highlight (mottled) -->
+    <ellipse cx="22" cy="7" rx="7" ry="5" fill="url(#ab-flesh-hi)" opacity="0.3" stroke="none"/>
+    <!-- Stitch on head -->
+    <path d="M20,5 Q24,8 28,5" stroke="#555" stroke-width="0.8" fill="none" stroke-dasharray="1.5,2"/>
+    <!-- Mismatched eyes (one big, one small, different) -->
+    <!-- Left eye (larger, red) -->
+    <ellipse cx="20" cy="9" rx="3.5" ry="3" fill="#b71c1c"/>
+    <circle cx="20.5" cy="9" r="2" fill="#f44336"/>
+    <circle cx="21" cy="9" r="1" fill="#1a0000"/>
+    <circle cx="20.4" cy="8.5" r="0.5" fill="#fff" stroke="none"/>
+    <!-- Right eye (smaller, yellow-green, different level) -->
+    <ellipse cx="30" cy="7" rx="2.5" ry="2.8" fill="#f9a825"/>
+    <circle cx="30.3" cy="7.5" r="1.5" fill="#f57f17"/>
+    <circle cx="30.5" cy="8" r="0.8" fill="#1a0000"/>
+    <circle cx="30" cy="7.2" r="0.4" fill="#fff" stroke="none"/>
+    <!-- Extra tiny eye (above right) -->
+    <circle cx="34" cy="5" r="1.2" fill="#1a1a2e"/>
+    <circle cx="34" cy="5" r="0.8" fill="#fff"/>
+    <circle cx="34.2" cy="4.8" r="0.3" fill="#1a1a2e" stroke="none"/>
+    <!-- Mouth with toxic drool -->
+    <path d="M18,14 Q22,17 26,16 Q30,17 34,14" fill="#2d0050" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Toxic green drool -->
+    <path d="M22,16 Q22,19 21,21" stroke="url(#ab-drool)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M26,17 Q27,21 26,23" stroke="url(#ab-drool)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="26" cy="23" r="1.5" fill="#76ff03" opacity="0.8" stroke="none"/>
+    <path d="M30,16 Q31,18 30,20" stroke="url(#ab-drool)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Jagged teeth -->
+    <path d="M19,14 L18,17" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M22,15 L21,18" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M33,14 L34,17" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M30,15 L31,18" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
   </g>
-  <!-- Frame 1: Lumbering -->
-  <g transform="translate(56,0)">
-    <rect x="19" y="2" width="20" height="10" fill="#8e44ad"/>
-    <rect x="21" y="3" width="16" height="8" fill="#6c3483"/>
-    <rect x="23" y="5" width="4" height="3" fill="#ff0000"/>
-    <rect x="24" y="6" width="2" height="1" fill="#ff6666"/>
-    <rect x="33" y="4" width="3" height="4" fill="#ffe100"/>
-    <rect x="34" y="5" width="1" height="2" fill="#000"/>
-    <rect x="25" y="9" width="10" height="2" fill="#441155"/>
-    <rect x="26" y="9" width="1" height="2" fill="#888"/>
-    <rect x="29" y="9" width="1" height="2" fill="#888"/>
-    <rect x="32" y="9" width="1" height="2" fill="#888"/>
-    <rect x="6" y="12" width="44" height="24" fill="#8e44ad"/>
-    <rect x="8" y="14" width="40" height="20" fill="#6c3483"/>
-    <rect x="26" y="14" width="2" height="20" fill="#555"/>
-    <rect x="12" y="22" width="32" height="2" fill="#555"/>
-    <rect x="14" y="16" width="10" height="8" fill="#aa3377"/>
-    <rect x="16" y="18" width="6" height="4" fill="#cc4488"/>
-    <rect x="32" y="18" width="8" height="6" fill="#aa3377"/>
-    <rect x="34" y="20" width="4" height="2" fill="#cc4488"/>
-    <!-- Arms swinging -->
-    <rect x="0" y="12" width="8" height="18" fill="#6c3483"/>
-    <rect x="0" y="28" width="10" height="8" fill="#5b2c6f"/>
-    <rect x="48" y="18" width="6" height="14" fill="#6c3483"/>
-    <rect x="47" y="30" width="8" height="6" fill="#5b2c6f"/>
-    <!-- Legs stride -->
-    <rect x="8" y="36" width="12" height="11" fill="#6c3483"/>
-    <rect x="36" y="37" width="12" height="12" fill="#6c3483"/>
-    <rect x="6" y="45" width="14" height="10" fill="#4a235a"/>
-    <rect x="36" y="47" width="14" height="9" fill="#4a235a"/>
+
+  <!-- Frame 1: Reaching forward with multiple arms -->
+  <g transform="translate(56,0)" stroke="#1a1a2e" stroke-width="1.2" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="26" cy="53" rx="20" ry="2.5" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Legs (different positions — reaching forward lean) -->
+    <ellipse cx="14" cy="44" rx="8" ry="10" fill="url(#ab-flesh)"/>
+    <ellipse cx="36" cy="45" rx="7" ry="9" fill="url(#ab-flesh)"/>
+    <!-- Feet -->
+    <ellipse cx="12" cy="53" rx="10" ry="3.5" fill="url(#ab-flesh-dark)"/>
+    <ellipse cx="36" cy="53" rx="8" ry="3" fill="url(#ab-flesh-dark)"/>
+    <!-- Torso (leaning forward) -->
+    <path d="M5,16 Q6,8 16,6 Q26,4 38,8 Q48,12 48,20 Q48,34 40,42 Q30,46 18,44 Q6,40 5,30 Q5,22 5,16Z" fill="url(#ab-flesh)" transform="rotate(-5,26,26)"/>
+    <!-- Body highlight -->
+    <ellipse cx="20" cy="20" rx="12" ry="10" fill="url(#ab-flesh-hi)" opacity="0.3" stroke="none"/>
+    <!-- Exposed bones -->
+    <path d="M10,26 Q12,22 16,24 Q14,28 10,26Z" fill="url(#ab-bone)" stroke="#ccc" stroke-width="0.6"/>
+    <path d="M38,18 Q42,16 44,20 Q42,22 38,20 Q38,18 38,18Z" fill="url(#ab-bone)" stroke="#ccc" stroke-width="0.6"/>
+    <!-- Stitch lines -->
+    <path d="M24,8 Q26,18 24,28 Q22,36 24,44" stroke="#555" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+    <path d="M8,22 Q18,20 28,22 Q38,24 46,22" stroke="#555" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+    <!-- LARGE left arm reaching far forward -->
+    <path d="M6,20 Q-2,16 -4,10" stroke="#4a148c" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M6,20 Q-2,16 -4,10" stroke="#8e24aa" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- Left claws extended forward -->
+    <ellipse cx="-4" cy="10" rx="6" ry="5" fill="url(#ab-flesh)"/>
+    <path d="M-7,10 Q-10,8 -12,5" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M-6,8 Q-8,5 -9,2" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M-4,8 Q-5,5 -5,2" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M-1,9 Q-1,6 0,3" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Medium right arm reaching forward -->
+    <path d="M46,18 Q52,14 54,8" stroke="#4a148c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M46,18 Q52,14 54,8" stroke="#8e24aa" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Right claws -->
+    <ellipse cx="54" cy="8" rx="5" ry="4" fill="url(#ab-flesh)"/>
+    <path d="M52,6 Q51,3 50,0" stroke="#1a1a2e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M54,5 Q54,2 55,0" stroke="#1a1a2e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M56,6 Q57,3 58,1" stroke="#1a1a2e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <!-- Third arm reaching out sideways -->
+    <path d="M32,12 Q36,6 40,2" stroke="#4a148c" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M32,12 Q36,6 40,2" stroke="#7b1fa2" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M40,2 Q43,0 44,-1" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M40,2 Q42,0 41,-2" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Fourth tiny reaching arm from body side -->
+    <path d="M14,18 Q10,14 8,10" stroke="#4a148c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M14,18 Q10,14 8,10" stroke="#7b1fa2" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M8,10 Q6,8 5,6" stroke="#1a1a2e" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M8,10 Q7,7 8,5" stroke="#1a1a2e" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <!-- Head (leaning forward) -->
+    <ellipse cx="26" cy="9" rx="12" ry="10" fill="url(#ab-flesh)" transform="rotate(-8,26,9)"/>
+    <ellipse cx="22" cy="6" rx="7" ry="5" fill="url(#ab-flesh-hi)" opacity="0.3" stroke="none"/>
+    <!-- Stitch on head -->
+    <path d="M20,4 Q24,7 28,4" stroke="#555" stroke-width="0.8" fill="none" stroke-dasharray="1.5,2"/>
+    <!-- Mismatched eyes (wide, intense) -->
+    <!-- Left eye (larger, red — wide) -->
+    <ellipse cx="19" cy="8" rx="4" ry="3.5" fill="#b71c1c"/>
+    <circle cx="19.5" cy="8" r="2.5" fill="#f44336"/>
+    <circle cx="20" cy="8.5" r="1.2" fill="#1a0000"/>
+    <circle cx="19.3" cy="7.8" r="0.6" fill="#fff" stroke="none"/>
+    <!-- Right eye (yellow, wide) -->
+    <ellipse cx="30" cy="6" rx="3" ry="3.2" fill="#f9a825"/>
+    <circle cx="30.3" cy="6.5" r="1.8" fill="#f57f17"/>
+    <circle cx="30.5" cy="7" r="0.9" fill="#1a0000"/>
+    <circle cx="30" cy="6.2" r="0.45" fill="#fff" stroke="none"/>
+    <!-- Extra eye (top) -->
+    <circle cx="24" cy="3" r="1.5" fill="#1a1a2e"/>
+    <circle cx="24" cy="3" r="1" fill="#fff"/>
+    <circle cx="24.3" cy="2.8" r="0.4" fill="#1a1a2e" stroke="none"/>
+    <!-- Mouth open (roaring/reaching) -->
+    <path d="M17,13 Q22,18 26,17 Q30,18 35,13" fill="#2d0050" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Drool (green, more intense when reaching) -->
+    <path d="M22,17 Q21,21 20,24" stroke="url(#ab-drool)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="20" cy="24" r="2" fill="#76ff03" opacity="0.8" stroke="none"/>
+    <path d="M26,17 Q26,22 25,25" stroke="url(#ab-drool)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="25" cy="25" r="2.5" fill="#76ff03" opacity="0.7" stroke="none"/>
+    <path d="M30,17 Q31,20 30,23" stroke="url(#ab-drool)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Teeth -->
+    <path d="M18,13 L17,16" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M21,15 L20,18" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M34,13 L35,16" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M31,15 L32,18" stroke="#ddd" stroke-width="1" fill="none" stroke-linecap="round"/>
   </g>
 </svg>

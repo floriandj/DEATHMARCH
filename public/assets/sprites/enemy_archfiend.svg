@@ -1,119 +1,204 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 56" width="112" height="56" shape-rendering="crispEdges">
-  <!-- Frame 0: Archfiend - towering demon lord, massive horns and wings -->
-  <g>
-    <!-- Horns (curved, massive) -->
-    <rect x="6" y="0" width="4" height="6" fill="#440000"/>
-    <rect x="4" y="2" width="3" height="4" fill="#660000"/>
-    <rect x="2" y="4" width="3" height="3" fill="#880000"/>
-    <rect x="42" y="0" width="4" height="6" fill="#440000"/>
-    <rect x="45" y="2" width="3" height="4" fill="#660000"/>
-    <rect x="47" y="4" width="3" height="3" fill="#880000"/>
-    <!-- Head -->
-    <rect x="12" y="2" width="28" height="12" fill="#c0392b"/>
-    <rect x="14" y="4" width="24" height="8" fill="#922b21"/>
-    <!-- Eyes (hellfire) -->
-    <rect x="16" y="6" width="6" height="4" fill="#ff0000"/>
-    <rect x="17" y="7" width="4" height="2" fill="#ffcc00"/>
-    <rect x="30" y="6" width="6" height="4" fill="#ff0000"/>
-    <rect x="31" y="7" width="4" height="2" fill="#ffcc00"/>
-    <!-- Mouth -->
-    <rect x="18" y="11" width="16" height="3" fill="#440000"/>
-    <rect x="20" y="11" width="3" height="2" fill="#eee"/>
-    <rect x="26" y="11" width="3" height="2" fill="#eee"/>
-    <rect x="31" y="11" width="2" height="2" fill="#eee"/>
-    <!-- Crown spikes -->
-    <rect x="14" y="0" width="2" height="4" fill="#ff4400"/>
-    <rect x="22" y="0" width="3" height="3" fill="#ff6600"/>
-    <rect x="30" y="0" width="2" height="4" fill="#ff4400"/>
-    <rect x="37" y="0" width="2" height="3" fill="#ff6600"/>
-    <!-- Wings -->
-    <rect x="0" y="10" width="10" height="18" fill="#7b241c"/>
-    <rect x="1" y="12" width="8" height="14" fill="#922b21"/>
-    <rect x="0" y="8" width="4" height="6" fill="#641e16"/>
-    <rect x="42" y="10" width="10" height="18" fill="#7b241c"/>
-    <rect x="43" y="12" width="8" height="14" fill="#922b21"/>
-    <rect x="48" y="8" width="4" height="6" fill="#641e16"/>
-    <!-- Body -->
-    <rect x="10" y="14" width="32" height="18" fill="#c0392b"/>
-    <rect x="12" y="16" width="28" height="14" fill="#922b21"/>
-    <!-- Infernal core -->
-    <rect x="20" y="18" width="12" height="8" fill="#c0392b"/>
-    <rect x="22" y="20" width="8" height="4" fill="#ff4400"/>
-    <rect x="23" y="21" width="6" height="2" fill="#ffcc00"/>
-    <rect x="24" y="21" width="4" height="1" fill="#fff"/>
-    <!-- Shoulder armor -->
-    <rect x="6" y="14" width="6" height="6" fill="#641e16"/>
-    <rect x="40" y="14" width="6" height="6" fill="#641e16"/>
-    <!-- Arms -->
-    <rect x="4" y="20" width="6" height="14" fill="#922b21"/>
-    <rect x="42" y="20" width="6" height="14" fill="#922b21"/>
-    <!-- Fists -->
-    <rect x="3" y="32" width="8" height="6" fill="#7b241c"/>
-    <rect x="41" y="32" width="8" height="6" fill="#7b241c"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 56" width="112" height="56" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="af-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c62828"/>
+      <stop offset="100%" stop-color="#4e0000"/>
+    </linearGradient>
+    <linearGradient id="af-body-hi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef5350"/>
+      <stop offset="100%" stop-color="#c62828"/>
+    </linearGradient>
+    <linearGradient id="af-horn" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#212121"/>
+      <stop offset="100%" stop-color="#616161"/>
+    </linearGradient>
+    <radialGradient id="af-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#ffcc80"/>
+      <stop offset="40%" stop-color="#ff6d00"/>
+      <stop offset="100%" stop-color="#bf360c"/>
+    </radialGradient>
+    <radialGradient id="af-eye-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffcc80" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#ff6d00" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="af-wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b71c1c"/>
+      <stop offset="100%" stop-color="#4e0000"/>
+    </linearGradient>
+    <linearGradient id="af-armor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="100%" stop-color="#212121"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Frame 0: Standing menacingly, wings folded behind -->
+  <g stroke="#1a1a2e" stroke-width="1.2" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="28" cy="54" rx="18" ry="2" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Bat wings folded behind (behind body) -->
+    <path d="M8,18 Q2,12 1,22 Q3,30 8,34 Q10,28 10,22Z" fill="url(#af-wing)"/>
+    <path d="M8,18 Q4,14 3,20" stroke="#7f0000" stroke-width="1" fill="none"/>
+    <path d="M8,22 Q5,24 4,28" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <path d="M48,18 Q54,12 55,22 Q53,30 48,34 Q46,28 46,22Z" fill="url(#af-wing)"/>
+    <path d="M48,18 Q52,14 53,20" stroke="#7f0000" stroke-width="1" fill="none"/>
+    <path d="M48,22 Q51,24 52,28" stroke="#7f0000" stroke-width="0.8" fill="none"/>
     <!-- Legs -->
-    <rect x="14" y="32" width="10" height="14" fill="#922b21"/>
-    <rect x="28" y="32" width="10" height="14" fill="#922b21"/>
-    <!-- Hooves -->
-    <rect x="12" y="44" width="12" height="12" fill="#440000"/>
-    <rect x="28" y="44" width="12" height="12" fill="#440000"/>
-    <!-- Tail -->
-    <rect x="38" y="28" width="6" height="3" fill="#922b21"/>
-    <rect x="42" y="26" width="4" height="3" fill="#c0392b"/>
-    <rect x="44" y="25" width="3" height="3" fill="#ff4400"/>
+    <ellipse cx="20" cy="44" rx="7" ry="8" fill="url(#af-body)"/>
+    <ellipse cx="36" cy="44" rx="7" ry="8" fill="url(#af-body)"/>
+    <!-- Leg armor plates -->
+    <ellipse cx="20" cy="40" rx="6" ry="4" fill="url(#af-armor)"/>
+    <path d="M15,39 Q20,37 25,39" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <ellipse cx="36" cy="40" rx="6" ry="4" fill="url(#af-armor)"/>
+    <path d="M31,39 Q36,37 41,39" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <!-- Hooves / cloven feet -->
+    <path d="M14,51 Q18,54 20,54 Q22,54 22,52 Q20,53 18,53 Q16,52 14,51Z" fill="#1a1a2e"/>
+    <path d="M30,51 Q34,54 36,54 Q38,54 38,52 Q36,53 34,53 Q32,52 30,51Z" fill="#1a1a2e"/>
+    <!-- Body -->
+    <ellipse cx="28" cy="30" rx="16" ry="14" fill="url(#af-body)"/>
+    <!-- Body highlight -->
+    <ellipse cx="24" cy="24" rx="9" ry="7" fill="url(#af-body-hi)" opacity="0.35" stroke="none"/>
+    <!-- Heavy armor chest plate -->
+    <path d="M16,24 Q20,20 28,20 Q36,20 40,24 Q38,34 28,36 Q18,34 16,24Z" fill="url(#af-armor)"/>
+    <!-- Gold trim on armor -->
+    <path d="M16,24 Q20,20 28,20 Q36,20 40,24" stroke="#ffd700" stroke-width="0.8" fill="none" opacity="0.9"/>
+    <path d="M18,30 Q22,28 28,28 Q34,28 38,30" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <path d="M20,34 Q24,33 28,33 Q32,33 36,34" stroke="#ffd700" stroke-width="0.5" fill="none" opacity="0.6"/>
+    <!-- Left shoulder armor -->
+    <ellipse cx="12" cy="24" rx="7" ry="6" fill="url(#af-armor)"/>
+    <path d="M6,21 Q12,18 18,21" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <!-- Right shoulder armor -->
+    <ellipse cx="44" cy="24" rx="7" ry="6" fill="url(#af-armor)"/>
+    <path d="M38,21 Q44,18 50,21" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <!-- Left arm (clawed, hanging) -->
+    <path d="M8,26 Q5,32 6,40" stroke="#7f0000" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M8,26 Q5,32 6,40" stroke="#c62828" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Left clawed hand -->
+    <path d="M6,40 Q3,43 2,46" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M6,40 Q5,44 5,47" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M6,40 Q7,44 8,46" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M6,40 Q9,43 10,45" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Right arm (clawed, hanging) -->
+    <path d="M48,26 Q51,32 50,40" stroke="#7f0000" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M48,26 Q51,32 50,40" stroke="#c62828" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Right clawed hand -->
+    <path d="M50,40 Q47,43 46,46" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50,40 Q49,44 49,47" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50,40 Q51,44 52,46" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50,40 Q53,43 54,45" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <ellipse cx="28" cy="15" rx="7" ry="5" fill="url(#af-body)"/>
+    <!-- Head -->
+    <ellipse cx="28" cy="9" rx="14" ry="11" fill="url(#af-body)"/>
+    <!-- Head highlight -->
+    <ellipse cx="24" cy="5" rx="7" ry="5" fill="url(#af-body-hi)" opacity="0.3" stroke="none"/>
+    <!-- Large curved horns -->
+    <path d="M14,4 Q6,-2 9,6 Q11,10 14,8Z" fill="url(#af-horn)"/>
+    <path d="M13,4 Q7,0 10,6" stroke="#424242" stroke-width="0.8" fill="none"/>
+    <path d="M42,4 Q50,-2 47,6 Q45,10 42,8Z" fill="url(#af-horn)"/>
+    <path d="M43,4 Q49,0 46,6" stroke="#424242" stroke-width="0.8" fill="none"/>
+    <!-- Eye glow halos -->
+    <ellipse cx="21" cy="9" rx="5" ry="4" fill="url(#af-eye-glow)" stroke="none"/>
+    <ellipse cx="35" cy="9" rx="5" ry="4" fill="url(#af-eye-glow)" stroke="none"/>
+    <!-- Burning eyes -->
+    <ellipse cx="21" cy="9" rx="3.5" ry="3" fill="url(#af-eye)"/>
+    <circle cx="22" cy="9" r="1.5" fill="#1a0000"/>
+    <circle cx="21.3" cy="8.4" r="0.7" fill="#fff" stroke="none"/>
+    <ellipse cx="35" cy="9" rx="3.5" ry="3" fill="url(#af-eye)"/>
+    <circle cx="36" cy="9" r="1.5" fill="#1a0000"/>
+    <circle cx="35.3" cy="8.4" r="0.7" fill="#fff" stroke="none"/>
+    <!-- Heavy brow -->
+    <path d="M16,6 Q21,4 26,6" stroke="#1a0000" stroke-width="2" fill="none"/>
+    <path d="M30,6 Q35,4 40,6" stroke="#1a0000" stroke-width="2" fill="none"/>
+    <!-- Snarling mouth with fangs -->
+    <path d="M18,14 Q28,18 38,14" fill="#4e0000" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M20,14 L18,17" stroke="#e8e8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M24,14 L23,17" stroke="#e8e8e8" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M36,14 L38,17" stroke="#e8e8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M32,14 L33,17" stroke="#e8e8e8" stroke-width="1" fill="none" stroke-linecap="round"/>
   </g>
-  <!-- Frame 1: Attacking pose -->
-  <g transform="translate(56,0)">
-    <rect x="6" y="0" width="4" height="6" fill="#440000"/>
-    <rect x="4" y="2" width="3" height="4" fill="#660000"/>
-    <rect x="2" y="4" width="3" height="3" fill="#880000"/>
-    <rect x="42" y="0" width="4" height="6" fill="#440000"/>
-    <rect x="45" y="2" width="3" height="4" fill="#660000"/>
-    <rect x="47" y="4" width="3" height="3" fill="#880000"/>
-    <rect x="12" y="2" width="28" height="12" fill="#c0392b"/>
-    <rect x="14" y="4" width="24" height="8" fill="#922b21"/>
-    <rect x="16" y="6" width="6" height="4" fill="#ff0000"/>
-    <rect x="17" y="7" width="4" height="2" fill="#ffcc00"/>
-    <rect x="30" y="6" width="6" height="4" fill="#ff0000"/>
-    <rect x="31" y="7" width="4" height="2" fill="#ffcc00"/>
-    <!-- Mouth wider -->
-    <rect x="18" y="11" width="16" height="4" fill="#440000"/>
-    <rect x="20" y="11" width="3" height="3" fill="#eee"/>
-    <rect x="26" y="11" width="3" height="3" fill="#eee"/>
-    <rect x="31" y="11" width="2" height="3" fill="#eee"/>
-    <!-- Crown flames higher -->
-    <rect x="14" y="0" width="2" height="5" fill="#ff6600"/>
-    <rect x="22" y="0" width="3" height="4" fill="#ff4400"/>
-    <rect x="30" y="0" width="2" height="5" fill="#ff6600"/>
-    <rect x="37" y="0" width="2" height="4" fill="#ff4400"/>
-    <!-- Wings spread wider -->
-    <rect x="0" y="8" width="12" height="20" fill="#7b241c"/>
-    <rect x="1" y="10" width="10" height="16" fill="#922b21"/>
-    <rect x="0" y="6" width="5" height="6" fill="#641e16"/>
-    <rect x="40" y="8" width="12" height="20" fill="#7b241c"/>
-    <rect x="41" y="10" width="10" height="16" fill="#922b21"/>
-    <rect x="47" y="6" width="5" height="6" fill="#641e16"/>
-    <rect x="10" y="14" width="32" height="18" fill="#c0392b"/>
-    <rect x="12" y="16" width="28" height="14" fill="#922b21"/>
-    <!-- Core pulsing bigger -->
-    <rect x="18" y="17" width="16" height="10" fill="#c0392b"/>
-    <rect x="20" y="19" width="12" height="6" fill="#ff4400"/>
-    <rect x="22" y="20" width="8" height="4" fill="#ffcc00"/>
-    <rect x="23" y="21" width="6" height="2" fill="#fff"/>
-    <rect x="6" y="14" width="6" height="6" fill="#641e16"/>
-    <rect x="40" y="14" width="6" height="6" fill="#641e16"/>
-    <!-- Arms raised -->
-    <rect x="2" y="18" width="6" height="14" fill="#922b21"/>
-    <rect x="44" y="18" width="6" height="14" fill="#922b21"/>
-    <rect x="1" y="30" width="8" height="6" fill="#7b241c"/>
-    <rect x="43" y="30" width="8" height="6" fill="#7b241c"/>
-    <!-- Legs stride -->
-    <rect x="12" y="32" width="10" height="12" fill="#922b21"/>
-    <rect x="30" y="33" width="10" height="14" fill="#922b21"/>
-    <rect x="10" y="42" width="12" height="12" fill="#440000"/>
-    <rect x="30" y="45" width="12" height="11" fill="#440000"/>
-    <!-- Tail swish -->
-    <rect x="38" y="30" width="6" height="3" fill="#922b21"/>
-    <rect x="42" y="28" width="4" height="3" fill="#c0392b"/>
-    <rect x="44" y="27" width="3" height="2" fill="#ff6600"/>
+
+  <!-- Frame 1: Wings flared outward, claws raised -->
+  <g transform="translate(56,0)" stroke="#1a1a2e" stroke-width="1.2" stroke-linejoin="round">
+    <!-- Shadow (wider with wings spread) -->
+    <ellipse cx="28" cy="54" rx="22" ry="2" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Wings flared outward (dramatically spread) -->
+    <path d="M10,16 Q0,8 -1,20 Q1,32 9,36 Q11,28 12,20Z" fill="url(#af-wing)"/>
+    <path d="M10,16 Q2,10 1,18" stroke="#7f0000" stroke-width="1" fill="none"/>
+    <path d="M10,22 Q4,24 2,30" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <path d="M10,27 Q5,30 3,34" stroke="#7f0000" stroke-width="0.7" fill="none"/>
+    <path d="M46,16 Q56,8 57,20 Q55,32 47,36 Q45,28 44,20Z" fill="url(#af-wing)"/>
+    <path d="M46,16 Q54,10 55,18" stroke="#7f0000" stroke-width="1" fill="none"/>
+    <path d="M46,22 Q52,24 54,30" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <path d="M46,27 Q51,30 53,34" stroke="#7f0000" stroke-width="0.7" fill="none"/>
+    <!-- Legs (wider stance) -->
+    <ellipse cx="18" cy="44" rx="7" ry="8" fill="url(#af-body)"/>
+    <ellipse cx="38" cy="44" rx="7" ry="8" fill="url(#af-body)"/>
+    <!-- Leg armor -->
+    <ellipse cx="18" cy="40" rx="6" ry="4" fill="url(#af-armor)"/>
+    <path d="M13,39 Q18,37 23,39" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <ellipse cx="38" cy="40" rx="6" ry="4" fill="url(#af-armor)"/>
+    <path d="M33,39 Q38,37 43,39" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <!-- Hooves -->
+    <path d="M12,51 Q16,54 18,54 Q20,54 20,52 Q18,53 16,53 Q14,52 12,51Z" fill="#1a1a2e"/>
+    <path d="M32,51 Q36,54 38,54 Q40,54 40,52 Q38,53 36,53 Q34,52 32,51Z" fill="#1a1a2e"/>
+    <!-- Body -->
+    <ellipse cx="28" cy="30" rx="16" ry="14" fill="url(#af-body)"/>
+    <ellipse cx="24" cy="24" rx="9" ry="7" fill="url(#af-body-hi)" opacity="0.35" stroke="none"/>
+    <!-- Armor chest plate -->
+    <path d="M16,24 Q20,20 28,20 Q36,20 40,24 Q38,34 28,36 Q18,34 16,24Z" fill="url(#af-armor)"/>
+    <path d="M16,24 Q20,20 28,20 Q36,20 40,24" stroke="#ffd700" stroke-width="0.8" fill="none" opacity="0.9"/>
+    <path d="M18,30 Q22,28 28,28 Q34,28 38,30" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <path d="M20,34 Q24,33 28,33 Q32,33 36,34" stroke="#ffd700" stroke-width="0.5" fill="none" opacity="0.6"/>
+    <!-- Shoulders -->
+    <ellipse cx="12" cy="22" rx="7" ry="6" fill="url(#af-armor)"/>
+    <path d="M6,19 Q12,16 18,19" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <ellipse cx="44" cy="22" rx="7" ry="6" fill="url(#af-armor)"/>
+    <path d="M38,19 Q44,16 50,19" stroke="#ffd700" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <!-- Left arm raised with claws -->
+    <path d="M8,24 Q2,18 1,12" stroke="#7f0000" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M8,24 Q2,18 1,12" stroke="#c62828" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Left claws extended up-out -->
+    <path d="M1,12 Q-2,9 -3,7" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M1,12 Q-1,9 0,6" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M1,12 Q1,9 3,7" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M1,12 Q3,10 5,8" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Right arm raised with claws -->
+    <path d="M48,24 Q54,18 55,12" stroke="#7f0000" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M48,24 Q54,18 55,12" stroke="#c62828" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Right claws extended up-out -->
+    <path d="M55,12 Q58,9 59,7" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M55,12 Q57,9 56,6" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M55,12 Q55,9 53,7" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M55,12 Q53,10 51,8" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <ellipse cx="28" cy="15" rx="7" ry="5" fill="url(#af-body)"/>
+    <!-- Head -->
+    <ellipse cx="28" cy="9" rx="14" ry="11" fill="url(#af-body)"/>
+    <ellipse cx="24" cy="5" rx="7" ry="5" fill="url(#af-body-hi)" opacity="0.3" stroke="none"/>
+    <!-- Horns (more upright, aggressive) -->
+    <path d="M14,4 Q5,-4 8,6 Q10,10 14,8Z" fill="url(#af-horn)"/>
+    <path d="M13,4 Q6,-2 9,6" stroke="#424242" stroke-width="0.8" fill="none"/>
+    <path d="M42,4 Q51,-4 48,6 Q46,10 42,8Z" fill="url(#af-horn)"/>
+    <path d="M43,4 Q50,-2 47,6" stroke="#424242" stroke-width="0.8" fill="none"/>
+    <!-- Eye glow halos (brighter in combat) -->
+    <ellipse cx="21" cy="9" rx="6" ry="5" fill="url(#af-eye-glow)" stroke="none"/>
+    <ellipse cx="35" cy="9" rx="6" ry="5" fill="url(#af-eye-glow)" stroke="none"/>
+    <!-- Burning eyes (wider) -->
+    <ellipse cx="21" cy="9" rx="4" ry="3.5" fill="url(#af-eye)"/>
+    <circle cx="22" cy="9" r="1.5" fill="#1a0000"/>
+    <circle cx="21.3" cy="8.4" r="0.7" fill="#fff" stroke="none"/>
+    <ellipse cx="35" cy="9" rx="4" ry="3.5" fill="url(#af-eye)"/>
+    <circle cx="36" cy="9" r="1.5" fill="#1a0000"/>
+    <circle cx="35.3" cy="8.4" r="0.7" fill="#fff" stroke="none"/>
+    <!-- Heavy brow -->
+    <path d="M15,5 Q21,3 26,5" stroke="#1a0000" stroke-width="2.5" fill="none"/>
+    <path d="M30,5 Q35,3 41,5" stroke="#1a0000" stroke-width="2.5" fill="none"/>
+    <!-- Roaring mouth (wide open) -->
+    <path d="M16,13 Q28,19 40,13" fill="#4e0000" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M18,13 L16,17" stroke="#e8e8e8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M22,13 L21,17" stroke="#e8e8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M38,13 L40,17" stroke="#e8e8e8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M34,13 L35,17" stroke="#e8e8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M28,13 L28,17" stroke="#e8e8e8" stroke-width="1" fill="none" stroke-linecap="round"/>
   </g>
 </svg>
