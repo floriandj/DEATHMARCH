@@ -15,6 +15,7 @@ export class HUDScene extends Phaser.Scene {
   private goldText!: Phaser.GameObjects.Text;
   private bossHpBar!: Phaser.GameObjects.Graphics;
   private bossHpBg!: Phaser.GameObjects.Graphics;
+  private bossBackingPanel!: Phaser.GameObjects.Graphics;
   private bossHpLabel!: Phaser.GameObjects.Text;
   private weaponIcon!: Phaser.GameObjects.Sprite;
   private weaponLabel!: Phaser.GameObjects.Text;
@@ -92,37 +93,38 @@ export class HUDScene extends Phaser.Scene {
     // Score badge (gold border)
     const scoreBadge = this.add.graphics();
     scoreBadge.fillStyle(0xffd700, 0.1);
-    scoreBadge.fillRoundedRect(PAD - 4, 8, 190, 40, 20);
+    scoreBadge.fillRoundedRect(PAD - 4, 8, 155, 40, 20);
     scoreBadge.lineStyle(1.5, 0xffd700, 0.5);
-    scoreBadge.strokeRoundedRect(PAD - 4, 8, 190, 40, 20);
+    scoreBadge.strokeRoundedRect(PAD - 4, 8, 155, 40, 20);
     this.topElements.add(scoreBadge);
-    this.topElements.add(this.add.text(PAD + 10, 22, '\u2605', { fontSize: '20px', color: '#ffd700' }).setOrigin(0, 0.5));
-    this.scoreText = this.add.text(PAD + 34, 22, '0', {
+    this.topElements.add(this.add.text(PAD + 10, 24, '\u2605', { fontSize: '20px', color: '#ffd700' }).setOrigin(0, 0.5));
+    this.scoreText = this.add.text(PAD + 34, 24, '0', {
       fontSize: '22px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.scoreText);
 
     // Distance (center, subtle gold)
-    this.distanceText = this.add.text(GAME_WIDTH / 2, 22, '0m', {
+    this.distanceText = this.add.text(GAME_WIDTH / 2, 24, '0m', {
       fontSize: '14px', color: '#b8860b', fontFamily: 'Arial, Helvetica, sans-serif',
+      stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5);
     this.topElements.add(this.distanceText);
 
     // Units badge (blue border)
     const unitBadge = this.add.graphics();
     unitBadge.fillStyle(0x00d4ff, 0.1);
-    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 148, 8, 148, 40, 20);
+    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 130, 8, 130, 40, 20);
     unitBadge.lineStyle(1.5, 0x00d4ff, 0.5);
-    unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 148, 8, 148, 40, 20);
+    unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 130, 8, 130, 40, 20);
     this.topElements.add(unitBadge);
-    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 134, 22, '\u2694', { fontSize: '20px', color: '#00d4ff' }).setOrigin(0, 0.5));
-    this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 22, '0', {
+    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 116, 24, '\u2694', { fontSize: '20px', color: '#00d4ff' }).setOrigin(0, 0.5));
+    this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 24, '0', {
       fontSize: '22px', color: '#00d4ff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
     this.topElements.add(this.unitText);
 
-    // Gold (below score)
-    this.goldText = this.add.text(PAD + 10, 52, '\u{1FA99} 0g', {
+    // Gold (row 2, left)
+    this.goldText = this.add.text(PAD + 10, 50, '\u{1FA99} 0g', {
       fontSize: '13px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
@@ -133,11 +135,22 @@ export class HUDScene extends Phaser.Scene {
     // ── Boss HP bar (hidden, replaces top bar when active) ──
     const barWidth = 560;
     const barX = (GAME_WIDTH - barWidth) / 2;
-    const barY = 20;
+    const barY = 16;
+
+    // Dark backing panel behind boss HP area
+    this.bossBackingPanel = this.add.graphics().setVisible(false);
+    this.bossBackingPanel.fillStyle(0x0d1520, 0.85);
+    this.bossBackingPanel.fillRect(0, 0, GAME_WIDTH, 74);
+    this.bossBackingPanel.fillStyle(0xff4040, 0.4);
+    this.bossBackingPanel.fillRect(0, 72, GAME_WIDTH, 2);
+    this.bossBackingPanel.fillStyle(0x000000, 0.15);
+    this.bossBackingPanel.fillRect(0, 74, GAME_WIDTH, 8);
+
     this.bossHpBg = this.add.graphics().setVisible(false);
     this.bossHpBar = this.add.graphics().setVisible(false);
     this.bossHpLabel = this.add.text(GAME_WIDTH / 2, barY + 16, '', {
       fontSize: '16px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5).setVisible(false);
 
     this.bossHpBg.fillStyle(0xffffff, 0.1);
@@ -158,16 +171,16 @@ export class HUDScene extends Phaser.Scene {
       stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5).setAlpha(0);
 
-    // ── Pause button (gold accent) ──
+    // ── Pause button (gold accent, row 2 right) ──
     const pauseBg = this.add.graphics();
     pauseBg.fillStyle(0x0d1520, 0.8);
-    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 46, 52, 46, 46, 14);
+    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 40, 38, 40, 40, 12);
     pauseBg.lineStyle(1, 0xffd700, 0.3);
-    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 46, 52, 46, 46, 14);
+    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 40, 38, 40, 40, 12);
     this.topElements.add(pauseBg);
 
-    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 23, 70, '\u23F8', {
-      fontSize: '22px', color: '#ffd700',
+    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 20, 50, '\u23F8', {
+      fontSize: '20px', color: '#ffd700',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
     this.topElements.add(pauseBtn);
 
@@ -262,18 +275,19 @@ export class HUDScene extends Phaser.Scene {
       this.progressBar.clear();
       // Background track
       this.progressBar.fillStyle(0xffffff, 0.06);
-      this.progressBar.fillRect(PAD, 68, GAME_WIDTH - PAD * 2, 4);
+      this.progressBar.fillRect(PAD, 78, GAME_WIDTH - PAD * 2, 5);
       this.progressBar.fillStyle(0xff4040, 0.4);
-      this.progressBar.fillRect(PAD, 68, (GAME_WIDTH - PAD * 2) * progress, 4);
+      this.progressBar.fillRect(PAD, 78, (GAME_WIDTH - PAD * 2) * progress, 5);
       if (progress < 0.98) {
         this.progressBar.fillStyle(0xff4040, 0.6);
-        this.progressBar.fillCircle(PAD + (GAME_WIDTH - PAD * 2) * progress, 70, 3);
+        this.progressBar.fillCircle(PAD + (GAME_WIDTH - PAD * 2) * progress, 80, 3);
       }
     } else {
       this.progressBar.clear();
     }
 
     // Boss HP bar
+    this.bossBackingPanel.setVisible(showBoss);
     this.bossHpBg.setVisible(showBoss);
     this.bossHpBar.setVisible(showBoss);
     this.bossHpLabel.setVisible(showBoss);
@@ -284,7 +298,7 @@ export class HUDScene extends Phaser.Scene {
     if (showBoss) {
       const barWidth = 560;
       const barX = (GAME_WIDTH - barWidth) / 2;
-      const barY = 20;
+      const barY = 16;
       const fillWidth = barWidth * this.bossHpPercent;
 
       this.bossHpBar.clear();
