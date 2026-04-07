@@ -66,66 +66,80 @@ export class BootScene extends Phaser.Scene {
   }
 
   private generateGateTextures(): void {
-    const w = 120, h = 60, r = 14;
+    const w = 120, h = 100, r = 20;
 
-    // Multiply gate — bright green with bevel and "×" icon
+    // ── Multiply gate — green archway ──
     const gGreen = this.add.graphics();
-    gGreen.fillStyle(0x1a5c2a, 1);
-    gGreen.fillRoundedRect(0, 2, w, h, r);
-    gGreen.fillStyle(0x2a8a3e, 1);
-    gGreen.fillRoundedRect(0, 0, w, h - 2, r);
-    gGreen.fillStyle(0x51cf66, 1);
-    gGreen.fillRoundedRect(4, 3, w - 8, h - 8, r - 3);
-    gGreen.fillStyle(0x7ddf8a, 0.6);
-    gGreen.fillRoundedRect(8, 5, w - 16, (h - 8) / 3, r - 5);
-    gGreen.lineStyle(4, 0xffffff, 0.9);
-    gGreen.beginPath();
-    gGreen.moveTo(w / 2 - 8, h / 2 - 8); gGreen.lineTo(w / 2 + 8, h / 2 + 8);
-    gGreen.moveTo(w / 2 + 8, h / 2 - 8); gGreen.lineTo(w / 2 - 8, h / 2 + 8);
-    gGreen.strokePath();
+    // Outer shadow/depth
+    gGreen.fillStyle(0x0d3318, 1);
+    gGreen.fillRoundedRect(0, 4, w, h, { tl: r, tr: r, bl: 6, br: 6 });
+    // Body
+    gGreen.fillStyle(0x1a6b2a, 1);
+    gGreen.fillRoundedRect(0, 0, w, h - 4, { tl: r, tr: r, bl: 6, br: 6 });
+    // Inner face
+    gGreen.fillStyle(0x2ed44a, 1);
+    gGreen.fillRoundedRect(6, 5, w - 12, h - 14, { tl: r - 4, tr: r - 4, bl: 4, br: 4 });
+    // Top highlight
+    gGreen.fillStyle(0x6aed80, 0.7);
+    gGreen.fillRoundedRect(10, 7, w - 20, 18, { tl: r - 6, tr: r - 6, bl: 0, br: 0 });
+    // Vertical energy lines
+    gGreen.fillStyle(0xffffff, 0.08);
+    for (let lx = 20; lx < w - 12; lx += 22) {
+      gGreen.fillRect(lx, 10, 3, h - 24);
+    }
+    // Bottom glow
+    gGreen.fillStyle(0x88ffaa, 0.25);
+    gGreen.fillRect(10, h - 16, w - 20, 6);
+    // Border highlight
+    gGreen.lineStyle(2, 0x88ffaa, 0.5);
+    gGreen.strokeRoundedRect(3, 2, w - 6, h - 8, { tl: r - 2, tr: r - 2, bl: 5, br: 5 });
     gGreen.generateTexture('gate_multiply', w, h);
     gGreen.destroy();
 
-    // Add gate — bright blue with bevel and "+" icon
+    // ── Add gate — blue archway ──
     const gBlue = this.add.graphics();
-    gBlue.fillStyle(0x006688, 1);
-    gBlue.fillRoundedRect(0, 2, w, h, r);
-    gBlue.fillStyle(0x0088aa, 1);
-    gBlue.fillRoundedRect(0, 0, w, h - 2, r);
-    gBlue.fillStyle(0x00d4ff, 1);
-    gBlue.fillRoundedRect(4, 3, w - 8, h - 8, r - 3);
-    gBlue.fillStyle(0x66e4ff, 0.6);
-    gBlue.fillRoundedRect(8, 5, w - 16, (h - 8) / 3, r - 5);
-    gBlue.lineStyle(4, 0xffffff, 0.9);
-    gBlue.beginPath();
-    gBlue.moveTo(w / 2, h / 2 - 10); gBlue.lineTo(w / 2, h / 2 + 10);
-    gBlue.moveTo(w / 2 - 10, h / 2); gBlue.lineTo(w / 2 + 10, h / 2);
-    gBlue.strokePath();
+    gBlue.fillStyle(0x0a3355, 1);
+    gBlue.fillRoundedRect(0, 4, w, h, { tl: r, tr: r, bl: 6, br: 6 });
+    gBlue.fillStyle(0x0d5580, 1);
+    gBlue.fillRoundedRect(0, 0, w, h - 4, { tl: r, tr: r, bl: 6, br: 6 });
+    gBlue.fillStyle(0x00bbee, 1);
+    gBlue.fillRoundedRect(6, 5, w - 12, h - 14, { tl: r - 4, tr: r - 4, bl: 4, br: 4 });
+    gBlue.fillStyle(0x55ddff, 0.7);
+    gBlue.fillRoundedRect(10, 7, w - 20, 18, { tl: r - 6, tr: r - 6, bl: 0, br: 0 });
+    gBlue.fillStyle(0xffffff, 0.08);
+    for (let lx = 20; lx < w - 12; lx += 22) {
+      gBlue.fillRect(lx, 10, 3, h - 24);
+    }
+    gBlue.fillStyle(0x88ddff, 0.25);
+    gBlue.fillRect(10, h - 16, w - 20, 6);
+    gBlue.lineStyle(2, 0x88ddff, 0.5);
+    gBlue.strokeRoundedRect(3, 2, w - 6, h - 8, { tl: r - 2, tr: r - 2, bl: 5, br: 5 });
     gBlue.generateTexture('gate_add', w, h);
     gBlue.destroy();
 
-    // Subtract gate — dark red with bevel, stripes, and "−" icon
+    // ── Subtract gate — red danger archway ──
     const gRed = this.add.graphics();
-    gRed.fillStyle(0x660a0a, 1);
-    gRed.fillRoundedRect(0, 2, w, h, r);
-    gRed.fillStyle(0x881111, 1);
-    gRed.fillRoundedRect(0, 0, w, h - 2, r);
-    gRed.fillStyle(0xcc2222, 1);
-    gRed.fillRoundedRect(4, 3, w - 8, h - 8, r - 3);
-    gRed.fillStyle(0x991111, 0.5);
-    for (let sx = 12; sx < w - 8; sx += 16) {
-      gRed.fillRect(sx, 5, 8, h - 12);
+    gRed.fillStyle(0x3a0808, 1);
+    gRed.fillRoundedRect(0, 4, w, h, { tl: r, tr: r, bl: 6, br: 6 });
+    gRed.fillStyle(0x661010, 1);
+    gRed.fillRoundedRect(0, 0, w, h - 4, { tl: r, tr: r, bl: 6, br: 6 });
+    gRed.fillStyle(0xcc2020, 1);
+    gRed.fillRoundedRect(6, 5, w - 12, h - 14, { tl: r - 4, tr: r - 4, bl: 4, br: 4 });
+    // Hazard stripes
+    gRed.fillStyle(0x880808, 0.4);
+    for (let sx = 14; sx < w - 12; sx += 18) {
+      gRed.fillRect(sx, 8, 9, h - 20);
     }
-    gRed.fillStyle(0xdd3333, 0.4);
-    gRed.fillRoundedRect(8, 5, w - 16, (h - 8) / 3, r - 5);
-    gRed.lineStyle(4, 0xffffff, 0.9);
-    gRed.beginPath();
-    gRed.moveTo(w / 2 - 10, h / 2); gRed.lineTo(w / 2 + 10, h / 2);
-    gRed.strokePath();
+    gRed.fillStyle(0xff5555, 0.5);
+    gRed.fillRoundedRect(10, 7, w - 20, 18, { tl: r - 6, tr: r - 6, bl: 0, br: 0 });
+    gRed.fillStyle(0xff4444, 0.2);
+    gRed.fillRect(10, h - 16, w - 20, 6);
+    gRed.lineStyle(2, 0xff6666, 0.4);
+    gRed.strokeRoundedRect(3, 2, w - 6, h - 8, { tl: r - 2, tr: r - 2, bl: 5, br: 5 });
     gRed.generateTexture('gate_subtract', w, h);
     gRed.destroy();
 
-    // Boss gate — wide ominous banner with skull icon
+    // ── Boss gate — keep existing wide banner ──
     const bw = 600, bh = 70, br = 12;
     const gBoss = this.add.graphics();
     gBoss.fillStyle(0x15000a, 1);
