@@ -2,6 +2,9 @@
 import Phaser from 'phaser';
 import { getAllBaseEnemySprites, getAllBossSprites } from '@/config/progression';
 
+/** SVG sprites are rendered at 4x their viewBox size for sharp display */
+const SVG_RENDER_SCALE = 4;
+
 export class BootScene extends Phaser.Scene {
   constructor() {
     super({ key: 'BootScene' });
@@ -10,13 +13,13 @@ export class BootScene extends Phaser.Scene {
   preload(): void {
     // Player unit spritesheet (2 frames, 20x20 each)
     this.load.spritesheet('unit', 'assets/sprites/unit.svg', {
-      frameWidth: 20,
-      frameHeight: 20,
+      frameWidth: 20 * SVG_RENDER_SCALE,
+      frameHeight: 20 * SVG_RENDER_SCALE,
     });
 
     // Enemy spritesheets — load all base sprites (procedural enemies reuse these with tinting)
     for (const { type, size } of getAllBaseEnemySprites()) {
-      const frameSize = size * 2;
+      const frameSize = size * 2 * SVG_RENDER_SCALE;
       this.load.spritesheet(`enemy_${type}`, `assets/sprites/enemy_${type}.svg`, {
         frameWidth: frameSize,
         frameHeight: frameSize,
@@ -26,14 +29,14 @@ export class BootScene extends Phaser.Scene {
     // Boss spritesheets — one per world theme
     for (const bossSprite of getAllBossSprites()) {
       this.load.spritesheet(bossSprite, `assets/sprites/${bossSprite}.svg`, {
-        frameWidth: 88,
-        frameHeight: 88,
+        frameWidth: 88 * SVG_RENDER_SCALE,
+        frameHeight: 88 * SVG_RENDER_SCALE,
       });
     }
     // Legacy 'boss' key
     this.load.spritesheet('boss', 'assets/sprites/boss.svg', {
-      frameWidth: 88,
-      frameHeight: 88,
+      frameWidth: 88 * SVG_RENDER_SCALE,
+      frameHeight: 88 * SVG_RENDER_SCALE,
     });
 
     // Weapon icon SVGs
