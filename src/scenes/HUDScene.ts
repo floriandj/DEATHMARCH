@@ -171,18 +171,16 @@ export class HUDScene extends Phaser.Scene {
       stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5).setAlpha(0);
 
-    // ── Pause button (gold accent, row 2 right) ──
+    // ── Pause button (bottom-right, always visible) ──
     const pauseBg = this.add.graphics();
     pauseBg.fillStyle(0x0d1520, 0.8);
-    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 40, 38, 40, 40, 12);
+    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 44, GAME_HEIGHT - 80 - 22, 44, 44, 14);
     pauseBg.lineStyle(1, 0xffd700, 0.3);
-    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 40, 38, 40, 40, 12);
-    this.topElements.add(pauseBg);
+    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 44, GAME_HEIGHT - 80 - 22, 44, 44, 14);
 
-    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 20, 50, '\u23F8', {
-      fontSize: '20px', color: '#ffd700',
+    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 22, GAME_HEIGHT - 80, '\u23F8', {
+      fontSize: '22px', color: '#ffd700',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
-    this.topElements.add(pauseBtn);
 
     pauseBtn.on('pointerdown', () => {
       // Pause the game scene (whichever is running)
