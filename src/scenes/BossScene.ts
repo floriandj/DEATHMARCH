@@ -107,8 +107,8 @@ export class BossScene extends Phaser.Scene {
     // Render a static background covering the visible area
     this.background.update(0);
 
-    // Scale boss HP with unit count
-    const baseUnits = 30;
+    // Scale boss HP with unit count (higher baseline = less scaling from large armies)
+    const baseUnits = 50;
     const hpScale = Math.max(1, this.unitCount / baseUnits);
     const scaledBossCfg = { ...bossCfg, hp: Math.ceil(bossCfg.hp * hpScale) };
     this.scaledBossHp = scaledBossCfg.hp;

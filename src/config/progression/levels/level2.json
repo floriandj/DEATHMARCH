@@ -56,34 +56,35 @@
   },
 
   "gates": {
-    "interval": 450,
+    "interval": 650,
     "templates": [
-      { "left": { "op": "add",      "value": 4 }, "right": { "op": "add",      "value": 3  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 6 }, "right": { "op": "add",      "value": 3  }, "minDistance": 200 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 400 },
-      { "left": { "op": "add",      "value": 10}, "right": { "op": "subtract", "value": 4  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 800 }
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
+      { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 800 }
     ]
   },
 
   "boss": {
     "name": "INFERNO TITAN",
     "sprite": "boss_inferno",
-    "hp": 700,
+    "hp": 1100,
     "triggerDistance": 2800,
     "phases": [
-      { "name": "vulnerable", "duration": 4000, "damageReduction": 0 },
-      { "name": "slam",       "duration": 3500, "damageReduction": 0.6 },
-      { "name": "slam",       "duration": 2500, "damageReduction": 0.4 },
-      { "name": "charge",     "duration": 3500, "damageReduction": 1 }
+      { "name": "vulnerable", "duration": 3000, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3500, "damageReduction": 0.7 },
+      { "name": "charge",     "duration": 3500, "damageReduction": 1 },
+      { "name": "vulnerable", "duration": 2000, "damageReduction": 0.2 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.6 }
     ],
-    "enrageThreshold": 0.25,
-    "enrageDurationMultiplier": 0.5,
-    "slamWarning": 1200,
-    "enrageWarning": 600,
-    "chargeSpeed": 420,
-    "enrageChargeSpeed": 620
+    "enrageThreshold": 0.35,
+    "enrageDurationMultiplier": 0.4,
+    "slamWarning": 1000,
+    "enrageWarning": 500,
+    "chargeSpeed": 480,
+    "enrageChargeSpeed": 700
   },
 
   "scoring": {

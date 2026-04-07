@@ -57,35 +57,36 @@
   },
 
   "gates": {
-    "interval": 600,
+    "interval": 800,
     "templates": [
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 150 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "add",      "value": 1  }, "minDistance": 300 },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 300 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 900 },
-      { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 900 }
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 150 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 300 },
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 900 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 900 }
     ]
   },
 
   "boss": {
     "name": "GORATH",
     "sprite": "boss_gorath",
-    "hp": 500,
+    "hp": 800,
     "triggerDistance": 3000,
     "phases": [
-      { "name": "vulnerable", "duration": 5000, "damageReduction": 0 },
-      { "name": "slam",       "duration": 3000, "damageReduction": 0.5 },
-      { "name": "charge",     "duration": 4000, "damageReduction": 1 }
+      { "name": "vulnerable", "duration": 3500, "damageReduction": 0 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.7 },
+      { "name": "charge",     "duration": 4000, "damageReduction": 1 },
+      { "name": "vulnerable", "duration": 2500, "damageReduction": 0.15 },
+      { "name": "slam",       "duration": 3500, "damageReduction": 0.6 }
     ],
-    "enrageThreshold": 0.2,
-    "enrageDurationMultiplier": 0.5,
-    "slamWarning": 1500,
-    "enrageWarning": 800,
-    "chargeSpeed": 350,
-    "enrageChargeSpeed": 500
+    "enrageThreshold": 0.3,
+    "enrageDurationMultiplier": 0.45,
+    "slamWarning": 1200,
+    "enrageWarning": 650,
+    "chargeSpeed": 400,
+    "enrageChargeSpeed": 580
   },
 
   "scoring": {

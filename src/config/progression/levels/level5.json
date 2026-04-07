@@ -56,16 +56,16 @@
   },
 
   "gates": {
-    "interval": 400,
+    "interval": 650,
     "templates": [
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 5  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 8 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
       { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
-      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 8  }, "minDistance": 400 },
-      { "left": { "op": "add",      "value": 12}, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 800 },
-      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "subtract", "value": 10 }, "minDistance": 1000 },
-      { "left": { "op": "add",      "value": 15}, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 6  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 6 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 800 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 10 }, "minDistance": 1000 },
+      { "left": { "op": "add",      "value": 8 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
     ]
   },
 
@@ -73,22 +73,22 @@
     "name": "LICH KING",
     "sprite": "boss_lich",
     "scale": 1.8,
-    "hp": 1500,
+    "hp": 2200,
     "triggerDistance": 2500,
     "phases": [
-      { "name": "vulnerable", "duration": 3000, "damageReduction": 0 },
-      { "name": "slam",       "duration": 2500, "damageReduction": 0.5 },
+      { "name": "vulnerable", "duration": 2500, "damageReduction": 0 },
+      { "name": "slam",       "duration": 2500, "damageReduction": 0.7 },
       { "name": "charge",     "duration": 3500, "damageReduction": 1 },
-      { "name": "vulnerable", "duration": 2000, "damageReduction": 0 },
-      { "name": "slam",       "duration": 3000, "damageReduction": 0.7 },
+      { "name": "vulnerable", "duration": 1500, "damageReduction": 0.2 },
+      { "name": "slam",       "duration": 3000, "damageReduction": 0.8 },
       { "name": "charge",     "duration": 2500, "damageReduction": 1 }
     ],
-    "enrageThreshold": 0.35,
-    "enrageDurationMultiplier": 0.35,
-    "slamWarning": 900,
-    "enrageWarning": 450,
-    "chargeSpeed": 450,
-    "enrageChargeSpeed": 700
+    "enrageThreshold": 0.4,
+    "enrageDurationMultiplier": 0.3,
+    "slamWarning": 750,
+    "enrageWarning": 350,
+    "chargeSpeed": 500,
+    "enrageChargeSpeed": 800
   },
 
   "scoring": {

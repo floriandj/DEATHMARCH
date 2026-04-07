@@ -19,8 +19,8 @@ export const BULLET_POOL_SIZE = 1500;
 export const FORMATION_SPACING = 30; // pixels between units in formation
 
 // Army movement (shared between GameScene and BossScene)
-export const ARMY_INPUT_Y_RANGE = 300; // drag range for Y input normalization
-export const ARMY_Y_OFFSET_MAX = 200; // max pixels the army can nudge forward/back
+export const ARMY_INPUT_Y_RANGE = 200; // drag range for Y input normalization (lower = more responsive)
+export const ARMY_Y_OFFSET_MAX = 350; // max pixels the army can nudge forward/back
 
 // Gates
 export const GATE_INTERVAL = 800; // meters between gate pairs
@@ -28,7 +28,7 @@ export const GATE_WIDTH = 280; // pixels wide per gate side
 export const GATE_GAP = 16; // pixels between left and right gate
 
 // Battlefield
-export const FIELD_WIDTH = 600; // usable width in game coords
+export const FIELD_WIDTH = 700; // usable width in game coords
 export const SPAWN_AHEAD_DISTANCE = 800; // how far ahead enemies spawn
 
 // Boss
