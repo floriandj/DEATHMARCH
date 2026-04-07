@@ -72,6 +72,10 @@ export class BossScene extends Phaser.Scene {
   private bossAuraParticles: Phaser.GameObjects.Sprite[] = [];
   private auraTimer: number = 0;
 
+  // Shadows
+  private bossShadow!: Phaser.GameObjects.Image;
+  private unitShadows: Phaser.GameObjects.Image[] = [];
+
   constructor() {
     super({ key: 'BossScene' });
   }
@@ -126,6 +130,10 @@ export class BossScene extends Phaser.Scene {
       const tintColor = parseInt(bossCfg.tint.replace('#', ''), 16);
       this.bossSprite.setTint(tintColor);
     }
+
+    // Boss shadow
+    this.bossShadow = this.add.image(this.bossSprite.x, this.bossSprite.y + 60, 'vfx_shadow')
+      .setAlpha(0.3).setScale(3).setDepth(-1);
 
     // Entity pools
     this.units = [];
@@ -300,6 +308,21 @@ export class BossScene extends Phaser.Scene {
     if (bossKilled) {
       this.bossDefeated();
       return;
+    }
+
+    // Update boss shadow
+    if (this.bossShadow && this.bossSprite) {
+      this.bossShadow.setPosition(this.bossSprite.x, this.bossSprite.y + 60);
+    }
+
+    // Update unit shadows
+    for (let i = 0; i < this.units.length; i++) {
+      const u = this.units[i];
+      if (u.active && this.unitShadows[i]) {
+        this.unitShadows[i].setPosition(u.x, u.y + 10).setVisible(true);
+      } else if (this.unitShadows[i]) {
+        this.unitShadows[i].setVisible(false);
+      }
     }
 
     // 7. Update HUD
@@ -842,10 +865,13 @@ export class BossScene extends Phaser.Scene {
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
         const angle = (i / this.unitCount) * Math.PI * 2;
         const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
-        this.units[i].spawn(
-          armyScreenX + Math.cos(angle) * radius,
-          armyScreenY + Math.sin(angle) * radius,
-        );
+        const sx = armyScreenX + Math.cos(angle) * radius;
+        const sy = armyScreenY + Math.sin(angle) * radius;
+        this.units[i].spawn(sx, sy);
+        if (!this.unitShadows[i]) {
+          this.unitShadows[i] = this.add.image(sx, sy + 10, 'vfx_shadow').setAlpha(0.3).setDepth(-1);
+        }
+        this.unitShadows[i].setPosition(sx, sy + 10).setVisible(true).setScale(0.6);
         if (i < levelData.length) {
           this.units[i].unitLevel = levelData[i].level;
           this.units[i].kills = levelData[i].kills;
