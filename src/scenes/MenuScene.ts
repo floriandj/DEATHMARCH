@@ -10,8 +10,8 @@ const PAD = 28;
 const CW = GAME_WIDTH - PAD * 2;
 const F = 'Arial, Helvetica, sans-serif';
 const NODE_R = 34;
-const NODE_SPACING = 120;
-const WORLD_GAP = 52;
+const NODE_SPACING = 160;
+const WORLD_GAP = 80;
 const LOOKAHEAD = 8;
 const C_BG = 0x0f1923;
 const C_PANEL = 0x1a2840;
@@ -47,31 +47,35 @@ export class MenuScene extends Phaser.Scene {
     const visibleCount = maxUnlocked + 1 + LOOKAHEAD;
 
     // ── Header panel (fixed) ──
-    const headerH = 105;
+    const headerH = 120;
     const hdr = this.add.graphics().setDepth(10);
     hdr.fillStyle(0x0d1520, 1);
     hdr.fillRect(0, 0, GAME_WIDTH, headerH);
-    hdr.lineStyle(2, C_BORDER, 0.5);
-    hdr.lineBetween(0, headerH, GAME_WIDTH, headerH);
     // Gold accent line at top
     hdr.fillStyle(0xffd700, 0.9);
     hdr.fillRect(0, 0, GAME_WIDTH, 4);
+    // Gradient fade below header (dark → transparent)
+    const fadeH = 24;
+    for (let s = 0; s < fadeH; s++) {
+      hdr.fillStyle(0x0d1520, 1 - s / fadeH);
+      hdr.fillRect(0, headerH + s, GAME_WIDTH, 1);
+    }
 
-    this.add.text(GAME_WIDTH / 2, 30, 'DEATHMARCH', {
+    this.add.text(GAME_WIDTH / 2, 38, 'DEATHMARCH', {
       fontSize: '34px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
       stroke: '#b8860b', strokeThickness: 3,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
     // Score pill
-    this.pill(PAD, 56, 145, 34, 0xffd700, 11);
-    this.add.text(PAD + 12, 73, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
+    this.pill(PAD, 72, 145, 34, 0xffd700, 11);
+    this.add.text(PAD + 12, 89, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
       fontSize: '15px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
     }).setOrigin(0, 0.5).setDepth(11);
 
     // Gold pill
-    this.pill(GAME_WIDTH - PAD - 135, 56, 135, 34, 0xffd700, 11);
-    this.add.text(GAME_WIDTH - PAD - 12, 73, `\u{1FA99} ${WalletManager.gold}g`, {
+    this.pill(GAME_WIDTH - PAD - 135, 72, 135, 34, 0xffd700, 11);
+    this.add.text(GAME_WIDTH - PAD - 12, 89, `\u{1FA99} ${WalletManager.gold}g`, {
       fontSize: '15px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
     }).setOrigin(1, 0.5).setDepth(11);
 
@@ -84,11 +88,12 @@ export class MenuScene extends Phaser.Scene {
     foot.lineBetween(0, GAME_HEIGHT - footH, GAME_WIDTH, GAME_HEIGHT - footH);
 
     const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - footH / 2, '\u2699  SETTINGS', {
-      fontSize: '15px', color: '#64748b', fontFamily: F, fontStyle: 'bold',
+      fontSize: '15px', color: '#94a3b8', fontFamily: F, fontStyle: 'bold',
+      stroke: '#b8860b', strokeThickness: 1,
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(11);
     settBtn.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
     settBtn.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settBtn.on('pointerout', () => settBtn.setColor('#64748b'));
+    settBtn.on('pointerout', () => settBtn.setColor('#94a3b8'));
 
     // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
@@ -133,7 +138,7 @@ export class MenuScene extends Phaser.Scene {
 
   private buildPositions(count: number): { x: number; y: number }[] {
     const pos: { x: number; y: number }[] = [];
-    let y = 150;
+    let y = 180;
     for (let i = 0; i < count; i++) {
       if (i > 0 && i % 5 === 0) y += WORLD_GAP;
       pos.push({ x: getNodeX(i), y }); y += NODE_SPACING;
@@ -175,7 +180,7 @@ export class MenuScene extends Phaser.Scene {
     const worldInfos = getWorldInfoForLevels(visibleCount - 1);
     for (const world of worldInfos) {
       if (world.startLevel >= positions.length) continue;
-      const y = positions[world.startLevel].y - 48;
+      const y = positions[world.startLevel].y - 64;
       const lvl = generateLevel(world.startLevel);
       const accent = lvl.theme.accentColor;
 
@@ -249,11 +254,11 @@ export class MenuScene extends Phaser.Scene {
           stroke: '#000', strokeThickness: 2,
         }).setOrigin(0.5));
 
-        nc.add(this.add.text(0, NODE_R + 14, lvl.name.toUpperCase(), {
+        nc.add(this.add.text(0, NODE_R + 16, lvl.name.toUpperCase(), {
           fontSize: '11px', color: '#4ade80', fontFamily: F, fontStyle: 'bold',
         }).setOrigin(0.5));
 
-        this.createPlayButton(x, y + NODE_R + 40);
+        this.createPlayButton(x, y + NODE_R + 48);
 
       } else if (isCompleted) {
         const ng = this.add.graphics();
@@ -295,7 +300,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createPlayButton(x: number, y: number): void {
-    const w = 170, h = 48, r = h / 2;
+    const w = 150, h = 42, r = h / 2;
     const c = this.add.container(x, y);
 
     const sh = this.add.graphics();
@@ -335,6 +340,6 @@ export class MenuScene extends Phaser.Scene {
 
   private clampScroll(): void {
     const minY = -(this.totalHeight - GAME_HEIGHT + 80);
-    this.scrollContainer.y = Phaser.Math.Clamp(this.scrollContainer.y, minY, 60);
+    this.scrollContainer.y = Phaser.Math.Clamp(this.scrollContainer.y, minY, 120);
   }
 }
