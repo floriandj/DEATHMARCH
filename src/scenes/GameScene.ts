@@ -70,9 +70,12 @@ export class GameScene extends Phaser.Scene {
   private nextPouchDistance: number = 300;
   private goldPouches: Phaser.GameObjects.Sprite[] = [];
 
-  // Perk state
+  // Perk / orb state
   private nextRegenDistance: number = 0;
   private furyTimer: number = 0; // temporary 2x fire rate from elite orb
+  private curseSlowTimer: number = 0; // temporary 0.5x fire rate from curse orb
+  private curseBlindOverlay: Phaser.GameObjects.Graphics | null = null;
+  private curseBlindTimer: number = 0;
   private powerOrbs: Phaser.GameObjects.Container[] = [];
 
   // Shadow visuals
@@ -113,9 +116,12 @@ export class GameScene extends Phaser.Scene {
     this.nextPouchDistance = 200 + Math.random() * 200;
     this.goldPouches = [];
 
-    // Perk state
+    // Perk / orb state
     this.nextRegenDistance = perks.regenDistanceInterval ?? Infinity;
     this.furyTimer = 0;
+    this.curseSlowTimer = 0;
+    this.curseBlindOverlay = null;
+    this.curseBlindTimer = 0;
     this.powerOrbs = [];
 
     SoundManager.init();
@@ -547,6 +553,19 @@ export class GameScene extends Phaser.Scene {
     const bulletColor = hexToNum(weaponStats.bulletColor);
     let effectiveFireRate = weaponStats.fireRate * perks.fireRateMultiplier * perks.berserkerMultiplier(this.unitCount);
     if (this.furyTimer > 0) { effectiveFireRate *= 0.5; this.furyTimer -= delta; }
+    if (this.curseSlowTimer > 0) { effectiveFireRate *= 2; this.curseSlowTimer -= delta; }
+
+    // Curse blind overlay tick
+    if (this.curseBlindTimer > 0) {
+      this.curseBlindTimer -= delta;
+      if (this.curseBlindOverlay) {
+        this.curseBlindOverlay.setAlpha(0.25 + Math.sin(Date.now() / 200) * 0.15);
+      }
+      if (this.curseBlindTimer <= 0 && this.curseBlindOverlay) {
+        this.curseBlindOverlay.destroy();
+        this.curseBlindOverlay = null;
+      }
+    }
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
@@ -809,14 +828,33 @@ export class GameScene extends Phaser.Scene {
 
   /** Spawn a power orb when an elite enemy dies */
   private spawnPowerOrb(x: number, y: number): void {
-    const orbTypes = ['fury', 'heal', 'gold'] as const;
-    const orbType = orbTypes[Math.floor(Math.random() * orbTypes.length)];
+    // Weighted pool: positive orbs are more common, but curses lurk
+    const pool = [
+      { type: 'fury',  weight: 3 },
+      { type: 'heal',  weight: 3 },
+      { type: 'gold',  weight: 3 },
+      { type: 'curse_slow',  weight: 2 }, // halves fire rate for 8s
+      { type: 'curse_drain', weight: 1 }, // lose 2 units
+      { type: 'curse_blind', weight: 1 }, // screen distortion for 6s
+      { type: 'chaos',       weight: 1 }, // wild card: random strong effect
+    ];
+    const totalWeight = pool.reduce((s, e) => s + e.weight, 0);
+    let roll = Math.random() * totalWeight;
+    let orbType = pool[0].type;
+    for (const entry of pool) {
+      roll -= entry.weight;
+      if (roll <= 0) { orbType = entry.type; break; }
+    }
 
     // Color scheme per type
     const colors: Record<string, { core: number; glow: number; ring: number; icon: string }> = {
-      fury:  { core: 0xff4400, glow: 0xff6600, ring: 0xff8800, icon: '\u{1F525}' },
-      heal:  { core: 0x22c55e, glow: 0x4ade80, ring: 0x86efac, icon: '\u{1F49A}' },
-      gold:  { core: 0xfbbf24, glow: 0xfde68a, ring: 0xfef3c7, icon: '\u{1FA99}' },
+      fury:        { core: 0xff4400, glow: 0xff6600, ring: 0xff8800, icon: '\u{1F525}' },
+      heal:        { core: 0x22c55e, glow: 0x4ade80, ring: 0x86efac, icon: '\u{1F49A}' },
+      gold:        { core: 0xfbbf24, glow: 0xfde68a, ring: 0xfef3c7, icon: '\u{1FA99}' },
+      curse_slow:  { core: 0x7c3aed, glow: 0x9333ea, ring: 0xa855f7, icon: '\u{1F9CA}' },
+      curse_drain: { core: 0xdc2626, glow: 0xef4444, ring: 0xf87171, icon: '\u{1F480}' },
+      curse_blind: { core: 0x6b21a8, glow: 0x7e22ce, ring: 0x9333ea, icon: '\u{1F441}\uFE0F' },
+      chaos:       { core: 0xf0abfc, glow: 0xe879f9, ring: 0xd946ef, icon: '\u{1F3B2}' },
     };
     const c = colors[orbType];
 
@@ -850,18 +888,31 @@ export class GameScene extends Phaser.Scene {
     const icon = this.add.text(0, -1, c.icon, { fontSize: '16px' }).setOrigin(0.5);
     container.add(icon);
 
-    // Layer 5: Orbiting sparkles
-    for (let i = 0; i < 3; i++) {
-      const spark = this.add.circle(0, 0, 2, 0xffffff, 0.8);
+    // Layer 5: Orbiting sparkles (smooth for positive, erratic for curse)
+    const isCurse = orbType.startsWith('curse_') || orbType === 'chaos';
+    const sparkCount = isCurse ? 5 : 3;
+    const sparkColor = isCurse ? c.core : 0xffffff;
+    for (let i = 0; i < sparkCount; i++) {
+      const spark = this.add.circle(0, 0, isCurse ? 3 : 2, sparkColor, 0.8);
       container.add(spark);
-      const angle = (i / 3) * Math.PI * 2;
-      const radius = 20;
-      this.tweens.add({
-        targets: spark,
-        x: { from: Math.cos(angle) * radius, to: Math.cos(angle + Math.PI * 2) * radius },
-        y: { from: Math.sin(angle) * radius, to: Math.sin(angle + Math.PI * 2) * radius },
-        duration: 2000, repeat: -1, ease: 'Linear',
-      });
+      const angle = (i / sparkCount) * Math.PI * 2;
+      const radius = isCurse ? 24 : 20;
+      if (isCurse) {
+        // Erratic jitter for cursed orbs
+        this.tweens.add({
+          targets: spark,
+          x: { from: Math.cos(angle) * radius, to: Math.cos(angle + Math.PI) * radius * 0.6 },
+          y: { from: Math.sin(angle) * radius, to: Math.sin(angle + Math.PI) * radius * 0.6 },
+          duration: 400 + Math.random() * 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        });
+      } else {
+        this.tweens.add({
+          targets: spark,
+          x: { from: Math.cos(angle) * radius, to: Math.cos(angle + Math.PI * 2) * radius },
+          y: { from: Math.sin(angle) * radius, to: Math.sin(angle + Math.PI * 2) * radius },
+          duration: 2000, repeat: -1, ease: 'Linear',
+        });
+      }
     }
 
     // Entrance: burst in from nothing
@@ -886,11 +937,16 @@ export class GameScene extends Phaser.Scene {
     const orbType = (orb as any).orbType as string;
 
     const colors: Record<string, { flash: [number, number, number]; text: string }> = {
-      fury:  { flash: [255, 80, 0],   text: '#ff6600' },
-      heal:  { flash: [50, 220, 100],  text: '#4ade80' },
-      gold:  { flash: [255, 200, 50],  text: '#fbbf24' },
+      fury:        { flash: [255, 80, 0],    text: '#ff6600' },
+      heal:        { flash: [50, 220, 100],   text: '#4ade80' },
+      gold:        { flash: [255, 200, 50],   text: '#fbbf24' },
+      curse_slow:  { flash: [120, 50, 220],   text: '#a855f7' },
+      curse_drain: { flash: [220, 40, 40],    text: '#f87171' },
+      curse_blind: { flash: [100, 30, 170],   text: '#9333ea' },
+      chaos:       { flash: [230, 120, 240],  text: '#e879f9' },
     };
     const c = colors[orbType] || colors.gold;
+    const isCurse = orbType.startsWith('curse_');
 
     let label = '';
     let subtitle = '';
@@ -903,14 +959,59 @@ export class GameScene extends Phaser.Scene {
       this.respawnArmy();
       label = '\u{1F49A} HEAL!';
       subtitle = '+3 UNITS';
-    } else {
+    } else if (orbType === 'gold') {
       const goldGain = 50;
       this.pouchGold += goldGain;
       label = '\u{1FA99} JACKPOT!';
       subtitle = `+${goldGain} GOLD`;
+    } else if (orbType === 'curse_slow') {
+      this.curseSlowTimer = 8000;
+      label = '\u{1F9CA} CURSED!';
+      subtitle = 'FIRE RATE HALVED';
+    } else if (orbType === 'curse_drain') {
+      const lost = Math.min(2, this.unitCount - 1);
+      this.unitCount = Math.max(1, this.unitCount - lost);
+      this.respawnArmy();
+      label = '\u{1F480} DRAINED!';
+      subtitle = `-${lost} UNITS`;
+    } else if (orbType === 'curse_blind') {
+      this.curseBlindTimer = 6000;
+      if (this.curseBlindOverlay) this.curseBlindOverlay.destroy();
+      this.curseBlindOverlay = this.add.graphics().setDepth(50);
+      this.curseBlindOverlay.fillStyle(0x2d0050, 0.3);
+      this.curseBlindOverlay.fillRect(
+        this.cameras.main.scrollX, this.cameras.main.scrollY,
+        GAME_WIDTH, GAME_HEIGHT,
+      );
+      this.curseBlindOverlay.setScrollFactor(0);
+      label = '\u{1F441}\uFE0F BLINDED!';
+      subtitle = 'VISION OBSCURED';
+    } else if (orbType === 'chaos') {
+      // Wild card — roll a random strong effect (positive or negative)
+      const chaosRoll = Math.random();
+      if (chaosRoll < 0.25) {
+        this.furyTimer = 12000;
+        label = '\u{1F3B2} MEGA FURY!';
+        subtitle = '2x FIRE RATE 12s';
+      } else if (chaosRoll < 0.5) {
+        this.unitCount += 5;
+        this.respawnArmy();
+        label = '\u{1F3B2} REINFORCEMENTS!';
+        subtitle = '+5 UNITS';
+      } else if (chaosRoll < 0.75) {
+        const lost = Math.min(3, this.unitCount - 1);
+        this.unitCount = Math.max(1, this.unitCount - lost);
+        this.respawnArmy();
+        label = '\u{1F3B2} CATASTROPHE!';
+        subtitle = `-${lost} UNITS`;
+      } else {
+        this.pouchGold += 100;
+        label = '\u{1F3B2} FORTUNE!';
+        subtitle = '+100 GOLD';
+      }
     }
 
-    SoundManager.play('weapon_upgrade');
+    SoundManager.play(isCurse ? 'gate_negative' : 'weapon_upgrade');
     const ox = orb.x;
     const oy = orb.y;
 
@@ -920,25 +1021,50 @@ export class GameScene extends Phaser.Scene {
       this.tweens.killTweensOf(child);
     }
 
-    // Collection burst — expanding ring
-    const burstRing = this.add.circle(ox, oy, 5, parseInt(c.text.replace('#', ''), 16), 0.5);
-    this.tweens.add({
-      targets: burstRing, radius: 60, alpha: 0, duration: 400,
-      onUpdate: () => burstRing.setRadius(burstRing.radius),
-      onComplete: () => burstRing.destroy(),
-    });
+    const colorNum = parseInt(c.text.replace('#', ''), 16);
 
-    // Scatter particles outward
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      const p = this.add.circle(ox, oy, 3, 0xffffff, 0.9);
-      this.tweens.add({
-        targets: p,
-        x: ox + Math.cos(angle) * 50,
-        y: oy + Math.sin(angle) * 50,
-        alpha: 0, scale: 0.2, duration: 350 + Math.random() * 150,
-        onComplete: () => p.destroy(),
+    if (isCurse) {
+      // Curse: implosion — particles rush INWARD, then dark burst
+      for (let i = 0; i < 10; i++) {
+        const angle = (i / 10) * Math.PI * 2;
+        const startDist = 60 + Math.random() * 20;
+        const p = this.add.circle(ox + Math.cos(angle) * startDist, oy + Math.sin(angle) * startDist, 3, colorNum, 0.9);
+        this.tweens.add({
+          targets: p, x: ox, y: oy,
+          alpha: 0, scale: 2, duration: 300 + Math.random() * 100,
+          onComplete: () => p.destroy(),
+        });
+      }
+      // Dark shockwave after implosion
+      this.time.delayedCall(250, () => {
+        const darkRing = this.add.circle(ox, oy, 5, colorNum, 0.6);
+        this.tweens.add({
+          targets: darkRing, radius: 50, alpha: 0, duration: 350,
+          onUpdate: () => darkRing.setRadius(darkRing.radius),
+          onComplete: () => darkRing.destroy(),
+        });
       });
+    } else {
+      // Positive: expanding burst ring
+      const burstRing = this.add.circle(ox, oy, 5, colorNum, 0.5);
+      this.tweens.add({
+        targets: burstRing, radius: 60, alpha: 0, duration: 400,
+        onUpdate: () => burstRing.setRadius(burstRing.radius),
+        onComplete: () => burstRing.destroy(),
+      });
+
+      // Scatter particles outward
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const p = this.add.circle(ox, oy, 3, 0xffffff, 0.9);
+        this.tweens.add({
+          targets: p,
+          x: ox + Math.cos(angle) * 50,
+          y: oy + Math.sin(angle) * 50,
+          alpha: 0, scale: 0.2, duration: 350 + Math.random() * 150,
+          onComplete: () => p.destroy(),
+        });
+      }
     }
 
     // Big label
