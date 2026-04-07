@@ -36,7 +36,7 @@ export class MenuScene extends Phaser.Scene {
   constructor() { super({ key: 'MenuScene' }); }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0f1923');
+    this.cameras.main.setBackgroundColor('#0a0f1a');
     this.cameras.main.fadeIn(400, 0, 0, 0);
     SoundManager.init();
 
@@ -49,37 +49,38 @@ export class MenuScene extends Phaser.Scene {
     // ── Header panel (fixed) ──
     const headerH = 105;
     const hdr = this.add.graphics().setDepth(10);
-    hdr.fillStyle(C_PANEL, 1);
+    hdr.fillStyle(0x0d1520, 1);
     hdr.fillRect(0, 0, GAME_WIDTH, headerH);
     hdr.lineStyle(2, C_BORDER, 0.5);
     hdr.lineBetween(0, headerH, GAME_WIDTH, headerH);
-    // Yellow accent line at top
-    hdr.fillStyle(C_YELLOW, 0.9);
+    // Gold accent line at top
+    hdr.fillStyle(0xffd700, 0.9);
     hdr.fillRect(0, 0, GAME_WIDTH, 4);
 
     this.add.text(GAME_WIDTH / 2, 30, 'DEATHMARCH', {
-      fontSize: '34px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
-      stroke: '#000', strokeThickness: 3,
+      fontSize: '34px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
+      stroke: '#b8860b', strokeThickness: 3,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
     // Score pill
-    this.pill(PAD, 56, 145, 34, C_YELLOW, 11);
+    this.pill(PAD, 56, 145, 34, 0xffd700, 11);
     this.add.text(PAD + 12, 73, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
-      fontSize: '15px', color: '#fbbf24', fontFamily: F, fontStyle: 'bold',
+      fontSize: '15px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
     }).setOrigin(0, 0.5).setDepth(11);
 
     // Gold pill
-    this.pill(GAME_WIDTH - PAD - 135, 56, 135, 34, C_YELLOW, 11);
+    this.pill(GAME_WIDTH - PAD - 135, 56, 135, 34, 0xffd700, 11);
     this.add.text(GAME_WIDTH - PAD - 12, 73, `\u{1FA99} ${WalletManager.gold}g`, {
-      fontSize: '15px', color: '#fbbf24', fontFamily: F, fontStyle: 'bold',
+      fontSize: '15px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
     }).setOrigin(1, 0.5).setDepth(11);
 
     // ── Footer (fixed) ──
     const footH = 52;
     const foot = this.add.graphics().setDepth(10);
-    foot.fillStyle(C_PANEL, 1);
+    foot.fillStyle(0x0d1520, 1);
     foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, footH);
-    foot.lineStyle(1, C_BORDER, 0.4);
+    foot.lineStyle(1, 0xffd700, 0.15);
     foot.lineBetween(0, GAME_HEIGHT - footH, GAME_WIDTH, GAME_HEIGHT - footH);
 
     const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - footH / 2, '\u2699  SETTINGS', {
@@ -124,9 +125,9 @@ export class MenuScene extends Phaser.Scene {
 
   private pill(x: number, y: number, w: number, h: number, color: number, depth: number): void {
     const g = this.add.graphics().setDepth(depth);
-    g.fillStyle(color, 0.15);
+    g.fillStyle(color, 0.1);
     g.fillRoundedRect(x, y, w, h, h / 2);
-    g.lineStyle(2, color, 0.3);
+    g.lineStyle(1.5, color, 0.4);
     g.strokeRoundedRect(x, y, w, h, h / 2);
   }
 
@@ -174,22 +175,40 @@ export class MenuScene extends Phaser.Scene {
     const worldInfos = getWorldInfoForLevels(visibleCount - 1);
     for (const world of worldInfos) {
       if (world.startLevel >= positions.length) continue;
-      const y = positions[world.startLevel].y - 44;
+      const y = positions[world.startLevel].y - 48;
       const lvl = generateLevel(world.startLevel);
       const accent = lvl.theme.accentColor;
 
+      const ribbonW = 300, ribbonH = 32, notchW = 12;
+      const rx = GAME_WIDTH / 2 - ribbonW / 2;
       const bg = this.add.graphics();
-      bg.fillStyle(C_PANEL, 0.9);
-      bg.fillRoundedRect(GAME_WIDTH / 2 - 140, y - 14, 280, 28, 14);
-      bg.lineStyle(2, accent, 0.4);
-      bg.strokeRoundedRect(GAME_WIDTH / 2 - 140, y - 14, 280, 28, 14);
-      // Accent dot
-      bg.fillStyle(accent, 0.8);
-      bg.fillCircle(GAME_WIDTH / 2 - 120, y, 4);
+      bg.fillStyle(accent, 0.85);
+      bg.beginPath();
+      bg.moveTo(rx + notchW, y - ribbonH / 2);
+      bg.lineTo(rx + ribbonW - notchW, y - ribbonH / 2);
+      bg.lineTo(rx + ribbonW, y);
+      bg.lineTo(rx + ribbonW - notchW, y + ribbonH / 2);
+      bg.lineTo(rx + notchW, y + ribbonH / 2);
+      bg.lineTo(rx, y);
+      bg.closePath();
+      bg.fillPath();
+      bg.fillStyle(0xffffff, 0.15);
+      bg.fillRect(rx + notchW + 4, y - ribbonH / 2 + 3, ribbonW - notchW * 2 - 8, ribbonH / 3);
+      bg.lineStyle(1.5, 0x000000, 0.3);
+      bg.beginPath();
+      bg.moveTo(rx + notchW, y - ribbonH / 2);
+      bg.lineTo(rx + ribbonW - notchW, y - ribbonH / 2);
+      bg.lineTo(rx + ribbonW, y);
+      bg.lineTo(rx + ribbonW - notchW, y + ribbonH / 2);
+      bg.lineTo(rx + notchW, y + ribbonH / 2);
+      bg.lineTo(rx, y);
+      bg.closePath();
+      bg.strokePath();
       this.scrollContainer.add(bg);
 
       this.scrollContainer.add(this.add.text(GAME_WIDTH / 2, y, world.name.toUpperCase(), {
-        fontSize: '12px', color: lvl.theme.accentHex, fontFamily: F, fontStyle: 'bold', letterSpacing: 3,
+        fontSize: '13px', color: '#ffffff', fontFamily: F, fontStyle: 'bold', letterSpacing: 4,
+        stroke: '#000', strokeThickness: 1,
       }).setOrigin(0.5));
     }
   }
@@ -207,7 +226,7 @@ export class MenuScene extends Phaser.Scene {
       if (isCurrent) {
         // Glow
         const glow = this.add.graphics();
-        glow.fillStyle(C_GREEN, 0.12);
+        glow.fillStyle(0xffd700, 0.12);
         glow.fillCircle(0, 0, NODE_R + 12);
         nc.add(glow);
         this.tweens.add({ targets: glow, alpha: { from: 0.1, to: 0.4 }, scale: { from: 0.95, to: 1.1 },
@@ -219,8 +238,10 @@ export class MenuScene extends Phaser.Scene {
         ng.fillCircle(0, 0, NODE_R);
         ng.fillStyle(0xffffff, 0.2);
         ng.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.65);
-        ng.lineStyle(3, 0xffffff, 0.3);
+        ng.lineStyle(3, 0xffd700, 0.8);
         ng.strokeCircle(0, 0, NODE_R);
+        ng.lineStyle(1.5, 0xffffff, 0.3);
+        ng.strokeCircle(0, 0, NODE_R - 3);
         nc.add(ng);
 
         nc.add(this.add.text(0, -2, String(i + 1), {
