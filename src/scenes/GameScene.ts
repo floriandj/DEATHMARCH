@@ -256,7 +256,7 @@ export class GameScene extends Phaser.Scene {
         const enemyCfg = LevelManager.instance.getEnemyStats(cmd.type);
         const worldX = GAME_WIDTH / 2 + cmd.x;
         const worldY = this.armyWorldY - GAME_HEIGHT - 100; // ahead of camera
-        const isElite = Math.random() < 0.03; // 3% elite chance — rare and special
+        const isElite = Math.random() < 0.015; // 1.5% elite chance — very rare
         enemy.spawn(worldX, worldY, {
           type: enemyCfg.type as any,
           hp: enemyCfg.hp,
@@ -379,7 +379,6 @@ export class GameScene extends Phaser.Scene {
           const killed = enemy.takeDamage(totalDmg);
           if (killed) {
             SoundManager.play('enemy_death');
-            this.levelGold += Math.ceil(1 * perks.goldKillMultiplier);
             this.score += enemy.scoreValue;
             const now = this.time.now;
             if (now - this.lastKillTime < 2000) {
@@ -828,11 +827,10 @@ export class GameScene extends Phaser.Scene {
 
   /** Spawn a power orb when an elite enemy dies */
   private spawnPowerOrb(x: number, y: number): void {
-    // Weighted pool: positive orbs are more common, but curses lurk
+    // Weighted pool: no gold orbs — gold only comes from pouches
     const pool = [
       { type: 'fury',  weight: 3 },
       { type: 'heal',  weight: 3 },
-      { type: 'gold',  weight: 3 },
       { type: 'curse_slow',  weight: 2 }, // halves fire rate for 8s
       { type: 'curse_drain', weight: 1 }, // lose 2 units
       { type: 'curse_blind', weight: 1 }, // screen distortion for 6s
@@ -850,7 +848,6 @@ export class GameScene extends Phaser.Scene {
     const colors: Record<string, { core: number; glow: number; ring: number; icon: string }> = {
       fury:        { core: 0xff4400, glow: 0xff6600, ring: 0xff8800, icon: '\u{1F525}' },
       heal:        { core: 0x22c55e, glow: 0x4ade80, ring: 0x86efac, icon: '\u{1F49A}' },
-      gold:        { core: 0xfbbf24, glow: 0xfde68a, ring: 0xfef3c7, icon: '\u{1FA99}' },
       curse_slow:  { core: 0x7c3aed, glow: 0x9333ea, ring: 0xa855f7, icon: '\u{1F9CA}' },
       curse_drain: { core: 0xdc2626, glow: 0xef4444, ring: 0xf87171, icon: '\u{1F480}' },
       curse_blind: { core: 0x6b21a8, glow: 0x7e22ce, ring: 0x9333ea, icon: '\u{1F441}\uFE0F' },
@@ -939,7 +936,6 @@ export class GameScene extends Phaser.Scene {
     const colors: Record<string, { flash: [number, number, number]; text: string }> = {
       fury:        { flash: [255, 80, 0],    text: '#ff6600' },
       heal:        { flash: [50, 220, 100],   text: '#4ade80' },
-      gold:        { flash: [255, 200, 50],   text: '#fbbf24' },
       curse_slow:  { flash: [120, 50, 220],   text: '#a855f7' },
       curse_drain: { flash: [220, 40, 40],    text: '#f87171' },
       curse_blind: { flash: [100, 30, 170],   text: '#9333ea' },
@@ -959,11 +955,6 @@ export class GameScene extends Phaser.Scene {
       this.respawnArmy();
       label = '\u{1F49A} HEAL!';
       subtitle = '+3 UNITS';
-    } else if (orbType === 'gold') {
-      const goldGain = 50;
-      this.pouchGold += goldGain;
-      label = '\u{1FA99} JACKPOT!';
-      subtitle = `+${goldGain} GOLD`;
     } else if (orbType === 'curse_slow') {
       this.curseSlowTimer = 8000;
       label = '\u{1F9CA} CURSED!';
@@ -1005,9 +996,9 @@ export class GameScene extends Phaser.Scene {
         label = '\u{1F3B2} CATASTROPHE!';
         subtitle = `-${lost} UNITS`;
       } else {
-        this.pouchGold += 100;
-        label = '\u{1F3B2} FORTUNE!';
-        subtitle = '+100 GOLD';
+        this.curseSlowTimer = 10000;
+        label = '\u{1F3B2} SLUGGISH!';
+        subtitle = 'FIRE RATE HALVED 10s';
       }
     }
 
