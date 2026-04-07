@@ -11,6 +11,7 @@ import {
   SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
+import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
@@ -32,6 +33,7 @@ interface BossSceneData {
 
 export class BossScene extends Phaser.Scene {
   private input_handler!: InputHandler;
+  private background!: Background;
   private bossState!: BossState;
   private hud!: HUDScene;
 
@@ -104,6 +106,9 @@ export class BossScene extends Phaser.Scene {
     this.barrageTimer = 0;
 
     this.input_handler = new InputHandler(this);
+    this.background = new Background(this);
+    // Render a static background covering the visible area
+    this.background.update(0);
 
     // Scale boss HP with effective power (accounts for unit levels)
     const effectivePower = data.effectivePower || this.unitCount;
