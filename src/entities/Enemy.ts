@@ -13,6 +13,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   splashDamage: number = 0;
   scoreValue: number = 0;
   enemyType: string = '';
+  isElite: boolean = false;
   private enemyColor: number = 0xff6b6b;
 
   // Behavior trait state
@@ -29,20 +30,22 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.setActive(false);
   }
 
-  spawn(x: number, y: number, stats: EnemyStats): void {
+  spawn(x: number, y: number, stats: EnemyStats, elite: boolean = false): void {
     this.setPosition(x, y);
     this.setVisible(true);
     this.setActive(true);
-    this.hp = stats.hp;
+    this.isElite = elite;
+    this.hp = elite ? Math.ceil(stats.hp * 2.5) : stats.hp;
     this.speed = stats.speed;
     this.contactDamage = stats.contactDamage;
     this.splashRadius = stats.splashRadius;
     this.splashDamage = stats.splashDamage;
-    this.scoreValue = stats.scoreValue;
+    this.scoreValue = elite ? stats.scoreValue * 3 : stats.scoreValue;
     this.enemyType = stats.type;
     this.enemyColor = stats.color;
     this.setAlpha(1);
-    this.setScale(ENTITY_SCALE / SVG_RENDER_SCALE);
+    const baseScale = ENTITY_SCALE / SVG_RENDER_SCALE;
+    this.setScale(elite ? baseScale * 1.3 : baseScale);
 
     // Reset trait state
     this.zigzagTimer = Math.random() * 1000;
@@ -70,6 +73,11 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         const animKey = `enemy_${stats.type}_walk`;
         if (this.scene.anims.exists(animKey)) this.play(animKey);
       }
+    }
+
+    // Elite visual: gold tint override
+    if (elite) {
+      this.setTint(0xffd700);
     }
   }
 

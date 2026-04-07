@@ -10,6 +10,7 @@ import { GameScene } from '@/scenes/GameScene';
 import { BossScene } from '@/scenes/BossScene';
 import { HUDScene } from '@/scenes/HUDScene';
 import { GameOverScene } from '@/scenes/GameOverScene';
+import { PerkSelectScene } from '@/scenes/PerkSelectScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -20,7 +21,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, SplashScene, MenuScene, SettingsScene, GameScene, BossScene, HUDScene, GameOverScene],
+  scene: [BootScene, SplashScene, MenuScene, SettingsScene, GameScene, BossScene, HUDScene, GameOverScene, PerkSelectScene],
 };
 
 new Phaser.Game(config);

@@ -19,6 +19,7 @@ import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
+import { PerkManager } from '@/systems/PerkManager';
 
 interface BossSceneData {
   score: number;
@@ -252,13 +253,15 @@ export class BossScene extends Phaser.Scene {
     // 3d. Update boss projectiles
     this.updateBossProjectiles(delta);
 
-    // 5. Fire bullets at boss (per-unit level scaling)
+    // 5. Fire bullets at boss (per-unit level scaling + perks)
+    const perks = PerkManager.instance;
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     const bulletColor = hexToNum(weaponStats.bulletColor);
+    const effectiveFireRate = weaponStats.fireRate * perks.fireRateMultiplier * perks.berserkerMultiplier(this.unitCount);
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta, weaponStats.fireRate)) {
+      if (unit.updateFiring(delta, effectiveFireRate)) {
         if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
@@ -286,7 +289,7 @@ export class BossScene extends Phaser.Scene {
       const dy = b.y - this.bossSprite.y;
       if (dx * dx + dy * dy < bossHitRadius) {
         this.bullets.despawn(idx);
-        this.bossState.takeDamage(b.damage);
+        this.bossState.takeDamage(b.damage + perks.bonusBulletDamage);
         SoundManager.play('boss_hit');
 
         this.spawnHitSpark(b.x, b.y);
@@ -1021,12 +1024,17 @@ export class BossScene extends Phaser.Scene {
       this.score += level.scoring.bossKill;
       this.score += this.unitCount * level.scoring.perSurvivingUnit;
 
+      // Track run streak for gold multiplier
+      PerkManager.instance.onBossVictory();
+      const streakMult = PerkManager.instance.streakGoldMultiplier;
+
       this.scene.stop('HUDScene');
-      const goldEarned = WalletManager.earnLevelGold(this.levelGold, this.pouchGold);
-      this.scene.start('GameOverScene', {
+      const goldEarned = Math.ceil(WalletManager.earnLevelGold(this.levelGold, this.pouchGold) * streakMult);
+
+      // Route to perk selection before game over screen
+      this.scene.start('PerkSelectScene', {
         score: Math.floor(this.score),
         distance: Math.floor(this.distance),
-        bossDefeated: true,
         goldEarned,
       });
     });

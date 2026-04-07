@@ -23,6 +23,7 @@ import { WeaponCrate } from '@/entities/WeaponCrate';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
+import { PerkManager } from '@/systems/PerkManager';
 
 export class GameScene extends Phaser.Scene {
   private input_handler!: InputHandler;
@@ -69,6 +70,11 @@ export class GameScene extends Phaser.Scene {
   private nextPouchDistance: number = 300;
   private goldPouches: Phaser.GameObjects.Sprite[] = [];
 
+  // Perk state
+  private nextRegenDistance: number = 0;
+  private furyTimer: number = 0; // temporary 2x fire rate from elite orb
+  private powerOrbs: Phaser.GameObjects.Sprite[] = [];
+
   // Shadow visuals
   private unitShadows: Phaser.GameObjects.Image[] = [];
   private enemyShadows: Map<Enemy, Phaser.GameObjects.Image> = new Map();
@@ -83,9 +89,11 @@ export class GameScene extends Phaser.Scene {
     this.armyX = 0;
     this.distance = 0;
     this.score = 0;
-    // Consume single-use boosts from shop
+    // Consume single-use boosts from shop + perk bonuses
     const boosts = WalletManager.consumeBoosts();
-    this.unitCount = level.startingUnits + boosts.extraUnits;
+    const perks = PerkManager.instance;
+    perks.resetLevel();
+    this.unitCount = level.startingUnits + boosts.extraUnits + perks.extraStartingUnits;
     this.activeUnitCount = 0;
     this.killStreak = 0;
     this.lastKillTime = 0;
@@ -104,6 +112,11 @@ export class GameScene extends Phaser.Scene {
     this.pouchGold = 0;
     this.nextPouchDistance = 200 + Math.random() * 200;
     this.goldPouches = [];
+
+    // Perk state
+    this.nextRegenDistance = perks.regenDistanceInterval ?? Infinity;
+    this.furyTimer = 0;
+    this.powerOrbs = [];
 
     SoundManager.init();
     SoundManager.play('level_start');
@@ -195,6 +208,7 @@ export class GameScene extends Phaser.Scene {
     if (this.dmgNumberTimer > 0) this.dmgNumberTimer -= delta;
     const AGGRO_RANGE = 500; // enemies start moving when army is this close
     const level = LevelManager.instance.current;
+    const perks = PerkManager.instance;
     const marchSpeed = level.marchSpeed;
 
     // 1. Army marches upward in world space
@@ -236,6 +250,7 @@ export class GameScene extends Phaser.Scene {
         const enemyCfg = LevelManager.instance.getEnemyStats(cmd.type);
         const worldX = GAME_WIDTH / 2 + cmd.x;
         const worldY = this.armyWorldY - GAME_HEIGHT - 100; // ahead of camera
+        const isElite = Math.random() < 0.08; // 8% elite chance
         enemy.spawn(worldX, worldY, {
           type: enemyCfg.type as any,
           hp: enemyCfg.hp,
@@ -247,7 +262,7 @@ export class GameScene extends Phaser.Scene {
           color: hexToNum(enemyCfg.color),
           appearsAtDistance: enemyCfg.appearsAtDistance,
           scoreValue: enemyCfg.scoreValue,
-        });
+        }, isElite);
       }
     }
 
@@ -353,11 +368,12 @@ export class GameScene extends Phaser.Scene {
         const dy = b.y - enemy.y;
         if (dx * dx + dy * dy < (enemy.displayWidth / 2 + 5) ** 2) {
           this.bullets.despawn(idx);
-          this.showDamageNumber(b.x, b.y - 10, b.damage);
-          const killed = enemy.takeDamage(b.damage);
+          const totalDmg = b.damage + perks.bonusBulletDamage;
+          this.showDamageNumber(b.x, b.y - 10, totalDmg);
+          const killed = enemy.takeDamage(totalDmg);
           if (killed) {
             SoundManager.play('enemy_death');
-            this.levelGold += 1;
+            this.levelGold += Math.ceil(1 * perks.goldKillMultiplier);
             this.score += enemy.scoreValue;
             const now = this.time.now;
             if (now - this.lastKillTime < 2000) {
@@ -366,6 +382,23 @@ export class GameScene extends Phaser.Scene {
               this.killStreak = 1;
             }
             this.lastKillTime = now;
+            // Perk: Vampiric — chance to gain a unit
+            if (perks.vampiricChance > 0 && Math.random() < perks.vampiricChance) {
+              this.unitCount++;
+              this.respawnArmy();
+            }
+            // Perk: Chain Kill — deal 2 damage to nearest enemy
+            if (perks.hasChainKill) {
+              this.applyChainKill(enemy.x, enemy.y);
+            }
+            // Perk: Explosive Rounds — splash on kill
+            if (perks.hasExplosiveRounds) {
+              this.applyExplosiveSplash(enemy.x, enemy.y);
+            }
+            // Elite: drop power orb
+            if (enemy.isElite) {
+              this.spawnPowerOrb(enemy.x, enemy.y);
+            }
           }
           return;
         }
@@ -426,15 +459,24 @@ export class GameScene extends Phaser.Scene {
             SoundManager.play('shield_absorb');
             this.cameras.main.flash(200, 100, 200, 255, true);
           } else {
-            this.unitCount = Math.max(0, this.unitCount - enemy.contactDamage);
+            // Apply perk modifiers to contact damage
+            let contactDmg = Math.max(1, enemy.contactDamage - perks.contactDamageReduction + perks.contactDamagePenalty);
+            this.unitCount = Math.max(0, this.unitCount - contactDmg);
             if (enemy.splashRadius > 0) {
               this.unitCount = Math.max(0, this.unitCount - enemy.splashDamage);
             }
           }
           enemy.despawn();
           if (this.unitCount <= 0) {
-            this.gameOver();
-            return;
+            // Perk: Iron Will — survive with 1 unit once per level
+            if (perks.hasIronWill) {
+              perks.ironWillUsed = true;
+              this.unitCount = 1;
+              this.cameras.main.flash(300, 255, 50, 50, true);
+            } else {
+              this.gameOver();
+              return;
+            }
           }
           this.respawnArmy();
         }
@@ -477,6 +519,14 @@ export class GameScene extends Phaser.Scene {
         if (result) {
           const oldCount = this.unitCount;
           this.unitCount = result.apply(this.unitCount);
+          // Perk: Lucky Gates — add ops give +1 extra per stack
+          if (this.unitCount > oldCount && perks.gateBonusAdd > 0) {
+            this.unitCount += perks.gateBonusAdd;
+          }
+          // Perk: Rally Cry — positive gates give +2 bonus per stack
+          if (this.unitCount > oldCount && perks.gateBonusUnitsOnPositive > 0) {
+            this.unitCount += perks.gateBonusUnitsOnPositive;
+          }
           this.unitCount = Math.max(1, this.unitCount);
           SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
           this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
@@ -495,15 +545,41 @@ export class GameScene extends Phaser.Scene {
     // 9. Fire bullets (weapon fire rate, per-unit level scaling)
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     const bulletColor = hexToNum(weaponStats.bulletColor);
+    let effectiveFireRate = weaponStats.fireRate * perks.fireRateMultiplier * perks.berserkerMultiplier(this.unitCount);
+    if (this.furyTimer > 0) { effectiveFireRate *= 0.5; this.furyTimer -= delta; }
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta, weaponStats.fireRate)) {
+      if (unit.updateFiring(delta, effectiveFireRate)) {
         if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
           }
+        }
+      }
+    }
+
+    // 9b. Perk: Regeneration — gain units at distance intervals
+    if (perks.regenDistanceInterval && this.distance >= this.nextRegenDistance) {
+      this.unitCount++;
+      this.nextRegenDistance = this.distance + perks.regenDistanceInterval;
+      this.respawnArmy();
+    }
+
+    // 9c. Power orb collection
+    for (let i = this.powerOrbs.length - 1; i >= 0; i--) {
+      const orb = this.powerOrbs[i];
+      if (!orb.active) { this.powerOrbs.splice(i, 1); continue; }
+      if (orb.y > this.armyWorldY + 200) { orb.destroy(); this.powerOrbs.splice(i, 1); continue; }
+      for (const unit of this.units) {
+        if (!unit.active) continue;
+        const odx = unit.x - orb.x;
+        const ody = unit.y - orb.y;
+        if (odx * odx + ody * ody < 40 * 40) {
+          this.collectPowerOrb(orb);
+          this.powerOrbs.splice(i, 1);
+          break;
         }
       }
     }
@@ -681,6 +757,81 @@ export class GameScene extends Phaser.Scene {
 
     this.cameras.main.flash(300, 255, 255, 255, true);
     this.cameras.main.shake(200, 0.015);
+  }
+
+  /** Chain Kill perk: deal 2 damage to the nearest enemy */
+  private applyChainKill(x: number, y: number): void {
+    let nearest: Enemy | null = null;
+    let nearestDist = Infinity;
+    for (const e of this.enemies) {
+      if (!e.active) continue;
+      const dx = e.x - x;
+      const dy = e.y - y;
+      const d = dx * dx + dy * dy;
+      if (d < nearestDist && d < 150 * 150) {
+        nearestDist = d;
+        nearest = e;
+      }
+    }
+    if (nearest) {
+      nearest.takeDamage(2);
+      // Visual: lightning bolt effect
+      const bolt = this.add.text(nearest.x, nearest.y - 15, '\u26A1', { fontSize: '20px' }).setOrigin(0.5);
+      this.tweens.add({ targets: bolt, alpha: 0, y: nearest.y - 40, duration: 300, onComplete: () => bolt.destroy() });
+    }
+  }
+
+  /** Explosive Rounds perk: splash damage on kill */
+  private applyExplosiveSplash(x: number, y: number): void {
+    const splashRadius = 60;
+    for (const e of this.enemies) {
+      if (!e.active) continue;
+      const dx = e.x - x;
+      const dy = e.y - y;
+      if (dx * dx + dy * dy < splashRadius * splashRadius) {
+        e.takeDamage(1);
+      }
+    }
+    // Visual: small explosion
+    const boom = this.add.circle(x, y, 5, 0xff6600, 0.5);
+    this.tweens.add({ targets: boom, radius: splashRadius, alpha: 0, duration: 250, onUpdate: () => boom.setRadius(boom.radius), onComplete: () => boom.destroy() });
+  }
+
+  /** Spawn a power orb when an elite enemy dies */
+  private spawnPowerOrb(x: number, y: number): void {
+    const orb = this.add.sprite(x, y, 'vfx_burst');
+    orb.setTint(0xffd700);
+    orb.setScale(1.5);
+    orb.setAlpha(0.9);
+    this.tweens.add({ targets: orb, scale: { from: 1.2, to: 1.8 }, alpha: { from: 0.7, to: 1 }, duration: 600, yoyo: true, repeat: -1 });
+    (orb as any).orbType = ['fury', 'heal', 'gold'][Math.floor(Math.random() * 3)];
+    this.powerOrbs.push(orb);
+  }
+
+  /** Collect a power orb — apply temporary buff */
+  private collectPowerOrb(orb: Phaser.GameObjects.Sprite): void {
+    const orbType = (orb as any).orbType as string;
+    let label = '';
+    if (orbType === 'fury') {
+      this.furyTimer = 8000; // 8 seconds of 2x fire rate
+      label = 'FURY!';
+    } else if (orbType === 'heal') {
+      this.unitCount += 3;
+      this.respawnArmy();
+      label = '+3 UNITS!';
+    } else {
+      const goldGain = 50;
+      this.pouchGold += goldGain;
+      label = `+${goldGain}g!`;
+    }
+    SoundManager.play('weapon_upgrade');
+    const txt = this.add.text(orb.x, orb.y, label, {
+      fontSize: '24px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5);
+    this.tweens.add({ targets: txt, y: orb.y - 80, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
+    this.cameras.main.flash(200, 255, 215, 0, true);
+    orb.destroy();
   }
 
   private gameOver(): void {

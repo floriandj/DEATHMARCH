@@ -5,6 +5,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
+import { PerkManager } from '@/systems/PerkManager';
 
 interface GameOverData { score: number; distance: number; bossDefeated: boolean; goldEarned: number; }
 
@@ -43,6 +44,11 @@ export class GameOverScene extends Phaser.Scene {
     const goldEarned = data.goldEarned || 0;
     const showShop = !data.bossDefeated;
     if (data.bossDefeated) SoundManager.play('victory');
+
+    // Reset all perks and run streak on death
+    if (!data.bossDefeated) {
+      PerkManager.instance.resetRun();
+    }
 
     const vs = Math.min(1.35, Math.max(0.85, GAME_HEIGHT / 1280));
     let y = Math.round(20 * vs);
@@ -121,6 +127,28 @@ export class GameOverScene extends Phaser.Scene {
     }
 
     y += statsH + Math.round(12 * vs);
+
+    // ── Perks display ──
+    const activePerks = PerkManager.instance.getAll();
+    const streak = PerkManager.instance.runStreak;
+    if (activePerks.length > 0 || streak > 0) {
+      const perkH = Math.round(60 * vs);
+      this.panel(PAD, y, CW, perkH, data.bossDefeated ? 0xa855f7 : C_RED);
+      const perkLabel = data.bossDefeated ? 'ACTIVE PERKS' : 'PERKS LOST';
+      this.add.text(PAD + 16, y + perkH * 0.35, perkLabel, {
+        fontSize: `${Math.round(12 * vs)}px`, color: data.bossDefeated ? '#c084fc' : '#f87171', fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
+      }).setOrigin(0, 0.5);
+      const icons = activePerks.map((p) => p.icon).join(' ');
+      this.add.text(PAD + CW - 16, y + perkH * 0.35, icons, {
+        fontSize: `${Math.round(18 * vs)}px`,
+      }).setOrigin(1, 0.5);
+      if (streak > 0) {
+        this.add.text(PAD + 16, y + perkH * 0.72, `\u{1F525} ${streak} streak  \u00D7${(1 + streak * 0.25).toFixed(2)} gold`, {
+          fontSize: `${Math.round(12 * vs)}px`, color: '#f97316', fontFamily: F, fontStyle: 'bold',
+        }).setOrigin(0, 0.5);
+      }
+      y += perkH + Math.round(8 * vs);
+    }
 
     // ── Shop panel (death only) ──
     if (showShop) {
