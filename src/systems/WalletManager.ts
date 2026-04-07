@@ -121,15 +121,15 @@ export const WalletManager = {
     return [
       {
         id: 'extra_units',
-        name: '+3 UNITS',
-        description: 'Start next level with 3 extra units',
+        name: '+1 UNIT',
+        description: 'Start next level with 1 extra unit',
         cost: () => 50,
         canBuy: () => load().gold >= 50,
         buy: () => {
           const d = load();
           if (d.gold >= 50) {
             d.gold -= 50;
-            d.pendingExtraUnits += 3;
+            d.pendingExtraUnits += 1;
             save(d);
           }
         },

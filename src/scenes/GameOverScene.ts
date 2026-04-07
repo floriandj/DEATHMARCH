@@ -146,7 +146,7 @@ export class GameOverScene extends Phaser.Scene {
       const items = WalletManager.getShopItems();
       const shopIcons = ['\u{1F6E1}\uFE0F', '\u{1F52B}', '\u{1F6E1}\uFE0F', '\u{1FA99}'];
       const shopColors = [C_BLUE, C_RED, C_GREEN, C_YELLOW];
-      const hints = ['3 extra soldiers', 'Stronger weapon', 'Block 1 hit', '+50% gold forever'];
+      const hints = ['1 extra soldier', 'Stronger weapon', 'Block 1 hit', '+50% gold forever'];
       for (let i = 0; i < items.length; i++) {
         this.shopItem(iy, shopIcons[i], shopColors[i], items[i], hints[i], vs);
         iy += itemH;
