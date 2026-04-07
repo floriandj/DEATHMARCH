@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { EnemyStats } from '@/config/EnemyConfig';
-import { ENTITY_SCALE } from '@/config/GameConfig';
+import { ENTITY_SCALE, SVG_RENDER_SCALE } from '@/config/GameConfig';
 import { getSpriteForType, getTintForType } from '@/systems/ProceduralEnemy';
 
 export class Enemy extends Phaser.GameObjects.Sprite {
@@ -42,7 +42,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.enemyType = stats.type;
     this.enemyColor = stats.color;
     this.setAlpha(1);
-    this.setScale(ENTITY_SCALE);
+    this.setScale(ENTITY_SCALE / SVG_RENDER_SCALE);
 
     // Reset trait state
     this.zigzagTimer = Math.random() * 1000;

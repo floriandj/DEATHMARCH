@@ -54,6 +54,9 @@ export const SCORE_PER_SURVIVING_UNIT = 100;
 // Enemy pool
 export const ENEMY_POOL_SIZE = 100;
 
+// SVGs render at 4x their viewBox pixel size for sharp display
+export const SVG_RENDER_SCALE = 4;
+
 // Global sprite scale multiplier for all game entities (units, enemies, bosses, bullets)
 export const ENTITY_SCALE = 2;
 

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BULLET_SPEED, BULLET_DAMAGE, ENTITY_SCALE } from '@/config/GameConfig';
+import { BULLET_SPEED, BULLET_DAMAGE, ENTITY_SCALE, SVG_RENDER_SCALE } from '@/config/GameConfig';
 
 export class Bullet extends Phaser.GameObjects.Sprite {
   active: boolean = false;
@@ -12,7 +12,7 @@ export class Bullet extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
-    this.setScale(1.5 * ENTITY_SCALE);
+    this.setScale(1.5 * ENTITY_SCALE / SVG_RENDER_SCALE);
   }
 
   fire(fromX: number, fromY: number, tint?: number): void {

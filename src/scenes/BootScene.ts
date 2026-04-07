@@ -1,9 +1,7 @@
 // src/scenes/BootScene.ts
 import Phaser from 'phaser';
+import { SVG_RENDER_SCALE } from '@/config/GameConfig';
 import { getAllBaseEnemySprites, getAllBossSprites } from '@/config/progression';
-
-/** SVG sprites are rendered at 4x their viewBox size for sharp display */
-const SVG_RENDER_SCALE = 4;
 
 export class BootScene extends Phaser.Scene {
   constructor() {

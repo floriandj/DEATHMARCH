@@ -8,6 +8,7 @@ import {
   ARMY_INPUT_Y_RANGE,
   ARMY_Y_OFFSET_MAX,
   ENTITY_SCALE,
+  SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
 import { InputHandler } from '@/systems/InputHandler';
@@ -115,7 +116,7 @@ export class BossScene extends Phaser.Scene {
 
     // Boss sprite - starts off-screen, will animate in
     const bossSpriteKey = bossCfg.sprite || 'boss';
-    this.bossScale = (bossCfg.scale ?? 1.5) * ENTITY_SCALE;
+    this.bossScale = (bossCfg.scale ?? 1.5) * ENTITY_SCALE / SVG_RENDER_SCALE;
     this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, bossSpriteKey);
     this.bossSprite.setScale(this.bossScale);
     this.bossSprite.setAlpha(0);

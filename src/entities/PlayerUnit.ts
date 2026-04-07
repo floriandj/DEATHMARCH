@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import {
   ENTITY_SCALE,
+  SVG_RENDER_SCALE,
   UNIT_MAX_LEVEL,
   UNIT_KILLS_TO_LEVEL,
   UNIT_FIRE_RATE_MULT,
@@ -87,7 +88,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
   /** Apply visual changes for current level (scale + tint) */
   private applyLevelVisuals(): void {
     const levelScale = UNIT_LEVEL_SCALE[this.unitLevel] ?? 1;
-    this.setScale(1.5 * ENTITY_SCALE * levelScale);
+    this.setScale(1.5 * ENTITY_SCALE * levelScale / SVG_RENDER_SCALE);
     if (!this.isStunned) {
       const tint = UNIT_LEVEL_TINT[this.unitLevel];
       if (tint && tint !== 0xffffff) {
