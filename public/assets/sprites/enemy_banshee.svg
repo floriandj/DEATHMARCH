@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 26" width="52" height="26" shape-rendering="geometricPrecision">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 26" width="208" height="104" shape-rendering="geometricPrecision">
   <defs>
     <linearGradient id="banshee-body" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#e1f5fe"/>
@@ -31,10 +31,10 @@
     <path d="M18,16 Q21,20 19,25 Q13,26 13,24 Q15,22 14,20Z" fill="url(#banshee-robe)" opacity="0.8"/>
     <!-- Wispy hair (flowing path curves, left side) -->
     <path d="M5,6 Q2,2 4,0" stroke="url(#banshee-hair)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <path d="M6,5 Q3,3 5,0" stroke="url(#banshee-hair)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <path d="M6,5 Q3,3 5,1" stroke="url(#banshee-hair)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
     <!-- Wispy hair (right side) -->
     <path d="M21,6 Q24,2 22,0" stroke="url(#banshee-hair)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <path d="M20,5 Q23,3 21,0" stroke="url(#banshee-hair)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <path d="M20,5 Q23,3 21,1" stroke="url(#banshee-hair)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
     <!-- Arms (ghostly, flowing outward slightly) -->
     <path d="M8,13 Q4,14 3,17" stroke="#81d4fa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
     <path d="M18,13 Q22,14 23,17" stroke="#81d4fa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
@@ -70,51 +70,49 @@
     <path d="M10,8.5 Q13,10 16,8.5" fill="#1a1a2e" stroke="#1a1a2e" stroke-width="0.7"/>
   </g>
 
-  <!-- Frame 1: Screaming with outstretched arms, mouth wider -->
+  <!-- Frame 1: Subtle floating variant — slight arm shift and body bob -->
   <g transform="translate(26,0)" stroke="#1a1a2e" stroke-width="1" stroke-linejoin="round">
-    <!-- Robe (billowing wider from energy) -->
-    <path d="M7,16 Q3,19 5,25 Q13,27 13,25 Q10,21 11,19Z" fill="url(#banshee-robe)" opacity="0.85"/>
-    <path d="M19,16 Q23,19 21,25 Q13,27 13,25 Q16,21 15,19Z" fill="url(#banshee-robe)" opacity="0.85"/>
-    <!-- Wispy hair blown back by scream energy -->
-    <path d="M5,6 Q1,1 3,-1" stroke="url(#banshee-hair)" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.8"/>
-    <path d="M6,5 Q2,2 4,-0.5" stroke="url(#banshee-hair)" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.6"/>
-    <path d="M21,6 Q25,1 23,-1" stroke="url(#banshee-hair)" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.8"/>
-    <path d="M20,5 Q24,2 22,-0.5" stroke="url(#banshee-hair)" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.6"/>
-    <!-- Arms outstretched wide -->
-    <path d="M8,13 Q3,11 1,12" stroke="#81d4fa" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.9"/>
-    <path d="M18,13 Q23,11 25,12" stroke="#81d4fa" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.9"/>
-    <!-- Finger wisps spread wide -->
-    <path d="M1,12 Q-0.5,11 -0.5,10" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <path d="M1,12 Q-0.5,12.5 -0.5,13.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <path d="M1,12 Q0,14 0.5,15.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.6"/>
-    <path d="M25,12 Q26.5,11 26.5,10" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <path d="M25,12 Q26.5,12.5 26.5,13.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <path d="M25,12 Q26,14 25.5,15.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.6"/>
-    <!-- Body (glowing more intensely during scream) -->
-    <ellipse cx="13" cy="14" rx="6.5" ry="6.5" fill="url(#banshee-body)" opacity="0.9"/>
-    <ellipse cx="11" cy="11.5" rx="3.5" ry="3" fill="#e1f5fe" opacity="0.45" stroke="none"/>
+    <!-- Flowing robe (slightly different sway) -->
+    <path d="M9,16 Q6,20 8,25 Q13,26 13,24 Q11,22 12,20Z" fill="url(#banshee-robe)" opacity="0.8"/>
+    <path d="M17,16 Q20,20 18,25 Q13,26 13,24 Q15,22 14,20Z" fill="url(#banshee-robe)" opacity="0.8"/>
+    <!-- Wispy hair (flowing, same positions — within bounds) -->
+    <path d="M5,6 Q2,3 4,1" stroke="url(#banshee-hair)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M6,5 Q3,3 5,1" stroke="url(#banshee-hair)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <!-- Wispy hair (right side) -->
+    <path d="M21,6 Q24,3 22,1" stroke="url(#banshee-hair)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M20,5 Q23,3 21,1" stroke="url(#banshee-hair)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <!-- Arms (shifted 2px — left forward, right back) -->
+    <path d="M8,13 Q3,13 2,16" stroke="#81d4fa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <path d="M18,13 Q23,15 24,18" stroke="#81d4fa" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <!-- Finger wisps left (within bounds, min x=1) -->
+    <path d="M2,16 Q1,17.5 1,18.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M2,16 Q1.5,18 2,19.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- Finger wisps right -->
+    <path d="M24,18 Q25,19.5 25,20.5" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M24,18 Q24.5,20 24,21" stroke="#b3e5fc" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- Body (translucent — 1px bob up) -->
+    <ellipse cx="13" cy="13" rx="6" ry="6" fill="url(#banshee-body)" opacity="0.8"/>
+    <!-- Body highlight -->
+    <ellipse cx="11" cy="10.5" rx="3" ry="2.5" fill="#e1f5fe" opacity="0.4" stroke="none"/>
     <!-- Neck -->
-    <rect x="10.5" y="6" width="5" height="5" rx="2" fill="url(#banshee-body)" opacity="0.9"/>
-    <!-- Head (slightly bigger/elongated during scream) -->
-    <ellipse cx="13" cy="6" rx="8.5" ry="7" fill="url(#banshee-body)" opacity="0.9"/>
-    <ellipse cx="10.5" cy="3" rx="4" ry="3" fill="#e1f5fe" opacity="0.4" stroke="none"/>
-    <!-- Eye glow halos (larger during scream) -->
-    <ellipse cx="10" cy="5" rx="3.5" ry="3" fill="url(#banshee-eye-glow)" stroke="none"/>
-    <ellipse cx="16" cy="5" rx="3.5" ry="3" fill="url(#banshee-eye-glow)" stroke="none"/>
-    <!-- Left eye (wider, more intense) -->
-    <ellipse cx="10" cy="5" rx="2.2" ry="2" fill="#111"/>
-    <ellipse cx="10" cy="5" rx="1.5" ry="1.4" fill="url(#banshee-eye)"/>
-    <circle cx="10.6" cy="4.4" r="0.5" fill="#f8bff8" stroke="none"/>
-    <!-- Right eye (wider, more intense) -->
-    <ellipse cx="16" cy="5" rx="2.2" ry="2" fill="#111"/>
-    <ellipse cx="16" cy="5" rx="1.5" ry="1.4" fill="url(#banshee-eye)"/>
-    <circle cx="16.6" cy="4.4" r="0.5" fill="#f8bff8" stroke="none"/>
-    <!-- Mouth (wide open scream) -->
-    <path d="M9,8 Q13,12 17,8" fill="#111" stroke="#1a1a2e" stroke-width="0.8"/>
-    <!-- Inner mouth glow -->
-    <ellipse cx="13" cy="9.5" rx="2.5" ry="1.5" fill="#9c27b0" opacity="0.6" stroke="none"/>
-    <!-- Scream wavy lines -->
-    <path d="M5,12 Q6,11 7,12 Q8,13 9,12" stroke="#81d4fa" stroke-width="0.8" fill="none" opacity="0.5"/>
-    <path d="M17,12 Q18,11 19,12 Q20,13 21,12" stroke="#81d4fa" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <rect x="10.5" y="5" width="5" height="5" rx="2" fill="url(#banshee-body)" opacity="0.85"/>
+    <!-- Head (1px bob up) -->
+    <ellipse cx="13" cy="5" rx="8" ry="5.5" fill="url(#banshee-body)" opacity="0.85"/>
+    <!-- Head shine -->
+    <ellipse cx="10.5" cy="2.5" rx="3.5" ry="2.5" fill="#e1f5fe" opacity="0.4" stroke="none"/>
+    <!-- Left eye glow halo -->
+    <ellipse cx="10" cy="4.5" rx="3" ry="2.5" fill="url(#banshee-eye-glow)" stroke="none"/>
+    <!-- Right eye glow halo -->
+    <ellipse cx="16" cy="4.5" rx="3" ry="2.5" fill="url(#banshee-eye-glow)" stroke="none"/>
+    <!-- Left eye (hollow, purple glow) -->
+    <ellipse cx="10" cy="4.5" rx="2" ry="1.8" fill="#111"/>
+    <ellipse cx="10" cy="4.5" rx="1.3" ry="1.2" fill="url(#banshee-eye)"/>
+    <circle cx="10.5" cy="4" r="0.4" fill="#f8bff8" stroke="none"/>
+    <!-- Right eye (hollow, purple glow) -->
+    <ellipse cx="16" cy="4.5" rx="2" ry="1.8" fill="#111"/>
+    <ellipse cx="16" cy="4.5" rx="1.3" ry="1.2" fill="url(#banshee-eye)"/>
+    <circle cx="16.5" cy="4" r="0.4" fill="#f8bff8" stroke="none"/>
+    <!-- Mouth (slightly open — serene) -->
+    <path d="M10,7.5 Q13,9 16,7.5" fill="#1a1a2e" stroke="#1a1a2e" stroke-width="0.7"/>
   </g>
 </svg>
