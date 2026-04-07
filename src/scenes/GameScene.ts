@@ -8,6 +8,7 @@ import {
   ENEMY_POOL_SIZE,
   ARMY_INPUT_Y_RANGE,
   ARMY_Y_OFFSET_MAX,
+  SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
 import { Background } from '@/systems/Background';
@@ -292,7 +293,7 @@ export class GameScene extends Phaser.Scene {
       const pouchX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
       const pouchY = this.armyWorldY - GAME_HEIGHT - 80;
       const pouch = this.add.sprite(pouchX, pouchY, 'gold_pouch');
-      pouch.setScale(2);
+      pouch.setScale(2 / SVG_RENDER_SCALE);
       pouch.setAlpha(1);
       (pouch as any).goldValue = Math.round(10 + Math.random() * 15);
       this.goldPouches.push(pouch);

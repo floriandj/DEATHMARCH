@@ -156,7 +156,8 @@ export class HUDScene extends Phaser.Scene {
     this.weaponIcon = this.add.sprite(PAD + 24, GAME_HEIGHT - 80, 'weapon_svg_pistol')
       .setDisplaySize(28, 28).setAlpha(0).setOrigin(0.5);
     this.weaponLabel = this.add.text(PAD + 52, GAME_HEIGHT - 80, '', {
-      fontSize: '14px', color: '#cccccc', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      fontSize: '14px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5).setAlpha(0);
 
     // ── Pause button (gold accent) ──
