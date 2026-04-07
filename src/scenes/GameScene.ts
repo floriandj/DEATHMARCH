@@ -73,7 +73,7 @@ export class GameScene extends Phaser.Scene {
   // Perk state
   private nextRegenDistance: number = 0;
   private furyTimer: number = 0; // temporary 2x fire rate from elite orb
-  private powerOrbs: Phaser.GameObjects.Sprite[] = [];
+  private powerOrbs: Phaser.GameObjects.Container[] = [];
 
   // Shadow visuals
   private unitShadows: Phaser.GameObjects.Image[] = [];
@@ -250,7 +250,7 @@ export class GameScene extends Phaser.Scene {
         const enemyCfg = LevelManager.instance.getEnemyStats(cmd.type);
         const worldX = GAME_WIDTH / 2 + cmd.x;
         const worldY = this.armyWorldY - GAME_HEIGHT - 100; // ahead of camera
-        const isElite = Math.random() < 0.08; // 8% elite chance
+        const isElite = Math.random() < 0.03; // 3% elite chance — rare and special
         enemy.spawn(worldX, worldY, {
           type: enemyCfg.type as any,
           hp: enemyCfg.hp,
@@ -567,20 +567,30 @@ export class GameScene extends Phaser.Scene {
       this.respawnArmy();
     }
 
-    // 9c. Power orb collection
+    // 9c. Power orb collection (magnetic pull + pickup)
     for (let i = this.powerOrbs.length - 1; i >= 0; i--) {
       const orb = this.powerOrbs[i];
       if (!orb.active) { this.powerOrbs.splice(i, 1); continue; }
-      if (orb.y > this.armyWorldY + 200) { orb.destroy(); this.powerOrbs.splice(i, 1); continue; }
+      if (orb.y > this.armyWorldY + 300) { orb.destroy(); this.powerOrbs.splice(i, 1); continue; }
+      // Magnetic pull toward nearest unit when close
+      let minDist = Infinity;
+      let closestUnit: PlayerUnit | null = null;
       for (const unit of this.units) {
         if (!unit.active) continue;
         const odx = unit.x - orb.x;
         const ody = unit.y - orb.y;
-        if (odx * odx + ody * ody < 40 * 40) {
-          this.collectPowerOrb(orb);
-          this.powerOrbs.splice(i, 1);
-          break;
-        }
+        const d = odx * odx + ody * ody;
+        if (d < minDist) { minDist = d; closestUnit = unit; }
+      }
+      if (closestUnit && minDist < 80 * 80) {
+        // Gently pull orb toward unit
+        const pullStrength = 3 * dt;
+        orb.x += (closestUnit.x - orb.x) * pullStrength;
+        orb.y += (closestUnit.y - orb.y) * pullStrength;
+      }
+      if (closestUnit && minDist < 30 * 30) {
+        this.collectPowerOrb(orb);
+        this.powerOrbs.splice(i, 1);
       }
     }
 
@@ -799,38 +809,164 @@ export class GameScene extends Phaser.Scene {
 
   /** Spawn a power orb when an elite enemy dies */
   private spawnPowerOrb(x: number, y: number): void {
-    const orb = this.add.sprite(x, y, 'vfx_burst');
-    orb.setTint(0xffd700);
-    orb.setScale(1.5);
-    orb.setAlpha(0.9);
-    this.tweens.add({ targets: orb, scale: { from: 1.2, to: 1.8 }, alpha: { from: 0.7, to: 1 }, duration: 600, yoyo: true, repeat: -1 });
-    (orb as any).orbType = ['fury', 'heal', 'gold'][Math.floor(Math.random() * 3)];
-    this.powerOrbs.push(orb);
+    const orbTypes = ['fury', 'heal', 'gold'] as const;
+    const orbType = orbTypes[Math.floor(Math.random() * orbTypes.length)];
+
+    // Color scheme per type
+    const colors: Record<string, { core: number; glow: number; ring: number; icon: string }> = {
+      fury:  { core: 0xff4400, glow: 0xff6600, ring: 0xff8800, icon: '\u{1F525}' },
+      heal:  { core: 0x22c55e, glow: 0x4ade80, ring: 0x86efac, icon: '\u{1F49A}' },
+      gold:  { core: 0xfbbf24, glow: 0xfde68a, ring: 0xfef3c7, icon: '\u{1FA99}' },
+    };
+    const c = colors[orbType];
+
+    const container = this.add.container(x, y);
+
+    // Layer 1: Outer glow ring (soft, large)
+    const outerGlow = this.add.circle(0, 0, 28, c.glow, 0.15);
+    container.add(outerGlow);
+    this.tweens.add({
+      targets: outerGlow, scale: { from: 0.8, to: 1.4 }, alpha: { from: 0.2, to: 0.05 },
+      duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+    });
+
+    // Layer 2: Spinning ring
+    const ring = this.add.circle(0, 0, 18, c.ring, 0).setStrokeStyle(2, c.ring, 0.6);
+    container.add(ring);
+    this.tweens.add({
+      targets: ring, scale: { from: 0.9, to: 1.2 }, alpha: { from: 0.4, to: 0.8 },
+      duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+    });
+
+    // Layer 3: Core orb (bright center)
+    const core = this.add.circle(0, 0, 10, c.core, 0.9);
+    container.add(core);
+    this.tweens.add({
+      targets: core, scale: { from: 0.85, to: 1.15 },
+      duration: 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+    });
+
+    // Layer 4: Icon on top
+    const icon = this.add.text(0, -1, c.icon, { fontSize: '16px' }).setOrigin(0.5);
+    container.add(icon);
+
+    // Layer 5: Orbiting sparkles
+    for (let i = 0; i < 3; i++) {
+      const spark = this.add.circle(0, 0, 2, 0xffffff, 0.8);
+      container.add(spark);
+      const angle = (i / 3) * Math.PI * 2;
+      const radius = 20;
+      this.tweens.add({
+        targets: spark,
+        x: { from: Math.cos(angle) * radius, to: Math.cos(angle + Math.PI * 2) * radius },
+        y: { from: Math.sin(angle) * radius, to: Math.sin(angle + Math.PI * 2) * radius },
+        duration: 2000, repeat: -1, ease: 'Linear',
+      });
+    }
+
+    // Entrance: burst in from nothing
+    container.setScale(0).setAlpha(0);
+    this.tweens.add({
+      targets: container, scale: 1, alpha: 1,
+      duration: 400, ease: 'Back.easeOut',
+    });
+
+    // Gentle float up and down
+    this.tweens.add({
+      targets: container, y: { from: y - 5, to: y + 5 },
+      duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 400,
+    });
+
+    (container as any).orbType = orbType;
+    this.powerOrbs.push(container);
   }
 
-  /** Collect a power orb — apply temporary buff */
-  private collectPowerOrb(orb: Phaser.GameObjects.Sprite): void {
+  /** Collect a power orb — dramatic pickup effect */
+  private collectPowerOrb(orb: Phaser.GameObjects.Container): void {
     const orbType = (orb as any).orbType as string;
+
+    const colors: Record<string, { flash: [number, number, number]; text: string }> = {
+      fury:  { flash: [255, 80, 0],   text: '#ff6600' },
+      heal:  { flash: [50, 220, 100],  text: '#4ade80' },
+      gold:  { flash: [255, 200, 50],  text: '#fbbf24' },
+    };
+    const c = colors[orbType] || colors.gold;
+
     let label = '';
+    let subtitle = '';
     if (orbType === 'fury') {
-      this.furyTimer = 8000; // 8 seconds of 2x fire rate
-      label = 'FURY!';
+      this.furyTimer = 8000;
+      label = '\u{1F525} FURY!';
+      subtitle = '2x FIRE RATE';
     } else if (orbType === 'heal') {
       this.unitCount += 3;
       this.respawnArmy();
-      label = '+3 UNITS!';
+      label = '\u{1F49A} HEAL!';
+      subtitle = '+3 UNITS';
     } else {
       const goldGain = 50;
       this.pouchGold += goldGain;
-      label = `+${goldGain}g!`;
+      label = '\u{1FA99} JACKPOT!';
+      subtitle = `+${goldGain} GOLD`;
     }
+
     SoundManager.play('weapon_upgrade');
-    const txt = this.add.text(orb.x, orb.y, label, {
-      fontSize: '24px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    const ox = orb.x;
+    const oy = orb.y;
+
+    // Kill all tweens on the orb children then destroy
+    this.tweens.killTweensOf(orb);
+    for (const child of orb.getAll()) {
+      this.tweens.killTweensOf(child);
+    }
+
+    // Collection burst — expanding ring
+    const burstRing = this.add.circle(ox, oy, 5, parseInt(c.text.replace('#', ''), 16), 0.5);
+    this.tweens.add({
+      targets: burstRing, radius: 60, alpha: 0, duration: 400,
+      onUpdate: () => burstRing.setRadius(burstRing.radius),
+      onComplete: () => burstRing.destroy(),
+    });
+
+    // Scatter particles outward
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const p = this.add.circle(ox, oy, 3, 0xffffff, 0.9);
+      this.tweens.add({
+        targets: p,
+        x: ox + Math.cos(angle) * 50,
+        y: oy + Math.sin(angle) * 50,
+        alpha: 0, scale: 0.2, duration: 350 + Math.random() * 150,
+        onComplete: () => p.destroy(),
+      });
+    }
+
+    // Big label
+    const mainTxt = this.add.text(ox, oy - 10, label, {
+      fontSize: '28px', color: c.text, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(15);
+
+    // Subtitle
+    const subTxt = this.add.text(ox, oy + 20, subtitle, {
+      fontSize: '16px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 3,
-    }).setOrigin(0.5);
-    this.tweens.add({ targets: txt, y: orb.y - 80, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
-    this.cameras.main.flash(200, 255, 215, 0, true);
+    }).setOrigin(0.5).setDepth(15);
+
+    // Animate text up and out
+    this.tweens.add({
+      targets: mainTxt, y: oy - 90, alpha: 0, scale: 1.3,
+      duration: 1000, ease: 'Power2', onComplete: () => mainTxt.destroy(),
+    });
+    this.tweens.add({
+      targets: subTxt, y: oy - 60, alpha: 0,
+      duration: 800, delay: 100, ease: 'Power2', onComplete: () => subTxt.destroy(),
+    });
+
+    // Screen flash matching orb color
+    this.cameras.main.flash(250, c.flash[0], c.flash[1], c.flash[2], true);
+    this.cameras.main.shake(150, 0.01);
+
     orb.destroy();
   }
 
