@@ -1,152 +1,251 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
-  <!-- Frame 0: Lich King - skeletal sorcerer with crown and robes -->
-  <g>
-    <!-- Crown (dark iron with gems) -->
-    <rect x="22" y="0" width="6" height="10" fill="#555"/>
-    <rect x="24" y="0" width="2" height="4" fill="#9b59b6"/>
-    <rect x="34" y="0" width="8" height="14" fill="#555"/>
-    <rect x="36" y="0" width="4" height="6" fill="#9b59b6"/>
-    <rect x="37" y="2" width="2" height="2" fill="#d6a0ff"/>
-    <rect x="48" y="0" width="8" height="12" fill="#555"/>
-    <rect x="50" y="0" width="4" height="6" fill="#9b59b6"/>
-    <rect x="60" y="0" width="6" height="10" fill="#555"/>
-    <rect x="62" y="0" width="2" height="4" fill="#9b59b6"/>
-    <!-- Crown base -->
-    <rect x="20" y="8" width="48" height="6" fill="#444"/>
-    <rect x="22" y="9" width="44" height="4" fill="#555"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Bone skull -->
+    <linearGradient id="lich-skull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f5f5"/>
+      <stop offset="60%" stop-color="#e0e0e0"/>
+      <stop offset="100%" stop-color="#9e9e9e"/>
+    </linearGradient>
+    <linearGradient id="lich-skull-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#e0e0e0" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Dark purple robes -->
+    <linearGradient id="lich-robe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6a1b9a"/>
+      <stop offset="50%" stop-color="#4a148c"/>
+      <stop offset="100%" stop-color="#1a0033"/>
+    </linearGradient>
+    <linearGradient id="lich-robe-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ce93d8" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#4a148c" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Soul orbs (green) -->
+    <radialGradient id="lich-orb" cx="0.35" cy="0.35" r="0.65">
+      <stop offset="0%" stop-color="#ccff90"/>
+      <stop offset="40%" stop-color="#76ff03"/>
+      <stop offset="100%" stop-color="#1b5e20"/>
+    </radialGradient>
+    <radialGradient id="lich-orb-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#76ff03" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#1b5e20" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Green eye glow -->
+    <radialGradient id="lich-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#ccff90"/>
+      <stop offset="40%" stop-color="#76ff03"/>
+      <stop offset="100%" stop-color="#33691e"/>
+    </radialGradient>
+    <!-- Staff -->
+    <linearGradient id="lich-staff" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5d4037"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <!-- Staff crystal -->
+    <radialGradient id="lich-staff-crystal" cx="0.4" cy="0.3" r="0.7">
+      <stop offset="0%" stop-color="#b9f6ca"/>
+      <stop offset="50%" stop-color="#00e676"/>
+      <stop offset="100%" stop-color="#1b5e20"/>
+    </radialGradient>
+    <!-- Floating robe wisps -->
+    <linearGradient id="lich-wisp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6a1b9a" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#4a148c" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Death aura -->
+    <radialGradient id="lich-aura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#76ff03" stop-opacity="0.2"/>
+      <stop offset="60%" stop-color="#1b5e20" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
 
-    <!-- Skull head -->
-    <rect x="20" y="12" width="48" height="22" fill="#e8e0d0"/>
-    <rect x="22" y="14" width="44" height="18" fill="#f0e8d8"/>
-    <!-- Brow ridges -->
-    <rect x="24" y="14" width="14" height="3" fill="#d0c8b8"/>
-    <rect x="50" y="14" width="14" height="3" fill="#d0c8b8"/>
-    <!-- Eye sockets (deep, glowing purple) -->
-    <rect x="24" y="18" width="12" height="10" fill="#222"/>
-    <rect x="52" y="18" width="12" height="10" fill="#222"/>
-    <rect x="26" y="20" width="8" height="6" fill="#9b59b6"/>
-    <rect x="54" y="20" width="8" height="6" fill="#9b59b6"/>
-    <rect x="28" y="21" width="4" height="4" fill="#d6a0ff"/>
-    <rect x="56" y="21" width="4" height="4" fill="#d6a0ff"/>
-    <rect x="29" y="22" width="2" height="2" fill="#fff"/>
-    <rect x="57" y="22" width="2" height="2" fill="#fff"/>
-    <!-- Nose hole -->
-    <rect x="40" y="26" width="4" height="4" fill="#c0b8a8"/>
-    <rect x="41" y="27" width="2" height="3" fill="#888"/>
-    <!-- Jaw -->
-    <rect x="26" y="30" width="36" height="6" fill="#d0c8b8"/>
-    <rect x="28" y="30" width="32" height="4" fill="#444"/>
-    <!-- Teeth -->
-    <rect x="30" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="35" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="40" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="45" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="50" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="55" y="30" width="3" height="3" fill="#f0e8d8"/>
+  <!-- FRAME 0: FLOATING, 2 SOUL ORBS ORBITING -->
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Death aura -->
+    <ellipse cx="44" cy="50" rx="40" ry="38" fill="url(#lich-aura)" stroke="none"/>
 
-    <!-- Robes (dark purple flowing) -->
-    <rect x="8" y="34" width="72" height="40" fill="#2c1654"/>
-    <rect x="12" y="36" width="64" height="36" fill="#3a1d6e"/>
-    <!-- Robe trim -->
-    <rect x="10" y="34" width="68" height="3" fill="#555"/>
-    <rect x="12" y="35" width="64" height="1" fill="#9b59b6"/>
-    <!-- Soul orb (center) -->
-    <rect x="32" y="42" width="24" height="20" fill="#1a0a3a"/>
-    <rect x="34" y="44" width="20" height="16" fill="#2c1654"/>
-    <rect x="36" y="46" width="16" height="12" fill="#9b59b6"/>
-    <rect x="38" y="48" width="12" height="8" fill="#be7bf0"/>
-    <rect x="40" y="50" width="8" height="4" fill="#d6a0ff"/>
-    <rect x="42" y="51" width="4" height="2" fill="#fff"/>
-    <!-- Robe folds -->
-    <rect x="14" y="42" width="2" height="24" fill="#241050"/>
-    <rect x="26" y="44" width="2" height="20" fill="#241050"/>
-    <rect x="60" y="42" width="2" height="24" fill="#241050"/>
-    <rect x="72" y="44" width="2" height="20" fill="#241050"/>
+    <!-- Shadow (small - floating above ground) -->
+    <ellipse cx="44" cy="86" rx="18" ry="3" fill="#000" opacity="0.15" stroke="none"/>
 
-    <!-- Skeletal arms (holding staff implied) -->
-    <rect x="2" y="38" width="10" height="4" fill="#e8e0d0"/>
-    <rect x="0" y="40" width="8" height="18" fill="#3a1d6e"/>
-    <rect x="2" y="42" width="4" height="14" fill="#2c1654"/>
-    <rect x="0" y="56" width="8" height="6" fill="#e8e0d0"/>
-    <rect x="2" y="58" width="4" height="3" fill="#d0c8b8"/>
-    <rect x="76" y="38" width="10" height="4" fill="#e8e0d0"/>
-    <rect x="80" y="40" width="8" height="18" fill="#3a1d6e"/>
-    <rect x="82" y="42" width="4" height="14" fill="#2c1654"/>
-    <rect x="80" y="56" width="8" height="6" fill="#e8e0d0"/>
-    <rect x="82" y="58" width="4" height="3" fill="#d0c8b8"/>
+    <!-- STAFF (held in left hand, at side) -->
+    <!-- Staff glow -->
+    <ellipse cx="14" cy="14" rx="8" ry="8" fill="url(#lich-orb-glow)" stroke="none"/>
+    <!-- Staff shaft -->
+    <path d="M14,14 Q12,36 10,62" stroke="url(#lich-staff)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M14,14 Q12,36 10,62" stroke="#795548" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Staff crystal head -->
+    <path d="M8,8 Q8,4 14,4 Q20,4 20,8 Q20,14 14,16 Q8,14 8,8Z" fill="url(#lich-staff-crystal)" stroke="#00e676" stroke-width="0.8"/>
+    <!-- Crystal facets -->
+    <path d="M10,8 L14,4 L18,8 L14,14Z" fill="none" stroke="#b9f6ca" stroke-width="0.5"/>
+    <path d="M9,10 L14,6 L19,10" stroke="#b9f6ca" stroke-width="0.5" fill="none"/>
+    <!-- Crystal glow wisps -->
+    <path d="M8,6 Q6,2 8,4 M14,4 Q14,0 16,2 M20,6 Q22,2 20,4" stroke="#76ff03" stroke-width="0.8" stroke-linecap="round" fill="none"/>
 
-    <!-- Robe bottom (flowing, wider) -->
-    <rect x="4" y="70" width="80" height="14" fill="#2c1654"/>
-    <rect x="8" y="72" width="72" height="10" fill="#3a1d6e"/>
-    <!-- Bottom trim -->
-    <rect x="6" y="80" width="76" height="3" fill="#9b59b6"/>
-    <rect x="8" y="81" width="72" height="1" fill="#d6a0ff"/>
-    <!-- Shadow/hover effect -->
-    <rect x="12" y="84" width="64" height="4" fill="#1a0a3a" opacity="0.4"/>
+    <!-- ROBES (tattered, wavy) -->
+    <!-- Robe body / lower flow -->
+    <path d="M24,44 Q18,54 16,70 Q20,80 30,82 Q44,84 58,82 Q68,80 72,70 Q70,54 64,44Z" fill="url(#lich-robe)"/>
+    <!-- Robe tattered hem wisps -->
+    <path d="M18,72 Q20,68 22,72 Q24,66 26,72 Q28,68 30,72" stroke="url(#lich-wisp)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M58,72 Q60,68 62,72 Q64,66 66,72 Q68,68 70,72" stroke="url(#lich-wisp)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Robe highlight -->
+    <path d="M26,46 Q22,58 24,70 Q32,74 44,72 Q50,68 48,58 Q42,46 32,46Z" fill="url(#lich-robe-hi)" stroke="none"/>
+    <!-- Robe ornament trim -->
+    <path d="M26,48 Q30,46 36,48 Q40,50 44,48 Q48,46 52,48 Q58,50 62,48" stroke="#7b1fa2" stroke-width="1" fill="none"/>
+    <path d="M24,56 Q30,54 36,56 Q40,58 44,56 Q48,54 52,56 Q58,58 64,56" stroke="#7b1fa2" stroke-width="0.8" fill="none"/>
+
+    <!-- Left sleeve / arm (bone) -->
+    <path d="M24,44 Q16,48 12,56" stroke="#4a148c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M24,44 Q16,48 12,56" stroke="#e0e0e0" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Bone hand left (staff-holding) -->
+    <path d="M10,54 Q8,58 10,62 Q14,64 18,62 Q20,58 18,54 Q14,52 10,54Z" fill="url(#lich-skull)" stroke="#757575" stroke-width="0.8"/>
+    <!-- Bone finger lines -->
+    <path d="M10,56 L8,54 M13,54 L12,52 M16,54 L16,51 M18,56 L20,54" stroke="#9e9e9e" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+    <!-- Right sleeve / arm (bone) -->
+    <path d="M64,44 Q72,48 76,56" stroke="#4a148c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M64,44 Q72,48 76,56" stroke="#e0e0e0" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Bone hand right -->
+    <path d="M78,54 Q80,58 78,62 Q74,64 70,62 Q68,58 70,54 Q74,52 78,54Z" fill="url(#lich-skull)" stroke="#757575" stroke-width="0.8"/>
+    <path d="M78,56 L80,54 M75,54 L76,52 M72,54 L72,51 M70,56 L68,54" stroke="#9e9e9e" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+    <!-- Robe body upper -->
+    <path d="M24,32 Q22,38 24,44 Q34,50 44,50 Q54,50 64,44 Q66,38 64,32 Q54,26 44,26 Q34,26 24,32Z" fill="url(#lich-robe)"/>
+    <path d="M26,34 Q30,32 36,34 Q40,36 44,34 Q48,32 52,34 Q58,36 62,34" stroke="#7b1fa2" stroke-width="0.8" fill="none"/>
+
+    <!-- Neck bone -->
+    <path d="M38,24 Q40,26 44,26 Q48,26 50,24 Q48,20 44,20 Q40,20 38,24Z" fill="url(#lich-skull)" stroke="#9e9e9e" stroke-width="0.8"/>
+
+    <!-- SKULL HEAD -->
+    <ellipse cx="44" cy="14" rx="20" ry="18" fill="url(#lich-skull)"/>
+    <!-- Skull highlight -->
+    <ellipse cx="38" cy="8" rx="9" ry="7" fill="url(#lich-skull-hi)" stroke="none"/>
+    <!-- Skull cheekbones -->
+    <path d="M24,18 Q28,22 32,20" stroke="#bdbdbd" stroke-width="1" fill="none"/>
+    <path d="M64,18 Q60,22 56,20" stroke="#bdbdbd" stroke-width="1" fill="none"/>
+    <!-- Skull crack (menacing) -->
+    <path d="M40,4 Q42,8 40,12 Q42,14 44,12 Q46,14 48,12 Q46,8 48,4" stroke="#9e9e9e" stroke-width="0.8" fill="none"/>
+    <!-- Skull nose cavity -->
+    <path d="M41,18 L43,22 L47,22 L49,18 L44,16Z" fill="#424242" stroke="#1a1a2e" stroke-width="0.5"/>
+    <!-- Grinning teeth / jaw -->
+    <path d="M28,26 Q36,28 44,28 Q52,28 60,26 Q58,32 44,34 Q30,32 28,26Z" fill="#424242" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M30,26 L30,30 M34,27 L34,31 M38,27 L38,32 M44,27 L44,32 M50,27 L50,32 M54,27 L54,31 M58,26 L58,30" stroke="#e0e0e0" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- HOLLOW GLOWING GREEN EYES -->
+    <ellipse cx="34" cy="14" rx="7" ry="6" fill="#0a0a0a"/>
+    <ellipse cx="54" cy="14" rx="7" ry="6" fill="#0a0a0a"/>
+    <!-- Eye glow aura -->
+    <ellipse cx="34" cy="14" rx="8" ry="7" fill="url(#lich-orb-glow)" stroke="none" opacity="0.8"/>
+    <ellipse cx="54" cy="14" rx="8" ry="7" fill="url(#lich-orb-glow)" stroke="none" opacity="0.8"/>
+    <ellipse cx="34" cy="14" rx="5" ry="4.5" fill="url(#lich-eye)"/>
+    <ellipse cx="54" cy="14" rx="5" ry="4.5" fill="url(#lich-eye)"/>
+    <circle cx="34" cy="13.5" r="2" fill="#1a2600"/>
+    <circle cx="33" cy="12.5" r="0.8" fill="#ccff90" stroke="none"/>
+    <circle cx="54" cy="13.5" r="2" fill="#1a2600"/>
+    <circle cx="53" cy="12.5" r="0.8" fill="#ccff90" stroke="none"/>
+
+    <!-- SOUL ORBS (orbiting) -->
+    <!-- Orb 1 (left side) -->
+    <ellipse cx="6" cy="32" rx="7" ry="7" fill="url(#lich-orb-glow)" stroke="none"/>
+    <ellipse cx="6" cy="32" rx="5" ry="5" fill="url(#lich-orb)" stroke="#00e676" stroke-width="0.8"/>
+    <circle cx="4" cy="30" r="1.5" fill="#ccff90" stroke="none"/>
+    <!-- Orb 1 energy trail -->
+    <path d="M6,32 Q10,36 16,40" stroke="#76ff03" stroke-width="0.8" fill="none" stroke-dasharray="2,2"/>
+    <!-- Orb 2 (right side) -->
+    <ellipse cx="82" cy="44" rx="7" ry="7" fill="url(#lich-orb-glow)" stroke="none"/>
+    <ellipse cx="82" cy="44" rx="5" ry="5" fill="url(#lich-orb)" stroke="#00e676" stroke-width="0.8"/>
+    <circle cx="80" cy="42" r="1.5" fill="#ccff90" stroke="none"/>
+    <path d="M82,44 Q78,40 72,38" stroke="#76ff03" stroke-width="0.8" fill="none" stroke-dasharray="2,2"/>
   </g>
 
-  <!-- Frame 1 (arms raised, soul orb pulsing) -->
-  <g transform="translate(88,0)">
-    <!-- Crown -->
-    <rect x="22" y="0" width="6" height="10" fill="#555"/>
-    <rect x="24" y="0" width="2" height="4" fill="#be7bf0"/>
-    <rect x="34" y="0" width="8" height="14" fill="#555"/>
-    <rect x="36" y="0" width="4" height="6" fill="#be7bf0"/>
-    <rect x="37" y="2" width="2" height="2" fill="#fff"/>
-    <rect x="48" y="0" width="8" height="12" fill="#555"/>
-    <rect x="50" y="0" width="4" height="6" fill="#be7bf0"/>
-    <rect x="60" y="0" width="6" height="10" fill="#555"/>
-    <rect x="62" y="0" width="2" height="4" fill="#be7bf0"/>
-    <rect x="20" y="8" width="48" height="6" fill="#444"/>
+  <!-- FRAME 1: CASTING — ORBS GATHERED ABOVE STAFF, STAFF GLOWING BRIGHTER -->
+  <g transform="translate(88, 0)" stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Death aura (more intense) -->
+    <ellipse cx="44" cy="50" rx="44" ry="42" fill="url(#lich-aura)" stroke="none"/>
 
-    <!-- Skull -->
-    <rect x="20" y="12" width="48" height="22" fill="#e8e0d0"/>
-    <rect x="22" y="14" width="44" height="18" fill="#f0e8d8"/>
-    <rect x="24" y="14" width="14" height="3" fill="#d0c8b8"/>
-    <rect x="50" y="14" width="14" height="3" fill="#d0c8b8"/>
-    <!-- Eyes (brighter) -->
-    <rect x="24" y="18" width="12" height="10" fill="#222"/>
-    <rect x="52" y="18" width="12" height="10" fill="#222"/>
-    <rect x="26" y="20" width="8" height="6" fill="#be7bf0"/>
-    <rect x="54" y="20" width="8" height="6" fill="#be7bf0"/>
-    <rect x="28" y="21" width="4" height="4" fill="#eeccff"/>
-    <rect x="56" y="21" width="4" height="4" fill="#eeccff"/>
-    <rect x="40" y="26" width="4" height="4" fill="#c0b8a8"/>
-    <!-- Jaw open wider -->
-    <rect x="24" y="30" width="40" height="8" fill="#d0c8b8"/>
-    <rect x="26" y="30" width="36" height="6" fill="#444"/>
-    <rect x="28" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="34" y="30" width="3" height="4" fill="#f0e8d8"/>
-    <rect x="40" y="30" width="3" height="3" fill="#f0e8d8"/>
-    <rect x="46" y="30" width="3" height="4" fill="#f0e8d8"/>
-    <rect x="52" y="30" width="3" height="3" fill="#f0e8d8"/>
+    <!-- Shadow (small - floating) -->
+    <ellipse cx="44" cy="86" rx="18" ry="3" fill="#000" opacity="0.15" stroke="none"/>
 
-    <!-- Robes -->
-    <rect x="8" y="36" width="72" height="38" fill="#2c1654"/>
-    <rect x="12" y="38" width="64" height="34" fill="#3a1d6e"/>
-    <rect x="10" y="36" width="68" height="3" fill="#555"/>
-    <rect x="12" y="37" width="64" height="1" fill="#9b59b6"/>
-    <!-- Soul orb (brighter pulse) -->
-    <rect x="30" y="42" width="28" height="22" fill="#1a0a3a"/>
-    <rect x="32" y="44" width="24" height="18" fill="#2c1654"/>
-    <rect x="34" y="46" width="20" height="14" fill="#be7bf0"/>
-    <rect x="36" y="48" width="16" height="10" fill="#d6a0ff"/>
-    <rect x="38" y="50" width="12" height="6" fill="#eeccff"/>
-    <rect x="40" y="52" width="8" height="2" fill="#fff"/>
+    <!-- STAFF (raised forward for casting) -->
+    <!-- Massive staff glow -->
+    <ellipse cx="18" cy="8" rx="14" ry="14" fill="url(#lich-orb-glow)" stroke="none"/>
+    <!-- Staff shaft -->
+    <path d="M18,8 Q16,30 12,60" stroke="url(#lich-staff)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M18,8 Q16,30 12,60" stroke="#795548" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Staff crystal (glowing bright) -->
+    <path d="M10,2 Q10,-2 18,-2 Q26,-2 26,2 Q26,10 18,12 Q10,10 10,2Z" fill="url(#lich-staff-crystal)" stroke="#00e676" stroke-width="1.2"/>
+    <path d="M12,2 L18,-2 L24,2 L18,10Z" fill="none" stroke="#b9f6ca" stroke-width="0.8"/>
+    <!-- Crystal bright glow rays -->
+    <path d="M10,0 Q6,-4 8,-2 M18,-2 Q18,-8 20,-4 M26,0 Q30,-4 28,-2" stroke="#76ff03" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <path d="M8,6 Q4,4 6,6 M28,6 Q32,4 30,6" stroke="#00e676" stroke-width="0.8" stroke-linecap="round" fill="none"/>
 
-    <!-- Arms (raised, casting) -->
-    <rect x="0" y="34" width="10" height="4" fill="#e8e0d0"/>
-    <rect x="0" y="36" width="6" height="14" fill="#3a1d6e"/>
-    <rect x="0" y="48" width="8" height="6" fill="#e8e0d0"/>
-    <rect x="78" y="34" width="10" height="4" fill="#e8e0d0"/>
-    <rect x="82" y="36" width="6" height="14" fill="#3a1d6e"/>
-    <rect x="80" y="48" width="8" height="6" fill="#e8e0d8"/>
+    <!-- ORBS GATHERED ABOVE STAFF (both near staff head) -->
+    <!-- Orb 1 near staff -->
+    <ellipse cx="8" cy="18" rx="9" ry="9" fill="url(#lich-orb-glow)" stroke="none"/>
+    <ellipse cx="8" cy="18" rx="6" ry="6" fill="url(#lich-orb)" stroke="#00e676" stroke-width="1"/>
+    <circle cx="6" cy="16" r="2" fill="#ccff90" stroke="none"/>
+    <path d="M8,18 Q14,12 18,8" stroke="#76ff03" stroke-width="1" fill="none"/>
+    <!-- Orb 2 above staff -->
+    <ellipse cx="28" cy="6" rx="7" ry="7" fill="url(#lich-orb-glow)" stroke="none"/>
+    <ellipse cx="28" cy="6" rx="5" ry="5" fill="url(#lich-orb)" stroke="#00e676" stroke-width="0.8"/>
+    <circle cx="26" cy="4" r="1.5" fill="#ccff90" stroke="none"/>
+    <path d="M28,6 Q22,8 18,8" stroke="#76ff03" stroke-width="1" fill="none"/>
+    <!-- Orb energy arcs between them and staff -->
+    <path d="M8,18 Q12,10 28,6" stroke="#76ff03" stroke-width="0.6" fill="none" stroke-dasharray="1,2"/>
+    <path d="M8,16 Q14,8 18,6" stroke="#b9f6ca" stroke-width="0.5" fill="none" stroke-dasharray="1,2"/>
 
-    <!-- Robe bottom -->
-    <rect x="4" y="70" width="80" height="14" fill="#2c1654"/>
-    <rect x="8" y="72" width="72" height="10" fill="#3a1d6e"/>
-    <rect x="6" y="80" width="76" height="3" fill="#be7bf0"/>
-    <rect x="8" y="81" width="72" height="1" fill="#eeccff"/>
-    <rect x="10" y="84" width="68" height="4" fill="#1a0a3a" opacity="0.5"/>
+    <!-- ROBES (flowing back dramatically) -->
+    <path d="M24,44 Q18,54 16,70 Q20,80 30,82 Q44,84 58,82 Q68,80 72,70 Q70,54 64,44Z" fill="url(#lich-robe)"/>
+    <!-- Tattered hem wisps (more dramatic) -->
+    <path d="M16,70 Q18,66 20,70 Q22,64 24,70 Q26,66 28,70 Q30,64 32,70" stroke="url(#lich-wisp)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M56,70 Q58,66 60,70 Q62,64 64,70 Q66,66 68,70 Q70,64 72,70" stroke="url(#lich-wisp)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M26,46 Q22,58 24,70 Q32,74 44,72 Q50,68 48,58 Q42,46 32,46Z" fill="url(#lich-robe-hi)" stroke="none"/>
+    <path d="M26,48 Q30,46 36,48 Q40,50 44,48 Q48,46 52,48 Q58,50 62,48" stroke="#7b1fa2" stroke-width="1" fill="none"/>
+    <path d="M24,56 Q30,54 36,56 Q40,58 44,56 Q48,54 52,56 Q58,58 64,56" stroke="#7b1fa2" stroke-width="0.8" fill="none"/>
+
+    <!-- Left arm (casting forward, raised) -->
+    <path d="M24,44 Q14,36 10,24" stroke="#4a148c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M24,44 Q14,36 10,24" stroke="#e0e0e0" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M8,22 Q6,18 8,22 Q12,24 16,22 Q18,18 16,22 Q12,26 8,22Z" fill="url(#lich-skull)" stroke="#757575" stroke-width="0.8"/>
+    <!-- Finger rays of spell -->
+    <path d="M8,22 L4,18 M10,20 L8,16 M13,20 L12,16 M16,22 L18,18" stroke="#76ff03" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+    <!-- Right arm (reaching out, channeling) -->
+    <path d="M64,44 Q76,40 82,30" stroke="#4a148c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M64,44 Q76,40 82,30" stroke="#e0e0e0" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M80,28 Q82,24 84,28 Q82,32 80,30 Q78,26 80,28Z" fill="url(#lich-skull)" stroke="#757575" stroke-width="0.8"/>
+    <path d="M80,28 L82,24 M82,30 L84,26 M84,28 L86,24" stroke="#76ff03" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+    <!-- Robe body upper -->
+    <path d="M24,32 Q22,38 24,44 Q34,50 44,50 Q54,50 64,44 Q66,38 64,32 Q54,26 44,26 Q34,26 24,32Z" fill="url(#lich-robe)"/>
+    <path d="M26,34 Q30,32 36,34 Q40,36 44,34 Q48,32 52,34 Q58,36 62,34" stroke="#7b1fa2" stroke-width="0.8" fill="none"/>
+
+    <!-- Neck -->
+    <path d="M38,24 Q40,26 44,26 Q48,26 50,24 Q48,20 44,20 Q40,20 38,24Z" fill="url(#lich-skull)" stroke="#9e9e9e" stroke-width="0.8"/>
+
+    <!-- SKULL HEAD -->
+    <ellipse cx="44" cy="14" rx="20" ry="18" fill="url(#lich-skull)"/>
+    <ellipse cx="38" cy="8" rx="9" ry="7" fill="url(#lich-skull-hi)" stroke="none"/>
+    <path d="M24,18 Q28,22 32,20" stroke="#bdbdbd" stroke-width="1" fill="none"/>
+    <path d="M64,18 Q60,22 56,20" stroke="#bdbdbd" stroke-width="1" fill="none"/>
+    <path d="M40,4 Q42,8 40,12 Q42,14 44,12 Q46,14 48,12 Q46,8 48,4" stroke="#9e9e9e" stroke-width="0.8" fill="none"/>
+    <path d="M41,18 L43,22 L47,22 L49,18 L44,16Z" fill="#424242" stroke="#1a1a2e" stroke-width="0.5"/>
+    <path d="M28,26 Q36,28 44,28 Q52,28 60,26 Q58,32 44,34 Q30,32 28,26Z" fill="#424242" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M30,26 L30,30 M34,27 L34,31 M38,27 L38,32 M44,27 L44,32 M50,27 L50,32 M54,27 L54,31 M58,26 L58,30" stroke="#e0e0e0" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- HOLLOW EYES (blazing green for casting) -->
+    <ellipse cx="34" cy="14" rx="7" ry="6" fill="#0a0a0a"/>
+    <ellipse cx="54" cy="14" rx="7" ry="6" fill="#0a0a0a"/>
+    <ellipse cx="34" cy="14" rx="10" ry="9" fill="url(#lich-orb-glow)" stroke="none" opacity="1"/>
+    <ellipse cx="54" cy="14" rx="10" ry="9" fill="url(#lich-orb-glow)" stroke="none" opacity="1"/>
+    <ellipse cx="34" cy="14" rx="5" ry="4.5" fill="url(#lich-eye)"/>
+    <ellipse cx="54" cy="14" rx="5" ry="4.5" fill="url(#lich-eye)"/>
+    <circle cx="34" cy="13.5" r="2" fill="#1a2600"/>
+    <circle cx="33" cy="12.5" r="0.8" fill="#ccff90" stroke="none"/>
+    <circle cx="54" cy="13.5" r="2" fill="#1a2600"/>
+    <circle cx="53" cy="12.5" r="0.8" fill="#ccff90" stroke="none"/>
+    <!-- Eye power rays (casting state) -->
+    <path d="M26,12 L22,10 M26,14 L22,14 M27,16 L23,18" stroke="#76ff03" stroke-width="0.6" stroke-linecap="round" fill="none"/>
+    <path d="M62,12 L66,10 M62,14 L66,14 M61,16 L65,18" stroke="#76ff03" stroke-width="0.6" stroke-linecap="round" fill="none"/>
   </g>
 </svg>

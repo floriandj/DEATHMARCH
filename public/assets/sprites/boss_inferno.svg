@@ -1,143 +1,255 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
-  <!-- Frame 0: Inferno Titan - massive fiery golem -->
-  <g>
-    <!-- Flame crown -->
-    <rect x="20" y="0" width="6" height="10" fill="#ff6600"/>
-    <rect x="30" y="0" width="8" height="14" fill="#ff4400"/>
-    <rect x="31" y="0" width="6" height="8" fill="#ffaa00"/>
-    <rect x="42" y="0" width="8" height="12" fill="#ff6600"/>
-    <rect x="52" y="0" width="6" height="10" fill="#ff4400"/>
-    <rect x="53" y="0" width="4" height="6" fill="#ffaa00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Fire demon lava body -->
+    <linearGradient id="inferno-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff8a50"/>
+      <stop offset="50%" stop-color="#ff6f00"/>
+      <stop offset="100%" stop-color="#bf360c"/>
+    </linearGradient>
+    <linearGradient id="inferno-body-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <linearGradient id="inferno-body-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffcc80" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ff6f00" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Flame wings -->
+    <linearGradient id="inferno-wing" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#d84315"/>
+      <stop offset="40%" stop-color="#ff6f00"/>
+      <stop offset="80%" stop-color="#ffc107"/>
+      <stop offset="100%" stop-color="#ffeb3b"/>
+    </linearGradient>
+    <linearGradient id="inferno-wing2" x1="0" y1="1" x2="0.5" y2="0">
+      <stop offset="0%" stop-color="#bf360c" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#ff9800"/>
+      <stop offset="100%" stop-color="#fff176" stop-opacity="0.9"/>
+    </linearGradient>
+    <!-- Lava veins -->
+    <linearGradient id="inferno-vein" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffeb3b"/>
+      <stop offset="50%" stop-color="#ff6f00"/>
+      <stop offset="100%" stop-color="#d84315"/>
+    </linearGradient>
+    <!-- Eyes -->
+    <radialGradient id="inferno-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="30%" stop-color="#fff9c4"/>
+      <stop offset="100%" stop-color="#e65100"/>
+    </radialGradient>
+    <!-- Fire crown -->
+    <radialGradient id="inferno-flame-core" cx="0.5" cy="1" r="0.8">
+      <stop offset="0%" stop-color="#ffeb3b"/>
+      <stop offset="50%" stop-color="#ff6f00"/>
+      <stop offset="100%" stop-color="#bf360c" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Fire aura -->
+    <radialGradient id="inferno-aura" cx="0.5" cy="0.8" r="0.6">
+      <stop offset="0%" stop-color="#ff6f00" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#bf360c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
 
-    <!-- Head (angular, rocky) -->
-    <rect x="18" y="10" width="52" height="24" fill="#8b4513"/>
-    <rect x="20" y="12" width="48" height="20" fill="#a0522d"/>
-    <!-- Lava cracks -->
-    <rect x="24" y="14" width="2" height="8" fill="#ff4400"/>
-    <rect x="34" y="12" width="2" height="6" fill="#ff6600"/>
-    <rect x="50" y="14" width="2" height="10" fill="#ff4400"/>
-    <rect x="60" y="16" width="2" height="6" fill="#ff6600"/>
+  <!-- FRAME 0: WINGS PARTIALLY FOLDED -->
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Fire aura glow -->
+    <ellipse cx="44" cy="50" rx="44" ry="40" fill="url(#inferno-aura)" stroke="none"/>
 
-    <!-- Eyes (molten) -->
-    <rect x="24" y="20" width="14" height="8" fill="#111"/>
-    <rect x="50" y="20" width="14" height="8" fill="#111"/>
-    <rect x="26" y="21" width="10" height="6" fill="#ff6600"/>
-    <rect x="52" y="21" width="10" height="6" fill="#ff6600"/>
-    <rect x="30" y="22" width="4" height="4" fill="#ffee00"/>
-    <rect x="56" y="22" width="4" height="4" fill="#ffee00"/>
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="28" ry="4" fill="#000" opacity="0.2" stroke="none"/>
 
-    <!-- Jaw (wide, heavy) -->
-    <rect x="22" y="30" width="44" height="8" fill="#6b3410"/>
-    <rect x="26" y="31" width="36" height="4" fill="#ff2200"/>
-    <!-- Teeth (jagged) -->
-    <rect x="28" y="30" width="6" height="4" fill="#ddd"/>
-    <rect x="38" y="30" width="6" height="5" fill="#ddd"/>
-    <rect x="48" y="30" width="6" height="4" fill="#ddd"/>
-
-    <!-- Body (massive, armored) -->
-    <rect x="6" y="36" width="76" height="34" fill="#8b4513"/>
-    <rect x="10" y="38" width="68" height="30" fill="#a0522d"/>
-    <!-- Chest magma core -->
-    <rect x="26" y="42" width="36" height="20" fill="#cc2200"/>
-    <rect x="30" y="44" width="28" height="16" fill="#ff4400"/>
-    <rect x="34" y="46" width="20" height="12" fill="#ff8800"/>
-    <rect x="38" y="48" width="12" height="8" fill="#ffcc00"/>
-    <rect x="42" y="50" width="4" height="4" fill="#ffffff"/>
-
-    <!-- Shoulder plates -->
-    <rect x="0" y="34" width="14" height="14" fill="#6b3410"/>
-    <rect x="2" y="36" width="10" height="10" fill="#8b4513"/>
-    <rect x="74" y="34" width="14" height="14" fill="#6b3410"/>
-    <rect x="76" y="36" width="10" height="10" fill="#8b4513"/>
-    <!-- Lava veins on shoulders -->
-    <rect x="4" y="38" width="2" height="6" fill="#ff4400"/>
-    <rect x="80" y="38" width="2" height="6" fill="#ff4400"/>
-
-    <!-- Arms (thick, rocky) -->
-    <rect x="0" y="46" width="12" height="18" fill="#a0522d"/>
-    <rect x="2" y="48" width="8" height="14" fill="#8b4513"/>
-    <rect x="76" y="46" width="12" height="18" fill="#a0522d"/>
-    <rect x="78" y="48" width="8" height="14" fill="#8b4513"/>
-    <!-- Fists (glowing) -->
-    <rect x="0" y="62" width="14" height="12" fill="#6b3410"/>
-    <rect x="2" y="64" width="10" height="8" fill="#ff4400"/>
-    <rect x="74" y="62" width="14" height="12" fill="#6b3410"/>
-    <rect x="76" y="64" width="10" height="8" fill="#ff4400"/>
+    <!-- FLAME WINGS (partially folded) -->
+    <!-- Left wing -->
+    <path d="M18,36 Q4,24 2,14 Q8,18 14,22 Q6,10 10,4 Q16,12 18,22 Q12,6 18,2 Q22,12 20,26 Q26,16 28,12 Q30,22 24,32Z" fill="url(#inferno-wing)" stroke="#d84315" stroke-width="0.8"/>
+    <path d="M18,36 Q4,24 2,14" stroke="#ffeb3b" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <!-- Left wing secondary flames -->
+    <path d="M14,22 Q8,14 10,8 Q14,14 16,10 Q18,16 14,22Z" fill="url(#inferno-wing2)" stroke="none" opacity="0.8"/>
+    <!-- Right wing -->
+    <path d="M70,36 Q84,24 86,14 Q80,18 74,22 Q82,10 78,4 Q72,12 70,22 Q76,6 70,2 Q66,12 68,26 Q62,16 60,12 Q58,22 64,32Z" fill="url(#inferno-wing)" stroke="#d84315" stroke-width="0.8"/>
+    <path d="M70,36 Q84,24 86,14" stroke="#ffeb3b" stroke-width="0.6" fill="none" opacity="0.7"/>
+    <path d="M74,22 Q80,14 78,8 Q74,14 72,10 Q70,16 74,22Z" fill="url(#inferno-wing2)" stroke="none" opacity="0.8"/>
 
     <!-- Legs -->
-    <rect x="18" y="70" width="16" height="14" fill="#6b3410"/>
-    <rect x="20" y="72" width="12" height="10" fill="#8b4513"/>
-    <rect x="54" y="70" width="16" height="14" fill="#6b3410"/>
-    <rect x="56" y="72" width="12" height="10" fill="#8b4513"/>
-    <!-- Feet -->
-    <rect x="14" y="82" width="20" height="6" fill="#5a2d0c"/>
-    <rect x="54" y="82" width="20" height="6" fill="#5a2d0c"/>
+    <path d="M28,66 Q24,72 22,82 Q28,86 34,82 Q36,74 36,68Z" fill="url(#inferno-body-dark)"/>
+    <path d="M60,66 Q64,72 66,82 Q60,86 54,82 Q52,74 52,68Z" fill="url(#inferno-body-dark)"/>
+    <!-- Lava vein on legs -->
+    <path d="M26,68 Q28,72 26,78" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M62,68 Q60,72 62,78" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <!-- Clawed feet -->
+    <path d="M18,80 Q22,86 34,84 L32,80Z" fill="#212121" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M54,80 Q58,86 70,84 L68,80Z" fill="#212121" stroke="#1a1a2e" stroke-width="1"/>
+    <!-- Foot flames -->
+    <path d="M20,82 Q22,78 24,82 Q26,78 28,82" stroke="#ff6f00" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M58,82 Q60,78 62,82 Q64,78 66,82" stroke="#ff6f00" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+    <!-- Arms (at sides) -->
+    <path d="M16,40 Q10,54 8,66" stroke="#212121" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M16,40 Q10,54 8,66" stroke="#ff6f00" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Lava veins on left arm -->
+    <path d="M14,44 Q12,50 12,58" stroke="#ffeb3b" stroke-width="0.8" fill="none"/>
+    <!-- Left clawed hand -->
+    <path d="M4,64 Q2,68 4,72 Q8,76 14,74 Q18,70 16,66 Q12,62 8,64Z" fill="url(#inferno-body-dark)"/>
+    <path d="M4,66 L0,62 M8,64 L6,60 M12,64 L11,60 M16,66 L18,62" stroke="#ff6f00" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+
+    <!-- Right arm -->
+    <path d="M72,40 Q78,54 80,66" stroke="#212121" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M72,40 Q78,54 80,66" stroke="#ff6f00" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M74,44 Q76,50 76,58" stroke="#ffeb3b" stroke-width="0.8" fill="none"/>
+    <path d="M84,64 Q86,68 84,72 Q80,76 74,74 Q70,70 72,66 Q76,62 80,64Z" fill="url(#inferno-body-dark)"/>
+    <path d="M84,66 L88,62 M80,64 L82,60 M76,64 L77,60 M72,66 L70,62" stroke="#ff6f00" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+
+    <!-- BODY (dark with lava veins) -->
+    <path d="M18,36 Q14,44 14,60 Q16,70 28,72 Q44,74 60,72 Q72,70 74,60 Q74,44 70,36 Q60,30 44,30 Q28,30 18,36Z" fill="url(#inferno-body-dark)"/>
+    <!-- Body lava veins -->
+    <path d="M20,40 Q28,36 36,38 Q28,42 24,48" stroke="url(#inferno-vein)" stroke-width="1.2" fill="none"/>
+    <path d="M68,40 Q60,36 52,38 Q60,42 64,48" stroke="url(#inferno-vein)" stroke-width="1.2" fill="none"/>
+    <path d="M24,52 Q32,48 44,50 Q56,48 64,52" stroke="url(#inferno-vein)" stroke-width="1.2" fill="none"/>
+    <path d="M26,60 Q36,56 44,58 Q52,56 62,60" stroke="#ff6f00" stroke-width="1" fill="none"/>
+    <!-- Chest lava glow -->
+    <ellipse cx="44" cy="50" rx="12" ry="10" fill="url(#inferno-flame-core)" stroke="none"/>
+    <!-- Body highlight (hot spots) -->
+    <path d="M22,38 Q18,46 20,58 Q28,64 44,62 Q52,58 50,46 Q42,34 28,36Z" fill="url(#inferno-body-hi)" stroke="none"/>
+    <!-- Shoulder armor (dark) -->
+    <path d="M10,34 Q6,28 10,38 Q12,46 18,46 Q22,42 22,36 Q18,30 14,30Z" fill="#1a1a1a" stroke="#424242" stroke-width="1"/>
+    <path d="M8,30 Q6,26 9,24 M11,28 Q10,24 12,22" stroke="#ff6f00" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <path d="M78,34 Q82,28 78,38 Q76,46 70,46 Q66,42 66,36 Q70,30 74,30Z" fill="#1a1a1a" stroke="#424242" stroke-width="1"/>
+    <path d="M80,30 Q82,26 79,24 M77,28 Q78,24 76,22" stroke="#ff6f00" stroke-width="1" stroke-linecap="round" fill="none"/>
+
+    <!-- Neck -->
+    <path d="M34,28 Q38,30 44,30 Q50,30 54,28 Q52,24 44,24 Q36,24 34,28Z" fill="url(#inferno-body-dark)"/>
+    <path d="M36,28 Q40,26 48,28" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+
+    <!-- HEAD -->
+    <ellipse cx="44" cy="18" rx="22" ry="18" fill="url(#inferno-body-dark)"/>
+    <!-- Head lava veins -->
+    <path d="M24,16 Q30,12 36,16" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M52,16 Q58,12 64,16" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M34,22 Q40,18 48,22" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <!-- Head highlight -->
+    <ellipse cx="36" cy="12" rx="10" ry="7" fill="#ff6f00" opacity="0.15" stroke="none"/>
+
+    <!-- FIRE CROWN -->
+    <path d="M28,6 Q32,0 36,6 Q38,2 42,6 Q44,0 46,6 Q50,2 52,6 Q56,0 60,6" fill="url(#inferno-flame-core)" stroke="#ff6f00" stroke-width="0.8" stroke-linecap="round"/>
+    <path d="M30,8 Q32,4 34,8 M40,7 Q42,3 44,7 M52,7 Q54,4 56,8" fill="url(#inferno-wing)" stroke="none"/>
+
+    <!-- MOLTEN EYES -->
+    <ellipse cx="34" cy="18" rx="7" ry="6" fill="#1a0000"/>
+    <ellipse cx="54" cy="18" rx="7" ry="6" fill="#1a0000"/>
+    <!-- Eye flame glow -->
+    <ellipse cx="34" cy="18" rx="7" ry="6" fill="url(#inferno-aura)" stroke="none" opacity="0.8"/>
+    <ellipse cx="54" cy="18" rx="7" ry="6" fill="url(#inferno-aura)" stroke="none" opacity="0.8"/>
+    <ellipse cx="34" cy="18" rx="5" ry="4" fill="url(#inferno-eye)"/>
+    <ellipse cx="54" cy="18" rx="5" ry="4" fill="url(#inferno-eye)"/>
+    <circle cx="35" cy="17.5" r="2" fill="#1a0000"/>
+    <circle cx="34" cy="16.5" r="0.8" fill="#fff" stroke="none"/>
+    <circle cx="55" cy="17.5" r="2" fill="#1a0000"/>
+    <circle cx="54" cy="16.5" r="0.8" fill="#fff" stroke="none"/>
+    <!-- Brow horns -->
+    <path d="M28,14 Q26,8 28,12" stroke="#1a1a2e" stroke-width="1.5" fill="none"/>
+    <path d="M60,14 Q62,8 60,12" stroke="#1a1a2e" stroke-width="1.5" fill="none"/>
+
+    <!-- Fanged mouth -->
+    <path d="M30,24 Q44,28 58,24 Q56,30 44,32 Q32,30 30,24Z" fill="#1a0000"/>
+    <path d="M33,24 L32,28 M37,25 L36,30 M41,25 L41,30 M47,25 L47,30 M51,25 L52,30 M55,24 L56,28" stroke="#ff8a50" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Flame breath -->
+    <path d="M36,30 Q44,34 52,30" stroke="#ff6f00" stroke-width="1" fill="none"/>
+    <ellipse cx="44" cy="33" rx="6" ry="2" fill="url(#inferno-flame-core)" stroke="none"/>
   </g>
 
-  <!-- Frame 1 (arms raised, flames higher) -->
-  <g transform="translate(88,0)">
-    <!-- Flame crown (taller) -->
-    <rect x="18" y="0" width="6" height="14" fill="#ff6600"/>
-    <rect x="28" y="0" width="8" height="16" fill="#ff4400"/>
-    <rect x="29" y="0" width="6" height="10" fill="#ffaa00"/>
-    <rect x="40" y="0" width="10" height="14" fill="#ff6600"/>
-    <rect x="41" y="0" width="8" height="8" fill="#ffcc00"/>
-    <rect x="52" y="0" width="6" height="12" fill="#ff4400"/>
+  <!-- FRAME 1: WINGS SPREAD WIDE, FLAMES INTENSIFIED -->
+  <g transform="translate(88, 0)" stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Fire aura (more intense) -->
+    <ellipse cx="44" cy="50" rx="44" ry="44" fill="url(#inferno-aura)" stroke="none"/>
 
-    <!-- Head -->
-    <rect x="18" y="12" width="52" height="22" fill="#8b4513"/>
-    <rect x="20" y="14" width="48" height="18" fill="#a0522d"/>
-    <rect x="24" y="14" width="2" height="8" fill="#ff4400"/>
-    <rect x="50" y="14" width="2" height="10" fill="#ff4400"/>
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="28" ry="4" fill="#000" opacity="0.2" stroke="none"/>
 
-    <!-- Eyes (brighter) -->
-    <rect x="24" y="20" width="14" height="8" fill="#111"/>
-    <rect x="50" y="20" width="14" height="8" fill="#111"/>
-    <rect x="26" y="21" width="10" height="6" fill="#ff8800"/>
-    <rect x="52" y="21" width="10" height="6" fill="#ff8800"/>
-    <rect x="30" y="22" width="4" height="4" fill="#ffff00"/>
-    <rect x="56" y="22" width="4" height="4" fill="#ffff00"/>
+    <!-- WINGS SPREAD WIDE -->
+    <!-- Left wing spread -->
+    <path d="M18,36 Q0,18 -2,4 Q6,12 12,16 Q2,4 6,-2 Q14,8 16,20 Q10,2 18,-2 Q24,10 22,24 Q30,8 34,4 Q36,18 26,32Z" fill="url(#inferno-wing)" stroke="#d84315" stroke-width="0.8"/>
+    <path d="M18,36 Q0,18 -2,4" stroke="#ffeb3b" stroke-width="0.8" fill="none" opacity="0.8"/>
+    <path d="M12,16 Q4,8 6,2 Q12,10 14,6 Q16,14 12,16Z" fill="url(#inferno-wing2)" stroke="none" opacity="0.9"/>
+    <!-- Extra flame wisps left wing -->
+    <path d="M4,8 Q6,4 8,8 Q10,4 12,8" stroke="#ffeb3b" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M8,2 Q10,-2 12,2" stroke="#fff176" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.7"/>
 
-    <!-- Jaw -->
-    <rect x="22" y="30" width="44" height="8" fill="#6b3410"/>
-    <rect x="26" y="31" width="36" height="5" fill="#ff2200"/>
-    <rect x="28" y="30" width="6" height="4" fill="#ddd"/>
-    <rect x="38" y="30" width="6" height="5" fill="#ddd"/>
-    <rect x="48" y="30" width="6" height="4" fill="#ddd"/>
-
-    <!-- Body -->
-    <rect x="8" y="38" width="72" height="32" fill="#8b4513"/>
-    <rect x="12" y="40" width="64" height="28" fill="#a0522d"/>
-    <!-- Core (pulsing brighter) -->
-    <rect x="26" y="44" width="36" height="18" fill="#cc2200"/>
-    <rect x="30" y="46" width="28" height="14" fill="#ff4400"/>
-    <rect x="32" y="48" width="24" height="10" fill="#ff8800"/>
-    <rect x="36" y="50" width="16" height="6" fill="#ffcc00"/>
-    <rect x="40" y="52" width="8" height="2" fill="#ffffff"/>
-
-    <!-- Shoulders -->
-    <rect x="0" y="36" width="14" height="14" fill="#6b3410"/>
-    <rect x="2" y="38" width="10" height="10" fill="#8b4513"/>
-    <rect x="74" y="36" width="14" height="14" fill="#6b3410"/>
-    <rect x="76" y="38" width="10" height="10" fill="#8b4513"/>
-
-    <!-- Arms (raised) -->
-    <rect x="0" y="42" width="10" height="16" fill="#a0522d"/>
-    <rect x="2" y="44" width="8" height="12" fill="#8b4513"/>
-    <rect x="78" y="44" width="10" height="18" fill="#a0522d"/>
-    <rect x="80" y="46" width="8" height="14" fill="#8b4513"/>
-    <!-- Fists -->
-    <rect x="0" y="56" width="14" height="12" fill="#6b3410"/>
-    <rect x="2" y="58" width="10" height="8" fill="#ff4400"/>
-    <rect x="74" y="60" width="14" height="12" fill="#6b3410"/>
-    <rect x="76" y="62" width="10" height="8" fill="#ff4400"/>
+    <!-- Right wing spread -->
+    <path d="M70,36 Q88,18 90,4 Q82,12 76,16 Q86,4 82,-2 Q74,8 72,20 Q78,2 70,-2 Q64,10 66,24 Q58,8 54,4 Q52,18 62,32Z" fill="url(#inferno-wing)" stroke="#d84315" stroke-width="0.8"/>
+    <path d="M70,36 Q88,18 90,4" stroke="#ffeb3b" stroke-width="0.8" fill="none" opacity="0.8"/>
+    <path d="M76,16 Q84,8 82,2 Q76,10 74,6 Q72,14 76,16Z" fill="url(#inferno-wing2)" stroke="none" opacity="0.9"/>
+    <path d="M84,8 Q82,4 80,8 Q78,4 76,8" stroke="#ffeb3b" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M80,2 Q78,-2 76,2" stroke="#fff176" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.7"/>
 
     <!-- Legs -->
-    <rect x="16" y="70" width="16" height="14" fill="#6b3410"/>
-    <rect x="18" y="72" width="12" height="10" fill="#8b4513"/>
-    <rect x="56" y="71" width="16" height="14" fill="#6b3410"/>
-    <rect x="58" y="73" width="12" height="10" fill="#8b4513"/>
-    <rect x="12" y="82" width="20" height="6" fill="#5a2d0c"/>
-    <rect x="56" y="83" width="20" height="5" fill="#5a2d0c"/>
+    <path d="M28,66 Q24,72 22,82 Q28,86 34,82 Q36,74 36,68Z" fill="url(#inferno-body-dark)"/>
+    <path d="M60,66 Q64,72 66,82 Q60,86 54,82 Q52,74 52,68Z" fill="url(#inferno-body-dark)"/>
+    <path d="M26,68 Q28,72 26,78" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M62,68 Q60,72 62,78" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M18,80 Q22,86 34,84 L32,80Z" fill="#212121" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M54,80 Q58,86 70,84 L68,80Z" fill="#212121" stroke="#1a1a2e" stroke-width="1"/>
+    <!-- More foot flames -->
+    <path d="M18,80 Q20,76 22,80 Q24,76 26,80 Q28,76 30,80" stroke="#ff6f00" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M56,80 Q58,76 60,80 Q62,76 64,80 Q66,76 68,80" stroke="#ff6f00" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+    <!-- Arms raised menacingly -->
+    <path d="M16,40 Q8,46 4,36" stroke="#212121" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M16,40 Q8,46 4,36" stroke="#ff6f00" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M14,44 Q10,42 8,38" stroke="#ffeb3b" stroke-width="0.8" fill="none"/>
+    <path d="M0,34 Q-2,30 2,32 Q4,36 6,34 Q4,30 8,32 Q8,36 10,34" fill="url(#inferno-body-dark)" stroke="#ff6f00" stroke-width="0.8"/>
+
+    <path d="M72,40 Q80,46 84,36" stroke="#212121" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M72,40 Q80,46 84,36" stroke="#ff6f00" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M74,44 Q78,42 80,38" stroke="#ffeb3b" stroke-width="0.8" fill="none"/>
+    <path d="M88,34 Q90,30 86,32 Q84,36 82,34 Q84,30 80,32 Q80,36 78,34" fill="url(#inferno-body-dark)" stroke="#ff6f00" stroke-width="0.8"/>
+
+    <!-- Body -->
+    <path d="M18,36 Q14,44 14,60 Q16,70 28,72 Q44,74 60,72 Q72,70 74,60 Q74,44 70,36 Q60,30 44,30 Q28,30 18,36Z" fill="url(#inferno-body-dark)"/>
+    <path d="M20,40 Q28,36 36,38 Q28,42 24,48" stroke="url(#inferno-vein)" stroke-width="1.2" fill="none"/>
+    <path d="M68,40 Q60,36 52,38 Q60,42 64,48" stroke="url(#inferno-vein)" stroke-width="1.2" fill="none"/>
+    <path d="M24,52 Q32,48 44,50 Q56,48 64,52" stroke="url(#inferno-vein)" stroke-width="1.2" fill="none"/>
+    <path d="M26,60 Q36,56 44,58 Q52,56 62,60" stroke="#ff6f00" stroke-width="1" fill="none"/>
+    <ellipse cx="44" cy="50" rx="14" ry="12" fill="url(#inferno-flame-core)" stroke="none"/>
+    <path d="M22,38 Q18,46 20,58 Q28,64 44,62 Q52,58 50,46 Q42,34 28,36Z" fill="url(#inferno-body-hi)" stroke="none"/>
+    <path d="M10,34 Q6,28 10,38 Q12,46 18,46 Q22,42 22,36 Q18,30 14,30Z" fill="#1a1a1a" stroke="#424242" stroke-width="1"/>
+    <path d="M78,34 Q82,28 78,38 Q76,46 70,46 Q66,42 66,36 Q70,30 74,30Z" fill="#1a1a1a" stroke="#424242" stroke-width="1"/>
+
+    <!-- Neck -->
+    <path d="M34,28 Q38,30 44,30 Q50,30 54,28 Q52,24 44,24 Q36,24 34,28Z" fill="url(#inferno-body-dark)"/>
+
+    <!-- HEAD -->
+    <ellipse cx="44" cy="18" rx="22" ry="18" fill="url(#inferno-body-dark)"/>
+    <path d="M24,16 Q30,12 36,16" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M52,16 Q58,12 64,16" stroke="url(#inferno-vein)" stroke-width="1" fill="none"/>
+    <path d="M34,22 Q40,18 48,22" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <ellipse cx="36" cy="12" rx="10" ry="7" fill="#ff6f00" opacity="0.2" stroke="none"/>
+
+    <!-- FIRE CROWN (more intense) -->
+    <path d="M26,6 Q30,-2 34,6 Q36,0 40,6 Q42,-4 44,6 Q46,0 50,6 Q54,-2 58,6 Q60,0 62,6" fill="url(#inferno-flame-core)" stroke="#ff6f00" stroke-width="0.8" stroke-linecap="round"/>
+    <path d="M28,8 Q30,2 32,8 M38,7 Q40,1 42,7 M46,7 Q48,1 50,7 M56,8 Q58,2 60,8" fill="url(#inferno-wing)" stroke="none"/>
+    <!-- Crown flame wisps -->
+    <path d="M32,4 Q34,0 36,4 M44,2 Q46,-2 48,2 M56,4 Q58,0 60,4" stroke="#fff176" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.9"/>
+
+    <!-- EYES (blazing) -->
+    <ellipse cx="34" cy="18" rx="7" ry="6" fill="#1a0000"/>
+    <ellipse cx="54" cy="18" rx="7" ry="6" fill="#1a0000"/>
+    <ellipse cx="34" cy="18" rx="8" ry="7" fill="url(#inferno-aura)" stroke="none" opacity="1"/>
+    <ellipse cx="54" cy="18" rx="8" ry="7" fill="url(#inferno-aura)" stroke="none" opacity="1"/>
+    <ellipse cx="34" cy="18" rx="5" ry="4" fill="url(#inferno-eye)"/>
+    <ellipse cx="54" cy="18" rx="5" ry="4" fill="url(#inferno-eye)"/>
+    <circle cx="35" cy="17.5" r="2" fill="#1a0000"/>
+    <circle cx="34" cy="16.5" r="0.8" fill="#fff" stroke="none"/>
+    <circle cx="55" cy="17.5" r="2" fill="#1a0000"/>
+    <circle cx="54" cy="16.5" r="0.8" fill="#fff" stroke="none"/>
+    <path d="M28,14 Q26,8 28,12" stroke="#1a1a2e" stroke-width="1.5" fill="none"/>
+    <path d="M60,14 Q62,8 60,12" stroke="#1a1a2e" stroke-width="1.5" fill="none"/>
+
+    <!-- Fanged mouth (open, breathing fire) -->
+    <path d="M28,24 Q44,30 60,24 Q58,34 44,36 Q30,34 28,24Z" fill="#1a0000"/>
+    <path d="M31,24 L30,30 M36,25 L35,32 M40,26 L40,32 M44,26 L44,32 M48,26 L48,32 M52,25 L53,32 M57,24 L58,30" stroke="#ff8a50" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Fire breath -->
+    <path d="M34,32 Q44,38 54,32" stroke="#ff6f00" stroke-width="2" fill="none"/>
+    <ellipse cx="44" cy="36" rx="10" ry="4" fill="url(#inferno-flame-core)" stroke="none"/>
+    <path d="M38,38 Q40,34 42,38 Q44,34 46,38 Q48,34 50,38" stroke="#ffeb3b" stroke-width="0.8" stroke-linecap="round" fill="none"/>
   </g>
 </svg>

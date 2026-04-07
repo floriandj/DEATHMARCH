@@ -1,135 +1,222 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
-  <!-- Frame 0: Frost Wyrm - icy serpentine dragon -->
-  <g>
-    <!-- Ice horns -->
-    <rect x="20" y="0" width="4" height="12" fill="#88ddff"/>
-    <rect x="21" y="0" width="2" height="6" fill="#ccffff"/>
-    <rect x="34" y="0" width="6" height="8" fill="#88ddff"/>
-    <rect x="48" y="0" width="6" height="10" fill="#88ddff"/>
-    <rect x="60" y="0" width="4" height="12" fill="#88ddff"/>
-    <rect x="61" y="0" width="2" height="6" fill="#ccffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="frost-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b3e5fc"/>
+      <stop offset="50%" stop-color="#4fc3f7"/>
+      <stop offset="100%" stop-color="#01579b"/>
+    </linearGradient>
+    <linearGradient id="frost-body-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#4fc3f7" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="frost-crystal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e1f5fe"/>
+      <stop offset="50%" stop-color="#81d4fa"/>
+      <stop offset="100%" stop-color="#0277bd"/>
+    </linearGradient>
+    <linearGradient id="frost-crystal2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#4fc3f7" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="frost-crown" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#81d4fa"/>
+      <stop offset="60%" stop-color="#e1f5fe"/>
+      <stop offset="100%" stop-color="#fff"/>
+    </linearGradient>
+    <radialGradient id="frost-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="40%" stop-color="#b3e5fc"/>
+      <stop offset="100%" stop-color="#0288d1"/>
+    </radialGradient>
+    <radialGradient id="frost-aura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#e1f5fe" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="#81d4fa" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0288d1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="frost-breath" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#b3e5fc" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
 
-    <!-- Head (dragon-like, angular) -->
-    <rect x="16" y="8" width="56" height="22" fill="#4488bb"/>
-    <rect x="18" y="10" width="52" height="18" fill="#5599cc"/>
-    <!-- Ice scales -->
-    <rect x="22" y="10" width="4" height="4" fill="#88ccee"/>
-    <rect x="30" y="10" width="4" height="4" fill="#88ccee"/>
-    <rect x="50" y="10" width="4" height="4" fill="#88ccee"/>
-    <rect x="58" y="10" width="4" height="4" fill="#88ccee"/>
-
-    <!-- Eyes (cold blue glow) -->
-    <rect x="22" y="16" width="14" height="8" fill="#112233"/>
-    <rect x="52" y="16" width="14" height="8" fill="#112233"/>
-    <rect x="24" y="17" width="10" height="6" fill="#00aaff"/>
-    <rect x="54" y="17" width="10" height="6" fill="#00aaff"/>
-    <rect x="28" y="18" width="4" height="4" fill="#ccffff"/>
-    <rect x="58" y="18" width="4" height="4" fill="#ccffff"/>
-
-    <!-- Snout -->
-    <rect x="30" y="26" width="28" height="8" fill="#4488bb"/>
-    <rect x="32" y="27" width="24" height="6" fill="#5599cc"/>
-    <!-- Teeth (icicle-like) -->
-    <rect x="32" y="26" width="3" height="6" fill="#eeffff"/>
-    <rect x="38" y="26" width="3" height="7" fill="#eeffff"/>
-    <rect x="44" y="26" width="3" height="6" fill="#eeffff"/>
-    <rect x="50" y="26" width="3" height="7" fill="#eeffff"/>
-
-    <!-- Neck/Body (serpentine, scaled) -->
-    <rect x="10" y="32" width="68" height="32" fill="#4488bb"/>
-    <rect x="14" y="34" width="60" height="28" fill="#5599cc"/>
-    <!-- Frost core -->
-    <rect x="26" y="38" width="36" height="20" fill="#2266aa"/>
-    <rect x="30" y="40" width="28" height="16" fill="#3388cc"/>
-    <rect x="34" y="44" width="20" height="8" fill="#88ddff"/>
-    <rect x="38" y="46" width="12" height="4" fill="#ccffff"/>
-    <!-- Scale pattern -->
-    <rect x="16" y="36" width="6" height="6" fill="#6699bb"/>
-    <rect x="16" y="46" width="6" height="6" fill="#6699bb"/>
-    <rect x="66" y="36" width="6" height="6" fill="#6699bb"/>
-    <rect x="66" y="46" width="6" height="6" fill="#6699bb"/>
-
-    <!-- Wings (folded, icy) -->
-    <rect x="0" y="30" width="16" height="20" fill="#3377aa"/>
-    <rect x="2" y="32" width="12" height="16" fill="#4488bb"/>
-    <rect x="4" y="34" width="2" height="12" fill="#88ddff"/>
-    <rect x="72" y="30" width="16" height="20" fill="#3377aa"/>
-    <rect x="74" y="32" width="12" height="16" fill="#4488bb"/>
-    <rect x="82" y="34" width="2" height="12" fill="#88ddff"/>
-
-    <!-- Tail/Legs -->
-    <rect x="0" y="48" width="10" height="14" fill="#4488bb"/>
-    <rect x="78" y="48" width="10" height="14" fill="#4488bb"/>
-    <rect x="18" y="64" width="14" height="16" fill="#3377aa"/>
-    <rect x="20" y="66" width="10" height="12" fill="#4488bb"/>
-    <rect x="56" y="64" width="14" height="16" fill="#3377aa"/>
-    <rect x="58" y="66" width="10" height="12" fill="#4488bb"/>
-    <!-- Claws -->
-    <rect x="16" y="78" width="16" height="6" fill="#2266aa"/>
-    <rect x="16" y="82" width="4" height="4" fill="#88ddff"/>
-    <rect x="24" y="82" width="4" height="4" fill="#88ddff"/>
-    <rect x="54" y="78" width="16" height="6" fill="#2266aa"/>
-    <rect x="58" y="82" width="4" height="4" fill="#88ddff"/>
-    <rect x="66" y="82" width="4" height="4" fill="#88ddff"/>
-  </g>
-
-  <!-- Frame 1 (wings slightly spread, mouth open) -->
-  <g transform="translate(88,0)">
-    <!-- Ice horns -->
-    <rect x="20" y="0" width="4" height="14" fill="#88ddff"/>
-    <rect x="21" y="0" width="2" height="8" fill="#ccffff"/>
-    <rect x="34" y="0" width="6" height="10" fill="#88ddff"/>
-    <rect x="48" y="0" width="6" height="12" fill="#88ddff"/>
-    <rect x="60" y="0" width="4" height="14" fill="#88ddff"/>
-    <rect x="61" y="0" width="2" height="8" fill="#ccffff"/>
-
-    <!-- Head -->
-    <rect x="16" y="10" width="56" height="22" fill="#4488bb"/>
-    <rect x="18" y="12" width="52" height="18" fill="#5599cc"/>
-    <rect x="22" y="12" width="4" height="4" fill="#88ccee"/>
-    <rect x="58" y="12" width="4" height="4" fill="#88ccee"/>
-
-    <!-- Eyes (brighter) -->
-    <rect x="22" y="18" width="14" height="6" fill="#112233"/>
-    <rect x="52" y="18" width="14" height="6" fill="#112233"/>
-    <rect x="24" y="19" width="10" height="4" fill="#44ccff"/>
-    <rect x="54" y="19" width="10" height="4" fill="#44ccff"/>
-    <rect x="28" y="19" width="4" height="4" fill="#eeffff"/>
-    <rect x="58" y="19" width="4" height="4" fill="#eeffff"/>
-
-    <!-- Snout (open wider) -->
-    <rect x="28" y="26" width="32" height="10" fill="#4488bb"/>
-    <rect x="30" y="27" width="28" height="8" fill="#223355"/>
-    <rect x="30" y="26" width="3" height="5" fill="#eeffff"/>
-    <rect x="36" y="26" width="3" height="6" fill="#eeffff"/>
-    <rect x="42" y="26" width="3" height="5" fill="#eeffff"/>
-    <rect x="48" y="26" width="3" height="6" fill="#eeffff"/>
-    <rect x="54" y="26" width="3" height="5" fill="#eeffff"/>
-
-    <!-- Body -->
-    <rect x="10" y="34" width="68" height="30" fill="#4488bb"/>
-    <rect x="14" y="36" width="60" height="26" fill="#5599cc"/>
-    <rect x="26" y="40" width="36" height="18" fill="#2266aa"/>
-    <rect x="30" y="42" width="28" height="14" fill="#3388cc"/>
-    <rect x="32" y="44" width="24" height="10" fill="#88ddff"/>
-    <rect x="36" y="46" width="16" height="6" fill="#ccffff"/>
-
-    <!-- Wings (more spread) -->
-    <rect x="0" y="28" width="18" height="22" fill="#3377aa"/>
-    <rect x="2" y="30" width="14" height="18" fill="#4488bb"/>
-    <rect x="4" y="32" width="2" height="14" fill="#88ddff"/>
-    <rect x="8" y="34" width="2" height="10" fill="#88ddff"/>
-    <rect x="70" y="28" width="18" height="22" fill="#3377aa"/>
-    <rect x="72" y="30" width="14" height="18" fill="#4488bb"/>
-    <rect x="82" y="32" width="2" height="14" fill="#88ddff"/>
-    <rect x="78" y="34" width="2" height="10" fill="#88ddff"/>
+  <!-- FRAME 0: STANDING -->
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Frost aura -->
+    <ellipse cx="44" cy="44" rx="38" ry="36" fill="url(#frost-aura)" stroke="none"/>
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="26" ry="4" fill="#000" opacity="0.2" stroke="none"/>
 
     <!-- Legs -->
-    <rect x="16" y="64" width="14" height="16" fill="#3377aa"/>
-    <rect x="18" y="66" width="10" height="12" fill="#4488bb"/>
-    <rect x="58" y="65" width="14" height="16" fill="#3377aa"/>
-    <rect x="60" y="67" width="10" height="12" fill="#4488bb"/>
-    <rect x="14" y="78" width="16" height="6" fill="#2266aa"/>
-    <rect x="58" y="79" width="16" height="6" fill="#2266aa"/>
+    <path d="M28,64 Q24,70 22,80 Q28,84 34,80 Q36,72 36,66Z" fill="url(#frost-body)" stroke="#0277bd" stroke-width="1.2"/>
+    <path d="M60,64 Q64,70 66,80 Q60,84 54,80 Q52,72 52,66Z" fill="url(#frost-body)" stroke="#0277bd" stroke-width="1.2"/>
+    <!-- Crystal leg facets -->
+    <path d="M24,70 L28,68 L30,74 L26,76Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M62,70 L60,68 L58,74 L62,76Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <!-- Ice boots -->
+    <path d="M18,78 Q26,84 36,82 Q38,78 34,76Z" fill="#0277bd" stroke="#01579b" stroke-width="1"/>
+    <path d="M54,76 Q58,80 70,82 Q72,78 68,76Z" fill="#0277bd" stroke="#01579b" stroke-width="1"/>
+
+    <!-- Left Arm down -->
+    <path d="M16,38 Q10,50 8,64" stroke="#01579b" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M16,38 Q10,50 8,64" stroke="#4fc3f7" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Left ice gauntlet -->
+    <path d="M4,62 Q2,66 4,70 Q8,74 14,72 Q18,68 16,64 Q12,60 8,62Z" fill="url(#frost-crystal)"/>
+    <path d="M4,64 L2,61 M7,62 L6,59 M11,61 L11,58" stroke="#e1f5fe" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+
+    <!-- Right Arm down -->
+    <path d="M72,38 Q78,50 80,64" stroke="#01579b" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M72,38 Q78,50 80,64" stroke="#4fc3f7" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Right ice gauntlet -->
+    <path d="M84,62 Q86,66 84,70 Q80,74 74,72 Q70,68 72,64 Q76,60 80,62Z" fill="url(#frost-crystal)"/>
+    <path d="M84,64 L86,61 M81,62 L82,59 M77,61 L77,58" stroke="#e1f5fe" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+
+    <!-- Body -->
+    <path d="M18,34 Q14,42 14,58 Q16,68 28,70 Q44,72 60,70 Q72,68 74,58 Q74,42 70,34 Q60,28 44,28 Q28,28 18,34Z" fill="url(#frost-body)"/>
+    <!-- Body crystal facets -->
+    <path d="M20,36 L30,32 L30,44 L20,48Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5" stroke-linejoin="round"/>
+    <path d="M68,36 L58,32 L58,44 L68,48Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5" stroke-linejoin="round"/>
+    <path d="M28,48 L40,44 L40,58 L28,60Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5" stroke-linejoin="round"/>
+    <path d="M60,48 L48,44 L48,58 L60,60Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5" stroke-linejoin="round"/>
+    <!-- Body highlight -->
+    <path d="M22,36 Q18,44 20,56 Q28,62 44,60 Q50,54 46,42 Q38,32 26,34Z" fill="url(#frost-body-hi)" stroke="none"/>
+
+    <!-- Shoulder crystal armor -->
+    <path d="M8,32 Q4,26 8,36 Q10,44 16,44 Q20,40 20,34 Q16,28 12,28Z" fill="url(#frost-crystal)"/>
+    <path d="M6,28 L4,22 M9,26 L8,20 M12,25 L13,19" stroke="#e1f5fe" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M80,32 Q84,26 80,36 Q78,44 72,44 Q68,40 68,34 Q72,28 76,28Z" fill="url(#frost-crystal)"/>
+    <path d="M82,28 L84,22 M79,26 L80,20 M76,25 L75,19" stroke="#e1f5fe" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Neck -->
+    <path d="M34,26 Q38,28 44,28 Q50,28 54,26 Q52,22 44,22 Q36,22 34,26Z" fill="url(#frost-body)"/>
+
+    <!-- HEAD -->
+    <ellipse cx="44" cy="18" rx="22" ry="18" fill="url(#frost-body)"/>
+    <!-- Head facet shards -->
+    <path d="M24,16 L32,10 L36,18Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M64,16 L56,10 L52,18Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M38,26 L44,22 L50,26Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <ellipse cx="36" cy="12" rx="10" ry="7" fill="#fff" opacity="0.25" stroke="none"/>
+
+    <!-- Eyes -->
+    <ellipse cx="34" cy="18" rx="6" ry="5" fill="#003060"/>
+    <ellipse cx="54" cy="18" rx="6" ry="5" fill="#003060"/>
+    <ellipse cx="34" cy="18" rx="6" ry="5" fill="url(#frost-breath)" stroke="none" opacity="0.5"/>
+    <ellipse cx="54" cy="18" rx="6" ry="5" fill="url(#frost-breath)" stroke="none" opacity="0.5"/>
+    <ellipse cx="34" cy="18" rx="4" ry="3.5" fill="url(#frost-eye)"/>
+    <ellipse cx="54" cy="18" rx="4" ry="3.5" fill="url(#frost-eye)"/>
+    <circle cx="34" cy="17.5" r="1.5" fill="#003366"/>
+    <circle cx="33" cy="17" r="0.7" fill="#fff" stroke="none"/>
+    <circle cx="54" cy="17.5" r="1.5" fill="#003366"/>
+    <circle cx="53" cy="17" r="0.7" fill="#fff" stroke="none"/>
+
+    <!-- Nose (angular) -->
+    <path d="M42,22 L44,26 L46,22" fill="#0277bd" stroke="none"/>
+
+    <!-- Mouth -->
+    <path d="M32,28 Q44,30 56,28" stroke="#0277bd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Frozen breath wisps -->
+    <ellipse cx="44" cy="31" rx="6" ry="2" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="38" cy="33" rx="3" ry="1.5" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="50" cy="33" rx="3" ry="1.5" fill="url(#frost-breath)" stroke="none"/>
+
+    <!-- ICE CROWN -->
+    <path d="M22,8 Q22,4 44,3 Q66,4 66,8 L64,12 Q44,10 24,12Z" fill="url(#frost-crystal)"/>
+    <path d="M28,8 L26,0 L32,8Z" fill="url(#frost-crown)" stroke="#81d4fa" stroke-width="0.8"/>
+    <path d="M36,7 L34,-1 L40,8 L46,7 L50,-1 L52,8Z" fill="url(#frost-crown)" stroke="#81d4fa" stroke-width="0.8"/>
+    <path d="M56,8 L60,0 L62,8Z" fill="url(#frost-crown)" stroke="#81d4fa" stroke-width="0.8"/>
+    <path d="M26,4 L27,2 M40,3 L41,0 M60,4 L61,1" stroke="#fff" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- FRAME 1: ARMS RAISED, MORE FROST PARTICLES -->
+  <g transform="translate(88, 0)" stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Frost aura (more intense) -->
+    <ellipse cx="44" cy="44" rx="42" ry="40" fill="url(#frost-aura)" stroke="none"/>
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="26" ry="4" fill="#000" opacity="0.2" stroke="none"/>
+
+    <!-- Legs -->
+    <path d="M28,64 Q24,70 22,80 Q28,84 34,80 Q36,72 36,66Z" fill="url(#frost-body)" stroke="#0277bd" stroke-width="1.2"/>
+    <path d="M60,64 Q64,70 66,80 Q60,84 54,80 Q52,72 52,66Z" fill="url(#frost-body)" stroke="#0277bd" stroke-width="1.2"/>
+    <path d="M24,70 L28,68 L30,74 L26,76Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M62,70 L60,68 L58,74 L62,76Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M18,78 Q26,84 36,82 Q38,78 34,76Z" fill="#0277bd" stroke="#01579b" stroke-width="1"/>
+    <path d="M54,76 Q58,80 70,82 Q72,78 68,76Z" fill="#0277bd" stroke="#01579b" stroke-width="1"/>
+
+    <!-- Left Arm RAISED -->
+    <path d="M16,38 Q6,28 2,16" stroke="#01579b" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M16,38 Q6,28 2,16" stroke="#4fc3f7" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Left raised fist crystal -->
+    <path d="M0,12 Q-2,8 2,10 Q4,14 6,12 Q4,8 8,10 Q8,14 10,12" fill="url(#frost-crystal)" stroke="#81d4fa" stroke-width="0.8"/>
+
+    <!-- Right Arm RAISED -->
+    <path d="M72,38 Q82,28 86,16" stroke="#01579b" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M72,38 Q82,28 86,16" stroke="#4fc3f7" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M88,12 Q90,8 86,10 Q84,14 82,12 Q84,8 80,10 Q80,14 78,12" fill="url(#frost-crystal)" stroke="#81d4fa" stroke-width="0.8"/>
+
+    <!-- Frost particles floating -->
+    <ellipse cx="10" cy="22" rx="3" ry="3" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="5" cy="32" rx="2" ry="2" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="78" cy="22" rx="3" ry="3" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="83" cy="32" rx="2" ry="2" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="14" cy="10" rx="1.5" ry="1.5" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="74" cy="10" rx="1.5" ry="1.5" fill="url(#frost-breath)" stroke="none"/>
+    <!-- Snowflake patterns -->
+    <path d="M8,18 L8,14 M6,17 L10,15 M6,15 L10,17" stroke="#b3e5fc" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+    <path d="M80,18 L80,14 M78,17 L82,15 M78,15 L82,17" stroke="#b3e5fc" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+    <path d="M20,8 L20,4 M18,7 L22,5 M18,5 L22,7" stroke="#b3e5fc" stroke-width="0.6" stroke-linecap="round" fill="none"/>
+    <path d="M68,8 L68,4 M66,7 L70,5 M66,5 L70,7" stroke="#b3e5fc" stroke-width="0.6" stroke-linecap="round" fill="none"/>
+
+    <!-- Body -->
+    <path d="M18,34 Q14,42 14,58 Q16,68 28,70 Q44,72 60,70 Q72,68 74,58 Q74,42 70,34 Q60,28 44,28 Q28,28 18,34Z" fill="url(#frost-body)"/>
+    <path d="M20,36 L30,32 L30,44 L20,48Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M68,36 L58,32 L58,44 L68,48Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M28,48 L40,44 L40,58 L28,60Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M60,48 L48,44 L48,58 L60,60Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M22,36 Q18,44 20,56 Q28,62 44,60 Q50,54 46,42 Q38,32 26,34Z" fill="url(#frost-body-hi)" stroke="none"/>
+
+    <!-- Shoulder crystal armor -->
+    <path d="M8,32 Q4,26 8,36 Q10,44 16,44 Q20,40 20,34 Q16,28 12,28Z" fill="url(#frost-crystal)"/>
+    <path d="M6,28 L4,22 M9,26 L8,20 M12,25 L13,19" stroke="#e1f5fe" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M80,32 Q84,26 80,36 Q78,44 72,44 Q68,40 68,34 Q72,28 76,28Z" fill="url(#frost-crystal)"/>
+    <path d="M82,28 L84,22 M79,26 L80,20 M76,25 L75,19" stroke="#e1f5fe" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Neck -->
+    <path d="M34,26 Q38,28 44,28 Q50,28 54,26 Q52,22 44,22 Q36,22 34,26Z" fill="url(#frost-body)"/>
+
+    <!-- HEAD -->
+    <ellipse cx="44" cy="18" rx="22" ry="18" fill="url(#frost-body)"/>
+    <path d="M24,16 L32,10 L36,18Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M64,16 L56,10 L52,18Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <path d="M38,26 L44,22 L50,26Z" fill="url(#frost-crystal2)" stroke="#81d4fa" stroke-width="0.5"/>
+    <ellipse cx="36" cy="12" rx="10" ry="7" fill="#fff" opacity="0.25" stroke="none"/>
+
+    <!-- Eyes (glowing brighter) -->
+    <ellipse cx="34" cy="18" rx="6" ry="5" fill="#003060"/>
+    <ellipse cx="54" cy="18" rx="6" ry="5" fill="#003060"/>
+    <ellipse cx="34" cy="18" rx="7" ry="6" fill="url(#frost-breath)" stroke="none" opacity="0.7"/>
+    <ellipse cx="54" cy="18" rx="7" ry="6" fill="url(#frost-breath)" stroke="none" opacity="0.7"/>
+    <ellipse cx="34" cy="18" rx="4" ry="3.5" fill="url(#frost-eye)"/>
+    <ellipse cx="54" cy="18" rx="4" ry="3.5" fill="url(#frost-eye)"/>
+    <circle cx="34" cy="17.5" r="1.5" fill="#003366"/>
+    <circle cx="33" cy="17" r="0.7" fill="#fff" stroke="none"/>
+    <circle cx="54" cy="17.5" r="1.5" fill="#003366"/>
+    <circle cx="53" cy="17" r="0.7" fill="#fff" stroke="none"/>
+
+    <!-- Nose -->
+    <path d="M42,22 L44,26 L46,22" fill="#0277bd" stroke="none"/>
+
+    <!-- Mouth with heavy frost billowing -->
+    <path d="M32,28 Q44,30 56,28" stroke="#0277bd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="44" cy="31" rx="9" ry="3" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="36" cy="34" rx="4" ry="2" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="52" cy="34" rx="4" ry="2" fill="url(#frost-breath)" stroke="none"/>
+    <ellipse cx="44" cy="37" rx="5" ry="2" fill="url(#frost-breath)" stroke="none"/>
+
+    <!-- ICE CROWN -->
+    <path d="M22,8 Q22,4 44,3 Q66,4 66,8 L64,12 Q44,10 24,12Z" fill="url(#frost-crystal)"/>
+    <path d="M28,8 L26,0 L32,8Z" fill="url(#frost-crown)" stroke="#81d4fa" stroke-width="0.8"/>
+    <path d="M36,7 L34,-1 L40,8 L46,7 L50,-1 L52,8Z" fill="url(#frost-crown)" stroke="#81d4fa" stroke-width="0.8"/>
+    <path d="M56,8 L60,0 L62,8Z" fill="url(#frost-crown)" stroke="#81d4fa" stroke-width="0.8"/>
+    <path d="M26,4 L27,2 M40,3 L41,0 M60,4 L61,1" stroke="#fff" stroke-width="0.8" stroke-linecap="round" fill="none"/>
   </g>
 </svg>

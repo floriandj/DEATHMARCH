@@ -1,181 +1,261 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
-  <!-- Frame 0 -->
-  <g>
-    <!-- Crown -->
-    <rect x="26" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="27" y="0" width="6" height="6" fill="#ffee55"/>
-    <rect x="39" y="0" width="8" height="14" fill="#ffcc00"/>
-    <rect x="40" y="0" width="6" height="8" fill="#ffee55"/>
-    <rect x="52" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="53" y="0" width="6" height="6" fill="#ffee55"/>
-    <!-- Crown base -->
-    <rect x="22" y="10" width="44" height="6" fill="#ddaa00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Demon King body gradient -->
+    <linearGradient id="boss-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e53935"/>
+      <stop offset="60%" stop-color="#b71c1c"/>
+      <stop offset="100%" stop-color="#7f0000"/>
+    </linearGradient>
+    <linearGradient id="boss-body-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef9a9a" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#e53935" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Golden crown -->
+    <linearGradient id="boss-crown" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff176"/>
+      <stop offset="50%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#f57f17"/>
+    </linearGradient>
+    <linearGradient id="boss-crown-gem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e040fb"/>
+      <stop offset="100%" stop-color="#6a1b9a"/>
+    </linearGradient>
+    <!-- Purple energy core (idle) -->
+    <radialGradient id="boss-core-idle" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ea80fc"/>
+      <stop offset="40%" stop-color="#ce93d8"/>
+      <stop offset="100%" stop-color="#4a148c"/>
+    </radialGradient>
+    <!-- Purple energy core (active) -->
+    <radialGradient id="boss-core-active" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="25%" stop-color="#ea80fc"/>
+      <stop offset="65%" stop-color="#ab47bc"/>
+      <stop offset="100%" stop-color="#4a148c"/>
+    </radialGradient>
+    <!-- Core outer glow -->
+    <radialGradient id="boss-core-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ce93d8" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#9c27b0" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Core outer glow bright -->
+    <radialGradient id="boss-core-glow2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#9c27b0" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Shoulder armor -->
+    <linearGradient id="boss-armor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#616161"/>
+      <stop offset="100%" stop-color="#212121"/>
+    </linearGradient>
+    <!-- Eye glow -->
+    <radialGradient id="boss-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#fff59d"/>
+      <stop offset="40%" stop-color="#ffcc00"/>
+      <stop offset="100%" stop-color="#e65100"/>
+    </radialGradient>
+  </defs>
 
-    <!-- Head -->
-    <rect x="20" y="14" width="48" height="22" fill="#dd4444"/>
-    <rect x="22" y="16" width="44" height="18" fill="#ff6b6b"/>
-    <!-- Forehead lines -->
-    <rect x="28" y="16" width="32" height="2" fill="#cc3333"/>
+  <!-- ═══ FRAME 0: IDLE ═══ -->
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="28" ry="4" fill="#000" opacity="0.2" stroke="none"/>
 
-    <!-- Eyes (large, menacing) -->
-    <rect x="24" y="22" width="14" height="8" fill="#111"/>
-    <rect x="50" y="22" width="14" height="8" fill="#111"/>
-    <rect x="26" y="23" width="10" height="6" fill="#ff0000"/>
-    <rect x="52" y="23" width="10" height="6" fill="#ff0000"/>
-    <!-- Pupils -->
-    <rect x="30" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="31" y="25" width="2" height="2" fill="#fff"/>
-    <rect x="54" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="55" y="25" width="2" height="2" fill="#fff"/>
+    <!-- Legs -->
+    <path d="M28,68 Q24,72 22,80 Q26,82 30,80 Q32,74 34,70Z" fill="url(#boss-body)"/>
+    <path d="M60,68 Q64,72 66,80 Q62,82 58,80 Q56,74 54,70Z" fill="url(#boss-body)"/>
+    <!-- Feet / boots -->
+    <path d="M18,78 Q22,82 32,82 Q34,80 30,78Z" fill="#4a0000" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M56,78 Q60,82 70,82 Q68,80 64,78Z" fill="#4a0000" stroke="#1a1a2e" stroke-width="1"/>
+    <!-- Boot spikes -->
+    <path d="M18,80 L15,83" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M21,82 L19,86" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M70,80 L73,83" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M67,82 L69,86" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Left Shoulder Pauldron -->
+    <path d="M8,34 Q4,30 6,38 Q8,44 12,46 Q16,44 18,40 Q16,34 12,32Z" fill="url(#boss-armor)"/>
+    <path d="M6,32 L4,28 M8,30 L7,26 M11,29 L11,25" stroke="#757575" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Right Shoulder Pauldron -->
+    <path d="M80,34 Q84,30 82,38 Q80,44 76,46 Q72,44 70,40 Q72,34 76,32Z" fill="url(#boss-armor)"/>
+    <path d="M82,32 L84,28 M80,30 L81,26 M77,29 L77,25" stroke="#757575" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Left Arm -->
+    <path d="M14,42 Q8,50 6,62" stroke="#b71c1c" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M14,42 Q8,50 6,62" stroke="#e53935" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Left Fist -->
+    <ellipse cx="6" cy="65" rx="7" ry="6" fill="url(#boss-body)"/>
+    <path d="M2,63 Q1,65 2,67" stroke="#7f0000" stroke-width="1.2" fill="none"/>
+    <path d="M5,62 Q4,64 5,67" stroke="#7f0000" stroke-width="1.2" fill="none"/>
+    <path d="M9,62 Q10,64 9,67" stroke="#7f0000" stroke-width="1.2" fill="none"/>
+
+    <!-- Right Arm -->
+    <path d="M74,42 Q80,50 82,62" stroke="#b71c1c" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M74,42 Q80,50 82,62" stroke="#e53935" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Right Fist -->
+    <ellipse cx="82" cy="65" rx="7" ry="6" fill="url(#boss-body)"/>
+    <path d="M78,63 Q77,65 78,67" stroke="#7f0000" stroke-width="1.2" fill="none"/>
+    <path d="M82,62 Q81,64 82,67" stroke="#7f0000" stroke-width="1.2" fill="none"/>
+    <path d="M86,63 Q87,65 86,67" stroke="#7f0000" stroke-width="1.2" fill="none"/>
+
+    <!-- Body -->
+    <path d="M18,36 Q14,40 14,58 Q14,68 28,70 Q44,72 60,70 Q74,68 74,58 Q74,40 70,36 Q62,32 44,32 Q26,32 18,36Z" fill="url(#boss-body)"/>
+    <!-- Body highlight -->
+    <path d="M22,38 Q18,44 20,56 Q26,60 44,60 Q52,56 50,44 Q44,36 30,36Z" fill="url(#boss-body-hi)" stroke="none"/>
+    <!-- Chest armor plate -->
+    <path d="M28,42 Q26,48 28,56 Q36,60 44,60 Q52,60 60,56 Q62,48 60,42 Q52,38 44,38 Q36,38 28,42Z" fill="#9c1111" stroke="#7f0000" stroke-width="1"/>
+
+    <!-- Energy Core (idle - dimly glowing) -->
+    <ellipse cx="44" cy="50" rx="14" ry="12" fill="url(#boss-core-glow)" stroke="none"/>
+    <ellipse cx="44" cy="50" rx="10" ry="9" fill="url(#boss-core-idle)"/>
+    <!-- Core details -->
+    <path d="M38,46 Q44,42 50,46 Q52,50 50,54 Q44,58 38,54 Q36,50 38,46Z" fill="none" stroke="#ea80fc" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <path d="M40,49 L44,44 L48,49 L44,54Z" fill="none" stroke="#ce93d8" stroke-width="0.8"/>
+
+    <!-- Armor trim lines -->
+    <path d="M28,42 Q32,40 44,40 Q56,40 60,42" stroke="#7f0000" stroke-width="1" fill="none"/>
+    <path d="M26,48 L30,46 M62,48 L58,46" stroke="#cc2222" stroke-width="1" fill="none"/>
+
+    <!-- Neck -->
+    <path d="M36,30 Q36,34 44,35 Q52,34 52,30" fill="#b71c1c" stroke="#7f0000" stroke-width="1"/>
+
+    <!-- HEAD -->
+    <ellipse cx="44" cy="22" rx="22" ry="18" fill="url(#boss-body)"/>
+    <!-- Head highlight -->
+    <ellipse cx="38" cy="16" rx="10" ry="8" fill="#ef9a9a" opacity="0.3" stroke="none"/>
+    <!-- Brow ridge -->
+    <path d="M22,18 Q32,14 44,16 Q56,14 66,18" fill="#7f0000" stroke="none"/>
+
+    <!-- Eyes -->
+    <ellipse cx="34" cy="22" rx="6" ry="5" fill="#000"/>
+    <ellipse cx="54" cy="22" rx="6" ry="5" fill="#000"/>
+    <ellipse cx="34" cy="22" rx="4.5" ry="3.5" fill="url(#boss-eye)"/>
+    <ellipse cx="54" cy="22" rx="4.5" ry="3.5" fill="url(#boss-eye)"/>
+    <circle cx="35" cy="21.5" r="2" fill="#1a0000"/>
+    <circle cx="34" cy="20.5" r="0.8" fill="#fff" stroke="none"/>
+    <circle cx="55" cy="21.5" r="2" fill="#1a0000"/>
+    <circle cx="54" cy="20.5" r="0.8" fill="#fff" stroke="none"/>
+    <!-- Eyebrows (angled, menacing) -->
+    <path d="M28,17 Q34,14 40,17" stroke="#4a0000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M48,17 Q54,14 60,17" stroke="#4a0000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
 
     <!-- Nose -->
-    <rect x="40" y="28" width="8" height="4" fill="#cc3333"/>
+    <path d="M40,26 Q44,28 48,26 Q46,30 44,30 Q42,30 40,26Z" fill="#9c1111"/>
 
-    <!-- Mouth -->
-    <rect x="26" y="32" width="36" height="6" fill="#660000"/>
+    <!-- Mouth (idle, teeth showing) -->
+    <path d="M30,32 Q44,36 58,32 Q56,38 44,40 Q32,38 30,32Z" fill="#4a0000"/>
     <!-- Upper teeth -->
-    <rect x="28" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="34" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="40" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="46" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="52" y="32" width="4" height="4" fill="#eee"/>
-    <!-- Lower teeth -->
-    <rect x="30" y="36" width="4" height="3" fill="#ddd"/>
-    <rect x="42" y="36" width="4" height="3" fill="#ddd"/>
-    <rect x="54" y="36" width="4" height="3" fill="#ddd"/>
+    <path d="M33,32 L32,36 M37,33 L36,37 M41,33 L41,37 M47,33 L47,37 M51,33 L52,37 M55,32 L56,36" stroke="#eeeeee" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+    <!-- CROWN -->
+    <!-- Crown base band -->
+    <path d="M22,10 Q22,6 44,5 Q66,6 66,10 L64,14 Q44,12 24,14Z" fill="url(#boss-crown)"/>
+    <!-- Crown spikes -->
+    <path d="M26,10 Q28,2 30,10" fill="url(#boss-crown)" stroke="#f57f17" stroke-width="0.8"/>
+    <path d="M36,9 Q40,0 44,9" fill="url(#boss-crown)" stroke="#f57f17" stroke-width="0.8"/>
+    <path d="M52,9 Q56,2 58,10" fill="url(#boss-crown)" stroke="#f57f17" stroke-width="0.8"/>
+    <!-- Crown gems -->
+    <ellipse cx="30" cy="7" rx="2" ry="2.5" fill="url(#boss-crown-gem)" stroke="#9c27b0" stroke-width="0.5"/>
+    <ellipse cx="44" cy="5" rx="2.5" ry="3" fill="url(#boss-crown-gem)" stroke="#9c27b0" stroke-width="0.5"/>
+    <ellipse cx="58" cy="7" rx="2" ry="2.5" fill="url(#boss-crown-gem)" stroke="#9c27b0" stroke-width="0.5"/>
+    <!-- Crown rivet dots -->
+    <circle cx="24" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="34" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="44" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="54" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="64" cy="11" r="1" fill="#fff176" stroke="none"/>
+  </g>
+
+  <!-- ═══ FRAME 1: AGGRESSIVE (core pulsing, mouth wider) ═══ -->
+  <g transform="translate(88, 0)" stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="28" ry="4" fill="#000" opacity="0.2" stroke="none"/>
+
+    <!-- Legs (slightly wider stance) -->
+    <path d="M26,68 Q22,72 20,80 Q24,82 28,80 Q30,74 32,70Z" fill="url(#boss-body)"/>
+    <path d="M62,68 Q66,72 68,80 Q64,82 60,80 Q58,74 56,70Z" fill="url(#boss-body)"/>
+    <path d="M16,78 Q20,82 30,82 Q32,80 28,78Z" fill="#4a0000" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M58,78 Q62,82 72,82 Q70,80 66,78Z" fill="#4a0000" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M16,80 L13,83" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M19,82 L17,86" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M72,80 L75,83" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M69,82 L71,86" stroke="#424242" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Left Shoulder Pauldron (raised) -->
+    <path d="M6,30 Q2,26 4,34 Q6,40 10,42 Q14,40 16,36 Q14,30 10,28Z" fill="url(#boss-armor)"/>
+    <path d="M4,28 L2,24 M6,26 L5,22 M9,25 L9,21" stroke="#757575" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Right Shoulder Pauldron (raised) -->
+    <path d="M82,30 Q86,26 84,34 Q82,40 78,42 Q74,40 72,36 Q74,30 78,28Z" fill="url(#boss-armor)"/>
+    <path d="M84,28 L86,24 M82,26 L83,22 M79,25 L79,21" stroke="#757575" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Left Arm (raised aggressively) -->
+    <path d="M12,38 Q4,44 2,56" stroke="#b71c1c" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M12,38 Q4,44 2,56" stroke="#e53935" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="2" cy="59" rx="7" ry="6" fill="url(#boss-body)"/>
+    <!-- Right Arm (raised aggressively) -->
+    <path d="M76,38 Q84,44 86,56" stroke="#b71c1c" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M76,38 Q84,44 86,56" stroke="#e53935" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="86" cy="59" rx="7" ry="6" fill="url(#boss-body)"/>
 
     <!-- Body -->
-    <rect x="10" y="38" width="68" height="30" fill="#dd4444"/>
-    <rect x="14" y="40" width="60" height="26" fill="#ff6b6b"/>
-    <!-- Inner core (purple energy) -->
-    <rect x="24" y="44" width="40" height="18" fill="#9a3db8"/>
-    <rect x="28" y="46" width="32" height="14" fill="#be4bdb"/>
-    <!-- Core glow -->
-    <rect x="36" y="50" width="16" height="6" fill="#d66ef0"/>
-    <rect x="40" y="52" width="8" height="2" fill="#eea0ff"/>
+    <path d="M18,36 Q14,40 14,58 Q14,68 28,70 Q44,72 60,70 Q74,68 74,58 Q74,40 70,36 Q62,32 44,32 Q26,32 18,36Z" fill="url(#boss-body)"/>
+    <path d="M22,38 Q18,44 20,56 Q26,60 44,60 Q52,56 50,44 Q44,36 30,36Z" fill="url(#boss-body-hi)" stroke="none"/>
+    <path d="M28,42 Q26,48 28,56 Q36,60 44,60 Q52,60 60,56 Q62,48 60,42 Q52,38 44,38 Q36,38 28,42Z" fill="#9c1111" stroke="#7f0000" stroke-width="1"/>
 
-    <!-- Shoulder armor -->
-    <rect x="4" y="36" width="12" height="10" fill="#993333"/>
-    <rect x="5" y="37" width="10" height="8" fill="#bb4444"/>
-    <rect x="72" y="36" width="12" height="10" fill="#993333"/>
-    <rect x="73" y="37" width="10" height="8" fill="#bb4444"/>
-    <!-- Spikes on shoulders -->
-    <rect x="6" y="34" width="4" height="4" fill="#666"/>
-    <rect x="12" y="35" width="3" height="3" fill="#666"/>
-    <rect x="74" y="34" width="4" height="4" fill="#666"/>
-    <rect x="79" y="35" width="3" height="3" fill="#666"/>
+    <!-- Energy Core (PULSING BRIGHT) -->
+    <ellipse cx="44" cy="50" rx="18" ry="16" fill="url(#boss-core-glow2)" stroke="none"/>
+    <ellipse cx="44" cy="50" rx="10" ry="9" fill="url(#boss-core-active)"/>
+    <!-- Core energy tendrils -->
+    <path d="M34,50 Q36,44 44,42 Q52,44 54,50 Q52,56 44,58 Q36,56 34,50Z" fill="none" stroke="#ea80fc" stroke-width="1.2"/>
+    <path d="M40,49 L44,44 L48,49 L44,54Z" fill="#ce93d8" opacity="0.5" stroke="#fff" stroke-width="0.5"/>
+    <!-- Energy sparks -->
+    <path d="M30,48 L26,46 M58,48 L62,46" stroke="#ea80fc" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <path d="M32,42 L28,39 M56,42 L60,39" stroke="#ce93d8" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <path d="M32,58 L28,61 M56,58 L60,61" stroke="#ce93d8" stroke-width="1" stroke-linecap="round" fill="none"/>
 
-    <!-- Arms -->
-    <rect x="2" y="44" width="10" height="20" fill="#ff6b6b"/>
-    <rect x="3" y="45" width="8" height="18" fill="#dd4444"/>
-    <rect x="76" y="44" width="10" height="20" fill="#ff6b6b"/>
-    <rect x="77" y="45" width="8" height="18" fill="#dd4444"/>
-    <!-- Fists -->
-    <rect x="0" y="62" width="14" height="10" fill="#cc3333"/>
-    <rect x="2" y="64" width="10" height="6" fill="#dd4444"/>
-    <rect x="74" y="62" width="14" height="10" fill="#cc3333"/>
-    <rect x="76" y="64" width="10" height="6" fill="#dd4444"/>
+    <!-- Neck -->
+    <path d="M36,30 Q36,34 44,35 Q52,34 52,30" fill="#b71c1c" stroke="#7f0000" stroke-width="1"/>
 
-    <!-- Legs -->
-    <rect x="18" y="68" width="14" height="16" fill="#cc3333"/>
-    <rect x="20" y="70" width="10" height="12" fill="#aa2222"/>
-    <rect x="56" y="68" width="14" height="16" fill="#cc3333"/>
-    <rect x="58" y="70" width="10" height="12" fill="#aa2222"/>
-    <!-- Feet -->
-    <rect x="14" y="82" width="18" height="6" fill="#882222"/>
-    <rect x="56" y="82" width="18" height="6" fill="#882222"/>
-    <!-- Claws on feet -->
-    <rect x="14" y="86" width="4" height="2" fill="#555"/>
-    <rect x="20" y="86" width="4" height="2" fill="#555"/>
-    <rect x="28" y="86" width="4" height="2" fill="#555"/>
-    <rect x="56" y="86" width="4" height="2" fill="#555"/>
-    <rect x="62" y="86" width="4" height="2" fill="#555"/>
-    <rect x="70" y="86" width="4" height="2" fill="#555"/>
-  </g>
-  <!-- Frame 1 (arms raised, slight breath) -->
-  <g transform="translate(88,0)">
-    <!-- Crown -->
-    <rect x="26" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="27" y="0" width="6" height="6" fill="#ffee55"/>
-    <rect x="39" y="0" width="8" height="14" fill="#ffcc00"/>
-    <rect x="40" y="0" width="6" height="8" fill="#ffee55"/>
-    <rect x="52" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="53" y="0" width="6" height="6" fill="#ffee55"/>
-    <rect x="22" y="10" width="44" height="6" fill="#ddaa00"/>
+    <!-- HEAD -->
+    <ellipse cx="44" cy="22" rx="22" ry="18" fill="url(#boss-body)"/>
+    <ellipse cx="38" cy="16" rx="10" ry="8" fill="#ef9a9a" opacity="0.3" stroke="none"/>
+    <path d="M22,18 Q32,14 44,16 Q56,14 66,18" fill="#7f0000" stroke="none"/>
 
-    <!-- Head -->
-    <rect x="20" y="14" width="48" height="22" fill="#dd4444"/>
-    <rect x="22" y="16" width="44" height="18" fill="#ff6b6b"/>
-    <rect x="28" y="16" width="32" height="2" fill="#cc3333"/>
-
-    <!-- Eyes (squinting, angrier) -->
-    <rect x="24" y="23" width="14" height="6" fill="#111"/>
-    <rect x="50" y="23" width="14" height="6" fill="#111"/>
-    <rect x="26" y="24" width="10" height="4" fill="#ff0000"/>
-    <rect x="52" y="24" width="10" height="4" fill="#ff0000"/>
-    <rect x="30" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="31" y="25" width="2" height="2" fill="#fff"/>
-    <rect x="54" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="55" y="25" width="2" height="2" fill="#fff"/>
+    <!-- Eyes (squinting with rage) -->
+    <ellipse cx="34" cy="22" rx="6" ry="4" fill="#000"/>
+    <ellipse cx="54" cy="22" rx="6" ry="4" fill="#000"/>
+    <ellipse cx="34" cy="22" rx="4.5" ry="3" fill="url(#boss-eye)"/>
+    <ellipse cx="54" cy="22" rx="4.5" ry="3" fill="url(#boss-eye)"/>
+    <circle cx="35" cy="22" r="2" fill="#1a0000"/>
+    <circle cx="34" cy="21" r="0.8" fill="#fff" stroke="none"/>
+    <circle cx="55" cy="22" r="2" fill="#1a0000"/>
+    <circle cx="54" cy="21" r="0.8" fill="#fff" stroke="none"/>
+    <!-- Angry brows (more severe) -->
+    <path d="M28,16 Q34,12 40,15" stroke="#4a0000" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M48,15 Q54,12 60,16" stroke="#4a0000" stroke-width="3" fill="none" stroke-linecap="round"/>
 
     <!-- Nose -->
-    <rect x="40" y="28" width="8" height="4" fill="#cc3333"/>
+    <path d="M40,26 Q44,28 48,26 Q46,30 44,30 Q42,30 40,26Z" fill="#9c1111"/>
 
-    <!-- Mouth (open wider) -->
-    <rect x="24" y="32" width="40" height="8" fill="#660000"/>
-    <rect x="26" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="32" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="38" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="44" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="50" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="56" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="28" y="38" width="4" height="3" fill="#ddd"/>
-    <rect x="40" y="38" width="4" height="3" fill="#ddd"/>
-    <rect x="52" y="38" width="4" height="3" fill="#ddd"/>
+    <!-- Mouth WIDE OPEN -->
+    <path d="M28,31 Q44,38 60,31 Q58,42 44,44 Q30,42 28,31Z" fill="#4a0000"/>
+    <!-- More teeth -->
+    <path d="M31,31 L30,36 M35,33 L34,38 M39,33 L39,38 M44,33 L44,38 M49,33 L49,38 M53,33 L54,38 M57,31 L58,36" stroke="#eeeeee" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- Visible tongue -->
+    <path d="M36,38 Q44,44 52,38 Q52,42 44,44 Q36,42 36,38Z" fill="#e53935" stroke="none"/>
 
-    <!-- Body -->
-    <rect x="10" y="40" width="68" height="28" fill="#dd4444"/>
-    <rect x="14" y="42" width="60" height="24" fill="#ff6b6b"/>
-    <!-- Core (brighter pulse) -->
-    <rect x="24" y="46" width="40" height="16" fill="#9a3db8"/>
-    <rect x="28" y="48" width="32" height="12" fill="#be4bdb"/>
-    <rect x="34" y="50" width="20" height="8" fill="#d66ef0"/>
-    <rect x="38" y="52" width="12" height="4" fill="#eea0ff"/>
-
-    <!-- Shoulder armor -->
-    <rect x="4" y="38" width="12" height="10" fill="#993333"/>
-    <rect x="5" y="39" width="10" height="8" fill="#bb4444"/>
-    <rect x="72" y="38" width="12" height="10" fill="#993333"/>
-    <rect x="73" y="39" width="10" height="8" fill="#bb4444"/>
-    <rect x="6" y="36" width="4" height="4" fill="#666"/>
-    <rect x="12" y="37" width="3" height="3" fill="#666"/>
-    <rect x="74" y="36" width="4" height="4" fill="#666"/>
-    <rect x="79" y="37" width="3" height="3" fill="#666"/>
-
-    <!-- Arms (raised higher) -->
-    <rect x="0" y="42" width="10" height="18" fill="#ff6b6b"/>
-    <rect x="1" y="43" width="8" height="16" fill="#dd4444"/>
-    <rect x="78" y="46" width="10" height="20" fill="#ff6b6b"/>
-    <rect x="79" y="47" width="8" height="18" fill="#dd4444"/>
-    <!-- Fists -->
-    <rect x="0" y="58" width="14" height="10" fill="#cc3333"/>
-    <rect x="2" y="60" width="10" height="6" fill="#dd4444"/>
-    <rect x="74" y="64" width="14" height="10" fill="#cc3333"/>
-    <rect x="76" y="66" width="10" height="6" fill="#dd4444"/>
-
-    <!-- Legs -->
-    <rect x="16" y="68" width="14" height="14" fill="#cc3333"/>
-    <rect x="18" y="70" width="10" height="10" fill="#aa2222"/>
-    <rect x="58" y="69" width="14" height="16" fill="#cc3333"/>
-    <rect x="60" y="71" width="10" height="12" fill="#aa2222"/>
-    <!-- Feet -->
-    <rect x="12" y="80" width="18" height="6" fill="#882222"/>
-    <rect x="58" y="83" width="18" height="5" fill="#882222"/>
-    <rect x="12" y="84" width="4" height="2" fill="#555"/>
-    <rect x="18" y="84" width="4" height="2" fill="#555"/>
-    <rect x="26" y="84" width="4" height="2" fill="#555"/>
-    <rect x="58" y="86" width="4" height="2" fill="#555"/>
-    <rect x="64" y="86" width="4" height="2" fill="#555"/>
-    <rect x="72" y="86" width="4" height="2" fill="#555"/>
+    <!-- CROWN -->
+    <path d="M22,10 Q22,6 44,5 Q66,6 66,10 L64,14 Q44,12 24,14Z" fill="url(#boss-crown)"/>
+    <path d="M26,10 Q28,2 30,10" fill="url(#boss-crown)" stroke="#f57f17" stroke-width="0.8"/>
+    <path d="M36,9 Q40,0 44,9" fill="url(#boss-crown)" stroke="#f57f17" stroke-width="0.8"/>
+    <path d="M52,9 Q56,2 58,10" fill="url(#boss-crown)" stroke="#f57f17" stroke-width="0.8"/>
+    <ellipse cx="30" cy="7" rx="2" ry="2.5" fill="url(#boss-crown-gem)" stroke="#9c27b0" stroke-width="0.5"/>
+    <ellipse cx="44" cy="5" rx="2.5" ry="3" fill="url(#boss-crown-gem)" stroke="#9c27b0" stroke-width="0.5"/>
+    <ellipse cx="58" cy="7" rx="2" ry="2.5" fill="url(#boss-crown-gem)" stroke="#9c27b0" stroke-width="0.5"/>
+    <circle cx="24" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="34" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="44" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="54" cy="11" r="1" fill="#fff176" stroke="none"/>
+    <circle cx="64" cy="11" r="1" fill="#fff176" stroke="none"/>
   </g>
 </svg>

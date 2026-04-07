@@ -1,150 +1,277 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
-  <!-- Frame 0: Plague Hydra - multi-headed toxic beast -->
-  <g>
-    <!-- Left head -->
-    <rect x="8" y="0" width="16" height="14" fill="#2ecc71"/>
-    <rect x="10" y="2" width="12" height="10" fill="#27ae60"/>
-    <rect x="10" y="4" width="4" height="4" fill="#111"/>
-    <rect x="11" y="5" width="2" height="2" fill="#ff0"/>
-    <rect x="18" y="4" width="4" height="4" fill="#111"/>
-    <rect x="19" y="5" width="2" height="2" fill="#ff0"/>
-    <rect x="12" y="10" width="8" height="4" fill="#1a7a3a"/>
-    <rect x="13" y="10" width="2" height="3" fill="#ddd"/>
-    <rect x="17" y="10" width="2" height="3" fill="#ddd"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Bloated sickly body -->
+    <linearGradient id="plague-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9ccc65"/>
+      <stop offset="50%" stop-color="#689f38"/>
+      <stop offset="100%" stop-color="#33691e"/>
+    </linearGradient>
+    <linearGradient id="plague-body-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#558b2f"/>
+      <stop offset="100%" stop-color="#1b5e20"/>
+    </linearGradient>
+    <linearGradient id="plague-body-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dcedc8" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#689f38" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Distended belly -->
+    <radialGradient id="plague-belly" cx="0.4" cy="0.4" r="0.65">
+      <stop offset="0%" stop-color="#c5e1a5"/>
+      <stop offset="50%" stop-color="#8bc34a"/>
+      <stop offset="100%" stop-color="#33691e"/>
+    </radialGradient>
+    <!-- Pustules -->
+    <radialGradient id="plague-pustule" cx="0.35" cy="0.3" r="0.7">
+      <stop offset="0%" stop-color="#f9fbe7"/>
+      <stop offset="50%" stop-color="#cddc39"/>
+      <stop offset="100%" stop-color="#827717"/>
+    </radialGradient>
+    <radialGradient id="plague-pustule2" cx="0.35" cy="0.3" r="0.7">
+      <stop offset="0%" stop-color="#fffde7"/>
+      <stop offset="50%" stop-color="#ffee58"/>
+      <stop offset="100%" stop-color="#f57f17"/>
+    </radialGradient>
+    <!-- Toxic cloud -->
+    <radialGradient id="plague-toxic" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#76ff03" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="#64dd17" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#1b5e20" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Rib bones -->
+    <linearGradient id="plague-bone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#efebe9"/>
+      <stop offset="100%" stop-color="#bcaaa4"/>
+    </linearGradient>
+    <!-- Dripping ooze -->
+    <linearGradient id="plague-ooze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#689f38"/>
+      <stop offset="100%" stop-color="#76ff03" stop-opacity="0.6"/>
+    </linearGradient>
+    <!-- Eyes -->
+    <radialGradient id="plague-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#f9fbe7"/>
+      <stop offset="40%" stop-color="#cddc39"/>
+      <stop offset="100%" stop-color="#558b2f"/>
+    </radialGradient>
+  </defs>
 
-    <!-- Center head (main, bigger) -->
-    <rect x="28" y="0" width="32" height="20" fill="#2ecc71"/>
-    <rect x="30" y="2" width="28" height="16" fill="#27ae60"/>
-    <rect x="32" y="6" width="8" height="6" fill="#111"/>
-    <rect x="34" y="7" width="4" height="4" fill="#ff0"/>
-    <rect x="48" y="6" width="8" height="6" fill="#111"/>
-    <rect x="50" y="7" width="4" height="4" fill="#ff0"/>
-    <rect x="36" y="14" width="16" height="6" fill="#1a7a3a"/>
-    <rect x="38" y="14" width="3" height="5" fill="#ddd"/>
-    <rect x="43" y="14" width="3" height="4" fill="#ddd"/>
-    <rect x="48" y="14" width="3" height="5" fill="#ddd"/>
+  <!-- FRAME 0: LURCHING -->
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Toxic cloud aura -->
+    <ellipse cx="44" cy="60" rx="44" ry="32" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="20" cy="44" rx="16" ry="12" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="68" cy="50" rx="14" ry="10" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="44" cy="20" rx="12" ry="10" fill="url(#plague-toxic)" stroke="none"/>
 
-    <!-- Right head -->
-    <rect x="64" y="0" width="16" height="14" fill="#2ecc71"/>
-    <rect x="66" y="2" width="12" height="10" fill="#27ae60"/>
-    <rect x="66" y="4" width="4" height="4" fill="#111"/>
-    <rect x="67" y="5" width="2" height="2" fill="#ff0"/>
-    <rect x="74" y="4" width="4" height="4" fill="#111"/>
-    <rect x="75" y="5" width="2" height="2" fill="#ff0"/>
-    <rect x="68" y="10" width="8" height="4" fill="#1a7a3a"/>
-    <rect x="69" y="10" width="2" height="3" fill="#ddd"/>
-    <rect x="73" y="10" width="2" height="3" fill="#ddd"/>
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="32" ry="5" fill="#000" opacity="0.25" stroke="none"/>
 
-    <!-- Necks -->
-    <rect x="12" y="12" width="8" height="14" fill="#27ae60"/>
-    <rect x="36" y="18" width="16" height="8" fill="#27ae60"/>
-    <rect x="68" y="12" width="8" height="14" fill="#27ae60"/>
+    <!-- Thick stumpy legs -->
+    <path d="M24,68 Q18,74 16,84 Q24,88 32,84 Q34,76 32,70Z" fill="url(#plague-body-dark)"/>
+    <path d="M64,68 Q70,74 72,84 Q64,88 56,84 Q54,76 56,70Z" fill="url(#plague-body-dark)"/>
+    <!-- Ooze dripping off feet -->
+    <path d="M18,84 Q20,88 22,84 Q24,88 26,84" stroke="url(#plague-ooze)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M62,84 Q64,88 66,84 Q68,88 70,84" stroke="url(#plague-ooze)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Leg pustules -->
+    <ellipse cx="22" cy="74" rx="3" ry="2.5" fill="url(#plague-pustule)"/>
+    <ellipse cx="66" cy="76" rx="3" ry="2.5" fill="url(#plague-pustule)"/>
 
-    <!-- Body (massive, bloated) -->
-    <rect x="8" y="24" width="72" height="36" fill="#27ae60"/>
-    <rect x="12" y="26" width="64" height="32" fill="#2ecc71"/>
-    <!-- Toxic pustules -->
-    <rect x="20" y="30" width="8" height="8" fill="#f39c12"/>
-    <rect x="22" y="32" width="4" height="4" fill="#e67e22"/>
-    <rect x="40" y="28" width="10" height="10" fill="#f39c12"/>
-    <rect x="42" y="30" width="6" height="6" fill="#e67e22"/>
-    <rect x="44" y="32" width="2" height="2" fill="#fff"/>
-    <rect x="58" y="32" width="8" height="8" fill="#f39c12"/>
-    <rect x="60" y="34" width="4" height="4" fill="#e67e22"/>
-    <!-- Ooze drips -->
-    <rect x="24" y="46" width="4" height="8" fill="#1a7a3a"/>
-    <rect x="48" y="48" width="4" height="6" fill="#1a7a3a"/>
-    <rect x="60" y="44" width="4" height="10" fill="#1a7a3a"/>
+    <!-- Left arm (reaching forward, lurching) -->
+    <path d="M16,42 Q6,52 4,66" stroke="#33691e" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M16,42 Q6,52 4,66" stroke="#689f38" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- Pustule on left arm -->
+    <ellipse cx="10" cy="54" rx="3.5" ry="3" fill="url(#plague-pustule2)"/>
+    <!-- Left clawed hand (bloated) -->
+    <path d="M0,64 Q-2,70 2,74 Q8,78 14,74 Q18,68 14,64 Q8,60 4,62Z" fill="url(#plague-body)"/>
+    <path d="M0,66 L-2,62 M4,64 L2,60 M8,63 L7,59 M12,64 L12,60" stroke="#33691e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Stubby arms -->
-    <rect x="2" y="30" width="10" height="16" fill="#2ecc71"/>
-    <rect x="4" y="32" width="6" height="12" fill="#27ae60"/>
-    <rect x="2" y="44" width="8" height="6" fill="#1a7a3a"/>
-    <rect x="76" y="30" width="10" height="16" fill="#2ecc71"/>
-    <rect x="78" y="32" width="6" height="12" fill="#27ae60"/>
-    <rect x="78" y="44" width="8" height="6" fill="#1a7a3a"/>
+    <!-- Right arm (hanging down) -->
+    <path d="M72,42 Q80,52 82,66" stroke="#33691e" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M72,42 Q80,52 82,66" stroke="#689f38" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="78" cy="54" rx="3.5" ry="3" fill="url(#plague-pustule2)"/>
+    <!-- Right bloated hand -->
+    <path d="M88,64 Q90,70 86,74 Q80,78 74,74 Q70,68 74,64 Q80,60 84,62Z" fill="url(#plague-body)"/>
+    <path d="M88,66 L90,62 M84,64 L86,60 M80,63 L81,59 M76,64 L76,60" stroke="#33691e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Legs (wide, stumpy) -->
-    <rect x="14" y="58" width="18" height="16" fill="#1a7a3a"/>
-    <rect x="16" y="60" width="14" height="12" fill="#27ae60"/>
-    <rect x="56" y="58" width="18" height="16" fill="#1a7a3a"/>
-    <rect x="58" y="60" width="14" height="12" fill="#27ae60"/>
-    <!-- Feet -->
-    <rect x="10" y="72" width="22" height="6" fill="#145a2a"/>
-    <rect x="52" y="72" width="22" height="6" fill="#145a2a"/>
-    <!-- Toxic puddle -->
-    <rect x="8" y="78" width="72" height="4" fill="#2ecc71" opacity="0.3"/>
-    <rect x="16" y="80" width="56" height="4" fill="#2ecc71" opacity="0.2"/>
+    <!-- BODY (bloated, massive) -->
+    <path d="M14,38 Q10,48 10,62 Q12,72 26,74 Q44,76 62,74 Q76,72 78,62 Q78,48 74,38 Q62,30 44,30 Q26,30 14,38Z" fill="url(#plague-body)"/>
+    <!-- Body highlight -->
+    <path d="M18,40 Q14,50 16,62 Q24,68 44,66 Q52,62 50,50 Q42,36 28,36Z" fill="url(#plague-body-hi)" stroke="none"/>
+
+    <!-- EXPOSED RIB BONES -->
+    <path d="M28,40 Q22,44 24,50 Q28,52 32,48 Q32,44 28,40Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M28,48 Q22,52 24,58 Q28,60 32,56 Q32,52 28,48Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M28,56 Q22,60 24,66 Q28,68 32,64 Q32,60 28,56Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M60,40 Q66,44 64,50 Q60,52 56,48 Q56,44 60,40Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M60,48 Q66,52 64,58 Q60,60 56,56 Q56,52 60,48Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M60,56 Q66,60 64,66 Q60,68 56,64 Q56,60 60,56Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+
+    <!-- DISTENDED BELLY (large rounded) -->
+    <ellipse cx="44" cy="58" rx="20" ry="18" fill="url(#plague-belly)" stroke="#558b2f" stroke-width="1"/>
+    <!-- Belly pustules (various sizes) -->
+    <ellipse cx="38" cy="54" rx="4" ry="3.5" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="50" cy="52" rx="3" ry="2.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <ellipse cx="44" cy="62" rx="5" ry="4" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="34" cy="62" rx="3" ry="2.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <ellipse cx="54" cy="60" rx="3.5" ry="3" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <!-- Belly veins -->
+    <path d="M28,56 Q36,52 44,54 Q52,52 60,56" stroke="#33691e" stroke-width="0.8" fill="none"/>
+    <path d="M30,62 Q38,58 44,60 Q50,58 58,62" stroke="#33691e" stroke-width="0.8" fill="none"/>
+
+    <!-- Body pustules (non-belly) -->
+    <ellipse cx="22" cy="44" rx="3" ry="2.5" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="66" cy="42" rx="3.5" ry="3" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <ellipse cx="20" cy="56" rx="2.5" ry="2" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="68" cy="54" rx="2.5" ry="2" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+
+    <!-- Neck (thick) -->
+    <path d="M34,28 Q38,32 44,32 Q50,32 54,28 Q52,24 44,22 Q36,22 34,28Z" fill="url(#plague-body)"/>
+
+    <!-- HEAD (bloated, diseased) -->
+    <ellipse cx="44" cy="18" rx="22" ry="18" fill="url(#plague-body)"/>
+    <!-- Head highlight -->
+    <ellipse cx="36" cy="12" rx="10" ry="7" fill="#dcedc8" opacity="0.3" stroke="none"/>
+    <!-- Head pustules -->
+    <ellipse cx="28" cy="14" rx="3.5" ry="3" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="60" cy="12" rx="3" ry="2.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <ellipse cx="44" cy="8" rx="2.5" ry="2" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="52" cy="20" rx="2" ry="1.8" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+
+    <!-- Eyes (yellowed, sickly) -->
+    <ellipse cx="34" cy="18" rx="6" ry="5" fill="#1a2600"/>
+    <ellipse cx="54" cy="18" rx="6" ry="5" fill="#1a2600"/>
+    <ellipse cx="34" cy="18" rx="4.5" ry="3.5" fill="url(#plague-eye)"/>
+    <ellipse cx="54" cy="18" rx="4.5" ry="3.5" fill="url(#plague-eye)"/>
+    <circle cx="34" cy="17.5" r="2" fill="#1a2600"/>
+    <circle cx="33" cy="17" r="0.8" fill="#f9fbe7" stroke="none"/>
+    <circle cx="54" cy="17.5" r="2" fill="#1a2600"/>
+    <circle cx="53" cy="17" r="0.8" fill="#f9fbe7" stroke="none"/>
+    <!-- Brow (heavy, diseased) -->
+    <path d="M28,14 Q34,11 40,14" stroke="#33691e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M48,14 Q54,11 60,14" stroke="#33691e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Nose (rotted) -->
+    <path d="M40,22 Q44,26 48,22" fill="#33691e" stroke="none"/>
+    <circle cx="41" cy="23" r="1.5" fill="#1b5e20"/>
+    <circle cx="47" cy="23" r="1.5" fill="#1b5e20"/>
+
+    <!-- MOUTH with dripping ooze -->
+    <path d="M28,26 Q44,30 60,26 Q58,34 44,36 Q30,34 28,26Z" fill="#1b5e20"/>
+    <path d="M30,26 L29,32 M36,28 L35,34 M40,28 L40,34 M44,28 L44,34 M48,28 L48,34 M52,28 L53,34 M58,26 L59,32" stroke="#bcaaa4" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Ooze drips from mouth -->
+    <path d="M34,34 Q34,38 33,42 Q34,44 35,42 Q36,44 36,38 Q35,36 34,34Z" fill="url(#plague-ooze)" stroke="none"/>
+    <path d="M44,35 Q44,40 43,44 Q44,46 45,44 Q46,46 46,40 Q45,38 44,35Z" fill="url(#plague-ooze)" stroke="none"/>
+    <path d="M54,34 Q54,38 55,42 Q54,44 53,42 Q52,44 53,38 Q54,36 54,34Z" fill="url(#plague-ooze)" stroke="none"/>
   </g>
 
-  <!-- Frame 1 (heads sway, pustules pulse) -->
-  <g transform="translate(88,0)">
-    <!-- Left head (swayed left) -->
-    <rect x="4" y="2" width="16" height="14" fill="#2ecc71"/>
-    <rect x="6" y="4" width="12" height="10" fill="#27ae60"/>
-    <rect x="6" y="6" width="4" height="4" fill="#111"/>
-    <rect x="7" y="7" width="2" height="2" fill="#ff0"/>
-    <rect x="14" y="6" width="4" height="4" fill="#111"/>
-    <rect x="15" y="7" width="2" height="2" fill="#ff0"/>
-    <rect x="8" y="12" width="8" height="4" fill="#1a7a3a"/>
-    <rect x="9" y="12" width="2" height="3" fill="#ddd"/>
-    <rect x="13" y="12" width="2" height="3" fill="#ddd"/>
+  <!-- FRAME 1: BELLY PULSING/EXPANDED, MORE TOXIC CLOUDS -->
+  <g transform="translate(88, 0)" stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Toxic cloud aura (more intense) -->
+    <ellipse cx="44" cy="56" rx="44" ry="36" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="16" cy="40" rx="18" ry="14" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="72" cy="46" rx="16" ry="12" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="44" cy="16" rx="14" ry="12" fill="url(#plague-toxic)" stroke="none"/>
+    <!-- Extra toxic blobs -->
+    <ellipse cx="8" cy="56" rx="8" ry="6" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="80" cy="60" rx="8" ry="6" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="44" cy="78" rx="10" ry="6" fill="url(#plague-toxic)" stroke="none"/>
 
-    <!-- Center head (slightly up) -->
-    <rect x="28" y="0" width="32" height="18" fill="#2ecc71"/>
-    <rect x="30" y="2" width="28" height="14" fill="#27ae60"/>
-    <rect x="32" y="4" width="8" height="6" fill="#111"/>
-    <rect x="34" y="5" width="4" height="4" fill="#ff0"/>
-    <rect x="48" y="4" width="8" height="6" fill="#111"/>
-    <rect x="50" y="5" width="4" height="4" fill="#ff0"/>
-    <rect x="34" y="12" width="20" height="8" fill="#1a7a3a"/>
-    <rect x="36" y="12" width="3" height="5" fill="#ddd"/>
-    <rect x="41" y="12" width="3" height="6" fill="#ddd"/>
-    <rect x="46" y="12" width="3" height="5" fill="#ddd"/>
-    <rect x="51" y="12" width="3" height="6" fill="#ddd"/>
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="34" ry="5" fill="#000" opacity="0.25" stroke="none"/>
 
-    <!-- Right head (swayed right) -->
-    <rect x="68" y="2" width="16" height="14" fill="#2ecc71"/>
-    <rect x="70" y="4" width="12" height="10" fill="#27ae60"/>
-    <rect x="70" y="6" width="4" height="4" fill="#111"/>
-    <rect x="71" y="7" width="2" height="2" fill="#ff0"/>
-    <rect x="78" y="6" width="4" height="4" fill="#111"/>
-    <rect x="79" y="7" width="2" height="2" fill="#ff0"/>
-    <rect x="72" y="12" width="8" height="4" fill="#1a7a3a"/>
-    <rect x="73" y="12" width="2" height="3" fill="#ddd"/>
-    <rect x="77" y="12" width="2" height="3" fill="#ddd"/>
+    <!-- Thick legs -->
+    <path d="M24,68 Q18,74 16,84 Q24,88 32,84 Q34,76 32,70Z" fill="url(#plague-body-dark)"/>
+    <path d="M64,68 Q70,74 72,84 Q64,88 56,84 Q54,76 56,70Z" fill="url(#plague-body-dark)"/>
+    <path d="M18,84 Q20,88 22,84 Q24,88 26,84" stroke="url(#plague-ooze)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M62,84 Q64,88 66,84 Q68,88 70,84" stroke="url(#plague-ooze)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="22" cy="74" rx="3" ry="2.5" fill="url(#plague-pustule)"/>
+    <ellipse cx="66" cy="76" rx="3" ry="2.5" fill="url(#plague-pustule)"/>
 
-    <!-- Necks -->
-    <rect x="10" y="14" width="8" height="14" fill="#27ae60"/>
-    <rect x="36" y="16" width="16" height="10" fill="#27ae60"/>
-    <rect x="70" y="14" width="8" height="14" fill="#27ae60"/>
+    <!-- Arms (more spread out, pulsing) -->
+    <path d="M14,40 Q4,46 2,60" stroke="#33691e" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M14,40 Q4,46 2,60" stroke="#689f38" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="8" cy="50" rx="4" ry="3.5" fill="url(#plague-pustule2)"/>
+    <path d="M-2,58 Q-4,64 0,68 Q6,72 12,68 Q16,62 12,58 Q6,54 2,56Z" fill="url(#plague-body)"/>
+    <path d="M-2,60 L-4,56 M2,58 L0,54 M6,57 L5,53 M10,58 L10,54" stroke="#33691e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Body -->
-    <rect x="8" y="26" width="72" height="34" fill="#27ae60"/>
-    <rect x="12" y="28" width="64" height="30" fill="#2ecc71"/>
-    <!-- Pustules (brighter pulse) -->
-    <rect x="18" y="32" width="10" height="10" fill="#f1c40f"/>
-    <rect x="20" y="34" width="6" height="6" fill="#e67e22"/>
-    <rect x="22" y="36" width="2" height="2" fill="#fff"/>
-    <rect x="38" y="30" width="12" height="12" fill="#f1c40f"/>
-    <rect x="40" y="32" width="8" height="8" fill="#e67e22"/>
-    <rect x="42" y="34" width="4" height="4" fill="#fff"/>
-    <rect x="58" y="34" width="10" height="10" fill="#f1c40f"/>
-    <rect x="60" y="36" width="6" height="6" fill="#e67e22"/>
+    <path d="M74,40 Q84,46 86,60" stroke="#33691e" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M74,40 Q84,46 86,60" stroke="#689f38" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="80" cy="50" rx="4" ry="3.5" fill="url(#plague-pustule2)"/>
+    <path d="M90,58 Q92,64 88,68 Q82,72 76,68 Q72,62 76,58 Q82,54 86,56Z" fill="url(#plague-body)"/>
+    <path d="M90,60 L92,56 M86,58 L88,54 M82,57 L83,53 M78,58 L78,54" stroke="#33691e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Arms -->
-    <rect x="2" y="32" width="10" height="14" fill="#2ecc71"/>
-    <rect x="4" y="34" width="6" height="10" fill="#27ae60"/>
-    <rect x="76" y="32" width="10" height="14" fill="#2ecc71"/>
-    <rect x="78" y="34" width="6" height="10" fill="#27ae60"/>
+    <!-- BODY -->
+    <path d="M14,38 Q10,48 10,62 Q12,72 26,74 Q44,76 62,74 Q76,72 78,62 Q78,48 74,38 Q62,30 44,30 Q26,30 14,38Z" fill="url(#plague-body)"/>
+    <path d="M18,40 Q14,50 16,62 Q24,68 44,66 Q52,62 50,50 Q42,36 28,36Z" fill="url(#plague-body-hi)" stroke="none"/>
 
-    <!-- Legs -->
-    <rect x="12" y="58" width="18" height="16" fill="#1a7a3a"/>
-    <rect x="14" y="60" width="14" height="12" fill="#27ae60"/>
-    <rect x="58" y="59" width="18" height="16" fill="#1a7a3a"/>
-    <rect x="60" y="61" width="14" height="12" fill="#27ae60"/>
-    <rect x="8" y="72" width="22" height="6" fill="#145a2a"/>
-    <rect x="54" y="73" width="22" height="6" fill="#145a2a"/>
-    <rect x="6" y="78" width="76" height="4" fill="#2ecc71" opacity="0.4"/>
+    <!-- RIB BONES -->
+    <path d="M28,40 Q22,44 24,50 Q28,52 32,48 Q32,44 28,40Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M28,48 Q22,52 24,58 Q28,60 32,56 Q32,52 28,48Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M28,56 Q22,60 24,66 Q28,68 32,64 Q32,60 28,56Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M60,40 Q66,44 64,50 Q60,52 56,48 Q56,44 60,40Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M60,48 Q66,52 64,58 Q60,60 56,56 Q56,52 60,48Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+    <path d="M60,56 Q66,60 64,66 Q60,68 56,64 Q56,60 60,56Z" fill="url(#plague-bone)" stroke="#8d6e63" stroke-width="0.8"/>
+
+    <!-- DISTENDED BELLY (PULSING EXPANDED - larger than frame 0) -->
+    <ellipse cx="44" cy="58" rx="24" ry="22" fill="url(#plague-belly)" stroke="#558b2f" stroke-width="1.5"/>
+    <!-- Belly pustules (larger, pulsing) -->
+    <ellipse cx="36" cy="52" rx="5" ry="4.5" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.8"/>
+    <ellipse cx="52" cy="50" rx="4" ry="3.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.8"/>
+    <ellipse cx="44" cy="62" rx="6" ry="5" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.8"/>
+    <ellipse cx="32" cy="62" rx="4" ry="3.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.8"/>
+    <ellipse cx="56" cy="60" rx="4.5" ry="4" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.8"/>
+    <ellipse cx="44" cy="54" rx="3" ry="2.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <!-- Belly vein stretch marks (expanded) -->
+    <path d="M24,56 Q32,50 44,52 Q56,50 64,56" stroke="#33691e" stroke-width="1.2" fill="none"/>
+    <path d="M22,64 Q32,58 44,60 Q56,58 66,64" stroke="#33691e" stroke-width="1" fill="none"/>
+    <path d="M26,70 Q36,66 44,68 Q52,66 62,70" stroke="#33691e" stroke-width="0.8" fill="none"/>
+    <!-- Belly pulsing glow (expanded frame) -->
+    <ellipse cx="44" cy="58" rx="18" ry="16" fill="url(#plague-toxic)" stroke="none" opacity="0.6"/>
+
+    <!-- Body pustules -->
+    <ellipse cx="20" cy="44" rx="3" ry="2.5" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="68" cy="42" rx="3.5" ry="3" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <ellipse cx="18" cy="56" rx="2.5" ry="2" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="70" cy="54" rx="2.5" ry="2" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+
+    <!-- Neck -->
+    <path d="M34,28 Q38,32 44,32 Q50,32 54,28 Q52,24 44,22 Q36,22 34,28Z" fill="url(#plague-body)"/>
+
+    <!-- HEAD -->
+    <ellipse cx="44" cy="18" rx="22" ry="18" fill="url(#plague-body)"/>
+    <ellipse cx="36" cy="12" rx="10" ry="7" fill="#dcedc8" opacity="0.3" stroke="none"/>
+    <ellipse cx="28" cy="14" rx="3.5" ry="3" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="60" cy="12" rx="3" ry="2.5" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+    <ellipse cx="44" cy="8" rx="2.5" ry="2" fill="url(#plague-pustule)" stroke="#827717" stroke-width="0.5"/>
+    <ellipse cx="52" cy="20" rx="2" ry="1.8" fill="url(#plague-pustule2)" stroke="#e65100" stroke-width="0.5"/>
+
+    <!-- Eyes (more yellow/sick) -->
+    <ellipse cx="34" cy="18" rx="6" ry="5" fill="#1a2600"/>
+    <ellipse cx="54" cy="18" rx="6" ry="5" fill="#1a2600"/>
+    <ellipse cx="34" cy="18" rx="4.5" ry="3.5" fill="url(#plague-eye)"/>
+    <ellipse cx="54" cy="18" rx="4.5" ry="3.5" fill="url(#plague-eye)"/>
+    <circle cx="34" cy="17.5" r="2" fill="#1a2600"/>
+    <circle cx="33" cy="17" r="0.8" fill="#f9fbe7" stroke="none"/>
+    <circle cx="54" cy="17.5" r="2" fill="#1a2600"/>
+    <circle cx="53" cy="17" r="0.8" fill="#f9fbe7" stroke="none"/>
+    <path d="M28,14 Q34,11 40,14" stroke="#33691e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M48,14 Q54,11 60,14" stroke="#33691e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Nose -->
+    <path d="M40,22 Q44,26 48,22" fill="#33691e" stroke="none"/>
+    <circle cx="41" cy="23" r="1.5" fill="#1b5e20"/>
+    <circle cx="47" cy="23" r="1.5" fill="#1b5e20"/>
+
+    <!-- MOUTH (more ooze dripping) -->
+    <path d="M28,26 Q44,30 60,26 Q58,34 44,36 Q30,34 28,26Z" fill="#1b5e20"/>
+    <path d="M30,26 L29,32 M36,28 L35,34 M40,28 L40,34 M44,28 L44,34 M48,28 L48,34 M52,28 L53,34 M58,26 L59,32" stroke="#bcaaa4" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Heavy ooze drips -->
+    <path d="M32,34 Q31,40 30,46 Q32,48 33,46 Q34,50 35,46 Q36,48 36,40 Q34,36 32,34Z" fill="url(#plague-ooze)" stroke="none"/>
+    <path d="M44,35 Q44,42 43,48 Q44,50 45,48 Q46,52 47,48 Q48,50 48,42 Q46,38 44,35Z" fill="url(#plague-ooze)" stroke="none"/>
+    <path d="M56,34 Q57,40 58,46 Q56,48 55,46 Q54,50 53,46 Q52,48 52,40 Q54,36 56,34Z" fill="url(#plague-ooze)" stroke="none"/>
+    <!-- Toxic drip pools on ground area -->
+    <ellipse cx="32" cy="48" rx="3" ry="1.5" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="44" cy="52" rx="3" ry="1.5" fill="url(#plague-toxic)" stroke="none"/>
+    <ellipse cx="56" cy="48" rx="3" ry="1.5" fill="url(#plague-toxic)" stroke="none"/>
   </g>
 </svg>

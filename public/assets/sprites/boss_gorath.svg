@@ -1,181 +1,242 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="crispEdges">
-  <!-- Frame 0 -->
-  <g>
-    <!-- Crown -->
-    <rect x="26" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="27" y="0" width="6" height="6" fill="#ffee55"/>
-    <rect x="39" y="0" width="8" height="14" fill="#ffcc00"/>
-    <rect x="40" y="0" width="6" height="8" fill="#ffee55"/>
-    <rect x="52" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="53" y="0" width="6" height="6" fill="#ffee55"/>
-    <!-- Crown base -->
-    <rect x="22" y="10" width="44" height="6" fill="#ddaa00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 88" width="176" height="88" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- War Beast dark iron body -->
+    <linearGradient id="gorath-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#607d8b"/>
+      <stop offset="50%" stop-color="#455a64"/>
+      <stop offset="100%" stop-color="#1b2631"/>
+    </linearGradient>
+    <linearGradient id="gorath-body-hi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#90a4ae" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#455a64" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Heavy plate armor -->
+    <linearGradient id="gorath-plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#78909c"/>
+      <stop offset="100%" stop-color="#263238"/>
+    </linearGradient>
+    <!-- Molten orange cracks -->
+    <linearGradient id="gorath-molten" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6f00"/>
+      <stop offset="50%" stop-color="#ffca28"/>
+      <stop offset="100%" stop-color="#ff6f00"/>
+    </linearGradient>
+    <!-- Glowing orange eyes -->
+    <radialGradient id="gorath-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="40%" stop-color="#ffa000"/>
+      <stop offset="100%" stop-color="#e65100"/>
+    </radialGradient>
+    <!-- War hammer metal -->
+    <linearGradient id="gorath-hammer" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#90a4ae"/>
+      <stop offset="100%" stop-color="#37474f"/>
+    </linearGradient>
+    <!-- Hammer head glow -->
+    <radialGradient id="gorath-hammer-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffca28" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#ff6f00" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#bf360c" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Bull horns -->
+    <linearGradient id="gorath-horn" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3e2723"/>
+      <stop offset="100%" stop-color="#6d4c41"/>
+    </linearGradient>
+  </defs>
 
-    <!-- Head -->
-    <rect x="20" y="14" width="48" height="22" fill="#dd4444"/>
-    <rect x="22" y="16" width="44" height="18" fill="#ff6b6b"/>
-    <!-- Forehead lines -->
-    <rect x="28" y="16" width="32" height="2" fill="#cc3333"/>
+  <!-- FRAME 0: STANDING WITH HAMMER AT SIDE -->
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="30" ry="4" fill="#000" opacity="0.2" stroke="none"/>
 
-    <!-- Eyes (large, menacing) -->
-    <rect x="24" y="22" width="14" height="8" fill="#111"/>
-    <rect x="50" y="22" width="14" height="8" fill="#111"/>
-    <rect x="26" y="23" width="10" height="6" fill="#ff0000"/>
-    <rect x="52" y="23" width="10" height="6" fill="#ff0000"/>
-    <!-- Pupils -->
-    <rect x="30" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="31" y="25" width="2" height="2" fill="#fff"/>
-    <rect x="54" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="55" y="25" width="2" height="2" fill="#fff"/>
+    <!-- WAR HAMMER at side (held in right hand) -->
+    <!-- Hammer handle -->
+    <path d="M72,30 Q74,50 76,72" stroke="#5d4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M72,30 Q74,50 76,72" stroke="#8d6e63" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Hammer head glow aura -->
+    <ellipse cx="72" cy="30" rx="12" ry="8" fill="url(#gorath-hammer-glow)" stroke="none"/>
+    <!-- Hammer head -->
+    <path d="M60,22 Q60,18 72,18 Q84,18 84,22 Q84,34 72,36 Q60,34 60,22Z" fill="url(#gorath-hammer)"/>
+    <!-- Hammer head molten cracks -->
+    <path d="M63,24 Q68,20 74,24 Q70,28 63,24Z" fill="url(#gorath-molten)" stroke="none"/>
+    <path d="M66,30 Q72,26 78,30" stroke="#ff6f00" stroke-width="1.2" fill="none"/>
+    <path d="M62,22 L64,19 M70,21 L71,18 M78,22 L80,19" stroke="#ffca28" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+    <!-- Runes on hammer -->
+    <path d="M64,26 L66,24 L68,26 M74,26 L76,24 L78,26" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
 
-    <!-- Nose -->
-    <rect x="40" y="28" width="8" height="4" fill="#cc3333"/>
+    <!-- Legs (wide stance) -->
+    <path d="M26,64 Q20,72 18,82 Q24,86 32,82 Q34,74 34,68Z" fill="url(#gorath-body)"/>
+    <path d="M62,64 Q68,72 70,82 Q64,86 56,82 Q54,74 54,68Z" fill="url(#gorath-body)"/>
+    <!-- Leg plate armor -->
+    <path d="M22,66 Q24,64 28,64 Q30,70 28,74 Q24,74 22,70Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
+    <path d="M66,66 Q64,64 60,64 Q58,70 60,74 Q64,74 66,70Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
+    <!-- Leg crack lines -->
+    <path d="M24,66 Q26,68 24,72" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <path d="M64,66 Q62,68 64,72" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <!-- Hooves -->
+    <path d="M14,80 Q22,86 34,84 Q36,80 30,78Z" fill="#1b2631" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M54,78 Q60,84 74,84 Q74,80 68,78Z" fill="#1b2631" stroke="#1a1a2e" stroke-width="1"/>
 
-    <!-- Mouth -->
-    <rect x="26" y="32" width="36" height="6" fill="#660000"/>
-    <!-- Upper teeth -->
-    <rect x="28" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="34" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="40" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="46" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="52" y="32" width="4" height="4" fill="#eee"/>
-    <!-- Lower teeth -->
-    <rect x="30" y="36" width="4" height="3" fill="#ddd"/>
-    <rect x="42" y="36" width="4" height="3" fill="#ddd"/>
-    <rect x="54" y="36" width="4" height="3" fill="#ddd"/>
+    <!-- Left Arm (down) -->
+    <path d="M14,40 Q8,54 6,68" stroke="#1b2631" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M14,40 Q8,54 6,68" stroke="#455a64" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- Arm plate armor -->
+    <path d="M12,44 Q10,50 10,58 Q14,60 16,56 Q16,48 14,44Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
+    <!-- Left fist -->
+    <path d="M2,66 Q2,72 6,74 Q12,76 16,72 Q18,66 14,64 Q8,62 4,64Z" fill="url(#gorath-body)"/>
+    <!-- Fist knuckle spikes -->
+    <path d="M4,64 L2,61 M8,63 L7,60 M12,63 L12,60 M16,64 L17,61" stroke="#546e7a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Body -->
-    <rect x="10" y="38" width="68" height="30" fill="#dd4444"/>
-    <rect x="14" y="40" width="60" height="26" fill="#ff6b6b"/>
-    <!-- Inner core (purple energy) -->
-    <rect x="24" y="44" width="40" height="18" fill="#9a3db8"/>
-    <rect x="28" y="46" width="32" height="14" fill="#be4bdb"/>
-    <!-- Core glow -->
-    <rect x="36" y="50" width="16" height="6" fill="#d66ef0"/>
-    <rect x="40" y="52" width="8" height="2" fill="#eea0ff"/>
+    <!-- Right Arm (holding hammer) -->
+    <path d="M74,40 Q76,50 76,62" stroke="#1b2631" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M74,40 Q76,50 76,62" stroke="#455a64" stroke-width="7" fill="none" stroke-linecap="round"/>
 
-    <!-- Shoulder armor -->
-    <rect x="4" y="36" width="12" height="10" fill="#993333"/>
-    <rect x="5" y="37" width="10" height="8" fill="#bb4444"/>
-    <rect x="72" y="36" width="12" height="10" fill="#993333"/>
-    <rect x="73" y="37" width="10" height="8" fill="#bb4444"/>
-    <!-- Spikes on shoulders -->
-    <rect x="6" y="34" width="4" height="4" fill="#666"/>
-    <rect x="12" y="35" width="3" height="3" fill="#666"/>
-    <rect x="74" y="34" width="4" height="4" fill="#666"/>
-    <rect x="79" y="35" width="3" height="3" fill="#666"/>
+    <!-- BODY (massive) -->
+    <path d="M16,36 Q12,44 12,60 Q14,70 28,72 Q44,74 60,72 Q74,70 76,60 Q76,44 72,36 Q62,30 44,30 Q26,30 16,36Z" fill="url(#gorath-body)"/>
+    <!-- Body highlight -->
+    <path d="M20,38 Q16,46 18,58 Q26,64 44,62 Q52,58 50,46 Q42,34 28,34Z" fill="url(#gorath-body-hi)" stroke="none"/>
+    <!-- Chest plate -->
+    <path d="M24,40 Q22,50 24,60 Q34,66 44,66 Q54,66 64,60 Q66,50 64,40 Q54,34 44,34 Q34,34 24,40Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="1"/>
+    <!-- Chest molten crack veins -->
+    <path d="M30,44 Q36,40 44,42 Q52,40 58,44" stroke="url(#gorath-molten)" stroke-width="1.2" fill="none"/>
+    <path d="M28,52 Q34,48 44,50 Q54,48 60,52" stroke="#ff6f00" stroke-width="1" fill="none"/>
+    <path d="M32,58 Q38,54 44,56 Q50,54 56,58" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <!-- Shoulder pauldrons -->
+    <path d="M10,36 Q6,30 10,40 Q12,48 18,48 Q22,44 22,38 Q18,32 14,32Z" fill="url(#gorath-plate)"/>
+    <path d="M8,32 L6,28 M11,30 L10,26 M14,29 L15,25" stroke="#90a4ae" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M78,36 Q82,30 78,40 Q76,48 70,48 Q66,44 66,38 Q70,32 74,32Z" fill="url(#gorath-plate)"/>
+    <path d="M80,32 L82,28 M77,30 L78,26 M74,29 L73,25" stroke="#90a4ae" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Arms -->
-    <rect x="2" y="44" width="10" height="20" fill="#ff6b6b"/>
-    <rect x="3" y="45" width="8" height="18" fill="#dd4444"/>
-    <rect x="76" y="44" width="10" height="20" fill="#ff6b6b"/>
-    <rect x="77" y="45" width="8" height="18" fill="#dd4444"/>
-    <!-- Fists -->
-    <rect x="0" y="62" width="14" height="10" fill="#cc3333"/>
-    <rect x="2" y="64" width="10" height="6" fill="#dd4444"/>
-    <rect x="74" y="62" width="14" height="10" fill="#cc3333"/>
-    <rect x="76" y="64" width="10" height="6" fill="#dd4444"/>
+    <!-- Neck -->
+    <path d="M34,28 Q38,30 44,30 Q50,30 54,28 Q52,24 44,24 Q36,24 34,28Z" fill="url(#gorath-body)"/>
 
-    <!-- Legs -->
-    <rect x="18" y="68" width="14" height="16" fill="#cc3333"/>
-    <rect x="20" y="70" width="10" height="12" fill="#aa2222"/>
-    <rect x="56" y="68" width="14" height="16" fill="#cc3333"/>
-    <rect x="58" y="70" width="10" height="12" fill="#aa2222"/>
-    <!-- Feet -->
-    <rect x="14" y="82" width="18" height="6" fill="#882222"/>
-    <rect x="56" y="82" width="18" height="6" fill="#882222"/>
-    <!-- Claws on feet -->
-    <rect x="14" y="86" width="4" height="2" fill="#555"/>
-    <rect x="20" y="86" width="4" height="2" fill="#555"/>
-    <rect x="28" y="86" width="4" height="2" fill="#555"/>
-    <rect x="56" y="86" width="4" height="2" fill="#555"/>
-    <rect x="62" y="86" width="4" height="2" fill="#555"/>
-    <rect x="70" y="86" width="4" height="2" fill="#555"/>
+    <!-- HEAD (minotaur-like) -->
+    <ellipse cx="44" cy="20" rx="20" ry="18" fill="url(#gorath-body)"/>
+    <!-- Head highlight -->
+    <ellipse cx="37" cy="14" rx="9" ry="7" fill="#90a4ae" opacity="0.3" stroke="none"/>
+    <!-- Brow plate -->
+    <path d="M24,18 Q30,14 44,16 Q58,14 64,18" fill="#37474f" stroke="none"/>
+
+    <!-- BULL HORNS -->
+    <path d="M26,12 Q16,4 14,10 Q18,16 24,14Z" fill="url(#gorath-horn)"/>
+    <path d="M26,12 Q16,4 14,10" stroke="#3e2723" stroke-width="1" fill="none"/>
+    <path d="M62,12 Q72,4 74,10 Q70,16 64,14Z" fill="url(#gorath-horn)"/>
+    <path d="M62,12 Q72,4 74,10" stroke="#3e2723" stroke-width="1" fill="none"/>
+    <!-- Horn tips (iron-capped) -->
+    <ellipse cx="14" cy="10" rx="2" ry="2" fill="#78909c"/>
+    <ellipse cx="74" cy="10" rx="2" ry="2" fill="#78909c"/>
+
+    <!-- Glowing orange eyes -->
+    <ellipse cx="34" cy="20" rx="6" ry="5" fill="#0a0a0a"/>
+    <ellipse cx="54" cy="20" rx="6" ry="5" fill="#0a0a0a"/>
+    <ellipse cx="34" cy="20" rx="4.5" ry="3.5" fill="url(#gorath-eye)"/>
+    <ellipse cx="54" cy="20" rx="4.5" ry="3.5" fill="url(#gorath-eye)"/>
+    <circle cx="35" cy="19.5" r="2" fill="#1a0000"/>
+    <circle cx="34" cy="18.5" r="0.8" fill="#fff9c4" stroke="none"/>
+    <circle cx="55" cy="19.5" r="2" fill="#1a0000"/>
+    <circle cx="54" cy="18.5" r="0.8" fill="#fff9c4" stroke="none"/>
+    <!-- Eyebrow ridges -->
+    <path d="M28,16 Q34,13 40,16" stroke="#263238" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M48,16 Q54,13 60,16" stroke="#263238" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Snout / Muzzle -->
+    <path d="M36,24 Q40,28 44,28 Q48,28 52,24 Q50,30 44,32 Q38,30 36,24Z" fill="#37474f"/>
+    <!-- Nostrils -->
+    <circle cx="40" cy="26" r="2" fill="#1b2631"/>
+    <circle cx="48" cy="26" r="2" fill="#1b2631"/>
+    <!-- Teeth showing -->
+    <path d="M38,30 L37,34 M44,31 L44,35 M50,30 L51,34" stroke="#e0e0e0" stroke-width="1.5" stroke-linecap="round" fill="none"/>
   </g>
-  <!-- Frame 1 (arms raised, slight breath) -->
-  <g transform="translate(88,0)">
-    <!-- Crown -->
-    <rect x="26" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="27" y="0" width="6" height="6" fill="#ffee55"/>
-    <rect x="39" y="0" width="8" height="14" fill="#ffcc00"/>
-    <rect x="40" y="0" width="6" height="8" fill="#ffee55"/>
-    <rect x="52" y="0" width="8" height="12" fill="#ffcc00"/>
-    <rect x="53" y="0" width="6" height="6" fill="#ffee55"/>
-    <rect x="22" y="10" width="44" height="6" fill="#ddaa00"/>
 
-    <!-- Head -->
-    <rect x="20" y="14" width="48" height="22" fill="#dd4444"/>
-    <rect x="22" y="16" width="44" height="18" fill="#ff6b6b"/>
-    <rect x="28" y="16" width="32" height="2" fill="#cc3333"/>
+  <!-- FRAME 1: HAMMER RAISED OVERHEAD -->
+  <g transform="translate(88, 0)" stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Shadow -->
+    <ellipse cx="44" cy="86" rx="30" ry="4" fill="#000" opacity="0.2" stroke="none"/>
 
-    <!-- Eyes (squinting, angrier) -->
-    <rect x="24" y="23" width="14" height="6" fill="#111"/>
-    <rect x="50" y="23" width="14" height="6" fill="#111"/>
-    <rect x="26" y="24" width="10" height="4" fill="#ff0000"/>
-    <rect x="52" y="24" width="10" height="4" fill="#ff0000"/>
-    <rect x="30" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="31" y="25" width="2" height="2" fill="#fff"/>
-    <rect x="54" y="24" width="4" height="4" fill="#ffcc00"/>
-    <rect x="55" y="25" width="2" height="2" fill="#fff"/>
+    <!-- WAR HAMMER RAISED OVERHEAD -->
+    <!-- Handle going up -->
+    <path d="M72,62 Q74,44 76,28 Q74,20 70,16" stroke="#5d4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M72,62 Q74,44 76,28 Q74,20 70,16" stroke="#8d6e63" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Hammer head glow (brighter, overhead) -->
+    <ellipse cx="60" cy="8" rx="16" ry="10" fill="url(#gorath-hammer-glow)" stroke="none"/>
+    <!-- Hammer head overhead -->
+    <path d="M46,2 Q46,-2 62,-2 Q78,-2 78,2 Q78,14 62,16 Q46,14 46,2Z" fill="url(#gorath-hammer)"/>
+    <!-- Molten cracks on hammer (glowing) -->
+    <path d="M50,6 Q56,2 64,6 Q60,10 50,6Z" fill="url(#gorath-molten)" stroke="none"/>
+    <path d="M52,12 Q58,8 68,12" stroke="#ff6f00" stroke-width="1.2" fill="none"/>
+    <path d="M48,2 L50,-1 M58,1 L59,-2 M68,2 L70,-1" stroke="#ffca28" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+    <!-- Runes -->
+    <path d="M50,8 L52,6 L54,8 M62,8 L64,6 L66,8" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <!-- Heat shimmer lines above hammer -->
+    <path d="M50,-2 Q52,-6 54,-2 M60,-3 Q62,-7 64,-3 M70,-2 Q72,-6 74,-2" stroke="#ffca28" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.7"/>
 
-    <!-- Nose -->
-    <rect x="40" y="28" width="8" height="4" fill="#cc3333"/>
+    <!-- Legs (braced) -->
+    <path d="M24,64 Q18,72 16,82 Q22,86 30,82 Q32,74 32,68Z" fill="url(#gorath-body)"/>
+    <path d="M64,64 Q70,72 72,82 Q66,86 58,82 Q56,74 56,68Z" fill="url(#gorath-body)"/>
+    <path d="M20,66 Q22,64 26,64 Q28,70 26,74 Q22,74 20,70Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
+    <path d="M68,66 Q66,64 62,64 Q60,70 62,74 Q66,74 68,70Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
+    <path d="M22,66 Q24,68 22,72" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <path d="M66,66 Q64,68 66,72" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <path d="M12,80 Q20,86 32,84 Q34,80 28,78Z" fill="#1b2631" stroke="#1a1a2e" stroke-width="1"/>
+    <path d="M56,78 Q62,84 76,84 Q76,80 70,78Z" fill="#1b2631" stroke="#1a1a2e" stroke-width="1"/>
 
-    <!-- Mouth (open wider) -->
-    <rect x="24" y="32" width="40" height="8" fill="#660000"/>
-    <rect x="26" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="32" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="38" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="44" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="50" y="32" width="4" height="4" fill="#eee"/>
-    <rect x="56" y="32" width="4" height="5" fill="#eee"/>
-    <rect x="28" y="38" width="4" height="3" fill="#ddd"/>
-    <rect x="40" y="38" width="4" height="3" fill="#ddd"/>
-    <rect x="52" y="38" width="4" height="3" fill="#ddd"/>
+    <!-- Left Arm swung back (counterbalance) -->
+    <path d="M14,40 Q4,52 2,64" stroke="#1b2631" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M14,40 Q4,52 2,64" stroke="#455a64" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M10,44 Q8,50 8,58 Q12,60 14,56 Q14,48 12,44Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
+    <path d="M-2,62 Q-2,68 2,70 Q8,72 12,68 Q14,62 10,60 Q4,58 0,60Z" fill="url(#gorath-body)"/>
+    <path d="M0,60 L-2,57 M4,59 L3,56 M8,59 L8,56 M12,60 L13,57" stroke="#546e7a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+    <!-- Right Arm raised (holding hammer) -->
+    <path d="M74,40 Q76,32 74,22" stroke="#1b2631" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M74,40 Q76,32 74,22" stroke="#455a64" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M72,30 Q74,26 74,20 Q78,20 80,26 Q78,32 74,32Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="0.8"/>
 
     <!-- Body -->
-    <rect x="10" y="40" width="68" height="28" fill="#dd4444"/>
-    <rect x="14" y="42" width="60" height="24" fill="#ff6b6b"/>
-    <!-- Core (brighter pulse) -->
-    <rect x="24" y="46" width="40" height="16" fill="#9a3db8"/>
-    <rect x="28" y="48" width="32" height="12" fill="#be4bdb"/>
-    <rect x="34" y="50" width="20" height="8" fill="#d66ef0"/>
-    <rect x="38" y="52" width="12" height="4" fill="#eea0ff"/>
+    <path d="M16,36 Q12,44 12,60 Q14,70 28,72 Q44,74 60,72 Q74,70 76,60 Q76,44 72,36 Q62,30 44,30 Q26,30 16,36Z" fill="url(#gorath-body)"/>
+    <path d="M20,38 Q16,46 18,58 Q26,64 44,62 Q52,58 50,46 Q42,34 28,34Z" fill="url(#gorath-body-hi)" stroke="none"/>
+    <path d="M24,40 Q22,50 24,60 Q34,66 44,66 Q54,66 64,60 Q66,50 64,40 Q54,34 44,34 Q34,34 24,40Z" fill="url(#gorath-plate)" stroke="#546e7a" stroke-width="1"/>
+    <path d="M30,44 Q36,40 44,42 Q52,40 58,44" stroke="url(#gorath-molten)" stroke-width="1.2" fill="none"/>
+    <path d="M28,52 Q34,48 44,50 Q54,48 60,52" stroke="#ff6f00" stroke-width="1" fill="none"/>
+    <path d="M32,58 Q38,54 44,56 Q50,54 56,58" stroke="#ff6f00" stroke-width="0.8" fill="none"/>
+    <path d="M10,36 Q6,30 10,40 Q12,48 18,48 Q22,44 22,38 Q18,32 14,32Z" fill="url(#gorath-plate)"/>
+    <path d="M8,32 L6,28 M11,30 L10,26 M14,29 L15,25" stroke="#90a4ae" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M78,36 Q82,30 78,40 Q76,48 70,48 Q66,44 66,38 Q70,32 74,32Z" fill="url(#gorath-plate)"/>
+    <path d="M80,32 L82,28 M77,30 L78,26 M74,29 L73,25" stroke="#90a4ae" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Shoulder armor -->
-    <rect x="4" y="38" width="12" height="10" fill="#993333"/>
-    <rect x="5" y="39" width="10" height="8" fill="#bb4444"/>
-    <rect x="72" y="38" width="12" height="10" fill="#993333"/>
-    <rect x="73" y="39" width="10" height="8" fill="#bb4444"/>
-    <rect x="6" y="36" width="4" height="4" fill="#666"/>
-    <rect x="12" y="37" width="3" height="3" fill="#666"/>
-    <rect x="74" y="36" width="4" height="4" fill="#666"/>
-    <rect x="79" y="37" width="3" height="3" fill="#666"/>
+    <!-- Neck -->
+    <path d="M34,28 Q38,30 44,30 Q50,30 54,28 Q52,24 44,24 Q36,24 34,28Z" fill="url(#gorath-body)"/>
 
-    <!-- Arms (raised higher) -->
-    <rect x="0" y="42" width="10" height="18" fill="#ff6b6b"/>
-    <rect x="1" y="43" width="8" height="16" fill="#dd4444"/>
-    <rect x="78" y="46" width="10" height="20" fill="#ff6b6b"/>
-    <rect x="79" y="47" width="8" height="18" fill="#dd4444"/>
-    <!-- Fists -->
-    <rect x="0" y="58" width="14" height="10" fill="#cc3333"/>
-    <rect x="2" y="60" width="10" height="6" fill="#dd4444"/>
-    <rect x="74" y="64" width="14" height="10" fill="#cc3333"/>
-    <rect x="76" y="66" width="10" height="6" fill="#dd4444"/>
+    <!-- HEAD -->
+    <ellipse cx="44" cy="20" rx="20" ry="18" fill="url(#gorath-body)"/>
+    <ellipse cx="37" cy="14" rx="9" ry="7" fill="#90a4ae" opacity="0.3" stroke="none"/>
+    <path d="M24,18 Q30,14 44,16 Q58,14 64,18" fill="#37474f" stroke="none"/>
 
-    <!-- Legs -->
-    <rect x="16" y="68" width="14" height="14" fill="#cc3333"/>
-    <rect x="18" y="70" width="10" height="10" fill="#aa2222"/>
-    <rect x="58" y="69" width="14" height="16" fill="#cc3333"/>
-    <rect x="60" y="71" width="10" height="12" fill="#aa2222"/>
-    <!-- Feet -->
-    <rect x="12" y="80" width="18" height="6" fill="#882222"/>
-    <rect x="58" y="83" width="18" height="5" fill="#882222"/>
-    <rect x="12" y="84" width="4" height="2" fill="#555"/>
-    <rect x="18" y="84" width="4" height="2" fill="#555"/>
-    <rect x="26" y="84" width="4" height="2" fill="#555"/>
-    <rect x="58" y="86" width="4" height="2" fill="#555"/>
-    <rect x="64" y="86" width="4" height="2" fill="#555"/>
-    <rect x="72" y="86" width="4" height="2" fill="#555"/>
+    <!-- BULL HORNS -->
+    <path d="M26,12 Q16,4 14,10 Q18,16 24,14Z" fill="url(#gorath-horn)"/>
+    <path d="M26,12 Q16,4 14,10" stroke="#3e2723" stroke-width="1" fill="none"/>
+    <path d="M62,12 Q72,4 74,10 Q70,16 64,14Z" fill="url(#gorath-horn)"/>
+    <path d="M62,12 Q72,4 74,10" stroke="#3e2723" stroke-width="1" fill="none"/>
+    <ellipse cx="14" cy="10" rx="2" ry="2" fill="#78909c"/>
+    <ellipse cx="74" cy="10" rx="2" ry="2" fill="#78909c"/>
+
+    <!-- Eyes (glowing with exertion) -->
+    <ellipse cx="34" cy="20" rx="6" ry="5" fill="#0a0a0a"/>
+    <ellipse cx="54" cy="20" rx="6" ry="5" fill="#0a0a0a"/>
+    <ellipse cx="34" cy="20" rx="4.5" ry="3.5" fill="url(#gorath-eye)"/>
+    <ellipse cx="54" cy="20" rx="4.5" ry="3.5" fill="url(#gorath-eye)"/>
+    <circle cx="35" cy="19.5" r="2" fill="#1a0000"/>
+    <circle cx="34" cy="18.5" r="0.8" fill="#fff9c4" stroke="none"/>
+    <circle cx="55" cy="19.5" r="2" fill="#1a0000"/>
+    <circle cx="54" cy="18.5" r="0.8" fill="#fff9c4" stroke="none"/>
+    <path d="M28,16 Q34,12 40,15" stroke="#263238" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M48,15 Q54,12 60,16" stroke="#263238" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Snout -->
+    <path d="M36,24 Q40,28 44,28 Q48,28 52,24 Q50,30 44,32 Q38,30 36,24Z" fill="#37474f"/>
+    <circle cx="40" cy="26" r="2" fill="#1b2631"/>
+    <circle cx="48" cy="26" r="2" fill="#1b2631"/>
+    <path d="M38,30 L37,34 M44,31 L44,35 M50,30 L51,34" stroke="#e0e0e0" stroke-width="1.5" stroke-linecap="round" fill="none"/>
   </g>
 </svg>
