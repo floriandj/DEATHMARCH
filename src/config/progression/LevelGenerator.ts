@@ -223,36 +223,16 @@ export function generateLevel(levelIndex: number): LevelConfig {
   const triggerDistance = Math.ceil(rawTrigger / gateInterval) * gateInterval;
   const marchSpeed = Math.round(130 + cycle * 3 + posInCycle * 2);
 
-  // ── Enemies (world templates for cycle 0, procedural for later cycles) ──
+  // ── Enemies — always procedural for maximum variety ──
   const enemies: Record<string, LevelEnemyConfig> = {};
   const enemyKills: Record<string, number> = {};
 
-  if (cycle === 0) {
-    // First cycle: use hand-crafted world enemies
-    for (const tmpl of world.enemies) {
-      enemies[tmpl.type] = {
-        type: tmpl.type,
-        hp: Math.max(1, Math.round(tmpl.baseHp * diff)),
-        speed: Math.round(tmpl.speed * (1 + posInCycle * 0.04)),
-        size: tmpl.size,
-        contactDamage: tmpl.contactDamage,
-        splashRadius: tmpl.splashRadius,
-        splashDamage: tmpl.splashDamage,
-        color: tmpl.color,
-        appearsAtDistance: Math.round(tmpl.introFraction * triggerDistance),
-        scoreValue: Math.round(tmpl.scoreValue * diff),
-      };
-      enemyKills[tmpl.type] = Math.round(tmpl.scoreValue * diff);
-    }
-  } else {
-    // Later cycles: procedural enemies unique to this level
-    const seed = levelIndex * 7919 + 42;
-    const procDefs = generateEnemySet(seed, worldIdx);
-    const procConfigs = toEnemyConfigs(procDefs, diff, triggerDistance);
-    for (const [type, cfg] of Object.entries(procConfigs)) {
-      enemies[type] = cfg;
-      enemyKills[type] = cfg.scoreValue;
-    }
+  const enemySeed = levelIndex * 7919 + 42;
+  const procDefs = generateEnemySet(enemySeed, worldIdx);
+  const procConfigs = toEnemyConfigs(procDefs, diff, triggerDistance);
+  for (const [type, cfg] of Object.entries(procConfigs)) {
+    enemies[type] = cfg;
+    enemyKills[type] = cfg.scoreValue;
   }
 
   // ── Weapons ──
@@ -329,9 +309,9 @@ export function generateLevel(levelIndex: number): LevelConfig {
     },
     gates: { interval: gateInterval, templates: gateTemplates },
     boss: {
-      name: world.bossNames[posInCycle],
+      name: generateBossName(levelIndex),
       sprite: world.bossSprite,
-      tint: world.bossTint,
+      tint: generateBossTint(levelIndex, worldIdx),
       scale: 1.5 + posInCycle * 0.08,
       hp: bossHp,
       triggerDistance,
@@ -345,6 +325,46 @@ export function generateLevel(levelIndex: number): LevelConfig {
     },
     scoring: { perMeter, perSurvivingUnit, bossKill, enemyKills },
   };
+}
+
+// ---------------------------------------------------------------------------
+// Procedural boss name + tint for variety
+// ---------------------------------------------------------------------------
+
+const BOSS_PREFIXES = [
+  'Lord', 'King', 'Queen', 'Duke', 'Baron', 'Warlord', 'Emperor', 'Tyrant',
+  'Ancient', 'Cursed', 'Fallen', 'Undead', 'Elder', 'Primal', 'Abyssal',
+  'Infernal', 'Frost', 'Shadow', 'Blood', 'Iron', 'Storm', 'Doom', 'Dread',
+];
+const BOSS_NAMES = [
+  'Gorath', 'Malachar', 'Vexor', 'Thundrak', 'Zephyros', 'Nox', 'Pyraxis',
+  'Glacius', 'Venomor', 'Skulrak', 'Drakon', 'Mortis', 'Azrael', 'Typhon',
+  'Kronos', 'Balor', 'Fenris', 'Moloch', 'Orcus', 'Surtur', 'Ravana',
+  'Behemoth', 'Leviathan', 'Chimera', 'Hydra', 'Basilisk', 'Cerberus',
+];
+const BOSS_TINT_PALETTES: number[][] = [
+  [0xff4444, 0xcc2222, 0xff6666], // red
+  [0x4488ff, 0x2266dd, 0x66aaff], // blue
+  [0x44ff44, 0x22cc22, 0x66ff66], // green
+  [0xffaa00, 0xdd8800, 0xffcc44], // orange
+  [0xaa44ff, 0x8822dd, 0xcc66ff], // purple
+  [0xff44aa, 0xdd2288, 0xff66cc], // pink
+  [0x44ffff, 0x22dddd, 0x66ffff], // cyan
+];
+
+function generateBossName(levelIndex: number): string {
+  // Seeded selection so same level always gets same name
+  const s1 = (levelIndex * 3571 + 17) % BOSS_PREFIXES.length;
+  const s2 = (levelIndex * 7243 + 31) % BOSS_NAMES.length;
+  return `${BOSS_PREFIXES[s1]} ${BOSS_NAMES[s2]}`;
+}
+
+function generateBossTint(levelIndex: number, worldIdx: number): string | undefined {
+  // Cycle 0 world bosses keep original colors (no tint)
+  if (levelIndex < 5) return undefined;
+  const palette = BOSS_TINT_PALETTES[(levelIndex * 1327 + worldIdx) % BOSS_TINT_PALETTES.length];
+  const color = palette[(levelIndex * 991) % palette.length];
+  return '#' + color.toString(16).padStart(6, '0');
 }
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
