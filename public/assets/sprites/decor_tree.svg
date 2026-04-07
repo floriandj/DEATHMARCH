@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" width="24" height="32" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="trunk-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5d4037"/>
+      <stop offset="100%" stop-color="#3e2723"/>
+    </linearGradient>
+  </defs>
+  <!-- Main trunk -->
+  <rect x="10" y="18" width="4" height="14" rx="1.5" fill="url(#trunk-grad)"/>
+  <!-- Trunk taper at base -->
+  <path d="M9,28 Q12,32 15,28" fill="#3e2723"/>
+  <!-- Lower left branch -->
+  <path d="M12,22 Q7,19 4,15" stroke="#4e342e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Lower right branch -->
+  <path d="M12,22 Q17,18 20,14" stroke="#4e342e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Upper left branch -->
+  <path d="M12,17 Q8,13 5,10" stroke="#5d4037" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Upper right branch -->
+  <path d="M12,17 Q16,12 19,9" stroke="#5d4037" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Top branch -->
+  <path d="M12,15 Q12,9 12,6" stroke="#5d4037" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Small left twig -->
+  <path d="M8,12 Q6,10 5,8" stroke="#4e342e" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  <!-- Small right twig -->
+  <path d="M16,12 Q18,10 19,8" stroke="#4e342e" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,18 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
-  <!-- Pouch body -->
-  <ellipse cx="10" cy="13" rx="7" ry="6" fill="#c8960c"/>
-  <ellipse cx="10" cy="12" rx="6.5" ry="5.5" fill="#e8b20e"/>
-  <!-- Pouch shine -->
-  <ellipse cx="8" cy="11" rx="3" ry="2.5" fill="#ffd43b" opacity="0.6"/>
-  <!-- Pouch top/tie -->
-  <path d="M6 8 Q7 5 10 4 Q13 5 14 8" fill="#c8960c" stroke="#a07808" stroke-width="0.5"/>
-  <ellipse cx="10" cy="8" rx="4" ry="1.5" fill="#e8b20e"/>
-  <!-- Gold coins peeking out -->
-  <circle cx="8" cy="7" r="2" fill="#ffd43b" stroke="#c8960c" stroke-width="0.4"/>
-  <circle cx="12" cy="6.5" r="1.8" fill="#ffee66" stroke="#c8960c" stroke-width="0.4"/>
-  <!-- Coin detail -->
-  <text x="8" y="8.2" font-size="2.5" fill="#c8960c" text-anchor="middle" font-weight="bold">G</text>
-  <!-- Sparkle -->
-  <circle cx="14" cy="4" r="0.8" fill="#ffffff" opacity="0.8"/>
-  <circle cx="5" cy="6" r="0.5" fill="#ffffff" opacity="0.6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" shape-rendering="geometricPrecision">
+  <defs>
+    <radialGradient id="sack-body" cx="0.45" cy="0.55" r="0.55">
+      <stop offset="0%" stop-color="#a1887f"/>
+      <stop offset="100%" stop-color="#5d4037"/>
+    </radialGradient>
+    <radialGradient id="coin-a" cx="0.35" cy="0.3" r="0.6">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="50%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#f9a825"/>
+    </radialGradient>
+    <radialGradient id="coin-b" cx="0.35" cy="0.3" r="0.6">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="50%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#f9a825"/>
+    </radialGradient>
+  </defs>
+  <!-- Sack body -->
+  <ellipse cx="12" cy="16" rx="8" ry="7" fill="url(#sack-body)"/>
+  <!-- Sack highlight -->
+  <ellipse cx="10" cy="13.5" rx="4" ry="3" fill="#bcaaa4" opacity="0.35"/>
+  <!-- Neck/tie area -->
+  <rect x="9" y="8.5" width="6" height="3" rx="1.5" fill="#6d4c41"/>
+  <!-- Rope tie -->
+  <path d="M9,10 Q12,8.5 15,10" stroke="#d7ccc8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M10.5,9 Q12,7.5 13.5,9" stroke="#bcaaa4" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  <!-- Coin spilling from top — coin behind -->
+  <circle cx="9" cy="8" r="2.5" fill="url(#coin-a)" stroke="#f9a825" stroke-width="0.5"/>
+  <circle cx="8.3" cy="7.1" r="0.6" fill="#ffffff" opacity="0.7"/>
+  <!-- Coin in front -->
+  <circle cx="14.5" cy="7.5" r="2.2" fill="url(#coin-b)" stroke="#f9a825" stroke-width="0.5"/>
+  <circle cx="13.8" cy="6.7" r="0.5" fill="#ffffff" opacity="0.7"/>
+  <!-- Third small coin peeking -->
+  <circle cx="12" cy="7" r="1.6" fill="#ffd700" stroke="#f9a825" stroke-width="0.4"/>
+  <circle cx="11.4" cy="6.4" r="0.4" fill="#ffffff" opacity="0.65"/>
 </svg>
