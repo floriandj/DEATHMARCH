@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 24" width="48" height="24" shape-rendering="geometricPrecision">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 24" width="192" height="96" shape-rendering="geometricPrecision">
   <defs>
     <linearGradient id="gob-body" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#66bb6a"/>
@@ -12,7 +12,7 @@
   <!-- Frame 0 -->
   <g>
     <g stroke="#1a1a2e" stroke-width="1" stroke-linejoin="round">
-      <ellipse cx="12" cy="23" rx="7" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
+      <ellipse cx="12" cy="22.5" rx="7" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
       <ellipse cx="8" cy="21.5" rx="3.5" ry="2" fill="#1b5e20"/>
       <ellipse cx="16" cy="21.5" rx="3.5" ry="2" fill="#1b5e20"/>
       <rect x="6.5" y="16" width="3.5" height="6" rx="1.5" fill="url(#gob-body)"/>
@@ -23,9 +23,9 @@
       <path d="M20,10 Q22,12 21,15" stroke-width="2.5" fill="none" stroke="#43a047"/>
       <circle cx="3" cy="15.5" r="1.2" fill="#a5d6a7"/>
       <circle cx="21" cy="15.5" r="1.2" fill="#a5d6a7"/>
-      <ellipse cx="12" cy="6" rx="8" ry="6" fill="url(#gob-body)"/>
-      <path d="M3,5 Q1,2 4,4" fill="#43a047" stroke-width="1.5"/>
-      <path d="M21,5 Q23,2 20,4" fill="#43a047" stroke-width="1.5"/>
+      <ellipse cx="12" cy="6" rx="8" ry="5.5" fill="url(#gob-body)"/>
+      <path d="M4,5 Q2,2 5,4" fill="#43a047" stroke-width="1.5"/>
+      <path d="M20,5 Q22,2 19,4" fill="#43a047" stroke-width="1.5"/>
       <ellipse cx="9" cy="5.5" rx="2.2" ry="2" fill="url(#gob-eye)"/>
       <ellipse cx="15" cy="5.5" rx="2.2" ry="2" fill="url(#gob-eye)"/>
       <circle cx="9.5" cy="5.5" r="1" fill="#d32f2f"/>
@@ -37,33 +37,39 @@
       <rect x="13.5" y="8.5" width="1" height="1.5" rx="0.3" fill="#e0e0e0" stroke="none"/>
     </g>
   </g>
-  <!-- Frame 1 -->
+  <!-- Frame 1: subtle walk variant -->
   <g transform="translate(24,0)">
     <g stroke="#1a1a2e" stroke-width="1" stroke-linejoin="round">
-      <ellipse cx="12" cy="23" rx="7" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
-      <ellipse cx="6" cy="21" rx="3.5" ry="2" fill="#1b5e20"/>
-      <ellipse cx="17" cy="22" rx="3.5" ry="1.5" fill="#1b5e20"/>
-      <rect x="4.5" y="15.5" width="3.5" height="6" rx="1.5" fill="url(#gob-body)" transform="rotate(-10,6,18)"/>
-      <rect x="15" y="17" width="3.5" height="6" rx="1.5" fill="url(#gob-body)" transform="rotate(10,17,19)"/>
-      <ellipse cx="12" cy="13" rx="7" ry="5" fill="url(#gob-body)"/>
-      <ellipse cx="12" cy="12" rx="4" ry="3" fill="#81c784" opacity="0.4" stroke="none"/>
-      <path d="M4,9 Q1,11 2,14" stroke-width="2.5" fill="none" stroke="#43a047"/>
-      <path d="M20,9 Q23,10 22,13" stroke-width="2.5" fill="none" stroke="#43a047"/>
-      <circle cx="2" cy="14.5" r="1.2" fill="#a5d6a7"/>
-      <circle cx="22" cy="13.5" r="1.2" fill="#a5d6a7"/>
-      <ellipse cx="12" cy="5.5" rx="8" ry="6" fill="url(#gob-body)"/>
-      <path d="M3,4.5 Q1,1.5 4,3.5" fill="#43a047" stroke-width="1.5"/>
-      <path d="M21,4.5 Q23,1.5 20,3.5" fill="#43a047" stroke-width="1.5"/>
-      <ellipse cx="9" cy="5" rx="2.5" ry="2.2" fill="url(#gob-eye)"/>
-      <ellipse cx="15" cy="5" rx="2.5" ry="2.2" fill="url(#gob-eye)"/>
-      <circle cx="10" cy="5" r="1.2" fill="#d32f2f"/>
-      <circle cx="16" cy="5" r="1.2" fill="#d32f2f"/>
-      <circle cx="9.6" cy="4.5" r="0.4" fill="#fff" stroke="none"/>
-      <circle cx="15.6" cy="4.5" r="0.4" fill="#fff" stroke="none"/>
-      <path d="M7,8.5 Q12,12 17,8.5" fill="#1b5e20" stroke-width="0.8"/>
-      <rect x="9" y="8" width="1.2" height="2" rx="0.3" fill="#e0e0e0" stroke="none"/>
-      <rect x="13.8" y="8" width="1.2" height="2" rx="0.3" fill="#e0e0e0" stroke="none"/>
-      <rect x="11.2" y="9.5" width="1.2" height="1.5" rx="0.3" fill="#e0e0e0" stroke="none"/>
+      <ellipse cx="12" cy="22.5" rx="7" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
+      <!-- Left foot shifted forward 2px, right foot shifted back 2px -->
+      <ellipse cx="7" cy="21.5" rx="3.5" ry="2" fill="#1b5e20"/>
+      <ellipse cx="17" cy="21.5" rx="3.5" ry="2" fill="#1b5e20"/>
+      <!-- Left leg shifted forward 2px -->
+      <rect x="5.5" y="16" width="3.5" height="6" rx="1.5" fill="url(#gob-body)"/>
+      <!-- Right leg shifted back 2px -->
+      <rect x="15" y="16" width="3.5" height="6" rx="1.5" fill="url(#gob-body)"/>
+      <!-- Body 1px lower for walk bob -->
+      <ellipse cx="12" cy="14" rx="7" ry="5" fill="url(#gob-body)"/>
+      <ellipse cx="12" cy="13" rx="4" ry="3" fill="#81c784" opacity="0.4" stroke="none"/>
+      <!-- Left arm shifted forward 2px -->
+      <path d="M4,10 Q1,12 2,15" stroke-width="2.5" fill="none" stroke="#43a047"/>
+      <!-- Right arm shifted back 2px -->
+      <path d="M20,10 Q23,12 22,15" stroke-width="2.5" fill="none" stroke="#43a047"/>
+      <circle cx="2" cy="15.5" r="1.2" fill="#a5d6a7"/>
+      <circle cx="22" cy="15.5" r="1.2" fill="#a5d6a7"/>
+      <!-- Head same position -->
+      <ellipse cx="12" cy="6" rx="8" ry="5.5" fill="url(#gob-body)"/>
+      <path d="M4,5 Q2,2 5,4" fill="#43a047" stroke-width="1.5"/>
+      <path d="M20,5 Q22,2 19,4" fill="#43a047" stroke-width="1.5"/>
+      <ellipse cx="9" cy="5.5" rx="2.2" ry="2" fill="url(#gob-eye)"/>
+      <ellipse cx="15" cy="5.5" rx="2.2" ry="2" fill="url(#gob-eye)"/>
+      <circle cx="9.5" cy="5.5" r="1" fill="#d32f2f"/>
+      <circle cx="15.5" cy="5.5" r="1" fill="#d32f2f"/>
+      <circle cx="9.2" cy="5" r="0.4" fill="#fff" stroke="none"/>
+      <circle cx="15.2" cy="5" r="0.4" fill="#fff" stroke="none"/>
+      <path d="M8,9 Q12,11 16,9" fill="#1b5e20" stroke-width="0.8"/>
+      <rect x="9.5" y="8.5" width="1" height="1.5" rx="0.3" fill="#e0e0e0" stroke="none"/>
+      <rect x="13.5" y="8.5" width="1" height="1.5" rx="0.3" fill="#e0e0e0" stroke="none"/>
     </g>
   </g>
 </svg>
