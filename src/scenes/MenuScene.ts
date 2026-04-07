@@ -5,6 +5,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
+import { PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
 
 const PAD = 28;
 const CW = GAME_WIDTH - PAD * 2;
@@ -345,6 +346,17 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private startGame(): void {
+    // If starting from a checkpoint level, restore checkpoint perks.
+    // If starting from level 0, reset everything for a fresh run.
+    const selectedLevel = LevelManager.instance.currentLevelIndex;
+    const checkpointLvl = PerkManager.instance.checkpointLevel;
+    if (selectedLevel === 0) {
+      PerkManager.instance.resetAll();
+    } else if (selectedLevel <= checkpointLvl) {
+      PerkManager.instance.restoreCheckpoint();
+    }
+    // If starting past the checkpoint (replaying a completed level), keep current perks
+
     this.cameras.main.fadeOut(200, 0, 0, 0);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start('GameScene'));
   }

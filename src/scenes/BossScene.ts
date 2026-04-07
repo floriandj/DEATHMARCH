@@ -1036,6 +1036,7 @@ export class BossScene extends Phaser.Scene {
         score: Math.floor(this.score),
         distance: Math.floor(this.distance),
         goldEarned,
+        levelIndex: LevelManager.instance.currentLevelIndex,
       });
     });
   }

@@ -2,7 +2,7 @@
 // Full-screen perk selection after boss victory. Pick 1 of 3 random perks.
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
-import { PerkManager, PerkDef } from '@/systems/PerkManager';
+import { PerkManager, PerkDef, CHECKPOINT_INTERVAL } from '@/systems/PerkManager';
 import { SoundManager } from '@/systems/SoundManager';
 
 const F = 'Arial, Helvetica, sans-serif';
@@ -11,6 +11,7 @@ interface PerkSelectData {
   score: number;
   distance: number;
   goldEarned: number;
+  levelIndex: number;
 }
 
 const RARITY_COLORS: Record<string, { border: number; text: string; glow: number; label: string }> = {
@@ -54,6 +55,15 @@ export class PerkSelectScene extends Phaser.Scene {
       const perkIcons = existingPerks.map((p) => p.icon).join(' ');
       this.add.text(GAME_WIDTH / 2, 172, perkIcons, {
         fontSize: '20px',
+      }).setOrigin(0.5);
+    }
+
+    // Checkpoint indicator
+    const nextLevel = data.levelIndex + 1;
+    if (nextLevel % CHECKPOINT_INTERVAL === 0) {
+      const cpY = existingPerks.length > 0 ? 196 : 172;
+      this.add.text(GAME_WIDTH / 2, cpY, '\u{1F6A9} CHECKPOINT REACHED — progress saved!', {
+        fontSize: '13px', color: '#22c55e', fontFamily: F, fontStyle: 'bold',
       }).setOrigin(0.5);
     }
 
@@ -170,6 +180,13 @@ export class PerkSelectScene extends Phaser.Scene {
     if (perk) {
       PerkManager.instance.addPerk(perk.id);
       SoundManager.play('gate_positive');
+    }
+
+    // Save checkpoint if the next level is a checkpoint boundary
+    // e.g. completing level 4 means next is 5 (a checkpoint)
+    const nextLevel = data.levelIndex + 1;
+    if (nextLevel % CHECKPOINT_INTERVAL === 0) {
+      PerkManager.instance.saveCheckpoint(nextLevel);
     }
 
     this.cameras.main.fade(400, 0, 0, 0);

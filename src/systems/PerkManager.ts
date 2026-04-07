@@ -1,5 +1,6 @@
 // src/systems/PerkManager.ts
-// Roguelike perk system — perks stack across levels, reset on death.
+// Roguelike perk system — perks stack across levels, checkpoint every 5 levels.
+// Death resets to last checkpoint's perks. Perks persist via localStorage.
 
 export interface PerkDef {
   id: string;
@@ -34,6 +35,22 @@ export const ALL_PERKS: PerkDef[] = [
 
 const PERK_MAP = new Map(ALL_PERKS.map((p) => [p.id, p]));
 
+/** How many levels between checkpoints */
+export const CHECKPOINT_INTERVAL = 5;
+
+/** Returns the checkpoint level index for a given level (rounds down to nearest 5) */
+export function getCheckpointLevel(levelIndex: number): number {
+  return Math.floor(levelIndex / CHECKPOINT_INTERVAL) * CHECKPOINT_INTERVAL;
+}
+
+interface CheckpointData {
+  level: number;
+  perks: string[];
+  streak: number;
+}
+
+const STORAGE_KEY = 'deathmarch-checkpoint';
+
 export class PerkManager {
   private static _instance: PerkManager | null = null;
   private activePerks: string[] = [];
@@ -43,7 +60,10 @@ export class PerkManager {
   runStreak: number = 0;
 
   static get instance(): PerkManager {
-    if (!PerkManager._instance) PerkManager._instance = new PerkManager();
+    if (!PerkManager._instance) {
+      PerkManager._instance = new PerkManager();
+      PerkManager._instance.loadCheckpoint();
+    }
     return PerkManager._instance;
   }
 
@@ -69,11 +89,69 @@ export class PerkManager {
     return this.activePerks.length;
   }
 
-  /** Reset all perks and streak on death */
-  resetRun(): void {
+  // ── Checkpoint system ──
+
+  /** Save current perks + streak as a checkpoint */
+  saveCheckpoint(levelIndex: number): void {
+    const data: CheckpointData = {
+      level: levelIndex,
+      perks: [...this.activePerks],
+      streak: this.runStreak,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  /** Load checkpoint from localStorage (called once on init) */
+  private loadCheckpoint(): void {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const data: CheckpointData = JSON.parse(raw);
+      this.activePerks = data.perks || [];
+      this.runStreak = data.streak || 0;
+    } catch {
+      // corrupted — ignore
+    }
+  }
+
+  /** Get the checkpoint level index, or 0 if none saved */
+  get checkpointLevel(): number {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return 0;
+    try {
+      return (JSON.parse(raw) as CheckpointData).level || 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  /** On death: restore perks to the last checkpoint state */
+  restoreCheckpoint(): void {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      this.activePerks = [];
+      this.runStreak = 0;
+      this.ironWillUsed = false;
+      return;
+    }
+    try {
+      const data: CheckpointData = JSON.parse(raw);
+      this.activePerks = data.perks || [];
+      this.runStreak = data.streak || 0;
+      this.ironWillUsed = false;
+    } catch {
+      this.activePerks = [];
+      this.runStreak = 0;
+      this.ironWillUsed = false;
+    }
+  }
+
+  /** Full reset — clear checkpoint and all perks (e.g. starting fresh from menu) */
+  resetAll(): void {
     this.activePerks = [];
     this.ironWillUsed = false;
     this.runStreak = 0;
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   /** Called at start of each level to reset per-level flags */

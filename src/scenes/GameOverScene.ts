@@ -5,7 +5,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
-import { PerkManager } from '@/systems/PerkManager';
+import { PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
 
 interface GameOverData { score: number; distance: number; bossDefeated: boolean; goldEarned: number; }
 
@@ -45,9 +45,11 @@ export class GameOverScene extends Phaser.Scene {
     const showShop = !data.bossDefeated;
     if (data.bossDefeated) SoundManager.play('victory');
 
-    // Reset all perks and run streak on death
+    // On death: restore perks to last checkpoint state and go back to checkpoint level
+    const checkpointLvl = PerkManager.instance.checkpointLevel;
     if (!data.bossDefeated) {
-      PerkManager.instance.resetRun();
+      PerkManager.instance.restoreCheckpoint();
+      mgr.setLevel(checkpointLvl);
     }
 
     const vs = Math.min(1.35, Math.max(0.85, GAME_HEIGHT / 1280));
@@ -128,20 +130,25 @@ export class GameOverScene extends Phaser.Scene {
 
     y += statsH + Math.round(12 * vs);
 
-    // ── Perks display ──
+    // ── Perks display (after checkpoint restore on death) ──
     const activePerks = PerkManager.instance.getAll();
     const streak = PerkManager.instance.runStreak;
-    if (activePerks.length > 0 || streak > 0) {
+    if (activePerks.length > 0 || streak > 0 || (!data.bossDefeated && checkpointLvl > 0)) {
       const perkH = Math.round(60 * vs);
-      this.panel(PAD, y, CW, perkH, data.bossDefeated ? 0xa855f7 : C_RED);
-      const perkLabel = data.bossDefeated ? 'ACTIVE PERKS' : 'PERKS LOST';
+      const isVictory = data.bossDefeated;
+      this.panel(PAD, y, CW, perkH, isVictory ? 0xa855f7 : 0xf97316);
+      const perkLabel = isVictory ? 'ACTIVE PERKS' :
+        (activePerks.length > 0 ? `\u{1F6A9} CHECKPOINT PERKS (LVL ${checkpointLvl + 1})` : 'NO CHECKPOINT PERKS');
+      const labelColor = isVictory ? '#c084fc' : (activePerks.length > 0 ? '#fb923c' : '#94a3b8');
       this.add.text(PAD + 16, y + perkH * 0.35, perkLabel, {
-        fontSize: `${Math.round(12 * vs)}px`, color: data.bossDefeated ? '#c084fc' : '#f87171', fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
+        fontSize: `${Math.round(11 * vs)}px`, color: labelColor, fontFamily: F, fontStyle: 'bold', letterSpacing: 1,
       }).setOrigin(0, 0.5);
-      const icons = activePerks.map((p) => p.icon).join(' ');
-      this.add.text(PAD + CW - 16, y + perkH * 0.35, icons, {
-        fontSize: `${Math.round(18 * vs)}px`,
-      }).setOrigin(1, 0.5);
+      if (activePerks.length > 0) {
+        const icons = activePerks.map((p) => p.icon).join(' ');
+        this.add.text(PAD + CW - 16, y + perkH * 0.35, icons, {
+          fontSize: `${Math.round(18 * vs)}px`,
+        }).setOrigin(1, 0.5);
+      }
       if (streak > 0) {
         this.add.text(PAD + 16, y + perkH * 0.72, `\u{1F525} ${streak} streak  \u00D7${(1 + streak * 0.25).toFixed(2)} gold`, {
           fontSize: `${Math.round(12 * vs)}px`, color: '#f97316', fontFamily: F, fontStyle: 'bold',
@@ -196,7 +203,10 @@ export class GameOverScene extends Phaser.Scene {
       this.btn(btnY, '\u21BB  REPLAY', C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 600);
       btnY += btnH + btnGap;
     } else {
-      this.btn(btnY, '\u{1F4AA}  TRY AGAIN', C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 500);
+      const retryLabel = checkpointLvl === levelIndex
+        ? '\u{1F4AA}  TRY AGAIN'
+        : `\u{1F6A9}  RETRY FROM LVL ${checkpointLvl + 1}`;
+      this.btn(btnY, retryLabel, C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 500);
       btnY += btnH + btnGap;
     }
     this.btn(btnY, '\u2630  LEVELS', 0x374151, 0x1f2937, '#9ca3af', () => this.scene.start('MenuScene'), canAdvance ? 700 : 600);
