@@ -1,29 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
-  <!-- Railgun icon -->
-  <!-- Long barrel with rails -->
-  <rect x="0" y="8" width="16" height="2" fill="#00ffcc"/>
-  <rect x="0" y="12" width="16" height="2" fill="#00ffcc"/>
-  <rect x="0" y="10" width="16" height="2" fill="#00ddaa"/>
-  <!-- Rail glow -->
-  <rect x="2" y="9" width="2" height="1" fill="#ccffee"/>
-  <rect x="6" y="9" width="2" height="1" fill="#ccffee"/>
-  <rect x="10" y="9" width="2" height="1" fill="#ccffee"/>
-  <rect x="2" y="12" width="2" height="1" fill="#ccffee"/>
-  <rect x="6" y="12" width="2" height="1" fill="#ccffee"/>
-  <rect x="10" y="12" width="2" height="1" fill="#ccffee"/>
-  <!-- Body -->
-  <rect x="14" y="5" width="10" height="12" fill="#00ddaa"/>
-  <rect x="16" y="6" width="6" height="10" fill="#00bb88"/>
-  <!-- Energy cell -->
-  <rect x="16" y="7" width="4" height="4" fill="#00ffcc"/>
-  <rect x="17" y="8" width="2" height="2" fill="#eeffff"/>
-  <!-- Stock -->
-  <rect x="22" y="6" width="10" height="6" fill="#00bb88"/>
-  <rect x="24" y="7" width="6" height="4" fill="#009977"/>
-  <!-- Scope -->
-  <rect x="8" y="4" width="6" height="4" fill="#00bb88"/>
-  <rect x="9" y="5" width="4" height="2" fill="#00ffcc"/>
-  <!-- Grip -->
-  <rect x="20" y="14" width="6" height="10" fill="#009977"/>
-  <rect x="22" y="15" width="2" height="8" fill="#007755"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="rail_body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9e9e9e"/>
+      <stop offset="100%" stop-color="#424242"/>
+    </linearGradient>
+    <linearGradient id="rail_grip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#757575"/>
+      <stop offset="100%" stop-color="#212121"/>
+    </linearGradient>
+    <radialGradient id="rail_energy" cx="5%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#bbdefb"/>
+      <stop offset="40%" stop-color="#1565c0"/>
+      <stop offset="100%" stop-color="#0d47a1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rail_coil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1565c0"/>
+      <stop offset="100%" stop-color="#0d47a1"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round" fill="none">
+    <!-- Ultra-long barrel (sleek) -->
+    <rect x="1" y="12" width="16" height="3" rx="0.5" fill="url(#rail_body)"/>
+    <!-- Rail channel (energy guide) -->
+    <rect x="1" y="13" width="16" height="1" rx="0" fill="url(#rail_energy)" stroke="none"/>
+    <!-- Electromagnetic coil rings spaced along barrel -->
+    <rect x="2" y="11" width="2" height="5" rx="0.5" fill="url(#rail_coil)" stroke-width="1"/>
+    <rect x="5" y="11" width="2" height="5" rx="0.5" fill="url(#rail_coil)" stroke-width="1"/>
+    <rect x="8" y="11" width="2" height="5" rx="0.5" fill="url(#rail_coil)" stroke-width="1"/>
+    <rect x="11" y="11" width="2" height="5" rx="0.5" fill="url(#rail_coil)" stroke-width="1"/>
+    <rect x="14" y="11" width="2" height="5" rx="0.5" fill="url(#rail_coil)" stroke-width="1"/>
+    <!-- Coil energy glow dots -->
+    <circle cx="3" cy="13.5" r="0.6" fill="#bbdefb" stroke="none"/>
+    <circle cx="6" cy="13.5" r="0.6" fill="#bbdefb" stroke="none"/>
+    <circle cx="9" cy="13.5" r="0.6" fill="#bbdefb" stroke="none"/>
+    <circle cx="12" cy="13.5" r="0.6" fill="#bbdefb" stroke="none"/>
+    <circle cx="15" cy="13.5" r="0.6" fill="#bbdefb" stroke="none"/>
+    <!-- Receiver / power housing -->
+    <rect x="15" y="8" width="11" height="11" rx="1" fill="url(#rail_body)"/>
+    <!-- Energy capacitor window -->
+    <rect x="17" y="10" width="6" height="5" rx="0.5" fill="#0d47a1" stroke-width="1"/>
+    <rect x="18" y="11" width="4" height="3" rx="0.3" fill="#1565c0" stroke-width="0.8"/>
+    <!-- Glow inside capacitor -->
+    <rect x="19" y="11.5" width="2" height="2" rx="0.2" fill="#bbdefb" stroke="none"/>
+    <!-- Scope rail on top -->
+    <rect x="16" y="7" width="9" height="2" rx="0.3" fill="#757575" stroke-width="1"/>
+    <!-- Scope -->
+    <rect x="18" y="4" width="5" height="4" rx="0.5" fill="url(#rail_body)"/>
+    <rect x="19" y="5" width="3" height="2" rx="0.2" fill="#1565c0" stroke-width="0.8"/>
+    <!-- Slim stock -->
+    <rect x="25" y="9" width="6" height="7" rx="0.5" fill="url(#rail_body)"/>
+    <line x1="26" y1="10" x2="30" y2="10" stroke="#616161" stroke-width="0.8"/>
+    <line x1="26" y1="12" x2="30" y2="12" stroke="#616161" stroke-width="0.8"/>
+    <line x1="26" y1="14" x2="30" y2="14" stroke="#616161" stroke-width="0.8"/>
+    <!-- Pistol grip (slim) -->
+    <rect x="22" y="19" width="5" height="9" rx="1" fill="url(#rail_grip)"/>
+    <line x1="23.5" y1="21" x2="25.5" y2="21" stroke="#424242" stroke-width="0.8"/>
+    <line x1="23.5" y1="23" x2="25.5" y2="23" stroke="#424242" stroke-width="0.8"/>
+    <line x1="23.5" y1="25" x2="25.5" y2="25" stroke="#424242" stroke-width="0.8"/>
+    <!-- Trigger guard -->
+    <path d="M17 19 L17 24 Q17 26 19 26 L22 26" fill="url(#rail_body)" stroke-width="1.2"/>
+    <!-- Trigger -->
+    <line x1="18.5" y1="19" x2="18" y2="23" stroke="#9e9e9e" stroke-width="1.2"/>
+    <!-- Power cell (bottom) -->
+    <rect x="18" y="28" width="6" height="3" rx="0.5" fill="#0d47a1" stroke-width="1"/>
+    <rect x="19" y="28.5" width="4" height="2" rx="0.3" fill="#1565c0" stroke-width="0.8"/>
+  </g>
 </svg>

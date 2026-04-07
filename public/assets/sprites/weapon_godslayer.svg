@@ -1,34 +1,86 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
-  <!-- Godslayer icon - ornate golden weapon -->
-  <!-- Barrel (ornate, wide) -->
-  <rect x="0" y="7" width="12" height="6" fill="#fbbf24"/>
-  <rect x="2" y="8" width="8" height="4" fill="#f59e0b"/>
-  <!-- Barrel glow -->
-  <rect x="0" y="9" width="3" height="2" fill="#fef3c7"/>
-  <!-- Crown/halo accent -->
-  <rect x="0" y="5" width="3" height="3" fill="#fcd34d"/>
-  <rect x="0" y="12" width="3" height="3" fill="#fcd34d"/>
-  <!-- Body (ornate) -->
-  <rect x="10" y="3" width="14" height="14" fill="#f59e0b"/>
-  <rect x="12" y="4" width="10" height="12" fill="#d97706"/>
-  <!-- Divine core -->
-  <rect x="13" y="5" width="8" height="8" fill="#fbbf24"/>
-  <rect x="14" y="6" width="6" height="6" fill="#fcd34d"/>
-  <rect x="15" y="7" width="4" height="4" fill="#fef3c7"/>
-  <rect x="16" y="8" width="2" height="2" fill="#fff"/>
-  <!-- Wings/ornaments -->
-  <rect x="10" y="1" width="2" height="4" fill="#fcd34d"/>
-  <rect x="22" y="1" width="2" height="4" fill="#fcd34d"/>
-  <rect x="10" y="15" width="2" height="4" fill="#fcd34d"/>
-  <rect x="22" y="15" width="2" height="4" fill="#fcd34d"/>
-  <!-- Stock -->
-  <rect x="22" y="5" width="10" height="6" fill="#d97706"/>
-  <rect x="24" y="6" width="6" height="4" fill="#b45309"/>
-  <rect x="30" y="6" width="2" height="4" fill="#fcd34d"/>
-  <!-- Grip -->
-  <rect x="20" y="16" width="6" height="10" fill="#b45309"/>
-  <rect x="22" y="17" width="2" height="8" fill="#92400e"/>
-  <!-- Holy runes -->
-  <rect x="14" y="14" width="2" height="2" fill="#fef3c7"/>
-  <rect x="18" y="14" width="2" height="2" fill="#fef3c7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="god_gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff176"/>
+      <stop offset="50%" stop-color="#ffd600"/>
+      <stop offset="100%" stop-color="#f9a825"/>
+    </linearGradient>
+    <linearGradient id="god_body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9e9e9e"/>
+      <stop offset="100%" stop-color="#424242"/>
+    </linearGradient>
+    <linearGradient id="god_grip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#757575"/>
+      <stop offset="100%" stop-color="#212121"/>
+    </linearGradient>
+    <radialGradient id="god_purple" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="40%" stop-color="#7b1fa2"/>
+      <stop offset="100%" stop-color="#4a148c"/>
+    </radialGradient>
+    <radialGradient id="god_gold_glow" cx="15%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#fffde7"/>
+      <stop offset="50%" stop-color="#ffd600"/>
+      <stop offset="100%" stop-color="#f57f17" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="god_dual_glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffde7"/>
+      <stop offset="30%" stop-color="#ffd600"/>
+      <stop offset="70%" stop-color="#7b1fa2"/>
+      <stop offset="100%" stop-color="#4a148c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g stroke="#1a1a2e" stroke-width="1.5" stroke-linejoin="round" fill="none">
+    <!-- Ornate barrel with gold trim -->
+    <rect x="1" y="11" width="11" height="5" rx="0.5" fill="url(#god_body)"/>
+    <!-- Gold/purple dual energy from barrel -->
+    <rect x="1" y="11" width="6" height="5" rx="0.5" fill="url(#god_gold_glow)"/>
+    <!-- Crown ornament at muzzle (top and bottom) -->
+    <path d="M1 11 L3 9 L5 11" fill="url(#god_gold)" stroke-width="1"/>
+    <path d="M1 16 L3 18 L5 16" fill="url(#god_gold)" stroke-width="1"/>
+    <!-- Gold coil rings on barrel -->
+    <rect x="3" y="10.5" width="2" height="6" rx="0.5" fill="url(#god_gold)" stroke-width="1"/>
+    <rect x="6.5" y="10.5" width="2" height="6" rx="0.5" fill="url(#god_gold)" stroke-width="1"/>
+    <rect x="10" y="10.5" width="2" height="6" rx="0.5" fill="url(#god_gold)" stroke-width="1"/>
+    <!-- Elaborate receiver body (larger) -->
+    <rect x="10" y="7" width="14" height="13" rx="1.5" fill="url(#god_body)"/>
+    <!-- Gold border trim on receiver -->
+    <rect x="10" y="7" width="14" height="13" rx="1.5" fill="none" stroke="url(#god_gold)" stroke-width="1.5"/>
+    <!-- Dual energy chamber (gold + purple) -->
+    <ellipse cx="17" cy="13.5" rx="4.5" ry="5" fill="url(#god_dual_glow)"/>
+    <!-- Purple inner core -->
+    <ellipse cx="17" cy="13.5" rx="2.5" ry="2.8" fill="url(#god_purple)"/>
+    <!-- Gold inner core bright -->
+    <ellipse cx="17" cy="12.5" rx="1.2" ry="1" fill="#fffde7" stroke="none"/>
+    <!-- Ornamental wings (top) -->
+    <path d="M11 7 L12 4 L14 6 L16 3 L17 6 L20 4 L21 7" fill="url(#god_gold)" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- Ornamental wings (bottom) -->
+    <path d="M11 20 L12 23 L14 21 L16 24 L17 21 L20 23 L21 20" fill="url(#god_gold)" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- Side rune marks -->
+    <circle cx="13" cy="9" r="1" fill="url(#god_purple)" stroke="url(#god_gold)" stroke-width="0.8"/>
+    <circle cx="21" cy="9" r="1" fill="url(#god_purple)" stroke="url(#god_gold)" stroke-width="0.8"/>
+    <circle cx="13" cy="18" r="1" fill="url(#god_purple)" stroke="url(#god_gold)" stroke-width="0.8"/>
+    <circle cx="21" cy="18" r="1" fill="url(#god_purple)" stroke="url(#god_gold)" stroke-width="0.8"/>
+    <!-- Ornate stock with gold end cap -->
+    <rect x="22" y="9" width="9" height="9" rx="1" fill="url(#god_body)"/>
+    <rect x="28" y="9" width="3" height="9" rx="0.5" fill="url(#god_gold)" stroke-width="1"/>
+    <line x1="24" y1="10" x2="28" y2="10" stroke="#ffd600" stroke-width="0.8"/>
+    <line x1="24" y1="12" x2="28" y2="12" stroke="#ffd600" stroke-width="0.8"/>
+    <line x1="24" y1="14" x2="28" y2="14" stroke="#ffd600" stroke-width="0.8"/>
+    <line x1="24" y1="16" x2="28" y2="16" stroke="#ffd600" stroke-width="0.8"/>
+    <!-- Elaborate gold grip -->
+    <rect x="19" y="20" width="6" height="10" rx="1" fill="url(#god_grip)"/>
+    <!-- Gold grip wrap lines -->
+    <line x1="20" y1="22" x2="24" y2="22" stroke="#ffd600" stroke-width="0.8"/>
+    <line x1="20" y1="24" x2="24" y2="24" stroke="#ffd600" stroke-width="0.8"/>
+    <line x1="20" y1="26" x2="24" y2="26" stroke="#ffd600" stroke-width="0.8"/>
+    <line x1="20" y1="28" x2="24" y2="28" stroke="#ffd600" stroke-width="0.8"/>
+    <!-- Gold trigger guard -->
+    <path d="M12 20 L12 26 Q12 28 14 28 L19 28" fill="url(#god_gold)" stroke-width="1.2"/>
+    <!-- Trigger (gold) -->
+    <line x1="13.5" y1="20" x2="13" y2="25" stroke="#ffd600" stroke-width="1.5"/>
+    <!-- Magazine base (ornate) -->
+    <rect x="13" y="28" width="7" height="3" rx="1" fill="url(#god_gold)"/>
+    <rect x="14" y="28.5" width="5" height="2" rx="0.5" fill="url(#god_purple)" stroke-width="0.8"/>
+  </g>
 </svg>
