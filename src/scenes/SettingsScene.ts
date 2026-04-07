@@ -20,20 +20,21 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0f1923');
+    this.cameras.main.setBackgroundColor('#0a0f1a');
 
     // Header
     const hdr = this.add.graphics();
-    hdr.fillStyle(C_PANEL, 1);
-    hdr.fillRect(0, 0, GAME_WIDTH, 80);
-    hdr.fillStyle(C_YELLOW, 0.9);
-    hdr.fillRect(0, 0, GAME_WIDTH, 4);
-    hdr.lineStyle(1, C_BORDER, 0.5);
-    hdr.lineBetween(0, 80, GAME_WIDTH, 80);
+    hdr.fillStyle(0x0d1520, 1);
+    hdr.fillRect(0, 0, GAME_WIDTH, 84);
+    hdr.fillStyle(0xffd700, 0.9);
+    hdr.fillRect(0, 0, GAME_WIDTH, 3);
+    hdr.lineStyle(1, 0xffd700, 0.2);
+    hdr.lineBetween(0, 84, GAME_WIDTH, 84);
 
-    this.add.text(GAME_WIDTH / 2, 44, '\u2699  SETTINGS', {
-      fontSize: '30px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
-      stroke: '#000', strokeThickness: 2,
+    this.add.text(GAME_WIDTH / 2, 46, '\u2699  SETTINGS', {
+      fontSize: '32px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
+      stroke: '#b8860b', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5);
 
     let y = 100;
@@ -55,10 +56,12 @@ export class SettingsScene extends Phaser.Scene {
 
     // Version info
     const verBg = this.add.graphics();
-    verBg.fillStyle(C_PANEL, 0.8);
-    verBg.fillRoundedRect(PAD, GAME_HEIGHT - 120, CW, 44, 12);
-    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 98, `DEATHMARCH v2.0  \u2022  ${new Date().toISOString().slice(0, 10)}`, {
-      fontSize: '12px', color: '#475569', fontFamily: F,
+    verBg.fillStyle(0x0d1520, 0.8);
+    verBg.fillRoundedRect(PAD, GAME_HEIGHT - 124, CW, 48, 14);
+    verBg.lineStyle(1, 0xffd700, 0.15);
+    verBg.strokeRoundedRect(PAD, GAME_HEIGHT - 124, CW, 48, 14);
+    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 100, `DEATHMARCH v2.0  \u2022  ${new Date().toISOString().slice(0, 10)}`, {
+      fontSize: '12px', color: '#b8860b', fontFamily: F,
     }).setOrigin(0.5);
 
     // Back button
@@ -79,7 +82,7 @@ export class SettingsScene extends Phaser.Scene {
     g.fillStyle(color, 0.9);
     g.fillRoundedRect(PAD + 2, y + 2, CW - 4, 5, { tl: 12, tr: 12, bl: 0, br: 0 });
     // Accent dot
-    g.fillStyle(color, 0.6);
+    g.fillStyle(0xffd700, 0.5);
     g.fillCircle(PAD + 20, y + Math.round(32 * vs), 5);
 
     this.add.text(PAD + 34, y + Math.round(28 * vs), title, {

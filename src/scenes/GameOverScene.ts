@@ -27,7 +27,11 @@ export class GameOverScene extends Phaser.Scene {
   constructor() { super({ key: 'GameOverScene' }); }
 
   create(data: GameOverData): void {
-    this.cameras.main.setBackgroundColor('#0f1923');
+    this.cameras.main.setBackgroundColor('#0a0f1a');
+    // Vignette overlay
+    const vignette = this.add.graphics();
+    vignette.fillStyle(0x000000, 0.15);
+    vignette.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     const prev = parseInt(localStorage.getItem('deathmarch-highscore') || '0', 10);
     const isNewHigh = data.score > prev;
     if (isNewHigh) localStorage.setItem('deathmarch-highscore', String(data.score));
@@ -174,7 +178,7 @@ export class GameOverScene extends Phaser.Scene {
   private panel(x: number, y: number, w: number, h: number, accentColor: number): void {
     const g = this.add.graphics();
     // Panel body
-    g.fillStyle(C_PANEL, 1);
+    g.fillStyle(0x0d1520, 1);
     g.fillRoundedRect(x, y, w, h, 16);
     g.lineStyle(2, C_BORDER, 0.7);
     g.strokeRoundedRect(x, y, w, h, 16);
@@ -257,6 +261,11 @@ export class GameOverScene extends Phaser.Scene {
     // Shine
     bg.fillStyle(0xffffff, 0.15);
     bg.fillRoundedRect(-w / 2 + 6, -r + 3, w - 12, h * 0.28, { tl: r - 4, tr: r - 4, bl: 0, br: 0 });
+    // Gold border for primary buttons
+    if (colorTop === C_GREEN || colorTop === C_BLUE) {
+      bg.lineStyle(1.5, 0xffd700, 0.4);
+      bg.strokeRoundedRect(-w / 2, -r, w, h, r);
+    }
     c.add(bg);
 
     c.add(this.add.text(0, 0, label, {
