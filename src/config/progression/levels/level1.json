@@ -57,17 +57,16 @@
   },
 
   "gates": {
-    "interval": 500,
+    "interval": 600,
     "templates": [
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 3 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "add",      "value": 2  }, "minDistance": 150 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 300 },
-      { "left": { "op": "add",      "value": 4 }, "right": { "op": "add",      "value": 2  }, "minDistance": 300 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 600 },
-      { "left": { "op": "divide",   "value": 2 }, "right": { "op": "multiply", "value": 2  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 900 },
-      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 900 }
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 150 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "add",      "value": 1  }, "minDistance": 300 },
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 300 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 900 },
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 900 }
     ]
   },
 

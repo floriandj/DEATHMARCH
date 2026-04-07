@@ -217,7 +217,7 @@ export function generateLevel(levelIndex: number): LevelConfig {
   const diff = difficultyScale(cycle, posInCycle);
 
   // Core tuning knobs
-  const gateInterval = Math.max(250, Math.round(500 - cycle * 10 - posInCycle * 10));
+  const gateInterval = Math.max(400, Math.round(600 - cycle * 10 - posInCycle * 10));
   // Boss gate lands one interval after the last regular gate
   const rawTrigger = 6000 + cycle * 400 + posInCycle * 300;
   const triggerDistance = Math.ceil(rawTrigger / gateInterval) * gateInterval;
@@ -368,17 +368,16 @@ function generateBossTint(levelIndex: number, worldIdx: number): string | undefi
 }
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
-  // Reduced values — units level up individually so fewer raw units needed
+  // Small values — units level up so raw count should stay low (target ~5-10 max)
   return [
-    { left: { op: 'add', value: 2 }, right: { op: 'add', value: 1 }, minDistance: 0 },
-    { left: { op: 'add', value: 3 }, right: { op: 'add', value: 1 }, minDistance: 0 },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 2 }, minDistance: Math.round(triggerDistance * 0.1) },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.15) },
-    { left: { op: 'add', value: 4 }, right: { op: 'add', value: 2 }, minDistance: Math.round(triggerDistance * 0.2) },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.35) },
-    { left: { op: 'divide', value: 2 }, right: { op: 'multiply', value: 2 }, minDistance: Math.round(triggerDistance * 0.4) },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 3 }, minDistance: Math.round(triggerDistance * 0.55) },
-    { left: { op: 'add', value: 5 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.65) },
+    { left: { op: 'add', value: 1 }, right: { op: 'add', value: 1 }, minDistance: 0 },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: 0 },
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.1) },
+    { left: { op: 'add', value: 2 }, right: { op: 'add', value: 1 }, minDistance: Math.round(triggerDistance * 0.15) },
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.2) },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.4) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.55) },
+    { left: { op: 'add', value: 3 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.65) },
   ];
 }
 
