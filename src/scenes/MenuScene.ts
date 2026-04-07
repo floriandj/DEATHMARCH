@@ -80,20 +80,31 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(1, 0.5).setDepth(11);
 
     // ── Footer (fixed) ──
-    const footH = 52;
+    const footH = 80;
     const foot = this.add.graphics().setDepth(10);
     foot.fillStyle(0x0d1520, 1);
     foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, footH);
     foot.lineStyle(1, 0xffd700, 0.15);
     foot.lineBetween(0, GAME_HEIGHT - footH, GAME_WIDTH, GAME_HEIGHT - footH);
 
-    const settBtn = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - footH / 2, '\u2699  SETTINGS', {
-      fontSize: '15px', color: '#94a3b8', fontFamily: F, fontStyle: 'bold',
+    const settBtnW = 220, settBtnH = 52;
+    const settBtnX = GAME_WIDTH / 2, settBtnY = GAME_HEIGHT - footH / 2;
+    const settBg = this.add.graphics().setDepth(11);
+    settBg.fillStyle(0x1a2840, 1);
+    settBg.fillRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
+    settBg.lineStyle(1.5, 0xffd700, 0.3);
+    settBg.strokeRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
+
+    const settBtn = this.add.text(settBtnX, settBtnY, '\u2699  SETTINGS', {
+      fontSize: '22px', color: '#94a3b8', fontFamily: F, fontStyle: 'bold',
       stroke: '#b8860b', strokeThickness: 1,
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(11);
-    settBtn.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
-    settBtn.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settBtn.on('pointerout', () => settBtn.setColor('#94a3b8'));
+    }).setOrigin(0.5).setDepth(11);
+
+    const settHit = this.add.zone(settBtnX, settBtnY, settBtnW, settBtnH)
+      .setInteractive({ useHandCursor: true }).setDepth(12);
+    settHit.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
+    settHit.on('pointerover', () => settBtn.setColor('#ffffff'));
+    settHit.on('pointerout', () => settBtn.setColor('#94a3b8'));
 
     // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
