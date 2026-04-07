@@ -368,16 +368,17 @@ function generateBossTint(levelIndex: number, worldIdx: number): string | undefi
 }
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
+  // Reduced values — units level up individually so fewer raw units needed
   return [
-    { left: { op: 'add', value: 5 }, right: { op: 'add', value: 3 }, minDistance: 0 },
-    { left: { op: 'add', value: 8 }, right: { op: 'add', value: 3 }, minDistance: 0 },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 5 }, minDistance: Math.round(triggerDistance * 0.1) },
-    { left: { op: 'add', value: 5 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
-    { left: { op: 'add', value: 10 }, right: { op: 'add', value: 5 }, minDistance: Math.round(triggerDistance * 0.2) },
-    { left: { op: 'multiply', value: 3 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.35) },
+    { left: { op: 'add', value: 2 }, right: { op: 'add', value: 1 }, minDistance: 0 },
+    { left: { op: 'add', value: 3 }, right: { op: 'add', value: 1 }, minDistance: 0 },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 2 }, minDistance: Math.round(triggerDistance * 0.1) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.15) },
+    { left: { op: 'add', value: 4 }, right: { op: 'add', value: 2 }, minDistance: Math.round(triggerDistance * 0.2) },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.35) },
     { left: { op: 'divide', value: 2 }, right: { op: 'multiply', value: 2 }, minDistance: Math.round(triggerDistance * 0.4) },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 8 }, minDistance: Math.round(triggerDistance * 0.55) },
-    { left: { op: 'add', value: 12 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.65) },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'add', value: 3 }, minDistance: Math.round(triggerDistance * 0.55) },
+    { left: { op: 'add', value: 5 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.65) },
   ];
 }
 

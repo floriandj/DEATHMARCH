@@ -22,6 +22,8 @@ interface BossSceneData {
   score: number;
   distance: number;
   unitCount: number;
+  effectivePower: number;
+  unitLevels: { level: number; kills: number }[];
   weapon: string;
   levelGold: number;
   pouchGold: number;
@@ -46,6 +48,7 @@ export class BossScene extends Phaser.Scene {
   private bullets!: BulletPool;
   private bossSprite!: Phaser.GameObjects.Sprite;
   private scaledBossHp: number = 0;
+  private unitLevels: { level: number; kills: number }[] = [];
 
   // Slam danger zones
   private dangerZones: Phaser.GameObjects.Rectangle[] = [];
@@ -97,9 +100,11 @@ export class BossScene extends Phaser.Scene {
 
     this.input_handler = new InputHandler(this);
 
-    // Scale boss HP with army size so large armies don't instantly melt the boss
+    // Scale boss HP with effective power (accounts for unit levels)
+    const effectivePower = data.effectivePower || this.unitCount;
+    this.unitLevels = data.unitLevels || [];
     const baseUnits = 30;
-    const hpScale = Math.max(1, this.unitCount / baseUnits);
+    const hpScale = Math.max(1, effectivePower / baseUnits);
     const scaledBossCfg = { ...bossCfg, hp: Math.ceil(bossCfg.hp * hpScale) };
     this.scaledBossHp = scaledBossCfg.hp;
     this.bossState = new BossState(scaledBossCfg);
@@ -238,14 +243,14 @@ export class BossScene extends Phaser.Scene {
     // 3d. Update boss projectiles
     this.updateBossProjectiles(delta);
 
-    // 5. Fire bullets at boss
+    // 5. Fire bullets at boss (per-unit level scaling)
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     const bulletColor = hexToNum(weaponStats.bulletColor);
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
-        if (this.bullets.fire(unit.x, unit.y, bulletColor)) {
+        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, unit.damageMult)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -301,6 +306,7 @@ export class BossScene extends Phaser.Scene {
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
+    this.hud.effectivePower = this.getEffectivePower();
     this.hud.bossHpPercent = this.bossState.hp / this.scaledBossHp;
   }
 
@@ -794,6 +800,14 @@ export class BossScene extends Phaser.Scene {
 
   // ---------- Army management ----------
 
+  private getEffectivePower(): number {
+    let power = 0;
+    for (const unit of this.units) {
+      if (unit.active) power += unit.unitLevel;
+    }
+    return power;
+  }
+
   private respawnArmy(): void {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
@@ -801,16 +815,28 @@ export class BossScene extends Phaser.Scene {
     if (this.unitCount !== this.activeUnitCount) {
       const shrinking = this.unitCount < this.activeUnitCount;
       if (shrinking) {
+        // Kill lowest-level units first
+        const activeUnits = this.units.filter(u => u.active).sort((a, b) => a.unitLevel - b.unitLevel);
         let effectsPlayed = 0;
-        for (let i = this.units.length - 1; i >= 0 && effectsPlayed < this.activeUnitCount - this.unitCount; i--) {
-          if (this.units[i].active) {
-            this.units[i].despawnWithEffect();
-            effectsPlayed++;
-          }
+        const toKill = this.activeUnitCount - this.unitCount;
+        for (const unit of activeUnits) {
+          if (effectsPlayed >= toKill) break;
+          unit.despawnWithEffect();
+          effectsPlayed++;
         }
       }
+      // Preserve level data for survivors
+      const survivorData: { level: number; kills: number }[] = [];
+      for (const unit of this.units) {
+        if (unit.active) {
+          survivorData.push({ level: unit.unitLevel, kills: unit.kills });
+        }
+      }
+      // Use unitLevels from GameScene on first spawn (when no survivors yet)
+      const levelData = survivorData.length > 0 ? survivorData : this.unitLevels;
       for (const unit of this.units) {
         unit.despawn();
+        unit.resetLevel();
       }
       const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
@@ -820,6 +846,13 @@ export class BossScene extends Phaser.Scene {
           armyScreenX + Math.cos(angle) * radius,
           armyScreenY + Math.sin(angle) * radius,
         );
+        if (i < levelData.length) {
+          this.units[i].unitLevel = levelData[i].level;
+          this.units[i].kills = levelData[i].kills;
+          if (levelData[i].level > 1) {
+            this.units[i].spawn(this.units[i].x, this.units[i].y);
+          }
+        }
       }
       this.activeUnitCount = this.unitCount;
     }
