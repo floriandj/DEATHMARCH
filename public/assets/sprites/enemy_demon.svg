@@ -1,91 +1,142 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 32" width="64" height="32" shape-rendering="crispEdges">
-  <!-- Frame 0 -->
-  <g>
-    <!-- Crown spikes -->
-    <rect x="8" y="0" width="2" height="4" fill="#ff4400"/>
-    <rect x="15" y="0" width="2" height="3" fill="#ff4400"/>
-    <rect x="22" y="0" width="2" height="4" fill="#ff4400"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 32" width="64" height="32" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="demon-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff5722"/>
+      <stop offset="100%" stop-color="#bf360c"/>
+    </linearGradient>
+    <linearGradient id="demon-wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b71c1c"/>
+      <stop offset="100%" stop-color="#7f0000"/>
+    </linearGradient>
+    <radialGradient id="demon-eye" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#ffff00"/>
+      <stop offset="50%" stop-color="#ffcc00"/>
+      <stop offset="100%" stop-color="#ff6f00"/>
+    </radialGradient>
+    <radialGradient id="demon-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffff88" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ff9800" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="demon-horn" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="100%" stop-color="#757575"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Frame 0: Hovering (no feet touching ground) -->
+  <g stroke="#1a1a2e" stroke-width="1" stroke-linejoin="round">
+    <!-- Shadow on ground below -->
+    <ellipse cx="16" cy="30.5" rx="9" ry="1.5" fill="#000" opacity="0.2" stroke="none"/>
+    <!-- Left bat wing (spread) -->
+    <path d="M10,14 Q2,8 1,18 Q5,16 10,18Z" fill="url(#demon-wing)"/>
+    <path d="M10,14 Q4,9 3,15" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <!-- Right bat wing (spread) -->
+    <path d="M22,14 Q30,8 31,18 Q27,16 22,18Z" fill="url(#demon-wing)"/>
+    <path d="M22,14 Q28,9 29,15" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <!-- Forked tail -->
+    <path d="M16,26 Q11,29 9,31" stroke="#bf360c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M9,31 Q7,33 8,32" stroke="#bf360c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M9,31 Q10,33 11,32" stroke="#bf360c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Body (lean, hovering) -->
+    <ellipse cx="16" cy="20" rx="7" ry="9" fill="url(#demon-body)"/>
+    <!-- Belly highlight -->
+    <ellipse cx="14" cy="18" rx="3.5" ry="5" fill="#ff8a65" opacity="0.35" stroke="none"/>
+    <!-- Left arm hanging -->
+    <path d="M10,17 Q7,20 8,24" stroke="#bf360c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M10,17 Q7,20 8,24" stroke="#ff5722" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Right arm hanging -->
+    <path d="M22,17 Q25,20 24,24" stroke="#bf360c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M22,17 Q25,20 24,24" stroke="#ff5722" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Left claws -->
+    <path d="M8,24 Q6,25.5 5.5,27" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M8,24 Q7.5,26 8,27.5" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M8,24 Q9.5,25.5 10,27" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Right claws -->
+    <path d="M24,24 Q22.5,25.5 22,27" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M24,24 Q24,26 24.5,27.5" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M24,24 Q25.5,25.5 26,27" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <rect x="13" y="9" width="6" height="6" rx="2" fill="url(#demon-body)"/>
     <!-- Head -->
-    <rect x="8" y="3" width="16" height="8" fill="#cc9a00"/>
-    <rect x="9" y="4" width="14" height="6" fill="#ffd43b"/>
-    <!-- Eyes (glowing red) -->
-    <rect x="10" y="5" width="4" height="3" fill="#ff0000"/>
-    <rect x="18" y="5" width="4" height="3" fill="#ff0000"/>
-    <rect x="11" y="6" width="2" height="2" fill="#ff8800"/>
-    <rect x="19" y="6" width="2" height="2" fill="#ff8800"/>
-    <!-- Mouth (fire) -->
-    <rect x="12" y="9" width="8" height="2" fill="#ff4400"/>
-    <rect x="13" y="9" width="2" height="2" fill="#ffaa00"/>
-    <rect x="17" y="9" width="2" height="2" fill="#ffaa00"/>
-    <!-- Body -->
-    <rect x="8" y="11" width="16" height="10" fill="#cc9a00"/>
-    <rect x="9" y="12" width="14" height="8" fill="#ffd43b"/>
-    <!-- Core glow -->
-    <rect x="13" y="14" width="6" height="4" fill="#ffee88"/>
-    <rect x="14" y="15" width="4" height="2" fill="#fff"/>
-    <!-- Wings -->
-    <rect x="1" y="8" width="7" height="10" fill="#ff8800"/>
-    <rect x="2" y="9" width="5" height="8" fill="#ffaa44"/>
-    <rect x="1" y="7" width="3" height="2" fill="#ff6600"/>
-    <rect x="24" y="8" width="7" height="10" fill="#ff8800"/>
-    <rect x="25" y="9" width="5" height="8" fill="#ffaa44"/>
-    <rect x="28" y="7" width="3" height="2" fill="#ff6600"/>
-    <!-- Wing tips -->
-    <rect x="0" y="6" width="2" height="3" fill="#ff4400"/>
-    <rect x="30" y="6" width="2" height="3" fill="#ff4400"/>
-    <!-- Legs -->
-    <rect x="9" y="21" width="5" height="8" fill="#cc9a00"/>
-    <rect x="18" y="21" width="5" height="8" fill="#cc9a00"/>
-    <!-- Hooves -->
-    <rect x="8" y="28" width="6" height="4" fill="#662200"/>
-    <rect x="18" y="28" width="6" height="4" fill="#662200"/>
-    <!-- Tail -->
-    <rect x="23" y="18" width="4" height="2" fill="#cc9a00"/>
-    <rect x="26" y="17" width="3" height="2" fill="#ffd43b"/>
-    <rect x="28" y="16" width="2" height="2" fill="#ff4400"/>
+    <ellipse cx="16" cy="8" rx="9" ry="8" fill="url(#demon-body)"/>
+    <!-- Head highlight -->
+    <ellipse cx="13" cy="4.5" rx="4.5" ry="3.5" fill="#ff8a65" opacity="0.3" stroke="none"/>
+    <!-- Left horn (curved) -->
+    <path d="M9,3 Q6,0 7,3" fill="url(#demon-horn)" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Right horn (curved) -->
+    <path d="M23,3 Q26,0 25,3" fill="url(#demon-horn)" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Left eye glow halo -->
+    <ellipse cx="12.5" cy="7.5" rx="3.5" ry="3" fill="url(#demon-glow)" stroke="none"/>
+    <!-- Right eye glow halo -->
+    <ellipse cx="19.5" cy="7.5" rx="3.5" ry="3" fill="url(#demon-glow)" stroke="none"/>
+    <!-- Left eye -->
+    <ellipse cx="12.5" cy="7.5" rx="2.2" ry="2" fill="url(#demon-eye)"/>
+    <circle cx="12.8" cy="7.2" r="0.9" fill="#1a0000"/>
+    <circle cx="12.3" cy="6.8" r="0.4" fill="#fff" stroke="none"/>
+    <!-- Right eye -->
+    <ellipse cx="19.5" cy="7.5" rx="2.2" ry="2" fill="url(#demon-eye)"/>
+    <circle cx="19.8" cy="7.2" r="0.9" fill="#1a0000"/>
+    <circle cx="19.3" cy="6.8" r="0.4" fill="#fff" stroke="none"/>
+    <!-- Grinning mouth -->
+    <path d="M11,11 Q16,14 21,11" fill="#7f0000" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Small fangs -->
+    <path d="M12,11 L11.5,13" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M20,11 L20.5,13" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
   </g>
-  <!-- Frame 1 -->
-  <g transform="translate(32,0)">
-    <!-- Crown spikes (flicker) -->
-    <rect x="8" y="0" width="2" height="5" fill="#ff4400"/>
-    <rect x="15" y="0" width="2" height="4" fill="#ff6600"/>
-    <rect x="22" y="0" width="2" height="3" fill="#ff4400"/>
-    <!-- Head -->
-    <rect x="8" y="3" width="16" height="8" fill="#cc9a00"/>
-    <rect x="9" y="4" width="14" height="6" fill="#ffd43b"/>
-    <!-- Eyes -->
-    <rect x="10" y="5" width="4" height="3" fill="#ff0000"/>
-    <rect x="18" y="5" width="4" height="3" fill="#ff0000"/>
-    <rect x="11" y="6" width="2" height="2" fill="#ff8800"/>
-    <rect x="19" y="6" width="2" height="2" fill="#ff8800"/>
-    <!-- Mouth -->
-    <rect x="12" y="9" width="8" height="2" fill="#ff6600"/>
-    <rect x="14" y="9" width="2" height="2" fill="#ffcc00"/>
-    <!-- Body -->
-    <rect x="8" y="11" width="16" height="10" fill="#cc9a00"/>
-    <rect x="9" y="12" width="14" height="8" fill="#ffd43b"/>
-    <!-- Core glow (pulsing) -->
-    <rect x="12" y="13" width="8" height="6" fill="#ffee88"/>
-    <rect x="13" y="14" width="6" height="4" fill="#fff"/>
-    <!-- Wings (flapping up) -->
-    <rect x="1" y="6" width="7" height="10" fill="#ff8800"/>
-    <rect x="2" y="7" width="5" height="8" fill="#ffaa44"/>
-    <rect x="0" y="4" width="3" height="4" fill="#ff6600"/>
-    <rect x="24" y="6" width="7" height="10" fill="#ff8800"/>
-    <rect x="25" y="7" width="5" height="8" fill="#ffaa44"/>
-    <rect x="29" y="4" width="3" height="4" fill="#ff6600"/>
-    <!-- Wing tips higher -->
-    <rect x="0" y="3" width="2" height="3" fill="#ff4400"/>
-    <rect x="30" y="3" width="2" height="3" fill="#ff4400"/>
-    <!-- Legs (stride) -->
-    <rect x="8" y="21" width="5" height="7" fill="#cc9a00"/>
-    <rect x="19" y="22" width="5" height="8" fill="#cc9a00"/>
-    <!-- Hooves -->
-    <rect x="7" y="27" width="6" height="4" fill="#662200"/>
-    <rect x="19" y="29" width="6" height="3" fill="#662200"/>
-    <!-- Tail (swish) -->
-    <rect x="23" y="19" width="4" height="2" fill="#cc9a00"/>
-    <rect x="26" y="20" width="3" height="2" fill="#ffd43b"/>
-    <rect x="28" y="19" width="2" height="2" fill="#ff4400"/>
+
+  <!-- Frame 1: Diving forward with claws out, wings swept back -->
+  <g transform="translate(32,0)" stroke="#1a1a2e" stroke-width="1" stroke-linejoin="round">
+    <!-- Shadow (smaller — mid-dive) -->
+    <ellipse cx="16" cy="31" rx="7" ry="1.2" fill="#000" opacity="0.15" stroke="none"/>
+    <!-- Wings swept back -->
+    <path d="M13,12 Q3,7 2,14 Q6,13 11,16Z" fill="url(#demon-wing)"/>
+    <path d="M13,12 Q4,8 4,13" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <path d="M19,12 Q29,7 30,14 Q26,13 21,16Z" fill="url(#demon-wing)"/>
+    <path d="M19,12 Q28,8 28,13" stroke="#7f0000" stroke-width="0.8" fill="none"/>
+    <!-- Forked tail (trailing) -->
+    <path d="M14,20 Q9,24 8,28" stroke="#bf360c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M8,28 Q6,30 7,29" stroke="#bf360c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M8,28 Q9,30 10,29" stroke="#bf360c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Body (angled forward, diving) -->
+    <ellipse cx="16" cy="17" rx="6" ry="9" fill="url(#demon-body)" transform="rotate(-15,16,17)"/>
+    <ellipse cx="14" cy="14" rx="3" ry="5" fill="#ff8a65" opacity="0.35" stroke="none" transform="rotate(-15,14,14)"/>
+    <!-- Left arm thrust forward with claws -->
+    <path d="M12,15 Q5,16 3,15" stroke="#bf360c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M12,15 Q5,16 3,15" stroke="#ff5722" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Right arm thrust forward with claws -->
+    <path d="M20,15 Q27,16 29,15" stroke="#bf360c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M20,15 Q27,16 29,15" stroke="#ff5722" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Extended claws left -->
+    <path d="M3,15 Q1,13.5 0.5,12" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M3,15 Q1,15 0.5,16" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M3,15 Q2,17 2,18.5" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Extended claws right -->
+    <path d="M29,15 Q31,13.5 31.5,12" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M29,15 Q31,15 31.5,16" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M29,15 Q30,17 30,18.5" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Neck -->
+    <rect x="13" y="7" width="6" height="6" rx="2" fill="url(#demon-body)" transform="rotate(-10,16,10)"/>
+    <!-- Head (angled down, diving) -->
+    <ellipse cx="16" cy="7" rx="9" ry="7.5" fill="url(#demon-body)" transform="rotate(-10,16,7)"/>
+    <ellipse cx="13" cy="3.5" rx="4.5" ry="3" fill="#ff8a65" opacity="0.3" stroke="none"/>
+    <!-- Horns swept back -->
+    <path d="M9,2 Q5,-1 7,2" fill="url(#demon-horn)" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M23,2 Q27,-1 25,2" fill="url(#demon-horn)" stroke="#1a1a2e" stroke-width="0.8"/>
+    <!-- Eye glow halos -->
+    <ellipse cx="12" cy="6.5" rx="3.5" ry="3" fill="url(#demon-glow)" stroke="none"/>
+    <ellipse cx="19" cy="6.5" rx="3.5" ry="3" fill="url(#demon-glow)" stroke="none"/>
+    <!-- Eyes (wide, intense) -->
+    <ellipse cx="12" cy="6.5" rx="2.5" ry="2.2" fill="url(#demon-eye)"/>
+    <circle cx="12.5" cy="6.2" r="1" fill="#1a0000"/>
+    <circle cx="12" cy="5.7" r="0.4" fill="#fff" stroke="none"/>
+    <ellipse cx="19" cy="6.5" rx="2.5" ry="2.2" fill="url(#demon-eye)"/>
+    <circle cx="19.5" cy="6.2" r="1" fill="#1a0000"/>
+    <circle cx="19" cy="5.7" r="0.4" fill="#fff" stroke="none"/>
+    <!-- Snarling mouth (open) -->
+    <path d="M11,10 Q16,14 21,10" fill="#7f0000" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M12,10 L11,12" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M20,10 L21,12" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M15,10 L14.5,12" stroke="#fff" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+    <path d="M17,10 L17.5,12" stroke="#fff" stroke-width="0.7" fill="none" stroke-linecap="round"/>
   </g>
 </svg>
