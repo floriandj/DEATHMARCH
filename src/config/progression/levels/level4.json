@@ -15,9 +15,9 @@
   },
   "weaponOrder": ["ar", "lmg", "flamer", "plasma"],
   "weaponCrates": [
-    { "currentWeapon": "ar",     "nextWeapon": "lmg",    "distance": 400,  "hp": 22 },
-    { "currentWeapon": "lmg",    "nextWeapon": "flamer", "distance": 1100, "hp": 38 },
-    { "currentWeapon": "flamer", "nextWeapon": "plasma", "distance": 1900, "hp": 55 }
+    { "currentWeapon": "ar",     "nextWeapon": "lmg",    "distance": 280,  "hp": 22 },
+    { "currentWeapon": "lmg",    "nextWeapon": "flamer", "distance": 760,  "hp": 38 },
+    { "currentWeapon": "flamer", "nextWeapon": "plasma", "distance": 1300, "hp": 55 }
   ],
 
   "enemies": {
@@ -29,28 +29,28 @@
     "blighted": {
       "type": "blighted", "hp": 6, "speed": 70, "size": 18,
       "contactDamage": 3, "splashRadius": 45, "splashDamage": 1,
-      "color": "#2ecc71", "appearsAtDistance": 400, "scoreValue": 45
+      "color": "#2ecc71", "appearsAtDistance": 280, "scoreValue": 45
     },
     "spore_carrier": {
       "type": "spore_carrier", "hp": 4, "speed": 55, "size": 20,
       "contactDamage": 2, "splashRadius": 80, "splashDamage": 3,
-      "color": "#f39c12", "appearsAtDistance": 1000, "scoreValue": 60
+      "color": "#f39c12", "appearsAtDistance": 700, "scoreValue": 60
     },
     "abomination": {
       "type": "abomination", "hp": 18, "speed": 40, "size": 28,
       "contactDamage": 6, "splashRadius": 60, "splashDamage": 2,
-      "color": "#8e44ad", "appearsAtDistance": 1700, "scoreValue": 100
+      "color": "#8e44ad", "appearsAtDistance": 1200, "scoreValue": 100
     }
   },
 
   "waves": {
-    "gracePeriod": 80,
+    "gracePeriod": 60,
     "brackets": [
-      { "maxDistance": 250,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 80,  "intervalMax": 120 },
-      { "maxDistance": 500,  "clusterMin": 2, "clusterMax": 4, "intervalMin": 60,  "intervalMax": 90  },
-      { "maxDistance": 900,  "clusterMin": 3, "clusterMax": 5, "intervalMin": 45,  "intervalMax": 65  },
-      { "maxDistance": 1300, "clusterMin": 3, "clusterMax": 6, "intervalMin": 35,  "intervalMax": 50  },
-      { "maxDistance": 1800, "clusterMin": 4, "clusterMax": 7, "intervalMin": 25,  "intervalMax": 38  },
+      { "maxDistance": 180,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 80,  "intervalMax": 120 },
+      { "maxDistance": 350,  "clusterMin": 2, "clusterMax": 4, "intervalMin": 60,  "intervalMax": 90  },
+      { "maxDistance": 620,  "clusterMin": 3, "clusterMax": 5, "intervalMin": 45,  "intervalMax": 65  },
+      { "maxDistance": 900,  "clusterMin": 3, "clusterMax": 6, "intervalMin": 35,  "intervalMax": 50  },
+      { "maxDistance": 1250, "clusterMin": 4, "clusterMax": 7, "intervalMin": 25,  "intervalMax": 38  },
       { "maxDistance": 99999,"clusterMin": 5, "clusterMax": 9, "intervalMin": 14,  "intervalMax": 22  }
     ]
   },
@@ -60,11 +60,11 @@
     "templates": [
       { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
       { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
-      { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 400 },
-      { "left": { "op": "add",      "value": 5 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 700 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 8  }, "minDistance": 900 },
-      { "left": { "op": "add",      "value": 6 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 1200 }
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 150 },
+      { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 280 },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 480 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 8  }, "minDistance": 620 },
+      { "left": { "op": "add",      "value": 6 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 830 }
     ]
   },
 
@@ -72,7 +72,7 @@
     "name": "PLAGUE HYDRA",
     "sprite": "boss_plague",
     "hp": 1700,
-    "triggerDistance": 2600,
+    "triggerDistance": 1800,
     "phases": [
       { "name": "vulnerable", "duration": 2500, "damageReduction": 0 },
       { "name": "slam",       "duration": 2500, "damageReduction": 0.6 },

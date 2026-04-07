@@ -15,9 +15,9 @@
   },
   "weaponOrder": ["pistol", "smg", "ar", "lmg"],
   "weaponCrates": [
-    { "currentWeapon": "pistol", "nextWeapon": "smg", "distance": 500,  "hp": 15 },
-    { "currentWeapon": "smg",    "nextWeapon": "ar",  "distance": 1200, "hp": 25 },
-    { "currentWeapon": "ar",     "nextWeapon": "lmg", "distance": 2200, "hp": 40 }
+    { "currentWeapon": "pistol", "nextWeapon": "smg", "distance": 350,  "hp": 15 },
+    { "currentWeapon": "smg",    "nextWeapon": "ar",  "distance": 800,  "hp": 25 },
+    { "currentWeapon": "ar",     "nextWeapon": "lmg", "distance": 1500, "hp": 40 }
   ],
 
   "enemies": {
@@ -29,29 +29,29 @@
     "orc": {
       "type": "orc", "hp": 3, "speed": 80, "size": 16,
       "contactDamage": 2, "splashRadius": 0, "splashDamage": 0,
-      "color": "#e64980", "appearsAtDistance": 700, "scoreValue": 30
+      "color": "#e64980", "appearsAtDistance": 450, "scoreValue": 30
     },
     "troll": {
       "type": "troll", "hp": 8, "speed": 50, "size": 22,
       "contactDamage": 3, "splashRadius": 0, "splashDamage": 0,
-      "color": "#be4bdb", "appearsAtDistance": 1400, "scoreValue": 50
+      "color": "#be4bdb", "appearsAtDistance": 900, "scoreValue": 50
     },
     "demon": {
       "type": "demon", "hp": 5, "speed": 160, "size": 16,
       "contactDamage": 2, "splashRadius": 50, "splashDamage": 1,
-      "color": "#ffd43b", "appearsAtDistance": 2100, "scoreValue": 40
+      "color": "#ffd43b", "appearsAtDistance": 1400, "scoreValue": 40
     }
   },
 
   "waves": {
-    "gracePeriod": 120,
+    "gracePeriod": 80,
     "brackets": [
-      { "maxDistance": 300,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 120, "intervalMax": 180 },
-      { "maxDistance": 600,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 80,  "intervalMax": 120 },
-      { "maxDistance": 1000, "clusterMin": 1, "clusterMax": 2, "intervalMin": 60,  "intervalMax": 85  },
-      { "maxDistance": 1400, "clusterMin": 2, "clusterMax": 3, "intervalMin": 45,  "intervalMax": 65  },
-      { "maxDistance": 2000, "clusterMin": 2, "clusterMax": 4, "intervalMin": 35,  "intervalMax": 50  },
-      { "maxDistance": 2500, "clusterMin": 3, "clusterMax": 5, "intervalMin": 25,  "intervalMax": 35  },
+      { "maxDistance": 200,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 120, "intervalMax": 180 },
+      { "maxDistance": 400,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 80,  "intervalMax": 120 },
+      { "maxDistance": 650,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 60,  "intervalMax": 85  },
+      { "maxDistance": 950,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 45,  "intervalMax": 65  },
+      { "maxDistance": 1300, "clusterMin": 2, "clusterMax": 4, "intervalMin": 35,  "intervalMax": 50  },
+      { "maxDistance": 1700, "clusterMin": 3, "clusterMax": 5, "intervalMin": 25,  "intervalMax": 35  },
       { "maxDistance": 99999,"clusterMin": 4, "clusterMax": 7, "intervalMin": 18,  "intervalMax": 26  }
     ]
   },
@@ -61,11 +61,11 @@
     "templates": [
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 150 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 300 },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 600 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 900 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 900 }
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 100 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 200 },
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 400 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 600 }
     ]
   },
 
@@ -73,7 +73,7 @@
     "name": "GORATH",
     "sprite": "boss_gorath",
     "hp": 800,
-    "triggerDistance": 3000,
+    "triggerDistance": 2000,
     "phases": [
       { "name": "vulnerable", "duration": 3500, "damageReduction": 0 },
       { "name": "slam",       "duration": 3000, "damageReduction": 0.7 },

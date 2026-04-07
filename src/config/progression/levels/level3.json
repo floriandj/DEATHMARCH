@@ -4,7 +4,7 @@
   "description": "Ice and silence. The Frost Wyrm stirs beneath the glacier.",
 
   "startingUnits": 5,
-  "marchSpeed": 90,
+  "marchSpeed": 100,
 
   "startingWeapon": "ar",
   "weapons": {
@@ -15,9 +15,9 @@
   },
   "weaponOrder": ["ar", "lmg", "cryo", "railgun"],
   "weaponCrates": [
-    { "currentWeapon": "ar",   "nextWeapon": "lmg",     "distance": 500,  "hp": 25 },
-    { "currentWeapon": "lmg",  "nextWeapon": "cryo",    "distance": 1300, "hp": 40 },
-    { "currentWeapon": "cryo", "nextWeapon": "railgun",  "distance": 2200, "hp": 55 }
+    { "currentWeapon": "ar",   "nextWeapon": "lmg",     "distance": 350,  "hp": 25 },
+    { "currentWeapon": "lmg",  "nextWeapon": "cryo",    "distance": 900,  "hp": 40 },
+    { "currentWeapon": "cryo", "nextWeapon": "railgun",  "distance": 1500, "hp": 55 }
   ],
 
   "enemies": {
@@ -29,28 +29,28 @@
     "ice_golem": {
       "type": "ice_golem", "hp": 15, "speed": 35, "size": 26,
       "contactDamage": 5, "splashRadius": 0, "splashDamage": 0,
-      "color": "#4dabf7", "appearsAtDistance": 600, "scoreValue": 70
+      "color": "#4dabf7", "appearsAtDistance": 400, "scoreValue": 70
     },
     "banshee": {
       "type": "banshee", "hp": 3, "speed": 190, "size": 13,
       "contactDamage": 2, "splashRadius": 55, "splashDamage": 2,
-      "color": "#d0bfff", "appearsAtDistance": 1200, "scoreValue": 55
+      "color": "#d0bfff", "appearsAtDistance": 800, "scoreValue": 55
     },
     "yeti": {
       "type": "yeti", "hp": 10, "speed": 110, "size": 24,
       "contactDamage": 4, "splashRadius": 35, "splashDamage": 1,
-      "color": "#e8e8e8", "appearsAtDistance": 1900, "scoreValue": 80
+      "color": "#e8e8e8", "appearsAtDistance": 1300, "scoreValue": 80
     }
   },
 
   "waves": {
-    "gracePeriod": 100,
+    "gracePeriod": 70,
     "brackets": [
-      { "maxDistance": 300,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 90,  "intervalMax": 140 },
-      { "maxDistance": 700,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 65,  "intervalMax": 95  },
-      { "maxDistance": 1100, "clusterMin": 2, "clusterMax": 4, "intervalMin": 45,  "intervalMax": 65  },
-      { "maxDistance": 1600, "clusterMin": 3, "clusterMax": 5, "intervalMin": 35,  "intervalMax": 50  },
-      { "maxDistance": 2200, "clusterMin": 3, "clusterMax": 6, "intervalMin": 22,  "intervalMax": 38  },
+      { "maxDistance": 200,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 90,  "intervalMax": 140 },
+      { "maxDistance": 480,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 65,  "intervalMax": 95  },
+      { "maxDistance": 760,  "clusterMin": 2, "clusterMax": 4, "intervalMin": 45,  "intervalMax": 65  },
+      { "maxDistance": 1100, "clusterMin": 3, "clusterMax": 5, "intervalMin": 35,  "intervalMax": 50  },
+      { "maxDistance": 1500, "clusterMin": 3, "clusterMax": 6, "intervalMin": 22,  "intervalMax": 38  },
       { "maxDistance": 99999,"clusterMin": 5, "clusterMax": 8, "intervalMin": 15,  "intervalMax": 24  }
     ]
   },
@@ -60,11 +60,11 @@
     "templates": [
       { "left": { "op": "add",      "value": 3 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 0   },
       { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 0   },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 300 },
-      { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 500 },
-      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 800 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 1000 },
-      { "left": { "op": "add",      "value": 6 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 1200 }
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
+      { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 350 },
+      { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 550 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 700 },
+      { "left": { "op": "add",      "value": 6 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 850 }
     ]
   },
 
@@ -72,7 +72,7 @@
     "name": "FROST WYRM",
     "sprite": "boss_frost",
     "hp": 1400,
-    "triggerDistance": 2900,
+    "triggerDistance": 2000,
     "phases": [
       { "name": "vulnerable", "duration": 3000, "damageReduction": 0 },
       { "name": "charge",     "duration": 4500, "damageReduction": 1 },
