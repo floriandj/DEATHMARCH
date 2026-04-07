@@ -24,8 +24,8 @@ export const ARMY_Y_OFFSET_MAX = 200; // max pixels the army can nudge forward/b
 
 // Gates
 export const GATE_INTERVAL = 500; // meters between gate pairs
-export const GATE_WIDTH = 120; // pixels wide per gate side
-export const GATE_GAP = 40; // pixels between left and right gate
+export const GATE_WIDTH = 200; // pixels wide per gate side
+export const GATE_GAP = 20; // pixels between left and right gate
 
 // Battlefield
 export const FIELD_WIDTH = 600; // usable width in game coords

@@ -66,7 +66,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   private generateGateTextures(): void {
-    const w = 120, h = 100, r = 20;
+    const w = 200, h = 100, r = 24;
 
     // ── Multiply gate — green archway ──
     const gGreen = this.add.graphics();
