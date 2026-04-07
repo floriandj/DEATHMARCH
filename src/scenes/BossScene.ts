@@ -24,8 +24,6 @@ interface BossSceneData {
   score: number;
   distance: number;
   unitCount: number;
-  effectivePower: number;
-  unitLevels: { level: number; kills: number }[];
   weapon: string;
   levelGold: number;
   pouchGold: number;
@@ -51,7 +49,6 @@ export class BossScene extends Phaser.Scene {
   private bullets!: BulletPool;
   private bossSprite!: Phaser.GameObjects.Sprite;
   private scaledBossHp: number = 0;
-  private unitLevels: { level: number; kills: number }[] = [];
 
   // Slam danger zones
   private dangerZones: Phaser.GameObjects.Rectangle[] = [];
@@ -110,11 +107,9 @@ export class BossScene extends Phaser.Scene {
     // Render a static background covering the visible area
     this.background.update(0);
 
-    // Scale boss HP with effective power (accounts for unit levels)
-    const effectivePower = data.effectivePower || this.unitCount;
-    this.unitLevels = data.unitLevels || [];
+    // Scale boss HP with unit count
     const baseUnits = 30;
-    const hpScale = Math.max(1, effectivePower / baseUnits);
+    const hpScale = Math.max(1, this.unitCount / baseUnits);
     const scaledBossCfg = { ...bossCfg, hp: Math.ceil(bossCfg.hp * hpScale) };
     this.scaledBossHp = scaledBossCfg.hp;
     this.bossState = new BossState(scaledBossCfg);
@@ -264,7 +259,7 @@ export class BossScene extends Phaser.Scene {
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
-        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, unit.damageMult)) {
+        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -335,7 +330,6 @@ export class BossScene extends Phaser.Scene {
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
-    this.hud.effectivePower = this.getEffectivePower();
     this.hud.bossHpPercent = this.bossState.hp / this.scaledBossHp;
   }
 
@@ -829,14 +823,6 @@ export class BossScene extends Phaser.Scene {
 
   // ---------- Army management ----------
 
-  private getEffectivePower(): number {
-    let power = 0;
-    for (const unit of this.units) {
-      if (unit.active) power += unit.unitLevel;
-    }
-    return power;
-  }
-
   private respawnArmy(): void {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
@@ -844,8 +830,7 @@ export class BossScene extends Phaser.Scene {
     if (this.unitCount !== this.activeUnitCount) {
       const shrinking = this.unitCount < this.activeUnitCount;
       if (shrinking) {
-        // Kill lowest-level units first
-        const activeUnits = this.units.filter(u => u.active).sort((a, b) => a.unitLevel - b.unitLevel);
+        const activeUnits = this.units.filter(u => u.active);
         let effectsPlayed = 0;
         const toKill = this.activeUnitCount - this.unitCount;
         for (const unit of activeUnits) {
@@ -854,18 +839,8 @@ export class BossScene extends Phaser.Scene {
           effectsPlayed++;
         }
       }
-      // Preserve level data for survivors
-      const survivorData: { level: number; kills: number }[] = [];
-      for (const unit of this.units) {
-        if (unit.active) {
-          survivorData.push({ level: unit.unitLevel, kills: unit.kills });
-        }
-      }
-      // Use unitLevels from GameScene on first spawn (when no survivors yet)
-      const levelData = survivorData.length > 0 ? survivorData : this.unitLevels;
       for (const unit of this.units) {
         unit.despawn();
-        unit.resetLevel();
       }
       const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
@@ -878,13 +853,6 @@ export class BossScene extends Phaser.Scene {
           this.unitShadows[i] = this.add.image(sx, sy + 10, 'vfx_shadow').setAlpha(0.3).setDepth(-1);
         }
         this.unitShadows[i].setPosition(sx, sy + 10).setVisible(true).setScale(0.6);
-        if (i < levelData.length) {
-          this.units[i].unitLevel = levelData[i].level;
-          this.units[i].kills = levelData[i].kills;
-          if (levelData[i].level > 1) {
-            this.units[i].spawn(this.units[i].x, this.units[i].y);
-          }
-        }
       }
       this.activeUnitCount = this.unitCount;
     }

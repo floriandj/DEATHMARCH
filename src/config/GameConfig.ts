@@ -23,7 +23,7 @@ export const ARMY_INPUT_Y_RANGE = 300; // drag range for Y input normalization
 export const ARMY_Y_OFFSET_MAX = 200; // max pixels the army can nudge forward/back
 
 // Gates
-export const GATE_INTERVAL = 500; // meters between gate pairs
+export const GATE_INTERVAL = 800; // meters between gate pairs
 export const GATE_WIDTH = 280; // pixels wide per gate side
 export const GATE_GAP = 16; // pixels between left and right gate
 
@@ -60,10 +60,3 @@ export const SVG_RENDER_SCALE = 4;
 // Global sprite scale multiplier for all game entities (units, enemies, bosses, bullets)
 export const ENTITY_SCALE = 2;
 
-// Unit upgrade system
-export const UNIT_MAX_LEVEL = 3;
-export const UNIT_KILLS_TO_LEVEL: Record<number, number> = { 2: 3, 3: 8 }; // kills needed for level 2, 3
-export const UNIT_FIRE_RATE_MULT: Record<number, number> = { 1: 1, 2: 0.8, 3: 0.6 }; // lower = faster
-export const UNIT_DAMAGE_MULT: Record<number, number> = { 1: 1, 2: 2, 3: 3 };
-export const UNIT_LEVEL_TINT: Record<number, number> = { 1: 0xffffff, 2: 0x51cf66, 3: 0xffd43b };
-export const UNIT_LEVEL_SCALE: Record<number, number> = { 1: 1, 2: 1.15, 3: 1.35 };

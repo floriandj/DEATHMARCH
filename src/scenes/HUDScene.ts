@@ -25,7 +25,6 @@ export class HUDScene extends Phaser.Scene {
   score: number = 0;
   distance: number = 0;
   unitCount: number = 0;
-  effectivePower: number = 0;
   killStreak: number = 0;
   levelGold: number = 0;
   bossHpPercent: number = -1;
@@ -43,7 +42,6 @@ export class HUDScene extends Phaser.Scene {
     this.score = 0;
     this.distance = 0;
     this.unitCount = 0;
-    this.effectivePower = 0;
     this.killStreak = 0;
     this.lastKillStreak = 0;
     this.levelGold = 0;
@@ -247,12 +245,7 @@ export class HUDScene extends Phaser.Scene {
   update(): void {
     this.scoreText.setText(this.formatNumber(this.score));
     this.distanceText.setText(`${Math.floor(this.distance)}m`);
-    // Show effective power when units are upgraded (e.g. "5 \u2694 12")
-    if (this.effectivePower > this.unitCount) {
-      this.unitText.setText(`${this.unitCount} \u2694 ${this.effectivePower}`);
-    } else {
-      this.unitText.setText(String(this.unitCount));
-    }
+    this.unitText.setText(String(this.unitCount));
     this.goldText.setText(`${this.levelGold}g`);
 
     // Floating kill streak popup (only when streak changes)

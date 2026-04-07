@@ -22,16 +22,16 @@ describe('GateSpawner', () => {
     }
   });
 
-  it('x2 gate doubles the unit count', () => {
+  it('+3 gate adds 3 units', () => {
     const templates = LevelManager.instance.current.gates.templates;
-    const multiply = templates.find(
-      (t) => (t.left.op === 'multiply' && t.left.value === 2) || (t.right.op === 'multiply' && t.right.value === 2),
+    const add3 = templates.find(
+      (t) => (t.left.op === 'add' && t.left.value === 3) || (t.right.op === 'add' && t.right.value === 3),
     );
-    expect(multiply).toBeDefined();
-    const side = multiply!.left.op === 'multiply' && multiply!.left.value === 2 ? multiply!.left : multiply!.right;
+    expect(add3).toBeDefined();
+    const side = add3!.left.op === 'add' && add3!.left.value === 3 ? add3!.left : add3!.right;
     const apply = gateApplyFn(side);
-    expect(apply(5)).toBe(10);
-    expect(apply(1)).toBe(2);
+    expect(apply(5)).toBe(8);
+    expect(apply(1)).toBe(4);
   });
 
   it('+2 gate adds 2 units', () => {

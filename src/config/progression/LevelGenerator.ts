@@ -368,16 +368,15 @@ function generateBossTint(levelIndex: number, worldIdx: number): string | undefi
 }
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
-  // Small values — units level up so raw count should stay low (target ~5-10 max)
+  // No multiply/divide — target 3-8 units with ~3-4 gates per level (800m interval)
   return [
     { left: { op: 'add', value: 1 }, right: { op: 'add', value: 1 }, minDistance: 0 },
     { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: 0 },
-    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.1) },
-    { left: { op: 'add', value: 2 }, right: { op: 'add', value: 1 }, minDistance: Math.round(triggerDistance * 0.15) },
-    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.2) },
-    { left: { op: 'multiply', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.4) },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.55) },
-    { left: { op: 'add', value: 3 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.65) },
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.15) },
+    { left: { op: 'add', value: 2 }, right: { op: 'add', value: 1 }, minDistance: Math.round(triggerDistance * 0.3) },
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.45) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.6) },
+    { left: { op: 'add', value: 3 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.75) },
   ];
 }
 
