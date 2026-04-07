@@ -638,6 +638,8 @@ export class GameScene extends Phaser.Scene {
 
     if (this.unitCount !== this.activeUnitCount) {
       const shrinking = this.unitCount < this.activeUnitCount;
+      const growing = this.unitCount > this.activeUnitCount;
+
       if (shrinking) {
         const activeUnits = this.units.filter(u => u.active);
         let effectsPlayed = 0;
@@ -647,22 +649,45 @@ export class GameScene extends Phaser.Scene {
           unit.despawnWithEffect();
           effectsPlayed++;
         }
-      }
-      for (const unit of this.units) {
-        unit.despawn();
-      }
-      // Scale spawn radius with unit count so large armies spread out
-      const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
-      for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
-        const angle = (i / this.unitCount) * Math.PI * 2;
-        const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
-        const sx = armyCenterX + Math.cos(angle) * radius;
-        const sy = armyCenterY + Math.sin(angle) * radius;
-        this.units[i].spawn(sx, sy);
-        if (!this.unitShadows[i]) {
-          this.unitShadows[i] = this.add.image(sx, sy + 10, 'vfx_shadow').setAlpha(0.3).setDepth(-1);
+        // Despawn all and re-place at formation positions
+        for (const unit of this.units) {
+          unit.despawn();
         }
-        this.unitShadows[i].setPosition(sx, sy + 10).setVisible(true).setScale(0.6);
+        const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
+        for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
+          const angle = (i / this.unitCount) * Math.PI * 2;
+          const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
+          const sx = armyCenterX + Math.cos(angle) * radius;
+          const sy = armyCenterY + Math.sin(angle) * radius;
+          this.units[i].spawn(sx, sy);
+          if (!this.unitShadows[i]) {
+            this.unitShadows[i] = this.add.image(sx, sy + 10, 'vfx_shadow').setAlpha(0.3).setDepth(-1);
+          }
+          this.unitShadows[i].setPosition(sx, sy + 10).setVisible(true).setScale(0.6);
+        }
+      } else if (growing) {
+        // New units enter from left/right screen edges and walk in
+        const prevCount = this.activeUnitCount;
+        const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
+        for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
+          if (i < prevCount && this.units[i].active) continue; // already active
+          // Spawn from alternating left/right edges
+          const fromLeft = i % 2 === 0;
+          const edgeX = fromLeft ? -20 : GAME_WIDTH + 20;
+          const edgeY = armyCenterY + (Math.random() - 0.5) * 60;
+          this.units[i].spawn(edgeX, edgeY);
+          // Target is their formation slot — physics will pull them in
+          const angle = (i / this.unitCount) * Math.PI * 2;
+          const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
+          this.units[i].moveTo(
+            armyCenterX + Math.cos(angle) * radius,
+            armyCenterY + Math.sin(angle) * radius,
+          );
+          if (!this.unitShadows[i]) {
+            this.unitShadows[i] = this.add.image(edgeX, edgeY + 10, 'vfx_shadow').setAlpha(0.3).setDepth(-1);
+          }
+          this.unitShadows[i].setPosition(edgeX, edgeY + 10).setVisible(true).setScale(0.6);
+        }
       }
       this.activeUnitCount = this.unitCount;
     }
