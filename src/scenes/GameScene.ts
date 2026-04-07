@@ -351,6 +351,8 @@ export class GameScene extends Phaser.Scene {
               this.killStreak = 1;
             }
             this.lastKillTime = now;
+            // Award kill to the unit that fired the bullet
+            this.awardKillToUnit(b.ownerIndex, enemy.x, enemy.y);
           }
           return;
         }
@@ -460,14 +462,14 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 9. Fire bullets (weapon fire rate)
+    // 9. Fire bullets (weapon fire rate, per-unit level scaling)
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     const bulletColor = hexToNum(weaponStats.bulletColor);
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, weaponStats.fireRate)) {
-        if (this.bullets.fire(unit.x, unit.y, bulletColor)) {
+        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, unit.damageMult)) {
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -489,6 +491,7 @@ export class GameScene extends Phaser.Scene {
     this.hud.score = Math.floor(this.score);
     this.hud.distance = this.distance;
     this.hud.unitCount = this.unitCount;
+    this.hud.effectivePower = this.getEffectivePower();
     this.hud.killStreak = this.killStreak;
     this.hud.levelGold = this.levelGold + this.pouchGold;
     this.hud.weaponType = this.currentWeapon;
@@ -502,18 +505,28 @@ export class GameScene extends Phaser.Scene {
 
     if (this.unitCount !== this.activeUnitCount) {
       const shrinking = this.unitCount < this.activeUnitCount;
-      // Show death effect on units being lost
+      // Show death effect on units being lost (kill lowest-level units first)
       if (shrinking) {
+        // Sort active units by level ascending so weakest die first
+        const activeUnits = this.units.filter(u => u.active).sort((a, b) => a.unitLevel - b.unitLevel);
         let effectsPlayed = 0;
-        for (let i = this.units.length - 1; i >= 0 && effectsPlayed < this.activeUnitCount - this.unitCount; i--) {
-          if (this.units[i].active) {
-            this.units[i].despawnWithEffect();
-            effectsPlayed++;
-          }
+        const toKill = this.activeUnitCount - this.unitCount;
+        for (const unit of activeUnits) {
+          if (effectsPlayed >= toKill) break;
+          unit.despawnWithEffect();
+          effectsPlayed++;
+        }
+      }
+      // Preserve level/kills for surviving units
+      const survivorData: { level: number; kills: number }[] = [];
+      for (const unit of this.units) {
+        if (unit.active) {
+          survivorData.push({ level: unit.unitLevel, kills: unit.kills });
         }
       }
       for (const unit of this.units) {
         unit.despawn();
+        unit.resetLevel();
       }
       // Scale spawn radius with unit count so large armies spread out
       const spawnRadius = Math.min(FIELD_WIDTH * 0.45, 20 + Math.sqrt(this.unitCount) * 8);
@@ -524,6 +537,15 @@ export class GameScene extends Phaser.Scene {
           armyCenterX + Math.cos(angle) * radius,
           armyCenterY + Math.sin(angle) * radius,
         );
+        // Restore level data for existing survivors
+        if (i < survivorData.length) {
+          this.units[i].unitLevel = survivorData[i].level;
+          this.units[i].kills = survivorData[i].kills;
+          // Re-apply visuals for restored level
+          if (survivorData[i].level > 1) {
+            this.units[i].spawn(this.units[i].x, this.units[i].y);
+          }
+        }
       }
       this.activeUnitCount = this.unitCount;
     }
@@ -541,6 +563,39 @@ export class GameScene extends Phaser.Scene {
       );
       activeIdx++;
     }
+  }
+
+  /** Award a kill to a specific unit, triggering level-up if threshold reached */
+  private awardKillToUnit(ownerIndex: number, enemyX: number, enemyY: number): void {
+    if (ownerIndex < 0 || ownerIndex >= this.units.length) return;
+    const unit = this.units[ownerIndex];
+    if (!unit.active) return;
+    const leveledUp = unit.addKill();
+    if (leveledUp) {
+      this.showLevelUpEffect(unit.x, unit.y, unit.unitLevel);
+    }
+  }
+
+  /** Floating level-up popup on a unit */
+  private showLevelUpEffect(x: number, y: number, level: number): void {
+    SoundManager.play('gate_positive');
+    const txt = this.add.text(x, y - 20, `LV${level}`, {
+      fontSize: '18px', color: '#ffd43b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(12);
+    this.tweens.add({
+      targets: txt, y: y - 70, alpha: 0, scale: 1.4,
+      duration: 600, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+  }
+
+  /** Sum of all active unit levels (a L3 unit counts as 3) */
+  private getEffectivePower(): number {
+    let power = 0;
+    for (const unit of this.units) {
+      if (unit.active) power += unit.unitLevel;
+    }
+    return power;
   }
 
   /** Throttled floating damage numbers — batches rapid hits */
@@ -688,6 +743,8 @@ export class GameScene extends Phaser.Scene {
         score: Math.floor(this.score),
         distance: Math.floor(this.distance),
         unitCount: this.unitCount,
+        effectivePower: this.getEffectivePower(),
+        unitLevels: this.units.filter(u => u.active).map(u => ({ level: u.unitLevel, kills: u.kills })),
         weapon: this.currentWeapon,
         levelGold: this.levelGold,
         pouchGold: this.pouchGold,

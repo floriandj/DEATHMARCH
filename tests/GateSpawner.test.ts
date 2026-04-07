@@ -34,26 +34,26 @@ describe('GateSpawner', () => {
     expect(apply(1)).toBe(2);
   });
 
-  it('+10 gate adds 10 units', () => {
+  it('+5 gate adds 5 units', () => {
     const templates = LevelManager.instance.current.gates.templates;
     const add = templates.find(
-      (t) => (t.left.op === 'add' && t.left.value === 10) || (t.right.op === 'add' && t.right.value === 10),
+      (t) => (t.left.op === 'add' && t.left.value === 5) || (t.right.op === 'add' && t.right.value === 5),
     );
     expect(add).toBeDefined();
-    const side = add!.left.op === 'add' && add!.left.value === 10 ? add!.left : add!.right;
+    const side = add!.left.op === 'add' && add!.left.value === 5 ? add!.left : add!.right;
     const apply = gateApplyFn(side);
-    expect(apply(5)).toBe(15);
+    expect(apply(5)).toBe(10);
   });
 
-  it('-3 gate subtracts but never goes below 1', () => {
+  it('-2 gate subtracts but never goes below 1', () => {
     const templates = LevelManager.instance.current.gates.templates;
     const sub = templates.find(
-      (t) => (t.left.op === 'subtract' && t.left.value === 3) || (t.right.op === 'subtract' && t.right.value === 3),
+      (t) => (t.left.op === 'subtract' && t.left.value === 2) || (t.right.op === 'subtract' && t.right.value === 2),
     );
     expect(sub).toBeDefined();
-    const side = sub!.left.op === 'subtract' && sub!.left.value === 3 ? sub!.left : sub!.right;
+    const side = sub!.left.op === 'subtract' && sub!.left.value === 2 ? sub!.left : sub!.right;
     const apply = gateApplyFn(side);
-    expect(apply(10)).toBe(7);
+    expect(apply(10)).toBe(8);
     expect(apply(2)).toBe(1);
   });
 

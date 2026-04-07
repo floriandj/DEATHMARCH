@@ -1,5 +1,13 @@
 import Phaser from 'phaser';
-import { ENTITY_SCALE } from '@/config/GameConfig';
+import {
+  ENTITY_SCALE,
+  UNIT_MAX_LEVEL,
+  UNIT_KILLS_TO_LEVEL,
+  UNIT_FIRE_RATE_MULT,
+  UNIT_DAMAGE_MULT,
+  UNIT_LEVEL_TINT,
+  UNIT_LEVEL_SCALE,
+} from '@/config/GameConfig';
 
 export class PlayerUnit extends Phaser.GameObjects.Sprite {
   active: boolean = false;
@@ -11,11 +19,18 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
   /** Permanent offset so each unit fires at its own rhythm */
   private readonly fireOffset: number;
 
+  /** Unit upgrade state */
+  unitLevel: number = 1;
+  kills: number = 0;
+  /** Pool index — used for bullet-to-unit tracking */
+  readonly poolIndex: number;
+
   constructor(scene: Phaser.Scene, index: number = 0) {
     super(scene, 0, 0, 'unit');
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
+    this.poolIndex = index;
     this.fireOffset = (index * 37) % 200; // spread across base fire rate
   }
 
@@ -37,8 +52,50 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.fireTimer = this.fireOffset;
     this.stunTimer = 0;
     this.setAlpha(1);
-    this.setScale(1.5 * ENTITY_SCALE);
+    this.applyLevelVisuals();
     this.play('unit_march');
+  }
+
+  /** Add a kill and check for level-up. Returns true if unit leveled up. */
+  addKill(): boolean {
+    this.kills++;
+    const nextLevel = this.unitLevel + 1;
+    if (nextLevel <= UNIT_MAX_LEVEL && this.kills >= UNIT_KILLS_TO_LEVEL[nextLevel]) {
+      this.unitLevel = nextLevel;
+      this.applyLevelVisuals();
+      return true;
+    }
+    return false;
+  }
+
+  /** Reset upgrade state (used when unit is recycled) */
+  resetLevel(): void {
+    this.unitLevel = 1;
+    this.kills = 0;
+  }
+
+  /** Fire rate multiplier based on unit level */
+  get fireRateMult(): number {
+    return UNIT_FIRE_RATE_MULT[this.unitLevel] ?? 1;
+  }
+
+  /** Damage multiplier based on unit level */
+  get damageMult(): number {
+    return UNIT_DAMAGE_MULT[this.unitLevel] ?? 1;
+  }
+
+  /** Apply visual changes for current level (scale + tint) */
+  private applyLevelVisuals(): void {
+    const levelScale = UNIT_LEVEL_SCALE[this.unitLevel] ?? 1;
+    this.setScale(1.5 * ENTITY_SCALE * levelScale);
+    if (!this.isStunned) {
+      const tint = UNIT_LEVEL_TINT[this.unitLevel];
+      if (tint && tint !== 0xffffff) {
+        this.setTint(tint);
+      } else {
+        this.clearTint();
+      }
+    }
   }
 
   /** Set target without resetting fire timer */
@@ -56,7 +113,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
       this.stunTimer -= delta;
       if (this.stunTimer <= 0) {
         this.stunTimer = 0;
-        this.clearTint();
+        this.applyLevelVisuals();
       }
     }
 
@@ -124,9 +181,10 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
 
   updateFiring(delta: number, fireRate: number): boolean {
     if (!this.active || this.isStunned) return false;
+    const effectiveRate = fireRate * this.fireRateMult;
     this.fireTimer += delta;
-    if (this.fireTimer >= fireRate) {
-      this.fireTimer -= fireRate;
+    if (this.fireTimer >= effectiveRate) {
+      this.fireTimer -= effectiveRate;
       return true;
     }
     return false;
