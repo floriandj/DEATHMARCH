@@ -68,6 +68,10 @@ export class GameScene extends Phaser.Scene {
   private nextPouchDistance: number = 300;
   private goldPouches: Phaser.GameObjects.Sprite[] = [];
 
+  // Shadow visuals
+  private unitShadows: Phaser.GameObjects.Image[] = [];
+  private enemyShadows: Map<Enemy, Phaser.GameObjects.Image> = new Map();
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -211,6 +215,16 @@ export class GameScene extends Phaser.Scene {
     // 3b. Unit physics
     for (const unit of this.units) {
       unit.updatePhysics(delta, this.units);
+    }
+
+    // Update unit shadows
+    for (let i = 0; i < this.units.length; i++) {
+      const u = this.units[i];
+      if (u.active && this.unitShadows[i]) {
+        this.unitShadows[i].setPosition(u.x, u.y + 10).setVisible(true);
+      } else if (this.unitShadows[i]) {
+        this.unitShadows[i].setVisible(false);
+      }
     }
 
     // 4. Spawn enemies ahead of army in world space (static until aggro)
@@ -428,6 +442,23 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
+    // Update enemy shadows
+    for (let i = 0; i < this.enemies.length; i++) {
+      const e = this.enemies[i];
+      if (e.active) {
+        if (!this.enemyShadows.has(e)) {
+          const es = this.add.image(e.x, e.y + e.displayHeight * 0.4, 'vfx_shadow').setAlpha(0.25).setDepth(-1);
+          this.enemyShadows.set(e, es);
+        }
+        const es = this.enemyShadows.get(e)!;
+        es.setPosition(e.x, e.y + e.displayHeight * 0.4).setVisible(true);
+        es.setScale(e.displayWidth / 32);
+      } else {
+        const es = this.enemyShadows.get(e);
+        if (es) es.setVisible(false);
+      }
+    }
+
     // 8. Gates — static, check if unit walks into them
     for (const gate of this.gates) {
       if (!gate.active || gate.passed) continue;
@@ -533,10 +564,14 @@ export class GameScene extends Phaser.Scene {
       for (let i = 0; i < this.unitCount && i < this.units.length; i++) {
         const angle = (i / this.unitCount) * Math.PI * 2;
         const radius = spawnRadius * 0.3 + Math.random() * spawnRadius * 0.7;
-        this.units[i].spawn(
-          armyCenterX + Math.cos(angle) * radius,
-          armyCenterY + Math.sin(angle) * radius,
-        );
+        const sx = armyCenterX + Math.cos(angle) * radius;
+        const sy = armyCenterY + Math.sin(angle) * radius;
+        this.units[i].spawn(sx, sy);
+        // Add shadow below unit
+        if (!this.unitShadows[i]) {
+          this.unitShadows[i] = this.add.image(sx, sy + 10, 'vfx_shadow').setAlpha(0.3).setDepth(-1);
+        }
+        this.unitShadows[i].setPosition(sx, sy + 10).setVisible(true).setScale(0.6);
         // Restore level data for existing survivors
         if (i < survivorData.length) {
           this.units[i].unitLevel = survivorData[i].level;
