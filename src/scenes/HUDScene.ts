@@ -79,46 +79,52 @@ export class HUDScene extends Phaser.Scene {
     this.tweens.add({ targets: this.levelBanner, alpha: 1, y: { from: 160, to: 180 }, duration: 500, ease: 'Power2' });
     this.tweens.add({ targets: this.levelBanner, alpha: 0, y: 160, duration: 600, delay: 2800, ease: 'Power2' });
 
-    // ── Top bar (slim 70px) ──
+    // ── Top bar (beveled with gold trim) ──
     this.topElements = this.add.container(0, 0);
 
     const topBarBg = this.add.graphics();
-    topBarBg.fillStyle(0x000000, 0.5);
-    topBarBg.fillRect(0, 0, GAME_WIDTH, 70);
-    topBarBg.fillStyle(0x000000, 0.2);
-    topBarBg.fillRect(0, 70, GAME_WIDTH, 10);
+    topBarBg.fillStyle(0x0d1520, 0.85);
+    topBarBg.fillRect(0, 0, GAME_WIDTH, 74);
+    topBarBg.fillStyle(0xffd700, 0.6);
+    topBarBg.fillRect(0, 72, GAME_WIDTH, 2);
+    topBarBg.fillStyle(0x000000, 0.15);
+    topBarBg.fillRect(0, 74, GAME_WIDTH, 8);
     this.topElements.add(topBarBg);
 
-    // Score (top-left)
-    const scorePill = this.add.graphics();
-    scorePill.fillStyle(0xffd43b, 0.12);
-    scorePill.fillRoundedRect(PAD, 10, 180, 36, 18);
-    this.topElements.add(scorePill);
-    this.topElements.add(this.add.text(PAD + 12, 22, '\u2605', { fontSize: '18px', color: '#ffd43b' }).setOrigin(0, 0.5));
+    // Score badge (gold border)
+    const scoreBadge = this.add.graphics();
+    scoreBadge.fillStyle(0xffd700, 0.1);
+    scoreBadge.fillRoundedRect(PAD - 4, 8, 190, 40, 20);
+    scoreBadge.lineStyle(1.5, 0xffd700, 0.5);
+    scoreBadge.strokeRoundedRect(PAD - 4, 8, 190, 40, 20);
+    this.topElements.add(scoreBadge);
+    this.topElements.add(this.add.text(PAD + 10, 22, '\u2605', { fontSize: '20px', color: '#ffd700' }).setOrigin(0, 0.5));
     this.scoreText = this.add.text(PAD + 34, 22, '0', {
-      fontSize: '20px', color: '#ffd43b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      fontSize: '22px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.scoreText);
 
-    // Distance (top-center, subtle)
+    // Distance (center, subtle gold)
     this.distanceText = this.add.text(GAME_WIDTH / 2, 22, '0m', {
-      fontSize: '14px', color: '#888888', fontFamily: 'Arial, Helvetica, sans-serif',
+      fontSize: '14px', color: '#b8860b', fontFamily: 'Arial, Helvetica, sans-serif',
     }).setOrigin(0.5);
     this.topElements.add(this.distanceText);
 
-    // Units (top-right)
-    const unitPill = this.add.graphics();
-    unitPill.fillStyle(0x00d4ff, 0.12);
-    unitPill.fillRoundedRect(GAME_WIDTH - PAD - 140, 10, 140, 36, 18);
-    this.topElements.add(unitPill);
-    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 128, 22, '\u2694', { fontSize: '18px', color: '#00d4ff' }).setOrigin(0, 0.5));
+    // Units badge (blue border)
+    const unitBadge = this.add.graphics();
+    unitBadge.fillStyle(0x00d4ff, 0.1);
+    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 148, 8, 148, 40, 20);
+    unitBadge.lineStyle(1.5, 0x00d4ff, 0.5);
+    unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 148, 8, 148, 40, 20);
+    this.topElements.add(unitBadge);
+    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 134, 22, '\u2694', { fontSize: '20px', color: '#00d4ff' }).setOrigin(0, 0.5));
     this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 22, '0', {
-      fontSize: '20px', color: '#00d4ff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      fontSize: '22px', color: '#00d4ff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(1, 0.5);
     this.topElements.add(this.unitText);
 
-    // Gold (below score, small)
-    this.goldText = this.add.text(PAD + 12, 50, '0g', {
+    // Gold (below score)
+    this.goldText = this.add.text(PAD + 10, 52, '\u{1FA99} 0g', {
       fontSize: '13px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
@@ -141,21 +147,28 @@ export class HUDScene extends Phaser.Scene {
     this.bossHpBg.lineStyle(1, 0xff6b6b, 0.35);
     this.bossHpBg.strokeRoundedRect(barX - 4, barY, barWidth + 8, 32, 16);
 
-    // ── Weapon indicator (bottom-left, above thumb zone) ──
-    this.weaponIcon = this.add.sprite(PAD + 16, GAME_HEIGHT - 80, 'weapon_svg_pistol')
-      .setDisplaySize(32, 32).setAlpha(0).setOrigin(0.5);
-    this.weaponLabel = this.add.text(PAD + 38, GAME_HEIGHT - 80, '', {
+    // ── Weapon indicator (circular frame) ──
+    const wFrame = this.add.graphics();
+    wFrame.fillStyle(0x0d1520, 0.8);
+    wFrame.fillCircle(PAD + 24, GAME_HEIGHT - 80, 22);
+    wFrame.lineStyle(2, 0x888888, 0.6);
+    wFrame.strokeCircle(PAD + 24, GAME_HEIGHT - 80, 22);
+    this.weaponIcon = this.add.sprite(PAD + 24, GAME_HEIGHT - 80, 'weapon_svg_pistol')
+      .setDisplaySize(28, 28).setAlpha(0).setOrigin(0.5);
+    this.weaponLabel = this.add.text(PAD + 52, GAME_HEIGHT - 80, '', {
       fontSize: '14px', color: '#cccccc', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
     }).setOrigin(0, 0.5).setAlpha(0);
 
-    // ── Pause button (top-right, above unit count) ──
+    // ── Pause button (gold accent) ──
     const pauseBg = this.add.graphics();
-    pauseBg.fillStyle(0xffffff, 0.08);
-    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 44, 52, 44, 44, 12);
+    pauseBg.fillStyle(0x0d1520, 0.8);
+    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 46, 52, 46, 46, 14);
+    pauseBg.lineStyle(1, 0xffd700, 0.3);
+    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 46, 52, 46, 46, 14);
     this.topElements.add(pauseBg);
 
-    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 22, 68, '\u23F8', {
-      fontSize: '22px', color: '#999999',
+    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 23, 70, '\u23F8', {
+      fontSize: '22px', color: '#ffd700',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
     this.topElements.add(pauseBtn);
 
@@ -304,22 +317,23 @@ export class HUDScene extends Phaser.Scene {
     }
   }
 
-  /** Floating kill streak text near center of action */
   private showStreakPopup(streak: number): void {
     const x = GAME_WIDTH / 2 + (Math.random() - 0.5) * 100;
     const y = GAME_HEIGHT * 0.45;
-    const size = Math.min(48, 24 + streak * 3);
+    const size = Math.min(52, 26 + streak * 3);
+    const color = streak >= 10 ? '#ffd700' : streak >= 5 ? '#ff6600' : '#ff4444';
     const txt = this.add.text(x, y, `x${streak}`, {
-      fontSize: `${size}px`, color: '#ff6b6b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
-      stroke: '#000000', strokeThickness: 4,
+      fontSize: `${size}px`, color, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 5,
+      shadow: { offsetX: 0, offsetY: 0, color: color, blur: 8, fill: false, stroke: true },
     }).setOrigin(0.5).setDepth(15);
 
     this.tweens.add({
       targets: txt,
-      y: y - 80,
+      y: y - 90,
       alpha: 0,
-      scale: 1.5,
-      duration: 800,
+      scale: 1.6,
+      duration: 900,
       ease: 'Power2',
       onComplete: () => txt.destroy(),
     });
