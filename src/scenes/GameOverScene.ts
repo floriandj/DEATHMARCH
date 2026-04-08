@@ -68,19 +68,27 @@ export class GameOverScene extends Phaser.Scene {
     const title = this.add.text(GAME_WIDTH / 2, y + titleH * 0.33, `${emoji}  ${titleText}`, {
       fontSize: `${Math.round(55 * vs)}px`, color: titleColor, fontFamily: F, fontStyle: 'bold',
       stroke: '#000', strokeThickness: Math.round(5 * vs),
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setScale(0.5).setAlpha(0);
     this.tweens.add({ targets: title, scale: 1, alpha: 1, duration: 500, ease: 'Back.easeOut' });
 
     this.add.text(GAME_WIDTH / 2, y + titleH * 0.65, `Level ${levelIndex + 1} \u2022 ${level.name}`, {
       fontSize: `${Math.round(20 * vs)}px`, color: '#8fb0c4', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
     }).setOrigin(0.5);
 
     // Stars row
     const starY = y + titleH * 0.85;
     const starCount = data.bossDefeated ? 3 : Math.min(2, Math.floor(data.distance / 800));
     for (let i = 0; i < 3; i++) {
-      this.add.text(GAME_WIDTH / 2 + (i - 1) * Math.round(53 * vs), starY, '\u2B50', {
+      const sx = GAME_WIDTH / 2 + (i - 1) * Math.round(53 * vs);
+      if (i < starCount) {
+        const starGlow = this.add.graphics();
+        starGlow.fillStyle(C_YELLOW, 0.25);
+        starGlow.fillEllipse(sx, starY, Math.round(48 * vs), Math.round(44 * vs));
+      }
+      this.add.text(sx, starY, '\u2B50', {
         fontSize: `${Math.round(34 * vs)}px`,
       }).setOrigin(0.5).setAlpha(i < starCount ? 1 : 0.2);
     }
@@ -101,12 +109,22 @@ export class GameOverScene extends Phaser.Scene {
     const scoreVal = this.add.text(PAD + CW - 22, scoreRowY + Math.round(7 * vs), '0', {
       fontSize: `${Math.round(53 * vs)}px`, color: '#ffffff', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(1, 0.5);
+    // Golden glow behind score counter
+    const scoreGlow = this.add.graphics();
+    scoreGlow.fillStyle(C_YELLOW, 0.18);
+    scoreGlow.fillEllipse(PAD + CW - 22 - Math.round(60 * vs), scoreRowY + Math.round(7 * vs), Math.round(180 * vs), Math.round(60 * vs));
+    scoreGlow.setAlpha(0);
     if (data.score > 0) {
       const ctr = { val: 0 };
+      this.tweens.add({ targets: scoreGlow, alpha: 1, duration: 200, delay: 300, ease: 'Power2' });
       this.tweens.add({ targets: ctr, val: data.score, duration: 1000, delay: 300, ease: 'Power2',
         onUpdate: () => scoreVal.setText(String(Math.floor(ctr.val))),
-        onComplete: () => scoreVal.setText(String(data.score)) });
+        onComplete: () => {
+          scoreVal.setText(String(data.score));
+          this.tweens.add({ targets: scoreGlow, alpha: 0, duration: 600, ease: 'Power2' });
+        } });
     }
 
     // Divider
@@ -118,6 +136,7 @@ export class GameOverScene extends Phaser.Scene {
     this.add.text(PAD + Math.round(62 * vs), row2Y - 4, `${data.distance}m`, {
       fontSize: `${Math.round(29 * vs)}px`, color: '#38bdf8', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
     }).setOrigin(0, 0.5);
 
     // Gold
@@ -125,6 +144,7 @@ export class GameOverScene extends Phaser.Scene {
     this.add.text(GAME_WIDTH / 2 + Math.round(65 * vs), row2Y - 4, `+${goldEarned}g`, {
       fontSize: `${Math.round(29 * vs)}px`, color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
     }).setOrigin(0, 0.5);
 
     if (isNewHigh) {
@@ -174,6 +194,7 @@ export class GameOverScene extends Phaser.Scene {
       this.add.text(GAME_WIDTH / 2, y + Math.round(24 * vs), 'POWER UP', {
         fontSize: `${Math.round(24 * vs)}px`, color: '#ebb654', fontFamily: F, fontStyle: 'bold', letterSpacing: 4,
         stroke: '#1a3a4a', strokeThickness: 2,
+        shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
       }).setOrigin(0.5);
 
       // Gold pill
@@ -193,6 +214,9 @@ export class GameOverScene extends Phaser.Scene {
       const shopColors = [C_BLUE, C_RED, C_GREEN, C_YELLOW];
       const hints = ['1 extra soldier', 'Stronger weapon', 'Block 1 hit', '+50% gold forever'];
       for (let i = 0; i < items.length; i++) {
+        if (i > 0) {
+          this.add.rectangle(GAME_WIDTH / 2, iy - Math.round(2 * vs), CW - 36, 1, 0xffffff, 0.1);
+        }
         this.shopItem(iy, shopIcons[i], shopColors[i], items[i], hints[i], vs);
         iy += itemH;
       }
@@ -225,6 +249,10 @@ export class GameOverScene extends Phaser.Scene {
   // ── Dark panel with colored top accent bar ──
   private panel(x: number, y: number, w: number, h: number, accentColor: number): void {
     const g = this.add.graphics();
+    // Outer glow
+    const glowPad = 6;
+    g.fillStyle(accentColor, 0.08);
+    g.fillRoundedRect(x - glowPad, y - glowPad, w + glowPad * 2, h + glowPad * 2, 23);
     // Panel body
     g.fillStyle(0x1c6da3, 1);
     g.fillRoundedRect(x, y, w, h, 19);
@@ -297,6 +325,14 @@ export class GameOverScene extends Phaser.Scene {
     const x = GAME_WIDTH / 2;
     const c = this.add.container(x, y).setAlpha(0);
 
+    // Glow behind green (primary) button
+    if (colorTop === C_GREEN) {
+      const btnGlowG = this.add.graphics();
+      btnGlowG.fillStyle(C_GREEN, 0.1);
+      btnGlowG.fillRoundedRect(-w / 2 - 5, -r - 5, w + 10, h + 10, r + 4);
+      c.add(btnGlowG);
+    }
+
     // Shadow
     const sh = this.add.graphics();
     sh.fillStyle(0x000000, 0.4);
@@ -312,6 +348,9 @@ export class GameOverScene extends Phaser.Scene {
     // Shine
     bg.fillStyle(0xffffff, 0.15);
     bg.fillRoundedRect(-w / 2 + 6, -r + 3, w - 12, h * 0.28, { tl: r - 4, tr: r - 4, bl: 0, br: 0 });
+    // Bright highlight strip at top
+    bg.fillStyle(0xffffff, 0.15);
+    bg.fillRoundedRect(-w / 2 + 4, -r + 2, w - 8, 4, { tl: r - 2, tr: r - 2, bl: 0, br: 0 });
     // Gold border for primary buttons
     if (colorTop === C_GREEN || colorTop === C_BLUE) {
       bg.lineStyle(1.5, 0xebb654, 0.4);
@@ -322,6 +361,7 @@ export class GameOverScene extends Phaser.Scene {
     c.add(this.add.text(0, 0, label, {
       fontSize: `${Math.round(26 * vs)}px`, color: textColor, fontFamily: F, fontStyle: 'bold',
       stroke: '#000', strokeThickness: 1,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 3, fill: true },
     }).setOrigin(0.5));
 
     const hit = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });

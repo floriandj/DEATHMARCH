@@ -51,11 +51,20 @@ export class MenuScene extends Phaser.Scene {
     // ── Header panel (fixed) ──
     const headerH = 144;
     const hdr = this.add.graphics().setDepth(10);
-    hdr.fillStyle(0x1c6da3, 1);
-    hdr.fillRect(0, 0, GAME_WIDTH, headerH);
-    // Gold accent line at top
+    // Gradient header: lighter at top, darker at bottom
+    const hdrSteps = 16;
+    for (let s = 0; s < hdrSteps; s++) {
+      const t = s / hdrSteps;
+      const r = Phaser.Math.Linear(0x24, 0x1c, t);
+      const g = Phaser.Math.Linear(0x7a, 0x6d, t);
+      const b = Phaser.Math.Linear(0xb8, 0xa3, t);
+      const c = (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b);
+      hdr.fillStyle(c, 1);
+      hdr.fillRect(0, Math.floor(headerH * s / hdrSteps), GAME_WIDTH, Math.ceil(headerH / hdrSteps) + 1);
+    }
+    // Gold accent line at top (3px thick)
     hdr.fillStyle(0xebb654, 0.9);
-    hdr.fillRect(0, 0, GAME_WIDTH, 4);
+    hdr.fillRect(0, 0, GAME_WIDTH, 3);
     // Gradient fade below header (dark → transparent)
     const fadeH = 24;
     for (let s = 0; s < fadeH; s++) {
@@ -74,6 +83,7 @@ export class MenuScene extends Phaser.Scene {
     this.add.text(PAD + 14, 108, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
       fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0, 0.5).setDepth(11);
 
     // Gold pill
@@ -81,18 +91,35 @@ export class MenuScene extends Phaser.Scene {
     this.add.text(GAME_WIDTH - PAD - 14, 108, `\u{1FA99} ${WalletManager.gold}g`, {
       fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(1, 0.5).setDepth(11);
 
     // ── Footer (fixed) ──
     const footH = 96;
     const foot = this.add.graphics().setDepth(10);
-    foot.fillStyle(0x1c6da3, 1);
-    foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, footH);
-    foot.lineStyle(1, 0xebb654, 0.15);
-    foot.lineBetween(0, GAME_HEIGHT - footH, GAME_WIDTH, GAME_HEIGHT - footH);
+    // Gradient footer: darker at top, lighter at bottom
+    const footSteps = 12;
+    for (let s = 0; s < footSteps; s++) {
+      const t = s / footSteps;
+      const rr = Phaser.Math.Linear(0x1c, 0x24, t);
+      const gg = Phaser.Math.Linear(0x6d, 0x7a, t);
+      const bb = Phaser.Math.Linear(0xa3, 0xb8, t);
+      const cc = (Math.round(rr) << 16) | (Math.round(gg) << 8) | Math.round(bb);
+      foot.fillStyle(cc, 1);
+      foot.fillRect(0, GAME_HEIGHT - footH + Math.floor(footH * s / footSteps), GAME_WIDTH, Math.ceil(footH / footSteps) + 1);
+    }
+    // Gold accent line at top of footer (3px)
+    foot.fillStyle(0xebb654, 0.3);
+    foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, 3);
 
     const settBtnW = 260, settBtnH = 62;
     const settBtnX = GAME_WIDTH / 2, settBtnY = GAME_HEIGHT - footH / 2;
+    // Outer glow behind settings button
+    const settGlow = this.add.graphics().setDepth(10.5);
+    settGlow.fillStyle(0x2e92d4, 0.25);
+    settGlow.fillEllipse(settBtnX, settBtnY, settBtnW + 28, settBtnH + 24);
+    settGlow.fillStyle(0x2e92d4, 0.12);
+    settGlow.fillEllipse(settBtnX, settBtnY, settBtnW + 48, settBtnH + 40);
     const settBg = this.add.graphics().setDepth(11);
     settBg.fillStyle(0x2e92d4, 1);
     settBg.fillRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
@@ -102,6 +129,7 @@ export class MenuScene extends Phaser.Scene {
     const settBtn = this.add.text(settBtnX, settBtnY, '\u2699  SETTINGS', {
       fontSize: '26px', color: '#8fb0c4', fontFamily: F, fontStyle: 'bold',
       stroke: '#c89530', strokeThickness: 1,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
     const settHit = this.add.zone(settBtnX, settBtnY, settBtnW, settBtnH)
@@ -230,6 +258,7 @@ export class MenuScene extends Phaser.Scene {
       this.scrollContainer.add(this.add.text(GAME_WIDTH / 2, y, world.name.toUpperCase(), {
         fontSize: '18px', color: '#ffffff', fontFamily: F, fontStyle: 'bold', letterSpacing: 4,
         stroke: '#000', strokeThickness: 1,
+        shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
       }).setOrigin(0.5));
     }
   }
@@ -245,13 +274,19 @@ export class MenuScene extends Phaser.Scene {
       const nc = this.add.container(x, y);
 
       if (isCurrent) {
-        // Glow
+        // Outer glow (more visible)
+        const glowOuter = this.add.graphics();
+        glowOuter.fillStyle(0xebb654, 0.08);
+        glowOuter.fillCircle(0, 0, NODE_R + 28);
+        nc.add(glowOuter);
         const glow = this.add.graphics();
-        glow.fillStyle(0xebb654, 0.12);
-        glow.fillCircle(0, 0, NODE_R + 12);
+        glow.fillStyle(0xebb654, 0.18);
+        glow.fillCircle(0, 0, NODE_R + 14);
         nc.add(glow);
-        this.tweens.add({ targets: glow, alpha: { from: 0.1, to: 0.4 }, scale: { from: 0.95, to: 1.1 },
+        this.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.5 }, scale: { from: 0.95, to: 1.15 },
           duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+        this.tweens.add({ targets: glowOuter, alpha: { from: 0.06, to: 0.2 }, scale: { from: 1.0, to: 1.2 },
+          duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
         // Filled node
         const ng = this.add.graphics();
@@ -268,16 +303,26 @@ export class MenuScene extends Phaser.Scene {
         nc.add(this.add.text(0, -2, String(i + 1), {
           fontSize: '26px', color: '#fff', fontFamily: F, fontStyle: 'bold',
           stroke: '#000', strokeThickness: 2,
+          shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
         }).setOrigin(0.5));
 
         nc.add(this.add.text(0, NODE_R + 18, lvl.name.toUpperCase(), {
           fontSize: '18px', color: '#6be85a', fontFamily: F, fontStyle: 'bold',
           stroke: '#1a3a4a', strokeThickness: 2,
+          shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
         }).setOrigin(0.5));
 
         this.createPlayButton(x, y + NODE_R + 56);
 
       } else if (isCompleted) {
+        // Subtle green shimmer glow behind completed nodes
+        const shimmer = this.add.graphics();
+        shimmer.fillStyle(C_GREEN, 0.1);
+        shimmer.fillCircle(0, 0, NODE_R + 8);
+        nc.add(shimmer);
+        this.tweens.add({ targets: shimmer, alpha: { from: 0.08, to: 0.25 },
+          duration: 1400 + Math.random() * 400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
         const ng = this.add.graphics();
         ng.fillStyle(C_GREEN, 0.7);
         ng.fillCircle(0, 0, NODE_R - 2);
@@ -287,6 +332,7 @@ export class MenuScene extends Phaser.Scene {
         nc.add(this.add.text(0, -2, '\u2713', {
           fontSize: '26px', color: '#fff', fontFamily: F, fontStyle: 'bold',
           stroke: '#000', strokeThickness: 2,
+          shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
         }).setOrigin(0.5));
 
       } else {
@@ -299,6 +345,7 @@ export class MenuScene extends Phaser.Scene {
         nc.add(this.add.text(0, -2, String(i + 1), {
           fontSize: '20px', color: '#4a7088', fontFamily: F, fontStyle: 'bold',
           stroke: '#1a3a4a', strokeThickness: 2,
+          shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
         }).setOrigin(0.5));
       }
 
@@ -321,6 +368,16 @@ export class MenuScene extends Phaser.Scene {
     const w = 180, h = 52, r = h / 2;
     const c = this.add.container(x, y);
 
+    // Outer glow behind button
+    const outerGlow = this.add.graphics();
+    outerGlow.fillStyle(C_GREEN, 0.12);
+    outerGlow.fillEllipse(0, 0, w + 40, h + 30);
+    outerGlow.fillStyle(C_GREEN, 0.06);
+    outerGlow.fillEllipse(0, 0, w + 64, h + 48);
+    c.add(outerGlow);
+    this.tweens.add({ targets: outerGlow, alpha: { from: 0.7, to: 1.0 }, scale: { from: 0.97, to: 1.05 },
+      duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
     const sh = this.add.graphics();
     sh.fillStyle(0x000000, 0.3);
     sh.fillRoundedRect(-w / 2 + 2, -r + 3, w, h, r);
@@ -331,6 +388,10 @@ export class MenuScene extends Phaser.Scene {
     bg.fillRoundedRect(-w / 2, -r, w, h, r);
     bg.fillStyle(C_GREEN, 1);
     bg.fillRoundedRect(-w / 2, -r, w, h * 0.5, { tl: r, tr: r, bl: 4, br: 4 });
+    // Brighter highlight strip at top (white at 0.2 opacity)
+    bg.fillStyle(0xffffff, 0.2);
+    bg.fillRoundedRect(-w / 2 + 3, -r + 2, w - 6, 6, { tl: r - 3, tr: r - 3, bl: 0, br: 0 });
+    // Existing specular highlight
     bg.fillStyle(0xffffff, 0.15);
     bg.fillRoundedRect(-w / 2 + 4, -r + 3, w - 8, h * 0.28, { tl: r - 3, tr: r - 3, bl: 0, br: 0 });
     c.add(bg);
@@ -338,6 +399,7 @@ export class MenuScene extends Phaser.Scene {
     c.add(this.add.text(0, 0, '\u25B6  PLAY', {
       fontSize: '24px', color: '#fff', fontFamily: F, fontStyle: 'bold',
       stroke: '#000', strokeThickness: 1,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5));
 
     const hit = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
@@ -372,6 +434,7 @@ export class MenuScene extends Phaser.Scene {
     this.add.text(startX + 14, perkY, 'PERKS', {
       fontSize: '14px', color: '#ebb654', fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
       stroke: '#1a3a4a', strokeThickness: 1,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
     }).setOrigin(0, 0.5).setDepth(11);
 
     // Perk icons

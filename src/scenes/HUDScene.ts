@@ -9,6 +9,11 @@ import { PerkManager } from '@/systems/PerkManager';
 /** Safe margin from edges to avoid ENVELOP cropping */
 const PAD = 32;
 
+/** Archero 2-style drop shadow for HUD text */
+const HUD_SHADOW: Phaser.Types.GameObjects.Text.TextShadow = {
+  offsetX: 1, offsetY: 1, color: '#000', blur: 3, fill: true, stroke: false,
+};
+
 export class HUDScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private distanceText!: Phaser.GameObjects.Text;
@@ -23,6 +28,7 @@ export class HUDScene extends Phaser.Scene {
   private levelBanner!: Phaser.GameObjects.Container;
   private progressBar!: Phaser.GameObjects.Graphics;
   private topElements!: Phaser.GameObjects.Container;
+  private pauseGlow!: Phaser.GameObjects.Graphics;
 
   score: number = 0;
   distance: number = 0;
@@ -60,6 +66,11 @@ export class HUDScene extends Phaser.Scene {
 
     // ── Level banner (animated intro) ──
     this.levelBanner = this.add.container(GAME_WIDTH / 2, 180).setDepth(20);
+    // Subtle glow behind banner
+    const bannerGlow = this.add.graphics();
+    bannerGlow.fillStyle(accentColor, 0.12);
+    bannerGlow.fillRoundedRect(-280, -76, 560, 152, 40);
+    this.levelBanner.add(bannerGlow);
     const bannerBg = this.add.graphics();
     bannerBg.fillStyle(0x000000, 0.7);
     bannerBg.fillRoundedRect(-264, -60, 528, 120, 29);
@@ -69,14 +80,17 @@ export class HUDScene extends Phaser.Scene {
     this.levelBanner.add(this.add.text(0, -26, `LEVEL ${levelIndex + 1}`, {
       fontSize: '22px', color: accentHex, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', letterSpacing: 5,
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 4, fill: true, stroke: false },
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 10, level.name.toUpperCase(), {
       fontSize: '32px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 5, fill: true, stroke: false },
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 44, level.theme.worldName, {
       fontSize: '16px', color: '#6a8ea0', fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: 3,
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(0.5));
     this.levelBanner.setAlpha(0);
     this.tweens.add({ targets: this.levelBanner, alpha: 1, y: { from: 160, to: 180 }, duration: 500, ease: 'Power2' });
@@ -88,23 +102,32 @@ export class HUDScene extends Phaser.Scene {
     const topBarBg = this.add.graphics();
     topBarBg.fillStyle(0x1c6da3, 0.85);
     topBarBg.fillRect(0, 0, GAME_WIDTH, 89);
-    topBarBg.fillStyle(0xebb654, 0.6);
-    topBarBg.fillRect(0, 87, GAME_WIDTH, 2);
+    // Darker edge at the top for subtle gradient feel
+    topBarBg.fillStyle(0x000000, 0.2);
+    topBarBg.fillRect(0, 0, GAME_WIDTH, 6);
+    topBarBg.fillStyle(0x000000, 0.1);
+    topBarBg.fillRect(0, 6, GAME_WIDTH, 4);
+    // Prominent gold accent line at bottom (3px)
+    topBarBg.fillStyle(0xebb654, 0.7);
+    topBarBg.fillRect(0, 86, GAME_WIDTH, 3);
     topBarBg.fillStyle(0x000000, 0.15);
     topBarBg.fillRect(0, 89, GAME_WIDTH, 10);
     this.topElements.add(topBarBg);
 
-    // Score badge (gold border)
+    // Score badge (gold border + inner glow)
     const scoreBadge = this.add.graphics();
     scoreBadge.fillStyle(0xebb654, 0.1);
     scoreBadge.fillRoundedRect(PAD - 4, 10, 185, 48, 24);
+    scoreBadge.fillStyle(0xffffff, 0.08);
+    scoreBadge.fillRoundedRect(PAD, 13, 177, 42, 21);
     scoreBadge.lineStyle(1.5, 0xebb654, 0.5);
     scoreBadge.strokeRoundedRect(PAD - 4, 10, 185, 48, 24);
     this.topElements.add(scoreBadge);
-    this.topElements.add(this.add.text(PAD + 10, 30, '\u2605', { fontSize: '24px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2 }).setOrigin(0, 0.5));
+    this.topElements.add(this.add.text(PAD + 10, 30, '\u2605', { fontSize: '24px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2, shadow: HUD_SHADOW }).setOrigin(0, 0.5));
     this.scoreText = this.add.text(PAD + 38, 30, '0', {
       fontSize: '26px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(0, 0.5);
     this.topElements.add(this.scoreText);
 
@@ -112,20 +135,24 @@ export class HUDScene extends Phaser.Scene {
     this.distanceText = this.add.text(GAME_WIDTH / 2, 30, '0m', {
       fontSize: '18px', color: '#c89530', fontFamily: 'Arial, Helvetica, sans-serif',
       stroke: '#000000', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(0.5);
     this.topElements.add(this.distanceText);
 
-    // Units badge (blue border)
+    // Units badge (blue border + inner glow)
     const unitBadge = this.add.graphics();
     unitBadge.fillStyle(0x40c4e8, 0.1);
     unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 155, 10, 155, 48, 24);
+    unitBadge.fillStyle(0xffffff, 0.08);
+    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 151, 13, 147, 42, 21);
     unitBadge.lineStyle(1.5, 0x40c4e8, 0.5);
     unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 155, 10, 155, 48, 24);
     this.topElements.add(unitBadge);
-    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 140, 30, '\u2694', { fontSize: '24px', color: '#40c4e8', stroke: '#1a3a4a', strokeThickness: 2 }).setOrigin(0, 0.5));
+    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 140, 30, '\u2694', { fontSize: '24px', color: '#40c4e8', stroke: '#1a3a4a', strokeThickness: 2, shadow: HUD_SHADOW }).setOrigin(0, 0.5));
     this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 30, '0', {
       fontSize: '26px', color: '#40c4e8', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(1, 0.5);
     this.topElements.add(this.unitText);
 
@@ -133,6 +160,7 @@ export class HUDScene extends Phaser.Scene {
     this.goldText = this.add.text(PAD + 10, 62, '\u{1FA99} 0g', {
       fontSize: '16px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
 
@@ -148,8 +176,13 @@ export class HUDScene extends Phaser.Scene {
     this.bossBackingPanel = this.add.graphics().setVisible(false);
     this.bossBackingPanel.fillStyle(0x1c6da3, 0.85);
     this.bossBackingPanel.fillRect(0, 0, GAME_WIDTH, 89);
-    this.bossBackingPanel.fillStyle(0xe85454, 0.4);
-    this.bossBackingPanel.fillRect(0, 87, GAME_WIDTH, 2);
+    // Darker top edge for gradient feel
+    this.bossBackingPanel.fillStyle(0x000000, 0.2);
+    this.bossBackingPanel.fillRect(0, 0, GAME_WIDTH, 6);
+    this.bossBackingPanel.fillStyle(0x000000, 0.1);
+    this.bossBackingPanel.fillRect(0, 6, GAME_WIDTH, 4);
+    this.bossBackingPanel.fillStyle(0xe85454, 0.5);
+    this.bossBackingPanel.fillRect(0, 86, GAME_WIDTH, 3);
     this.bossBackingPanel.fillStyle(0x000000, 0.15);
     this.bossBackingPanel.fillRect(0, 89, GAME_WIDTH, 10);
 
@@ -158,6 +191,7 @@ export class HUDScene extends Phaser.Scene {
     this.bossHpLabel = this.add.text(GAME_WIDTH / 2, barY + 19, '', {
       fontSize: '20px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(0.5).setVisible(false);
 
     this.bossHpBg.fillStyle(0xffffff, 0.1);
@@ -176,12 +210,26 @@ export class HUDScene extends Phaser.Scene {
     this.weaponLabel = this.add.text(PAD + 60, GAME_HEIGHT - 80, '', {
       fontSize: '18px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 3,
+      shadow: HUD_SHADOW,
     }).setOrigin(0, 0.5).setAlpha(0);
 
     // ── Active perks tray (bottom-center) ──
     this.drawPerkTray();
 
     // ── Pause button (bottom-right, always visible) ──
+    // Pulsing glow behind the pause button
+    this.pauseGlow = this.add.graphics();
+    this.pauseGlow.fillStyle(0xebb654, 0.15);
+    this.pauseGlow.fillCircle(GAME_WIDTH - PAD - 26, GAME_HEIGHT - 80, 34);
+    this.tweens.add({
+      targets: this.pauseGlow,
+      alpha: { from: 0.6, to: 0.15 },
+      duration: 1800,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
     const pauseBg = this.add.graphics();
     pauseBg.fillStyle(0x1c6da3, 0.8);
     pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 52, GAME_HEIGHT - 80 - 26, 52, 52, 17);
@@ -190,6 +238,7 @@ export class HUDScene extends Phaser.Scene {
 
     const pauseBtn = this.add.text(GAME_WIDTH - PAD - 26, GAME_HEIGHT - 80, '\u23F8', {
       fontSize: '26px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: HUD_SHADOW,
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
 
     pauseBtn.on('pointerdown', () => {
@@ -316,8 +365,9 @@ export class HUDScene extends Phaser.Scene {
                        this.bossHpPercent > 0.2 ? 0xe89040 : 0xe84040;
       this.bossHpBar.fillStyle(hpColor, 0.85);
       this.bossHpBar.fillRoundedRect(barX, barY + 2, fillWidth, 34, 17);
+      // Glossy highlight strip at top of HP fill (Archero-style)
       this.bossHpBar.fillStyle(0xffffff, 0.15);
-      this.bossHpBar.fillRoundedRect(barX + 4, barY + 6, Math.max(fillWidth - 8, 0), 12, 6);
+      this.bossHpBar.fillRoundedRect(barX + 4, barY + 4, Math.max(fillWidth - 8, 0), 6, 3);
 
       this.bossHpLabel.setText(`${this.bossName || 'BOSS'}  ${Math.ceil(this.bossHpPercent * 100)}%`);
     }

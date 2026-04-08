@@ -33,9 +33,15 @@ export class PerkSelectScene extends Phaser.Scene {
     const streak = PerkManager.instance.runStreak;
 
     // ── Header ──
+    // Golden glow ellipse behind title
+    const titleGlow = this.add.graphics();
+    titleGlow.fillStyle(0xebb654, 0.1);
+    titleGlow.fillEllipse(GAME_WIDTH / 2, 80, 340, 70);
+
     this.add.text(GAME_WIDTH / 2, 80, '\u2B06\uFE0F  LEVEL UP', {
       fontSize: '46px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#000', strokeThickness: 4, letterSpacing: 4,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5);
 
     this.add.text(GAME_WIDTH / 2, 120, 'Choose a perk for your run', {
@@ -104,6 +110,12 @@ export class PerkSelectScene extends Phaser.Scene {
     const rc = RARITY_COLORS[perk.rarity];
     const container = this.add.container(x, y);
 
+    // Outer glow behind card in rarity color
+    const outerGlow = this.add.graphics();
+    outerGlow.fillStyle(rc.glow, 0.1);
+    outerGlow.fillRoundedRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16, 24);
+    container.add(outerGlow);
+
     // Card background
     const bg = this.add.graphics();
     bg.fillStyle(0x2e92d4, 0.95);
@@ -117,6 +129,18 @@ export class PerkSelectScene extends Phaser.Scene {
     strip.fillStyle(rc.border, 0.3);
     strip.fillRoundedRect(-w / 2, -h / 2, w, 7, { tl: 20, tr: 20, bl: 0, br: 0 });
     container.add(strip);
+
+    // Bright highlight strip just below rarity strip
+    const highlight = this.add.graphics();
+    highlight.fillStyle(0xffffff, 0.12);
+    highlight.fillRect(-w / 2, -h / 2 + 7, w, 3);
+    container.add(highlight);
+
+    // Circular glow behind icon
+    const iconGlow = this.add.graphics();
+    iconGlow.fillStyle(rc.glow, 0.15);
+    iconGlow.fillCircle(0, -h / 2 + 66, 40);
+    container.add(iconGlow);
 
     // Icon
     const icon = this.add.text(0, -h / 2 + 66, perk.icon, {
@@ -135,6 +159,7 @@ export class PerkSelectScene extends Phaser.Scene {
       fontSize: '20px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
       wordWrap: { width: w - 28 }, align: 'center',
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5));
 
     // Description
@@ -142,11 +167,23 @@ export class PerkSelectScene extends Phaser.Scene {
       fontSize: '16px', color: '#8fb0c4', fontFamily: F,
       wordWrap: { width: w - 34 }, align: 'center', lineSpacing: 4,
       stroke: '#1a3a4a', strokeThickness: 2,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
     }).setOrigin(0.5, 0));
 
     // Hit zone
     const hitZone = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
     container.add(hitZone);
+
+    // Glow pulse tween (paused by default)
+    const glowPulse = this.tweens.add({
+      targets: outerGlow,
+      alpha: { from: 1, to: 0.5 },
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+      paused: true,
+    });
 
     // Hover effect
     hitZone.on('pointerover', () => {
@@ -156,6 +193,11 @@ export class PerkSelectScene extends Phaser.Scene {
       bg.lineStyle(3, rc.border, 1);
       bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
       container.setScale(1.05);
+      // Brighten glow and start pulse
+      outerGlow.clear();
+      outerGlow.fillStyle(rc.glow, 0.25);
+      outerGlow.fillRoundedRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16, 24);
+      glowPulse.resume();
     });
 
     hitZone.on('pointerout', () => {
@@ -165,19 +207,33 @@ export class PerkSelectScene extends Phaser.Scene {
       bg.lineStyle(2, rc.border, 0.8);
       bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
       container.setScale(1);
+      // Reset glow
+      glowPulse.pause();
+      outerGlow.setAlpha(1);
+      outerGlow.clear();
+      outerGlow.fillStyle(rc.glow, 0.1);
+      outerGlow.fillRoundedRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16, 24);
     });
 
     hitZone.on('pointerdown', () => {
       this.selectPerk(perk, data);
     });
 
-    // Entrance animation — stagger cards
-    container.setAlpha(0).setScale(0.8);
+    // Entrance animation — stagger cards with vertical bounce
+    const finalY = container.y;
+    container.setAlpha(0).setScale(0.8).setY(finalY + 30);
     this.tweens.add({
       targets: container,
       alpha: 1,
       scale: 1,
       duration: 400,
+      delay: 200 + index * 120,
+      ease: 'Back.easeOut',
+    });
+    this.tweens.add({
+      targets: container,
+      y: finalY,
+      duration: 500,
       delay: 200 + index * 120,
       ease: 'Back.easeOut',
     });
