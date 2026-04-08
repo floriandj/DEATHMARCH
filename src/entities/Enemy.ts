@@ -95,6 +95,12 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     const behindLine = this.y > armyWorldY;
     let currentSpeed = behindLine ? this.speed * 2.5 : this.speed;
 
+    // Lateral chase boost: prevent player from outrunning mobs by dragging far left/right
+    const lateralDist = Math.abs(dx);
+    if (lateralDist > 100) {
+      currentSpeed = Math.max(currentSpeed, lateralDist * 1.2);
+    }
+
     // Zigzag trait — oscillate perpendicular to movement direction
     if (this.isZigzag()) {
       this.zigzagTimer += delta;
