@@ -1,36 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="96" height="96" shape-rendering="geometricPrecision">
   <defs>
     <radialGradient id="sack-body" cx="0.45" cy="0.55" r="0.55">
-      <stop offset="0%" stop-color="#a1887f"/>
-      <stop offset="100%" stop-color="#5d4037"/>
+      <stop offset="0%" stop-color="#e6c47f"/>
+      <stop offset="100%" stop-color="#b8860b"/>
     </radialGradient>
-    <radialGradient id="coin-a" cx="0.35" cy="0.3" r="0.6">
-      <stop offset="0%" stop-color="#fff9c4"/>
-      <stop offset="50%" stop-color="#ffd700"/>
-      <stop offset="100%" stop-color="#f9a825"/>
-    </radialGradient>
-    <radialGradient id="coin-b" cx="0.35" cy="0.3" r="0.6">
+    <radialGradient id="coin-shine" cx="0.35" cy="0.3" r="0.6">
       <stop offset="0%" stop-color="#fff9c4"/>
       <stop offset="50%" stop-color="#ffd700"/>
       <stop offset="100%" stop-color="#f9a825"/>
     </radialGradient>
   </defs>
-  <!-- Sack body -->
-  <ellipse cx="12" cy="16" rx="8" ry="7" fill="url(#sack-body)"/>
+  <!-- Sack body — wide, soft pouch shape -->
+  <path d="M5,18 Q5,11 8,10 L16,10 Q19,11 19,18 Q19,22 12,22 Q5,22 5,18Z" fill="url(#sack-body)"/>
   <!-- Sack highlight -->
-  <ellipse cx="10" cy="13.5" rx="4" ry="3" fill="#bcaaa4" opacity="0.35"/>
-  <!-- Neck/tie area -->
-  <rect x="9" y="8.5" width="6" height="3" rx="1.5" fill="#6d4c41"/>
-  <!-- Rope tie -->
-  <path d="M9,10 Q12,8.5 15,10" stroke="#d7ccc8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <path d="M10.5,9 Q12,7.5 13.5,9" stroke="#bcaaa4" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-  <!-- Coin spilling from top — coin behind -->
-  <circle cx="9" cy="8" r="2.5" fill="url(#coin-a)" stroke="#f9a825" stroke-width="0.5"/>
-  <circle cx="8.3" cy="7.1" r="0.6" fill="#ffffff" opacity="0.7"/>
-  <!-- Coin in front -->
-  <circle cx="14.5" cy="7.5" r="2.2" fill="url(#coin-b)" stroke="#f9a825" stroke-width="0.5"/>
-  <circle cx="13.8" cy="6.7" r="0.5" fill="#ffffff" opacity="0.7"/>
-  <!-- Third small coin peeking -->
-  <circle cx="12" cy="7" r="1.6" fill="#ffd700" stroke="#f9a825" stroke-width="0.4"/>
-  <circle cx="11.4" cy="6.4" r="0.4" fill="#ffffff" opacity="0.65"/>
+  <ellipse cx="10" cy="15" rx="4" ry="4" fill="#f0d899" opacity="0.3"/>
+  <!-- Gathered top / drawstring bunch -->
+  <path d="M8,10 Q9,7 12,7 Q15,7 16,10" fill="#c49a3a"/>
+  <!-- Drawstring bow — two loops -->
+  <ellipse cx="9.5" cy="8" rx="2" ry="1.2" fill="none" stroke="#8B6914" stroke-width="0.7" transform="rotate(-20 9.5 8)"/>
+  <ellipse cx="14.5" cy="8" rx="2" ry="1.2" fill="none" stroke="#8B6914" stroke-width="0.7" transform="rotate(20 14.5 8)"/>
+  <!-- Drawstring knot -->
+  <circle cx="12" cy="8.5" r="0.8" fill="#8B6914"/>
+  <!-- Dangling string ends -->
+  <path d="M11.2,8.5 Q10,11 9.5,12" stroke="#8B6914" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+  <path d="M12.8,8.5 Q14,11 14.5,12" stroke="#8B6914" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+  <!-- Dollar sign on sack -->
+  <text x="12" y="19" font-family="Arial,sans-serif" font-size="7" font-weight="bold" fill="#ffd700" text-anchor="middle" opacity="0.8">$</text>
+  <!-- Coin peeking from top -->
+  <circle cx="12" cy="5.5" r="2.2" fill="url(#coin-shine)" stroke="#f9a825" stroke-width="0.5"/>
+  <circle cx="11.3" cy="4.8" r="0.5" fill="#ffffff" opacity="0.7"/>
 </svg>
