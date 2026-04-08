@@ -65,12 +65,9 @@ export class MenuScene extends Phaser.Scene {
     // Gold accent line at top (3px thick)
     hdr.fillStyle(0xebb654, 0.9);
     hdr.fillRect(0, 0, GAME_WIDTH, 3);
-    // Gradient fade below header (dark → transparent)
-    const fadeH = 24;
-    for (let s = 0; s < fadeH; s++) {
-      hdr.fillStyle(0x1c6da3, 1 - s / fadeH);
-      hdr.fillRect(0, headerH + s, GAME_WIDTH, 1);
-    }
+    // Solid bottom edge (no transparency leak)
+    hdr.lineStyle(2, 0xebb654, 0.5);
+    hdr.lineBetween(0, headerH, GAME_WIDTH, headerH);
 
     this.add.text(GAME_WIDTH / 2, 46, 'DEATHMARCH', {
       fontSize: '42px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
@@ -109,7 +106,7 @@ export class MenuScene extends Phaser.Scene {
       foot.fillRect(0, GAME_HEIGHT - footH + Math.floor(footH * s / footSteps), GAME_WIDTH, Math.ceil(footH / footSteps) + 1);
     }
     // Gold accent line at top of footer (3px)
-    foot.fillStyle(0xebb654, 0.3);
+    foot.fillStyle(0xebb654, 0.7);
     foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, 3);
 
     const settBtnW = 260, settBtnH = 62;
@@ -174,9 +171,9 @@ export class MenuScene extends Phaser.Scene {
 
   private pill(x: number, y: number, w: number, h: number, color: number, depth: number): void {
     const g = this.add.graphics().setDepth(depth);
-    g.fillStyle(color, 0.1);
+    g.fillStyle(color, 0.35);
     g.fillRoundedRect(x, y, w, h, h / 2);
-    g.lineStyle(1.5, color, 0.4);
+    g.lineStyle(2, color, 0.8);
     g.strokeRoundedRect(x, y, w, h, h / 2);
   }
 
