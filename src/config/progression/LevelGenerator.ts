@@ -61,7 +61,7 @@ const WORLDS: WorldDef[] = [
     displayName: 'Green Meadows',
     theme: {
       groundColor: 0x6fbf5e, detailColors: [0x7fcc6e, 0x5aad4a, 0x8fd980, 0x4e9e3e],
-      glowColors: [0xa8e89a, 0xb8f0ab, 0x90dd80], accentColor: 0xff6b6b, accentHex: '#ff6b6b',
+      glowColors: [0xa8e89a, 0xb8f0ab, 0x90dd80], accentColor: 0x4cde39, accentHex: '#4cde39',
     },
     levelNames: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Troll Bridge', 'Demon Gate'],
     enemies: [
@@ -135,8 +135,8 @@ const WORLDS: WorldDef[] = [
     tag: 'plague',
     displayName: 'Swamp Lands',
     theme: {
-      groundColor: 0x7aab6a, detailColors: [0x6b9c5c, 0x8cbc7c, 0x78a868, 0x62944e],
-      glowColors: [0xaadd88, 0x99cc66, 0xbbee99], accentColor: 0x5ed48e, accentHex: '#5ed48e',
+      groundColor: 0x7b8a5e, detailColors: [0x6c7a56, 0x8b9b6f, 0x7b8b66, 0x5f6c4d],
+      glowColors: [0xc0b68a, 0xb1a577, 0xc9c19d], accentColor: 0x8b6f38, accentHex: '#8b6f38',
     },
     levelNames: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Toxic Depths', 'Plague Heart'],
     enemies: [
@@ -161,7 +161,7 @@ const WORLDS: WorldDef[] = [
     displayName: 'Desert Sands',
     theme: {
       groundColor: 0xdcc078, detailColors: [0xd0b468, 0xe6cc88, 0xc8a858, 0xf0d898],
-      glowColors: [0xf4e8aa, 0xeede90, 0xfaf0bb], accentColor: 0xe05544, accentHex: '#e05544',
+      glowColors: [0xf4e8aa, 0xeede90, 0xfaf0bb], accentColor: 0xd4b55a, accentHex: '#d4b55a',
     },
     levelNames: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Dark Sanctum', 'Throne of Ash'],
     enemies: [

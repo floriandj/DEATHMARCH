@@ -100,69 +100,94 @@ export class HUDScene extends Phaser.Scene {
     this.topElements = this.add.container(0, 0);
 
     const topBarBg = this.add.graphics();
-    topBarBg.fillStyle(0x1c6da3, 0.85);
-    topBarBg.fillRect(0, 0, GAME_WIDTH, 89);
-    // Darker edge at the top for subtle gradient feel
-    topBarBg.fillStyle(0x000000, 0.2);
-    topBarBg.fillRect(0, 0, GAME_WIDTH, 6);
+    topBarBg.fillStyle(0x3aa0e0, 0.92);
+    topBarBg.fillRect(0, 0, GAME_WIDTH, 106);
+    // Subtle light edge at the top for a polished feel
+    topBarBg.fillStyle(0xffffff, 0.12);
+    topBarBg.fillRect(0, 0, GAME_WIDTH, 8);
+    topBarBg.fillStyle(0xffffff, 0.06);
+    topBarBg.fillRect(0, 8, GAME_WIDTH, 5);
+    // Prominent gold accent line at bottom
+    topBarBg.fillStyle(0xebb654, 0.78);
+    topBarBg.fillRect(0, 103, GAME_WIDTH, 4);
     topBarBg.fillStyle(0x000000, 0.1);
-    topBarBg.fillRect(0, 6, GAME_WIDTH, 4);
-    // Prominent gold accent line at bottom (3px)
-    topBarBg.fillStyle(0xebb654, 0.7);
-    topBarBg.fillRect(0, 86, GAME_WIDTH, 3);
-    topBarBg.fillStyle(0x000000, 0.15);
-    topBarBg.fillRect(0, 89, GAME_WIDTH, 10);
+    topBarBg.fillRect(0, 106, GAME_WIDTH, 12);
     this.topElements.add(topBarBg);
 
-    // Score badge (gold border + inner glow)
-    const scoreBadge = this.add.graphics();
-    scoreBadge.fillStyle(0xebb654, 0.1);
-    scoreBadge.fillRoundedRect(PAD - 4, 10, 185, 48, 24);
-    scoreBadge.fillStyle(0xffffff, 0.08);
-    scoreBadge.fillRoundedRect(PAD, 13, 177, 42, 21);
-    scoreBadge.lineStyle(1.5, 0xebb654, 0.5);
-    scoreBadge.strokeRoundedRect(PAD - 4, 10, 185, 48, 24);
-    this.topElements.add(scoreBadge);
-    this.topElements.add(this.add.text(PAD + 10, 30, '\u2605', { fontSize: '24px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2, shadow: HUD_SHADOW }).setOrigin(0, 0.5));
-    this.scoreText = this.add.text(PAD + 38, 30, '0', {
-      fontSize: '26px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    // Top header (pause, level, gold)
+    this.pauseGlow = this.add.graphics();
+    this.pauseGlow.fillStyle(0xebb654, 0.22);
+    this.pauseGlow.fillRoundedRect(PAD - 6, 18, 76, 76, 24);
+    this.topElements.add(this.pauseGlow);
+    this.tweens.add({
+      targets: this.pauseGlow,
+      alpha: { from: 0.75, to: 0.18 },
+      duration: 1800,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    const pauseBg = this.add.graphics();
+    pauseBg.fillStyle(0x4ea4f0, 0.96);
+    pauseBg.fillRoundedRect(PAD, 22, 68, 68, 22);
+    pauseBg.lineStyle(1.8, 0xebb654, 0.55);
+    pauseBg.strokeRoundedRect(PAD, 22, 68, 68, 22);
+    this.topElements.add(pauseBg);
+
+    const pauseBtn = this.add.text(PAD + 34, 56, '\u23F8', {
+      fontSize: '32px', color: '#ebb654', stroke: '#1a3a4e', strokeThickness: 2,
+      shadow: HUD_SHADOW,
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    this.topElements.add(pauseBtn);
+
+    const levelBadgeW = 210;
+    const levelBadgeH = 56;
+    const levelBadgeX = (GAME_WIDTH - levelBadgeW) / 2;
+    const levelBadgeY = 24;
+    const levelBadge = this.add.graphics();
+    levelBadge.fillStyle(0x4ea4f0, 0.95);
+    levelBadge.fillRoundedRect(levelBadgeX, levelBadgeY, levelBadgeW, levelBadgeH, 24);
+    levelBadge.lineStyle(1.8, accentColor, 0.88);
+    levelBadge.strokeRoundedRect(levelBadgeX, levelBadgeY, levelBadgeW, levelBadgeH, 24);
+    this.topElements.add(levelBadge);
+    this.topElements.add(this.add.text(GAME_WIDTH / 2, 56, `Lv.${levelIndex + 1}`, {
+      fontSize: '26px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: HUD_SHADOW,
-    }).setOrigin(0, 0.5);
-    this.topElements.add(this.scoreText);
+    }).setOrigin(0.5));
 
-    // Distance (center, subtle gold)
-    this.distanceText = this.add.text(GAME_WIDTH / 2, 30, '0m', {
-      fontSize: '18px', color: '#e0b050', fontFamily: 'Arial, Helvetica, sans-serif',
-      stroke: '#000000', strokeThickness: 2,
+    const goldBadgeW = 220;
+    const goldBadgeH = 64;
+    const goldBadgeX = GAME_WIDTH - PAD - goldBadgeW;
+    const goldBadgeY = 20;
+    const goldBadge = this.add.graphics();
+    goldBadge.fillStyle(0x63c0ff, 0.95);
+    goldBadge.fillRoundedRect(goldBadgeX, goldBadgeY, goldBadgeW, goldBadgeH, 28);
+    goldBadge.lineStyle(1.8, 0xebb654, 0.55);
+    goldBadge.strokeRoundedRect(goldBadgeX, goldBadgeY, goldBadgeW, goldBadgeH, 28);
+    this.topElements.add(goldBadge);
+    this.goldText = this.add.text(goldBadgeX + goldBadgeW / 2, goldBadgeY + goldBadgeH / 2, `\u{1FA99}  0g`, {
+      fontSize: '24px', color: '#f4d860', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 3,
       shadow: HUD_SHADOW,
     }).setOrigin(0.5);
-    this.topElements.add(this.distanceText);
-
-    // Units badge (blue border + inner glow)
-    const unitBadge = this.add.graphics();
-    unitBadge.fillStyle(0x40c4e8, 0.1);
-    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 155, 10, 155, 48, 24);
-    unitBadge.fillStyle(0xffffff, 0.08);
-    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 151, 13, 147, 42, 21);
-    unitBadge.lineStyle(1.5, 0x40c4e8, 0.5);
-    unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 155, 10, 155, 48, 24);
-    this.topElements.add(unitBadge);
-    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 140, 30, '\u2694', { fontSize: '24px', color: '#40c4e8', stroke: '#1a3a4a', strokeThickness: 2, shadow: HUD_SHADOW }).setOrigin(0, 0.5));
-    this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 30, '0', {
-      fontSize: '26px', color: '#40c4e8', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
-      stroke: '#1a3a4a', strokeThickness: 2,
-      shadow: HUD_SHADOW,
-    }).setOrigin(1, 0.5);
-    this.topElements.add(this.unitText);
-
-    // Gold (row 2, left)
-    this.goldText = this.add.text(PAD + 10, 62, '\u{1FA99} 0g', {
-      fontSize: '16px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
-      stroke: '#1a3a4a', strokeThickness: 2,
-      shadow: HUD_SHADOW,
-    }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
+
+    pauseBtn.on('pointerdown', () => {
+      const gameScene = this.scene.get('GameScene');
+      const bossScene = this.scene.get('BossScene');
+      const activeScene = gameScene.scene.isActive() ? gameScene : bossScene;
+      if (activeScene.scene.isActive()) {
+        activeScene.scene.pause();
+        this.showPauseOverlay(activeScene);
+      }
+    });
+
+    // Hidden legacy HUD texts for data updates
+    this.scoreText = this.add.text(0, 0, '0', { fontSize: '1px', color: '#000000' }).setVisible(false);
+    this.distanceText = this.add.text(0, 0, '0m', { fontSize: '1px', color: '#000000' }).setVisible(false);
+    this.unitText = this.add.text(0, 0, '0', { fontSize: '1px', color: '#000000' }).setVisible(false);
 
     // Boss distance progress bar (below top bar, thin)
     this.progressBar = this.add.graphics();
@@ -216,41 +241,6 @@ export class HUDScene extends Phaser.Scene {
     // ── Active perks tray (bottom-center) ──
     this.drawPerkTray();
 
-    // ── Pause button (bottom-right, always visible) ──
-    // Pulsing glow behind the pause button
-    this.pauseGlow = this.add.graphics();
-    this.pauseGlow.fillStyle(0xebb654, 0.15);
-    this.pauseGlow.fillCircle(GAME_WIDTH - PAD - 26, GAME_HEIGHT - 80, 34);
-    this.tweens.add({
-      targets: this.pauseGlow,
-      alpha: { from: 0.6, to: 0.15 },
-      duration: 1800,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
-
-    const pauseBg = this.add.graphics();
-    pauseBg.fillStyle(0x1c6da3, 0.8);
-    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 52, GAME_HEIGHT - 80 - 26, 52, 52, 17);
-    pauseBg.lineStyle(1, 0xebb654, 0.3);
-    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 52, GAME_HEIGHT - 80 - 26, 52, 52, 17);
-
-    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 26, GAME_HEIGHT - 80, '\u23F8', {
-      fontSize: '26px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2,
-      shadow: HUD_SHADOW,
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
-
-    pauseBtn.on('pointerdown', () => {
-      // Pause the game scene (whichever is running)
-      const gameScene = this.scene.get('GameScene');
-      const bossScene = this.scene.get('BossScene');
-      const activeScene = gameScene.scene.isActive() ? gameScene : bossScene;
-      if (activeScene.scene.isActive()) {
-        activeScene.scene.pause();
-        this.showPauseOverlay(activeScene);
-      }
-    });
   }
 
   private showPauseOverlay(pausedScene: Phaser.Scene): void {
@@ -333,13 +323,17 @@ export class HUDScene extends Phaser.Scene {
       const progress = Math.min(1, this.distance / this.bossTriggerDistance);
       this.progressBar.clear();
       // Background track
-      this.progressBar.fillStyle(0xffffff, 0.06);
-      this.progressBar.fillRect(PAD, 94, GAME_WIDTH - PAD * 2, 6);
-      this.progressBar.fillStyle(0xe85454, 0.4);
-      this.progressBar.fillRect(PAD, 94, (GAME_WIDTH - PAD * 2) * progress, 6);
+      const barHeight = 18;
+      const barY = 108;
+      const barX = PAD;
+      const barW = GAME_WIDTH - PAD * 2;
+      this.progressBar.fillStyle(0xffffff, 0.18);
+      this.progressBar.fillRoundedRect(barX, barY, barW, barHeight, barHeight / 2);
+      this.progressBar.fillStyle(0xe85454, 0.64);
+      this.progressBar.fillRoundedRect(barX, barY, barW * progress, barHeight, barHeight / 2);
       if (progress < 0.98) {
-        this.progressBar.fillStyle(0xe85454, 0.6);
-        this.progressBar.fillCircle(PAD + (GAME_WIDTH - PAD * 2) * progress, 97, 4);
+        this.progressBar.fillStyle(0xe85454, 0.92);
+        this.progressBar.fillCircle(barX + barW * progress, barY + barHeight / 2, 9);
       }
     } else {
       this.progressBar.clear();

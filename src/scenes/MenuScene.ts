@@ -13,17 +13,16 @@ const F = 'Arial, Helvetica, sans-serif';
 const NODE_R = 41;
 const NODE_SPACING = 160;
 const WORLD_GAP = 80;
-const LOOKAHEAD = 8;
+const SECTIONS_AHEAD = 4;
+const SECTION_SIZE = 5;
 const C_BG = 0x2484c5;
 const C_PANEL = 0x2e92d4;
 const C_BORDER = 0x4aa8e0;
 const C_YELLOW = 0xebb654;
 const C_GREEN = 0x4cde39;
 
-const COL_L = 155;
 const COL_C = GAME_WIDTH / 2;
-const COL_R = GAME_WIDTH - 155;
-function getNodeX(i: number): number { return [COL_L, COL_C, COL_R, COL_C][i % 4]; }
+function getNodeX(i: number): number { return COL_C; }
 
 export class MenuScene extends Phaser.Scene {
   private scrollContainer!: Phaser.GameObjects.Container;
@@ -33,6 +32,9 @@ export class MenuScene extends Phaser.Scene {
   private scrollStartY = 0;
   private velocity = 0;
   private lastPointerY = 0;
+  private selectedLevel = 0;
+  private maxUnlockedLevel = 0;
+  private nodeSelectionMarkers: Phaser.GameObjects.Graphics[] = [];
 
   constructor() { super({ key: 'MenuScene' }); }
 
@@ -45,8 +47,11 @@ export class MenuScene extends Phaser.Scene {
     const mgr = LevelManager.instance;
     const savedLevel = parseInt(localStorage.getItem('deathmarch-level') || '0', 10);
     const maxUnlocked = Math.max(0, savedLevel);
+    this.maxUnlockedLevel = maxUnlocked;
+    this.selectedLevel = maxUnlocked;
     mgr.setLevel(maxUnlocked);
-    const visibleCount = maxUnlocked + 1 + LOOKAHEAD;
+    const currentSectionEnd = Math.ceil((maxUnlocked + 1) / SECTION_SIZE) * SECTION_SIZE;
+    const visibleCount = Math.max(maxUnlocked + 1, currentSectionEnd + SECTIONS_AHEAD * SECTION_SIZE);
 
     // ── Header panel (fixed) ──
     const headerH = 144;
@@ -76,20 +81,43 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(11);
 
     // Score pill
-    this.pill(PAD, 88, 174, 41, 0xebb654, 11);
-    this.add.text(PAD + 14, 108, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
+    const scorePillX = PAD;
+    const scorePillW = 174;
+    this.pill(scorePillX, 88, scorePillW, 41, 0xebb654, 11);
+    this.add.text(scorePillX + scorePillW / 2, 108, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
       fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
-    }).setOrigin(0, 0.5).setDepth(11);
+    }).setOrigin(0.5).setDepth(11);
 
     // Gold pill
-    this.pill(GAME_WIDTH - PAD - 162, 88, 162, 41, 0xebb654, 11);
-    this.add.text(GAME_WIDTH - PAD - 14, 108, `\u{1FA99} ${WalletManager.gold}g`, {
+    const goldPillX = GAME_WIDTH - PAD - 162;
+    const goldPillW = 162;
+    this.pill(goldPillX, 88, goldPillW, 41, 0xebb654, 11);
+    this.add.text(goldPillX + goldPillW / 2, 108, `\u{1F4B0} ${WalletManager.gold}g`, {
       fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
-    }).setOrigin(1, 0.5).setDepth(11);
+    }).setOrigin(0.5).setDepth(11);
+
+    const settingsSize = 60;
+    const settingsX = GAME_WIDTH - PAD - settingsSize / 2;
+    const settingsY = 52;
+    const settingsBg = this.add.graphics().setDepth(11);
+    settingsBg.fillStyle(0x2e92d4, 1);
+    settingsBg.fillRoundedRect(settingsX - settingsSize / 2, settingsY - settingsSize / 2, settingsSize, settingsSize, 18);
+    settingsBg.lineStyle(1.5, 0xebb654, 0.5);
+    settingsBg.strokeRoundedRect(settingsX - settingsSize / 2, settingsY - settingsSize / 2, settingsSize, settingsSize, 18);
+    const settingsIcon = this.add.text(settingsX, settingsY, '\u2699', {
+      fontSize: '26px', color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
+      stroke: '#e0b050', strokeThickness: 1,
+      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
+    }).setOrigin(0.5).setDepth(12);
+    const settingsHit = this.add.zone(settingsX, settingsY, settingsSize, settingsSize)
+      .setInteractive({ useHandCursor: true }).setDepth(13);
+    settingsHit.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
+    settingsHit.on('pointerover', () => settingsIcon.setColor('#ffffff'));
+    settingsHit.on('pointerout', () => settingsIcon.setColor('#d4e8f4'));
 
     // ── Footer (fixed) ──
     const footH = 96;
@@ -109,31 +137,6 @@ export class MenuScene extends Phaser.Scene {
     foot.fillStyle(0xebb654, 0.7);
     foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, 3);
 
-    const settBtnW = 260, settBtnH = 62;
-    const settBtnX = GAME_WIDTH / 2, settBtnY = GAME_HEIGHT - footH / 2;
-    // Outer glow behind settings button
-    const settGlow = this.add.graphics().setDepth(10.5);
-    settGlow.fillStyle(0x2e92d4, 0.25);
-    settGlow.fillEllipse(settBtnX, settBtnY, settBtnW + 28, settBtnH + 24);
-    settGlow.fillStyle(0x2e92d4, 0.12);
-    settGlow.fillEllipse(settBtnX, settBtnY, settBtnW + 48, settBtnH + 40);
-    const settBg = this.add.graphics().setDepth(11);
-    settBg.fillStyle(0x2e92d4, 1);
-    settBg.fillRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
-    settBg.lineStyle(1.5, 0xebb654, 0.3);
-    settBg.strokeRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
-
-    const settBtn = this.add.text(settBtnX, settBtnY, '\u2699  SETTINGS', {
-      fontSize: '26px', color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
-      stroke: '#e0b050', strokeThickness: 1,
-      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
-    }).setOrigin(0.5).setDepth(11);
-
-    const settHit = this.add.zone(settBtnX, settBtnY, settBtnW, settBtnH)
-      .setInteractive({ useHandCursor: true }).setDepth(12);
-    settHit.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
-    settHit.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settHit.on('pointerout', () => settBtn.setColor('#d4e8f4'));
 
     // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
@@ -144,6 +147,7 @@ export class MenuScene extends Phaser.Scene {
     this.drawWorldBanners(positions, visibleCount);
     this.drawNodes(positions, maxUnlocked);
     this.drawPerkBar();
+    this.createBottomPlayButton();
 
     const currentY = positions[Math.min(maxUnlocked, positions.length - 1)].y;
     this.scrollContainer.y = -currentY + GAME_HEIGHT * 0.45;
@@ -221,7 +225,7 @@ export class MenuScene extends Phaser.Scene {
     const worldInfos = getWorldInfoForLevels(visibleCount - 1);
     for (const world of worldInfos) {
       if (world.startLevel >= positions.length) continue;
-      const y = positions[world.startLevel].y - 64;
+      const y = positions[world.startLevel].y - 92;
       const lvl = generateLevel(world.startLevel);
       const accent = lvl.theme.accentColor;
 
@@ -240,6 +244,8 @@ export class MenuScene extends Phaser.Scene {
       bg.fillPath();
       bg.fillStyle(0xffffff, 0.15);
       bg.fillRect(rx + notchW + 4, y - ribbonH / 2 + 3, ribbonW - notchW * 2 - 8, ribbonH / 3);
+      bg.fillStyle(accent, 0.5);
+      bg.fillRect(rx + notchW + 6, y + ribbonH / 2 - 6, ribbonW - notchW * 2 - 12, 4);
       bg.lineStyle(1.5, 0x000000, 0.3);
       bg.beginPath();
       bg.moveTo(rx + notchW, y - ribbonH / 2);
@@ -263,21 +269,29 @@ export class MenuScene extends Phaser.Scene {
   private drawNodes(positions: { x: number; y: number }[], maxUnlocked: number): void {
     for (let i = 0; i < positions.length; i++) {
       const { x, y } = positions[i];
-      const isCurrent = i === maxUnlocked;
-      const isCompleted = i < maxUnlocked;
-      const isLocked = i > maxUnlocked;
+      const isSelected = i === this.selectedLevel;
+      const isCompleted = i < this.maxUnlockedLevel;
+      const isLocked = i > this.maxUnlockedLevel;
       const lvl = generateLevel(i);
+      const themeAccent = lvl.theme.accentColor;
 
       const nc = this.add.container(x, y);
 
-      if (isCurrent) {
+      const selectionRing = this.add.graphics();
+      selectionRing.lineStyle(4, themeAccent, 0.88);
+      selectionRing.strokeCircle(0, 0, NODE_R + 16);
+      selectionRing.alpha = isSelected ? 1 : 0;
+      nc.add(selectionRing);
+      this.nodeSelectionMarkers[i] = selectionRing;
+
+      if (isSelected) {
         // Outer glow (more visible)
         const glowOuter = this.add.graphics();
-        glowOuter.fillStyle(0xebb654, 0.08);
+        glowOuter.fillStyle(themeAccent, 0.08);
         glowOuter.fillCircle(0, 0, NODE_R + 28);
         nc.add(glowOuter);
         const glow = this.add.graphics();
-        glow.fillStyle(0xebb654, 0.18);
+        glow.fillStyle(themeAccent, 0.18);
         glow.fillCircle(0, 0, NODE_R + 14);
         nc.add(glow);
         this.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.5 }, scale: { from: 0.95, to: 1.15 },
@@ -287,7 +301,7 @@ export class MenuScene extends Phaser.Scene {
 
         // Filled node
         const ng = this.add.graphics();
-        ng.fillStyle(C_GREEN, 1);
+        ng.fillStyle(themeAccent, 1);
         ng.fillCircle(0, 0, NODE_R);
         ng.fillStyle(0xffffff, 0.2);
         ng.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.65);
@@ -304,27 +318,27 @@ export class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5));
 
         nc.add(this.add.text(0, NODE_R + 18, lvl.name.toUpperCase(), {
-          fontSize: '18px', color: '#6be85a', fontFamily: F, fontStyle: 'bold',
-          stroke: '#1a3a4a', strokeThickness: 2,
+          fontSize: '18px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
+          stroke: themeAccent, strokeThickness: 2,
           shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
         }).setOrigin(0.5));
-
-        this.createPlayButton(x, y + NODE_R + 56);
 
       } else if (isCompleted) {
         // Subtle green shimmer glow behind completed nodes
         const shimmer = this.add.graphics();
-        shimmer.fillStyle(C_GREEN, 0.1);
+        shimmer.fillStyle(themeAccent, 0.1);
         shimmer.fillCircle(0, 0, NODE_R + 8);
         nc.add(shimmer);
         this.tweens.add({ targets: shimmer, alpha: { from: 0.08, to: 0.25 },
           duration: 1400 + Math.random() * 400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
         const ng = this.add.graphics();
-        ng.fillStyle(C_GREEN, 0.7);
+        ng.fillStyle(themeAccent, 0.7);
         ng.fillCircle(0, 0, NODE_R - 2);
         ng.fillStyle(0xffffff, 0.15);
         ng.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.55);
+        ng.lineStyle(2, themeAccent, 0.4);
+        ng.strokeCircle(0, 0, NODE_R - 2);
         nc.add(ng);
         nc.add(this.add.text(0, -2, '\u2713', {
           fontSize: '26px', color: '#fff', fontFamily: F, fontStyle: 'bold',
@@ -336,7 +350,7 @@ export class MenuScene extends Phaser.Scene {
         const ng = this.add.graphics();
         ng.fillStyle(C_PANEL, 1);
         ng.fillCircle(0, 0, NODE_R - 4);
-        ng.lineStyle(2, C_BORDER, 0.5);
+        ng.lineStyle(2, themeAccent, 0.25);
         ng.strokeCircle(0, 0, NODE_R - 4);
         nc.add(ng);
         nc.add(this.add.text(0, -2, String(i + 1), {
@@ -352,7 +366,8 @@ export class MenuScene extends Phaser.Scene {
         hit.on('pointerdown', () => {
           this.time.delayedCall(80, () => {
             if (Math.abs(this.velocity) < 3) {
-              SoundManager.play('button_click'); LevelManager.instance.setLevel(i); this.startGame();
+              SoundManager.play('button_click');
+              this.selectLevel(i);
             }
           });
         });
@@ -361,9 +376,12 @@ export class MenuScene extends Phaser.Scene {
     }
   }
 
-  private createPlayButton(x: number, y: number): void {
-    const w = 180, h = 52, r = h / 2;
-    const c = this.add.container(x, y);
+  private createBottomPlayButton(): void {
+    const w = 320, h = 52, r = h / 2;
+    const x = GAME_WIDTH / 2;
+    const footH = 96;
+    const y = GAME_HEIGHT - footH / 2;
+    const c = this.add.container(x, y).setDepth(12);
 
     // Outer glow behind button
     const outerGlow = this.add.graphics();
@@ -406,8 +424,21 @@ export class MenuScene extends Phaser.Scene {
       this.tweens.add({ targets: c, scale: 0.93, duration: 50, yoyo: true, ease: 'Power2',
         onComplete: () => { c.setScale(1); this.startGame(); } });
     });
+  }
 
-    this.scrollContainer.add(c);
+  private selectLevel(levelIndex: number): void {
+    if (levelIndex === this.selectedLevel) return;
+    this.selectedLevel = levelIndex;
+    LevelManager.instance.setLevel(levelIndex);
+    this.refreshSelectionMarkers();
+  }
+
+  private refreshSelectionMarkers(): void {
+    for (let i = 0; i < this.nodeSelectionMarkers.length; i++) {
+      const marker = this.nodeSelectionMarkers[i];
+      if (!marker) continue;
+      marker.alpha = i === this.selectedLevel ? 1 : 0;
+    }
   }
 
   private drawPerkBar(): void {
