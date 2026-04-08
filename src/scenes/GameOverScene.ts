@@ -12,6 +12,7 @@ interface GameOverData { score: number; distance: number; bossDefeated: boolean;
 const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
 const F = 'Arial, Helvetica, sans-serif';
+const E = '"Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", sans-serif';
 // Color palette
 const C_BG = 0x2484c5;
 const C_PANEL = 0x2e92d4;
@@ -66,7 +67,7 @@ export class GameOverScene extends Phaser.Scene {
     const titleColor = data.bossDefeated ? '#6be85a' : '#f07070';
 
     const title = this.add.text(GAME_WIDTH / 2, y + titleH * 0.33, `${emoji}  ${titleText}`, {
-      fontSize: `${Math.round(55 * vs)}px`, color: titleColor, fontFamily: F, fontStyle: 'bold',
+      fontSize: `${Math.round(55 * vs)}px`, color: titleColor, fontFamily: `${E}, ${F}`, fontStyle: 'bold',
       stroke: '#000', strokeThickness: Math.round(5 * vs),
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setScale(0.5).setAlpha(0);
@@ -90,6 +91,7 @@ export class GameOverScene extends Phaser.Scene {
       }
       this.add.text(sx, starY, '\u2B50', {
         fontSize: `${Math.round(34 * vs)}px`,
+        fontFamily: `${E}, ${F}`,
       }).setOrigin(0.5).setAlpha(i < starCount ? 1 : 0.2);
     }
 
@@ -149,7 +151,7 @@ export class GameOverScene extends Phaser.Scene {
 
     if (isNewHigh) {
       this.add.text(PAD + CW - 22, row2Y + Math.round(24 * vs), '\u2728 NEW BEST!', {
-        fontSize: `${Math.round(16 * vs)}px`, color: '#ebb654', fontFamily: F, fontStyle: 'bold',
+        fontSize: `${Math.round(16 * vs)}px`, color: '#ebb654', fontFamily: `${E}, ${F}`, fontStyle: 'bold',
         stroke: '#1a3a4a', strokeThickness: 2,
       }).setOrigin(1, 0.5);
     }
@@ -167,7 +169,7 @@ export class GameOverScene extends Phaser.Scene {
         (activePerks.length > 0 ? `\u{1F6A9} CHECKPOINT PERKS (LVL ${checkpointLvl + 1})` : 'NO CHECKPOINT PERKS');
       const labelColor = isVictory ? '#c084fc' : (activePerks.length > 0 ? '#fb923c' : '#d4e8f4');
       this.add.text(PAD + 16, y + perkH * 0.35, perkLabel, {
-        fontSize: `${Math.round(14 * vs)}px`, color: labelColor, fontFamily: F, fontStyle: 'bold', letterSpacing: 1,
+        fontSize: `${Math.round(14 * vs)}px`, color: labelColor, fontFamily: `${E}, ${F}`, fontStyle: 'bold', letterSpacing: 1,
         stroke: '#1a3a4a', strokeThickness: 2,
       }).setOrigin(0, 0.5);
       if (activePerks.length > 0) {
@@ -178,7 +180,7 @@ export class GameOverScene extends Phaser.Scene {
       }
       if (streak > 0) {
         this.add.text(PAD + 16, y + perkH * 0.72, `\u{1F525} ${streak} streak  \u00D7${(1 + streak * 0.25).toFixed(2)} gold`, {
-          fontSize: `${Math.round(16 * vs)}px`, color: '#e8923a', fontFamily: F, fontStyle: 'bold',
+          fontSize: `${Math.round(16 * vs)}px`, color: '#e8923a', fontFamily: `${E}, ${F}`, fontStyle: 'bold',
           stroke: '#1a3a4a', strokeThickness: 2,
         }).setOrigin(0, 0.5);
       }
@@ -204,7 +206,7 @@ export class GameOverScene extends Phaser.Scene {
       pg.fillStyle(C_YELLOW, 0.2);
       pg.fillRoundedRect(GAME_WIDTH / 2 - pillW / 2, pillY, pillW, pillH, pillH / 2);
       this.add.text(GAME_WIDTH / 2, pillY + pillH / 2, `\u{1FA99}  ${WalletManager.gold}g`, {
-        fontSize: `${Math.round(18 * vs)}px`, color: '#ebb654', fontFamily: F, fontStyle: 'bold',
+        fontSize: `${Math.round(18 * vs)}px`, color: '#ebb654', fontFamily: `${E}, ${F}`, fontStyle: 'bold',
         stroke: '#1a3a4a', strokeThickness: 2,
       }).setOrigin(0.5);
 
@@ -271,7 +273,11 @@ export class GameOverScene extends Phaser.Scene {
     g.fillCircle(x, y, r);
     g.lineStyle(2, color, 0.4);
     g.strokeCircle(x, y, r);
-    this.add.text(x, y, icon, { fontSize: `${Math.round(19 * vs)}px` }).setOrigin(0.5);
+    this.add.text(x, y, icon, {
+      fontSize: `${Math.round(19 * vs)}px`,
+      fontFamily: `${E}, ${F}`,
+      align: 'center',
+    }).setOrigin(0.5);
   }
 
   // ── Shop item row ──
@@ -359,7 +365,7 @@ export class GameOverScene extends Phaser.Scene {
     c.add(bg);
 
     c.add(this.add.text(0, 0, label, {
-      fontSize: `${Math.round(26 * vs)}px`, color: textColor, fontFamily: F, fontStyle: 'bold',
+      fontSize: `${Math.round(26 * vs)}px`, color: textColor, fontFamily: `${E}, ${F}`, fontStyle: 'bold',
       stroke: '#000', strokeThickness: 1,
       shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 3, fill: true },
     }).setOrigin(0.5));

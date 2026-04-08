@@ -5,7 +5,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
-import { PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
+import { PerkDef, PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
 
 const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
@@ -317,9 +317,10 @@ export class MenuScene extends Phaser.Scene {
           shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
         }).setOrigin(0.5));
 
+        const accentHex = `#${themeAccent.toString(16).padStart(6, '0')}`;
         nc.add(this.add.text(0, NODE_R + 18, lvl.name.toUpperCase(), {
           fontSize: '18px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
-          stroke: themeAccent, strokeThickness: 2,
+          stroke: accentHex, strokeThickness: 2,
           shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
         }).setOrigin(0.5));
 
@@ -448,7 +449,7 @@ export class MenuScene extends Phaser.Scene {
     // Draw perks in a row above the footer
     const footH = 96;
     const perkY = GAME_HEIGHT - footH - 58;
-    const perkBarW = Math.min(CW, activePerks.length * 52 + 28);
+    const perkBarW = Math.min(CW, activePerks.length * 52 + 84);
     const startX = (GAME_WIDTH - perkBarW) / 2;
 
     // Background panel
@@ -488,6 +489,71 @@ export class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(11);
       }
       i++;
+    }
+
+    const viewLabel = this.add.text(startX + perkBarW - 16, perkY, 'VIEW', {
+      fontSize: '12px', color: '#ffffff', fontFamily: F, fontStyle: 'bold', letterSpacing: 1,
+      stroke: '#1a3a4a', strokeThickness: 2,
+    }).setOrigin(1, 0.5).setDepth(11).setInteractive({ useHandCursor: true });
+
+    viewLabel.on('pointerdown', () => {
+      this.showPerkListOverlay(activePerks);
+    });
+  }
+
+  private showPerkListOverlay(activePerks: PerkDef[]): void {
+    const overlay = this.add.container(0, 0).setDepth(30);
+    const backdrop = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.56).setOrigin(0).setInteractive();
+    backdrop.on('pointerdown', () => overlay.destroy());
+    overlay.add(backdrop);
+
+    const panelWidth = GAME_WIDTH - 80;
+    const panelHeight = Math.min(GAME_HEIGHT - 120, 260 + activePerks.length * 28);
+    const panelX = (GAME_WIDTH - panelWidth) / 2;
+    const panelY = (GAME_HEIGHT - panelHeight) / 2;
+
+    const panel = this.add.graphics();
+    panel.fillStyle(0x14283d, 0.96);
+    panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 18);
+    panel.lineStyle(2, 0xebb654, 0.7);
+    panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 18);
+    panel.setInteractive(new Phaser.Geom.Rectangle(panelX, panelY, panelWidth, panelHeight), Phaser.Geom.Rectangle.Contains);
+    panel.on('pointerdown', () => { /* capture clicks inside panel */ });
+    overlay.add(panel);
+
+    const header = this.add.text(GAME_WIDTH / 2, panelY + 30, 'ACTIVE PERKS', {
+      fontSize: '20px', color: '#f4e49e', fontFamily: F, fontStyle: 'bold',
+      stroke: '#0f1b34', strokeThickness: 2,
+    }).setOrigin(0.5);
+    overlay.add(header);
+
+    const closeButton = this.add.text(panelX + panelWidth - 18, panelY + 18, '✕', {
+      fontSize: '20px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
+      stroke: '#0f1b34', strokeThickness: 2,
+    }).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+    closeButton.on('pointerdown', () => overlay.destroy());
+    overlay.add(closeButton);
+
+    const uniquePerks = new Map<string, { perk: typeof activePerks[0]; count: number }>();
+    for (const perk of activePerks) {
+      const existing = uniquePerks.get(perk.id);
+      if (existing) existing.count++;
+      else uniquePerks.set(perk.id, { perk, count: 1 });
+    }
+
+    let y = panelY + 70;
+    for (const { perk, count } of uniquePerks.values()) {
+      const icon = this.add.text(panelX + 28, y, perk.icon, { fontSize: '22px' }).setOrigin(0, 0.5);
+      const label = this.add.text(panelX + 58, y - 8, `${perk.name}${count > 1 ? ` x${count}` : ''}`, {
+        fontSize: '16px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
+        stroke: '#0f1b34', strokeThickness: 2,
+      }).setOrigin(0, 0);
+      const desc = this.add.text(panelX + 58, y + 14, perk.description, {
+        fontSize: '12px', color: '#cdd7e5', fontFamily: F, wordWrap: { width: panelWidth - 100 },
+      }).setOrigin(0, 0);
+      overlay.add([icon, label, desc]);
+      y += 44;
+      if (y > panelY + panelHeight - 40) break;
     }
   }
 

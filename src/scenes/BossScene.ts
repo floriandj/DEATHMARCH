@@ -5,8 +5,10 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
+  ARMY_START_WORLD_Y,
   ARMY_INPUT_Y_RANGE,
-  ARMY_Y_OFFSET_MAX,
+  ARMY_Y_OFFSET_FORWARD_MAX,
+  ARMY_Y_OFFSET_BACK_MAX,
   ARMY_LATERAL_SPEED,
   ARMY_VERTICAL_SPEED,
   ENTITY_SCALE,
@@ -200,7 +202,7 @@ export class BossScene extends Phaser.Scene {
     this.armyX = Phaser.Math.Clamp(this.armyX, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
     const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
     this.armyYOffset += normalizedY * ARMY_VERTICAL_SPEED * dt;
-    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_MAX, ARMY_Y_OFFSET_MAX);
+    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_FORWARD_MAX, ARMY_Y_OFFSET_BACK_MAX);
     this.respawnArmy();
 
     // 1b. Unit physics

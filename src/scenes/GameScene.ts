@@ -6,8 +6,10 @@ import {
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
   ENEMY_POOL_SIZE,
+  ARMY_START_WORLD_Y,
   ARMY_INPUT_Y_RANGE,
-  ARMY_Y_OFFSET_MAX,
+  ARMY_Y_OFFSET_FORWARD_MAX,
+  ARMY_Y_OFFSET_BACK_MAX,
   ARMY_LATERAL_SPEED,
   ARMY_VERTICAL_SPEED,
   SVG_RENDER_SCALE,
@@ -176,7 +178,7 @@ export class GameScene extends Phaser.Scene {
     this.enemyHpBars = this.add.graphics().setDepth(12);
 
     // World setup
-    this.armyWorldY = 0;
+    this.armyWorldY = ARMY_START_WORLD_Y;
     this.cameras.main.setBounds(-Infinity, -Infinity, Infinity, Infinity);
 
     // Start HUD
@@ -251,7 +253,7 @@ export class GameScene extends Phaser.Scene {
     this.armyX = Phaser.Math.Clamp(this.armyX, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
     const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
     this.armyYOffset += normalizedY * ARMY_VERTICAL_SPEED * dt;
-    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_MAX, ARMY_Y_OFFSET_MAX);
+    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_FORWARD_MAX, ARMY_Y_OFFSET_BACK_MAX);
     this.respawnArmy();
 
     // 3b. Unit physics
@@ -1405,12 +1407,12 @@ export class GameScene extends Phaser.Scene {
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
     // Earn gold (partial on death)
-    WalletManager.earnLevelGold(this.levelGold, Math.floor(this.pouchGold * 0.5));
+    const goldEarned = WalletManager.earnLevelGold(this.levelGold, Math.floor(this.pouchGold * 0.5));
     this.scene.start('GameOverScene', {
       score: Math.floor(this.score),
       distance: Math.floor(this.distance),
       bossDefeated: false,
-      goldEarned: this.levelGold + Math.floor(this.pouchGold * 0.5),
+      goldEarned,
     });
   }
 
