@@ -456,8 +456,8 @@ export class GameScene extends Phaser.Scene {
 
       const distToArmy = Math.abs(enemy.y - this.armyWorldY);
 
-      // Despawn only if very far behind AND out of aggro range
-      if (enemy.y > this.armyWorldY + 500 && distToArmy > AGGRO_RANGE) {
+      // Despawn if enemy fell very far behind the army
+      if (enemy.y > this.armyWorldY + 600) {
         enemy.despawn();
         continue;
       }
@@ -479,7 +479,7 @@ export class GameScene extends Phaser.Scene {
           }
         }
 
-        const reached = enemy.updateMovement(delta, nearestX, nearestY, this.armyWorldY);
+        const reached = enemy.updateMovement(delta, nearestX, nearestY, this.armyWorldY, marchSpeed);
         if (reached) {
           if (WalletManager.useShield()) {
             // Shield absorbed the hit

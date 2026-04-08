@@ -84,7 +84,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     }
   }
 
-  updateMovement(delta: number, targetX: number, targetY: number, armyWorldY: number): boolean {
+  updateMovement(delta: number, targetX: number, targetY: number, armyWorldY: number, marchSpeed: number = 0): boolean {
     if (!this.active) return false;
     const dt = delta / 1000;
     let dx = targetX - this.x;
@@ -92,8 +92,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 10 * ENTITY_SCALE) return true;
 
-    const behindLine = this.y > armyWorldY;
-    let currentSpeed = behindLine ? this.speed * 2.5 : this.speed;
+    const behindLine = this.y > targetY;
+    // When behind: match march speed + guaranteed closing speed so they always catch up
+    let currentSpeed = behindLine ? marchSpeed + this.speed : this.speed;
 
     // Lateral chase boost: prevent player from outrunning mobs by dragging far left/right
     const lateralDist = Math.abs(dx);
