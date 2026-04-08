@@ -46,10 +46,9 @@ export class GameOverScene extends Phaser.Scene {
     const showShop = !data.bossDefeated;
     if (data.bossDefeated) SoundManager.play('victory');
 
-    // On death: restore perks to last checkpoint state and go back to checkpoint level
+    // On death: keep current perks but go back to checkpoint level
     const checkpointLvl = PerkManager.instance.checkpointLevel;
     if (!data.bossDefeated) {
-      PerkManager.instance.restoreCheckpoint();
       mgr.setLevel(checkpointLvl);
     }
 
