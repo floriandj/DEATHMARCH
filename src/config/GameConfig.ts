@@ -1,6 +1,7 @@
 export const GAME_WIDTH = 720;
-// Dynamic height: match device aspect ratio so there are never black bars
-const _aspectRatio = typeof window !== 'undefined' ? window.innerHeight / window.innerWidth : 16 / 9;
+// Dynamic height: use container height / constrained width so full viewport height is used
+const _containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 480) : 480;
+const _aspectRatio = typeof window !== 'undefined' ? window.innerHeight / _containerWidth : 16 / 9;
 export const GAME_HEIGHT = Math.round(GAME_WIDTH * _aspectRatio);
 
 // Isometric tile dimensions

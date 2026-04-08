@@ -51,21 +51,31 @@ src/
 │   └── GameOverScene.ts     # Results screen
 ├── systems/                 # Cross-entity coordination
 │   ├── ObjectPool.ts        # Generic object pooling (bullets, enemies, units)
+│   ├── BulletPool.ts        # Bullet-specific pool management
 │   ├── IsoHelper.ts         # Isometric coordinate transforms
 │   ├── WaveSpawner.ts       # Distance-based enemy wave generation
 │   ├── GateSpawner.ts       # Gate pair selection from templates
 │   ├── InputHandler.ts      # Touch/drag input handling
-│   └── Background.ts        # Scrolling background
+│   ├── Background.ts        # Scrolling background
+│   ├── ProceduralEnemy.ts   # Procedural enemy generation
+│   ├── SoundManager.ts      # Audio management
+│   ├── WakeLock.ts          # Screen wake lock for mobile
+│   └── WalletManager.ts     # In-game currency/wallet system
+├── pwa.ts                   # PWA service worker registration
+├── pwa-register.d.ts        # PWA type declarations
 └── config/                  # Game tuning
     ├── GameConfig.ts        # Constants (speeds, pool sizes, boss timings)
     ├── EnemyConfig.ts       # Enemy stats
     ├── WeaponConfig.ts      # Weapon definitions
     └── progression/         # Level system
         ├── LevelManager.ts  # Singleton managing level state
+        ├── LevelGenerator.ts # Procedural level generation
+        ├── types.ts         # Progression type definitions
+        ├── index.ts         # Barrel export
         └── levels/          # JSON configs (level1.json–level5.json)
 
 tests/                       # Vitest unit tests
-public/assets/               # SVG sprite assets
+public/assets/sprites/       # SVG sprite assets
 docs/                        # Game design specs and plans
 ```
 
