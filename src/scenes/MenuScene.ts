@@ -51,13 +51,13 @@ export class MenuScene extends Phaser.Scene {
     // ── Header panel (fixed) ──
     const headerH = 144;
     const hdr = this.add.graphics().setDepth(10);
-    // Gradient header: lighter at top, darker at bottom
+    // Gradient header: bright blue, slightly darker at bottom
     const hdrSteps = 16;
     for (let s = 0; s < hdrSteps; s++) {
       const t = s / hdrSteps;
-      const r = Phaser.Math.Linear(0x24, 0x1c, t);
-      const g = Phaser.Math.Linear(0x7a, 0x6d, t);
-      const b = Phaser.Math.Linear(0xb8, 0xa3, t);
+      const r = Phaser.Math.Linear(0x30, 0x24, t);
+      const g = Phaser.Math.Linear(0x98, 0x84, t);
+      const b = Phaser.Math.Linear(0xd8, 0xc5, t);
       const c = (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b);
       hdr.fillStyle(c, 1);
       hdr.fillRect(0, Math.floor(headerH * s / hdrSteps), GAME_WIDTH, Math.ceil(headerH / hdrSteps) + 1);
@@ -94,13 +94,13 @@ export class MenuScene extends Phaser.Scene {
     // ── Footer (fixed) ──
     const footH = 96;
     const foot = this.add.graphics().setDepth(10);
-    // Gradient footer: darker at top, lighter at bottom
+    // Gradient footer: slightly darker at top, bright at bottom
     const footSteps = 12;
     for (let s = 0; s < footSteps; s++) {
       const t = s / footSteps;
-      const rr = Phaser.Math.Linear(0x1c, 0x24, t);
-      const gg = Phaser.Math.Linear(0x6d, 0x7a, t);
-      const bb = Phaser.Math.Linear(0xa3, 0xb8, t);
+      const rr = Phaser.Math.Linear(0x24, 0x30, t);
+      const gg = Phaser.Math.Linear(0x84, 0x98, t);
+      const bb = Phaser.Math.Linear(0xc5, 0xd8, t);
       const cc = (Math.round(rr) << 16) | (Math.round(gg) << 8) | Math.round(bb);
       foot.fillStyle(cc, 1);
       foot.fillRect(0, GAME_HEIGHT - footH + Math.floor(footH * s / footSteps), GAME_WIDTH, Math.ceil(footH / footSteps) + 1);
