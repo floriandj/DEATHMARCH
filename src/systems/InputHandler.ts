@@ -2,26 +2,29 @@
 import Phaser from 'phaser';
 
 export class InputHandler {
-  offsetX: number = 0;
+  /** Normalized X position: -1 (left edge) to 1 (right edge) */
+  normalizedX: number = 0;
+
   offsetY: number = 0;
   private dragging: boolean = false;
-  private startX: number = 0;
   private startY: number = 0;
-  private baseOffsetX: number = 0;
   private baseOffsetY: number = 0;
+  private gameWidth: number;
+  private targetNormX: number = 0;
 
   constructor(scene: Phaser.Scene) {
+    this.gameWidth = scene.scale.width;
+
     scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.dragging = true;
-      this.startX = pointer.x;
+      this.targetNormX = Phaser.Math.Clamp((pointer.x / this.gameWidth) * 2 - 1, -1, 1);
       this.startY = pointer.y;
-      this.baseOffsetX = this.offsetX;
       this.baseOffsetY = this.offsetY;
     });
 
     scene.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (this.dragging) {
-        this.offsetX = this.baseOffsetX + (pointer.x - this.startX);
+        this.targetNormX = Phaser.Math.Clamp((pointer.x / this.gameWidth) * 2 - 1, -1, 1);
         this.offsetY = this.baseOffsetY + (pointer.y - this.startY);
       }
     });
@@ -31,8 +34,14 @@ export class InputHandler {
     });
   }
 
-  getNormalized(halfWidth: number): number {
-    return Phaser.Math.Clamp(this.offsetX / halfWidth, -1, 1);
+  /** Call each frame to smoothly lerp toward finger position */
+  update(dt: number): void {
+    const speed = 8; // lerp speed factor
+    this.normalizedX = Phaser.Math.Linear(this.normalizedX, this.targetNormX, 1 - Math.exp(-speed * dt));
+  }
+
+  getNormalized(_halfWidth: number): number {
+    return this.normalizedX;
   }
 
   /** Get vertical offset clamped to a limited range (-1 to 1) */
@@ -42,6 +51,8 @@ export class InputHandler {
 
   destroy(): void {
     this.dragging = false;
-    this.offsetX = 0;
+    this.normalizedX = 0;
+    this.targetNormX = 0;
+    this.offsetY = 0;
   }
 }

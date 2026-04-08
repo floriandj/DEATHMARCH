@@ -243,6 +243,7 @@ export class GameScene extends Phaser.Scene {
     this.background.update(this.cameras.main.scrollY);
 
     // 3. Update army position from input (X: left/right, Y: forward/back)
+    this.input_handler.update(dt);
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
     const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);

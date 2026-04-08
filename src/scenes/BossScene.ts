@@ -191,6 +191,8 @@ export class BossScene extends Phaser.Scene {
     const bossCfg = LevelManager.instance.bossConfig;
 
     // 1. Update army position (X + Y, same as GameScene)
+    const dt = delta / 1000;
+    this.input_handler.update(dt);
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
     this.armyX = normalized * (FIELD_WIDTH / 2);
     const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
