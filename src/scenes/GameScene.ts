@@ -85,6 +85,11 @@ export class GameScene extends Phaser.Scene {
   // Enemy health bars
   private enemyHpBars!: Phaser.GameObjects.Graphics;
 
+  // Quirky perk effect timers
+  private berserkerCryTimer: number = 0;
+  private glassCannonPulseTimer: number = 0;
+  private lastStandGrown: boolean = false;
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -126,6 +131,11 @@ export class GameScene extends Phaser.Scene {
     this.curseBlindOverlay = null;
     this.curseBlindTimer = 0;
     this.powerOrbs = [];
+
+    // Quirky perk effect timers
+    this.berserkerCryTimer = 2000;
+    this.glassCannonPulseTimer = 1000;
+    this.lastStandGrown = false;
 
     SoundManager.init();
     SoundManager.play('level_start');
@@ -401,6 +411,7 @@ export class GameScene extends Phaser.Scene {
             if (perks.vampiricChance > 0 && Math.random() < perks.vampiricChance) {
               this.unitCount++;
               this.respawnArmy();
+              this.quirkVampiric(enemy.x, enemy.y);
             }
             // Perk: Chain Kill — deal 2 damage to nearest enemy
             if (perks.hasChainKill) {
@@ -477,6 +488,7 @@ export class GameScene extends Phaser.Scene {
             // Perk: Thorns — deal damage back to enemy on contact
             if (perks.thornsDamage > 0) {
               enemy.takeDamage(perks.thornsDamage);
+              this.quirkThorns(enemy.x, enemy.y);
             }
             // Apply perk modifiers to contact damage
             let contactDmg = Math.max(1, enemy.contactDamage - perks.contactDamageReduction + perks.contactDamagePenalty);
@@ -492,6 +504,7 @@ export class GameScene extends Phaser.Scene {
               perks.ironWillUsed = true;
               this.unitCount = 1;
               this.cameras.main.flash(300, 255, 50, 50, true);
+              this.quirkIronWill();
             } else {
               this.gameOver();
               return;
@@ -611,6 +624,7 @@ export class GameScene extends Phaser.Scene {
           // Perk: Double Tap — chance to fire a second bullet
           if (perks.doubleTapChance > 0 && Math.random() < perks.doubleTapChance) {
             this.bullets.fire(unit.x + (Math.random() - 0.5) * 8, unit.y, bulletColor, unit.poolIndex, 1, pierce);
+            this.quirkDoubleTap(unit.x, unit.y);
           }
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
@@ -625,6 +639,31 @@ export class GameScene extends Phaser.Scene {
       this.unitCount++;
       this.nextRegenDistance = this.distance + perks.regenDistanceInterval;
       this.respawnArmy();
+      this.quirkRegeneration();
+    }
+
+    // 9q. Quirky periodic perk effects
+    // Berserker battle cries when active
+    if ((perks.has('berserker') && this.unitCount <= 5) || (perks.has('last_stand') && this.unitCount <= 1)) {
+      this.berserkerCryTimer -= delta;
+      if (this.berserkerCryTimer <= 0) {
+        this.quirkBattleCry();
+        this.berserkerCryTimer = 1500 + Math.random() * 2000; // every 1.5-3.5s
+      }
+    }
+    // Last Stand: grow the lone survivor to heroic size
+    if (perks.has('last_stand') && this.unitCount === 1) {
+      this.quirkLastStandGrow();
+    } else {
+      this.quirkLastStandReset();
+    }
+    // Glass Cannon: unstable energy pulse
+    if (perks.has('glass_cannon')) {
+      this.glassCannonPulseTimer -= delta;
+      if (this.glassCannonPulseTimer <= 0) {
+        this.quirkGlassCannonPulse();
+        this.glassCannonPulseTimer = 800 + Math.random() * 400; // every 0.8-1.2s
+      }
     }
 
     // 9c. Power orb collection (magnetic pull + pickup)
@@ -873,6 +912,8 @@ export class GameScene extends Phaser.Scene {
       // Visual: lightning bolt effect
       const bolt = this.add.text(nearest.x, nearest.y - 15, '\u26A1', { fontSize: '20px' }).setOrigin(0.5);
       this.tweens.add({ targets: bolt, alpha: 0, y: nearest.y - 40, duration: 300, onComplete: () => bolt.destroy() });
+      // Quirky: draw jagged lightning line between source and target
+      this.quirkChainLightning(x, y, nearest.x, nearest.y);
     }
   }
 
@@ -1152,6 +1193,205 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.shake(150, 0.01);
 
     orb.destroy();
+  }
+
+  // ── Quirky perk effects ──
+
+  private readonly BATTLE_CRIES = [
+    'RAAA!', 'BLOOD!', 'FOR GLORY!', 'NO MERCY!', 'CHAAARGE!',
+    'SMASH!', 'WAAAGH!', 'BONK!', 'yolo', 'gg ez',
+  ];
+
+  /** Vampiric proc: "SLURP!" + blood drip particles */
+  private quirkVampiric(x: number, y: number): void {
+    const txt = this.add.text(x, y - 20, '🧛 SLURP!', {
+      fontSize: '18px', color: '#ff2222', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(15);
+    this.tweens.add({
+      targets: txt, y: y - 70, alpha: 0, scale: 1.4,
+      duration: 800, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+    // Blood drip particles falling down
+    for (let i = 0; i < 5; i++) {
+      const drop = this.add.circle(x + (Math.random() - 0.5) * 30, y, 3, 0xaa0000, 0.9);
+      this.tweens.add({
+        targets: drop,
+        y: y + 30 + Math.random() * 40,
+        alpha: 0, scale: 0.3,
+        duration: 500 + Math.random() * 300,
+        delay: i * 60,
+        onComplete: () => drop.destroy(),
+      });
+    }
+  }
+
+  /** Iron Will proc: "NOT TODAY!" + expanding shockwave */
+  private quirkIronWill(): void {
+    const cx = GAME_WIDTH / 2 + this.armyX;
+    const cy = this.armyWorldY;
+    // Big dramatic text
+    const txt = this.add.text(cx, cy - 30, '💀 NOT TODAY!', {
+      fontSize: '32px', color: '#ff4444', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 5,
+    }).setOrigin(0.5).setDepth(20);
+    this.tweens.add({
+      targets: txt, y: cy - 120, alpha: 0, scale: 1.6,
+      duration: 1200, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+    // Expanding shockwave rings
+    for (let i = 0; i < 3; i++) {
+      const ring = this.add.circle(cx, cy, 5, 0xff4444, 0.4 - i * 0.1).setDepth(19);
+      this.tweens.add({
+        targets: ring, radius: 80 + i * 30, alpha: 0, duration: 600 + i * 200,
+        delay: i * 150,
+        onUpdate: () => ring.setRadius(ring.radius),
+        onComplete: () => ring.destroy(),
+      });
+    }
+    this.cameras.main.shake(500, 0.03);
+  }
+
+  /** Berserker/Last Stand: random battle cry floats up from army */
+  private quirkBattleCry(): void {
+    const cry = this.BATTLE_CRIES[Math.floor(Math.random() * this.BATTLE_CRIES.length)];
+    const cx = GAME_WIDTH / 2 + this.armyX + (Math.random() - 0.5) * 60;
+    const cy = this.armyWorldY - 20 + (Math.random() - 0.5) * 30;
+    const txt = this.add.text(cx, cy, cry, {
+      fontSize: '14px', color: '#ff6644', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(15).setRotation((Math.random() - 0.5) * 0.3);
+    this.tweens.add({
+      targets: txt, y: cy - 50, alpha: 0, scale: 1.2,
+      duration: 1000, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+  }
+
+  /** Thorns: "OUCH!" bounces off the enemy */
+  private quirkThorns(x: number, y: number): void {
+    const txt = this.add.text(x, y, '🌵 OUCH!', {
+      fontSize: '14px', color: '#22cc44', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(15);
+    // Bounce upward then fall
+    this.tweens.add({
+      targets: txt, y: y - 40, duration: 200, ease: 'Power2',
+      yoyo: true,
+      onComplete: () => {
+        this.tweens.add({
+          targets: txt, alpha: 0, duration: 200, onComplete: () => txt.destroy(),
+        });
+      },
+    });
+  }
+
+  /** Regeneration: sparkle confetti + "FRESH RECRUIT!" */
+  private quirkRegeneration(): void {
+    const cx = GAME_WIDTH / 2 + this.armyX;
+    const cy = this.armyWorldY;
+    const txt = this.add.text(cx, cy - 30, '✨ FRESH RECRUIT!', {
+      fontSize: '14px', color: '#44ffaa', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(15);
+    this.tweens.add({
+      targets: txt, y: cy - 70, alpha: 0, duration: 900, ease: 'Power2',
+      onComplete: () => txt.destroy(),
+    });
+    // Sparkle confetti
+    const sparkleColors = [0xffdd00, 0x44ff88, 0x44ddff, 0xff44aa, 0xffffff];
+    for (let i = 0; i < 8; i++) {
+      const color = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+      const spark = this.add.circle(
+        cx + (Math.random() - 0.5) * 40, cy + (Math.random() - 0.5) * 20,
+        2 + Math.random() * 2, color, 0.9,
+      ).setDepth(15);
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 20 + Math.random() * 30;
+      this.tweens.add({
+        targets: spark,
+        x: spark.x + Math.cos(angle) * dist,
+        y: spark.y + Math.sin(angle) * dist - 20,
+        alpha: 0, scale: 0.2,
+        duration: 400 + Math.random() * 300,
+        onComplete: () => spark.destroy(),
+      });
+    }
+  }
+
+  /** Enhanced Chain Kill: draw a visible lightning line between enemies */
+  private quirkChainLightning(fromX: number, fromY: number, toX: number, toY: number): void {
+    const gfx = this.add.graphics().setDepth(14);
+    gfx.lineStyle(2, 0x44ccff, 0.9);
+    gfx.beginPath();
+    gfx.moveTo(fromX, fromY);
+    // Jagged lightning segments
+    const segments = 5;
+    for (let i = 1; i < segments; i++) {
+      const t = i / segments;
+      const mx = fromX + (toX - fromX) * t + (Math.random() - 0.5) * 20;
+      const my = fromY + (toY - fromY) * t + (Math.random() - 0.5) * 20;
+      gfx.lineTo(mx, my);
+    }
+    gfx.lineTo(toX, toY);
+    gfx.strokePath();
+    this.tweens.add({
+      targets: gfx, alpha: 0, duration: 250,
+      onComplete: () => gfx.destroy(),
+    });
+  }
+
+  /** Double Tap: "DOUBLE!" quick popup */
+  private quirkDoubleTap(x: number, y: number): void {
+    const txt = this.add.text(x, y - 15, 'DOUBLE!', {
+      fontSize: '12px', color: '#ffcc00', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(15);
+    this.tweens.add({
+      targets: txt, y: y - 40, alpha: 0, scale: 1.3,
+      duration: 500, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+  }
+
+  /** Glass Cannon: pulse all active units between normal and red tint */
+  private quirkGlassCannonPulse(): void {
+    for (const unit of this.units) {
+      if (!unit.active) continue;
+      unit.setTint(0xff4444);
+    }
+    this.time.delayedCall(150, () => {
+      for (const unit of this.units) {
+        if (!unit.active || unit.isStunned) continue;
+        unit.clearTint();
+      }
+    });
+  }
+
+  /** Last Stand: grow the surviving unit to heroic size */
+  private quirkLastStandGrow(): void {
+    if (this.lastStandGrown) return;
+    this.lastStandGrown = true;
+    const unit = this.units.find(u => u.active);
+    if (!unit) return;
+    this.tweens.add({
+      targets: unit, displayWidth: unit.displayWidth * 2, displayHeight: unit.displayHeight * 2,
+      duration: 300, ease: 'Back.easeOut',
+    });
+    const cx = unit.x;
+    const cy = unit.y;
+    const txt = this.add.text(cx, cy - 30, '⚔️ LAST ONE STANDING!', {
+      fontSize: '16px', color: '#ff4444', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(15);
+    this.tweens.add({
+      targets: txt, y: cy - 80, alpha: 0, scale: 1.3,
+      duration: 1200, ease: 'Power2', onComplete: () => txt.destroy(),
+    });
+  }
+
+  /** Reset last stand growth when unit count goes above 1 */
+  private quirkLastStandReset(): void {
+    if (!this.lastStandGrown) return;
+    this.lastStandGrown = false;
   }
 
   private gameOver(): void {
