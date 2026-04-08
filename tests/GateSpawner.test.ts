@@ -22,16 +22,16 @@ describe('GateSpawner', () => {
     }
   });
 
-  it('+3 gate adds 3 units', () => {
+  it('-3 gate subtracts 3 units but never below 1', () => {
     const templates = LevelManager.instance.current.gates.templates;
-    const add3 = templates.find(
-      (t) => (t.left.op === 'add' && t.left.value === 3) || (t.right.op === 'add' && t.right.value === 3),
+    const sub3 = templates.find(
+      (t) => (t.left.op === 'subtract' && t.left.value === 3) || (t.right.op === 'subtract' && t.right.value === 3),
     );
-    expect(add3).toBeDefined();
-    const side = add3!.left.op === 'add' && add3!.left.value === 3 ? add3!.left : add3!.right;
+    expect(sub3).toBeDefined();
+    const side = sub3!.left.op === 'subtract' && sub3!.left.value === 3 ? sub3!.left : sub3!.right;
     const apply = gateApplyFn(side);
-    expect(apply(5)).toBe(8);
-    expect(apply(1)).toBe(4);
+    expect(apply(5)).toBe(2);
+    expect(apply(1)).toBe(1);
   });
 
   it('+2 gate adds 2 units', () => {

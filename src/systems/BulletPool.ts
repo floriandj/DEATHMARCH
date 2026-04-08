@@ -15,6 +15,8 @@ export interface BulletData {
   active: boolean;
   /** Index of the PlayerUnit that fired this bullet (-1 if unknown) */
   ownerIndex: number;
+  /** How many more enemies this bullet can pierce through */
+  pierceCount: number;
 }
 
 /** Texture key for the shared procedural bullet sprite. */
@@ -40,7 +42,7 @@ export class BulletPool {
     this.freeStack = new Array(capacity);
 
     for (let i = 0; i < capacity; i++) {
-      this.pool[i] = { x: 0, y: 0, vy: 0, damage: BULLET_DAMAGE, color: 0xffd43b, active: false, ownerIndex: -1 };
+      this.pool[i] = { x: 0, y: 0, vy: 0, damage: BULLET_DAMAGE, color: 0xffd43b, active: false, ownerIndex: -1, pierceCount: 0 };
       this.freeStack[i] = capacity - 1 - i;
 
       const s = scene.add.sprite(0, 0, TEX_KEY);
@@ -52,7 +54,7 @@ export class BulletPool {
   }
 
   /** Spawn a bullet. Returns false if pool is exhausted. */
-  fire(x: number, y: number, color: number, ownerIndex: number = -1, damageMult: number = 1): boolean {
+  fire(x: number, y: number, color: number, ownerIndex: number = -1, damageMult: number = 1, pierceCount: number = 0): boolean {
     if (this.freeStack.length === 0) return false;
     const idx = this.freeStack.pop()!;
     const b = this.pool[idx];
@@ -63,6 +65,7 @@ export class BulletPool {
     b.color = color;
     b.active = true;
     b.ownerIndex = ownerIndex;
+    b.pierceCount = pierceCount;
 
     const s = this.sprites[idx];
     s.setPosition(x, y);

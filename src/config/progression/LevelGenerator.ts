@@ -65,10 +65,10 @@ const WORLDS: WorldDef[] = [
     },
     levelNames: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Troll Bridge', 'Demon Gate'],
     enemies: [
-      { type: 'goblin', baseHp: 1, speed: 70, size: 12, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#ff6b6b', introFraction: 0, scoreValue: 10 },
-      { type: 'orc', baseHp: 3, speed: 80, size: 16, contactDamage: 2, splashRadius: 0, splashDamage: 0, color: '#e64980', introFraction: 0.25, scoreValue: 30 },
-      { type: 'troll', baseHp: 8, speed: 50, size: 22, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#be4bdb', introFraction: 0.5, scoreValue: 50 },
-      { type: 'demon', baseHp: 5, speed: 160, size: 16, contactDamage: 2, splashRadius: 50, splashDamage: 1, color: '#ffd43b', introFraction: 0.7, scoreValue: 40 },
+      { type: 'goblin', baseHp: 2, speed: 70, size: 12, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#ff6b6b', introFraction: 0, scoreValue: 10 },
+      { type: 'orc', baseHp: 5, speed: 80, size: 16, contactDamage: 2, splashRadius: 0, splashDamage: 0, color: '#e64980', introFraction: 0.25, scoreValue: 30 },
+      { type: 'troll', baseHp: 12, speed: 50, size: 22, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#be4bdb', introFraction: 0.5, scoreValue: 50 },
+      { type: 'demon', baseHp: 8, speed: 160, size: 16, contactDamage: 2, splashRadius: 50, splashDamage: 1, color: '#ffd43b', introFraction: 0.7, scoreValue: 40 },
     ],
     weaponOrder: ['pistol', 'smg', 'ar', 'lmg'],
     weapons: {
@@ -90,10 +90,10 @@ const WORLDS: WorldDef[] = [
     },
     levelNames: ['Ember Fields', 'Crimson Gauntlet', 'Hellfire Trench', 'Molten Core', 'Inferno Heart'],
     enemies: [
-      { type: 'orc', baseHp: 4, speed: 90, size: 16, contactDamage: 2, splashRadius: 0, splashDamage: 0, color: '#e64980', introFraction: 0, scoreValue: 25 },
-      { type: 'berserker', baseHp: 2, speed: 150, size: 14, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#ff4444', introFraction: 0.2, scoreValue: 40 },
-      { type: 'hellhound', baseHp: 3, speed: 180, size: 13, contactDamage: 2, splashRadius: 40, splashDamage: 1, color: '#ff8c00', introFraction: 0.45, scoreValue: 45 },
-      { type: 'warlock', baseHp: 6, speed: 65, size: 15, contactDamage: 4, splashRadius: 70, splashDamage: 2, color: '#9b59b6', introFraction: 0.65, scoreValue: 65 },
+      { type: 'orc', baseHp: 6, speed: 90, size: 16, contactDamage: 2, splashRadius: 0, splashDamage: 0, color: '#e64980', introFraction: 0, scoreValue: 25 },
+      { type: 'berserker', baseHp: 4, speed: 150, size: 14, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#ff4444', introFraction: 0.2, scoreValue: 40 },
+      { type: 'hellhound', baseHp: 5, speed: 180, size: 13, contactDamage: 2, splashRadius: 40, splashDamage: 1, color: '#ff8c00', introFraction: 0.45, scoreValue: 45 },
+      { type: 'warlock', baseHp: 9, speed: 65, size: 15, contactDamage: 4, splashRadius: 70, splashDamage: 2, color: '#9b59b6', introFraction: 0.65, scoreValue: 65 },
     ],
     weaponOrder: ['smg', 'ar', 'lmg', 'minigun'],
     weapons: {
@@ -115,10 +115,10 @@ const WORLDS: WorldDef[] = [
     },
     levelNames: ['Frostbite Pass', 'Glacier Ruins', 'Banshee Hollow', 'Ice Citadel', 'The Frozen Throne'],
     enemies: [
-      { type: 'frostbite', baseHp: 2, speed: 100, size: 11, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#74c0fc', introFraction: 0, scoreValue: 15 },
-      { type: 'ice_golem', baseHp: 15, speed: 35, size: 26, contactDamage: 5, splashRadius: 0, splashDamage: 0, color: '#4dabf7', introFraction: 0.25, scoreValue: 70 },
-      { type: 'banshee', baseHp: 3, speed: 190, size: 13, contactDamage: 2, splashRadius: 55, splashDamage: 2, color: '#d0bfff', introFraction: 0.45, scoreValue: 55 },
-      { type: 'yeti', baseHp: 10, speed: 110, size: 24, contactDamage: 4, splashRadius: 35, splashDamage: 1, color: '#e8e8e8', introFraction: 0.65, scoreValue: 80 },
+      { type: 'frostbite', baseHp: 3, speed: 100, size: 11, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#74c0fc', introFraction: 0, scoreValue: 15 },
+      { type: 'ice_golem', baseHp: 20, speed: 35, size: 26, contactDamage: 5, splashRadius: 0, splashDamage: 0, color: '#4dabf7', introFraction: 0.25, scoreValue: 70 },
+      { type: 'banshee', baseHp: 5, speed: 190, size: 13, contactDamage: 2, splashRadius: 55, splashDamage: 2, color: '#d0bfff', introFraction: 0.45, scoreValue: 55 },
+      { type: 'yeti', baseHp: 14, speed: 110, size: 24, contactDamage: 4, splashRadius: 35, splashDamage: 1, color: '#e8e8e8', introFraction: 0.65, scoreValue: 80 },
     ],
     weaponOrder: ['ar', 'lmg', 'cryo', 'railgun'],
     weapons: {
@@ -140,10 +140,10 @@ const WORLDS: WorldDef[] = [
     },
     levelNames: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Toxic Depths', 'Plague Heart'],
     enemies: [
-      { type: 'rat_swarm', baseHp: 1, speed: 130, size: 10, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#a0522d', introFraction: 0, scoreValue: 8 },
-      { type: 'blighted', baseHp: 6, speed: 70, size: 18, contactDamage: 3, splashRadius: 45, splashDamage: 1, color: '#2ecc71', introFraction: 0.2, scoreValue: 45 },
-      { type: 'spore_carrier', baseHp: 4, speed: 55, size: 20, contactDamage: 2, splashRadius: 80, splashDamage: 3, color: '#f39c12', introFraction: 0.45, scoreValue: 60 },
-      { type: 'abomination', baseHp: 18, speed: 40, size: 28, contactDamage: 6, splashRadius: 60, splashDamage: 2, color: '#8e44ad', introFraction: 0.65, scoreValue: 100 },
+      { type: 'rat_swarm', baseHp: 2, speed: 130, size: 10, contactDamage: 1, splashRadius: 0, splashDamage: 0, color: '#a0522d', introFraction: 0, scoreValue: 8 },
+      { type: 'blighted', baseHp: 9, speed: 70, size: 18, contactDamage: 3, splashRadius: 45, splashDamage: 1, color: '#2ecc71', introFraction: 0.2, scoreValue: 45 },
+      { type: 'spore_carrier', baseHp: 6, speed: 55, size: 20, contactDamage: 2, splashRadius: 80, splashDamage: 3, color: '#f39c12', introFraction: 0.45, scoreValue: 60 },
+      { type: 'abomination', baseHp: 24, speed: 40, size: 28, contactDamage: 6, splashRadius: 60, splashDamage: 2, color: '#8e44ad', introFraction: 0.65, scoreValue: 100 },
     ],
     weaponOrder: ['ar', 'lmg', 'flamer', 'plasma'],
     weapons: {
@@ -165,10 +165,10 @@ const WORLDS: WorldDef[] = [
     },
     levelNames: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Dark Sanctum', 'Throne of Ash'],
     enemies: [
-      { type: 'shadow_knight', baseHp: 8, speed: 100, size: 18, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#2c3e50', introFraction: 0, scoreValue: 50 },
-      { type: 'ashwalker', baseHp: 5, speed: 160, size: 14, contactDamage: 3, splashRadius: 50, splashDamage: 2, color: '#e74c3c', introFraction: 0.2, scoreValue: 65 },
-      { type: 'void_weaver', baseHp: 4, speed: 200, size: 12, contactDamage: 4, splashRadius: 65, splashDamage: 3, color: '#9b59b6', introFraction: 0.4, scoreValue: 85 },
-      { type: 'archfiend', baseHp: 20, speed: 80, size: 28, contactDamage: 7, splashRadius: 75, splashDamage: 3, color: '#c0392b', introFraction: 0.6, scoreValue: 120 },
+      { type: 'shadow_knight', baseHp: 12, speed: 100, size: 18, contactDamage: 3, splashRadius: 0, splashDamage: 0, color: '#2c3e50', introFraction: 0, scoreValue: 50 },
+      { type: 'ashwalker', baseHp: 8, speed: 160, size: 14, contactDamage: 3, splashRadius: 50, splashDamage: 2, color: '#e74c3c', introFraction: 0.2, scoreValue: 65 },
+      { type: 'void_weaver', baseHp: 6, speed: 200, size: 12, contactDamage: 4, splashRadius: 65, splashDamage: 3, color: '#9b59b6', introFraction: 0.4, scoreValue: 85 },
+      { type: 'archfiend', baseHp: 28, speed: 80, size: 28, contactDamage: 7, splashRadius: 75, splashDamage: 3, color: '#c0392b', introFraction: 0.6, scoreValue: 120 },
     ],
     weaponOrder: ['lmg', 'plasma', 'voidbeam', 'godslayer'],
     weapons: {
@@ -368,15 +368,15 @@ function generateBossTint(levelIndex: number, worldIdx: number): string | undefi
 }
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
-  // No multiply/divide — target 3-8 units with ~3-4 gates per level (800m interval)
+  // Balanced: mostly +1/+2 with riskier subtract options. No multiply gates.
   return [
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 1 }, minDistance: 0 },
     { left: { op: 'add', value: 1 }, right: { op: 'add', value: 1 }, minDistance: 0 },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: 0 },
-    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.15) },
-    { left: { op: 'add', value: 2 }, right: { op: 'add', value: 1 }, minDistance: Math.round(triggerDistance * 0.3) },
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.3) },
     { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.45) },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.6) },
-    { left: { op: 'add', value: 3 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.75) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.6) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.75) },
   ];
 }
 

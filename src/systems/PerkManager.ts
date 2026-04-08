@@ -24,11 +24,19 @@ export const ALL_PERKS: PerkDef[] = [
   // ── Economy / Utility ──
   { id: 'bounty_hunter', name: 'Bounty Hunter',    description: '+75% gold from enemy kills',            icon: '\u{1FA99}', rarity: 'common' },
   { id: 'lucky_gates',   name: 'Lucky Gates',      description: 'Gate add values +1',                    icon: '\u{1F340}', rarity: 'common' },
-  { id: 'second_wind',   name: 'Second Wind',      description: 'Start each level with +3 extra units',  icon: '\u{1F4A8}', rarity: 'common' },
-  { id: 'rally_cry',     name: 'Rally Cry',        description: 'Positive gates give +2 bonus units',    icon: '\u{1F4E3}', rarity: 'rare' },
+  { id: 'second_wind',   name: 'Second Wind',      description: 'Start each level with +2 extra units',  icon: '\u{1F4A8}', rarity: 'common' },
+  { id: 'rally_cry',     name: 'Rally Cry',        description: 'Positive gates give +1 bonus unit',     icon: '\u{1F4E3}', rarity: 'rare' },
   // ── Vampiric / On-kill ──
   { id: 'vampiric',      name: 'Vampiric Rounds',  description: '8% chance per kill to gain +1 unit',    icon: '\u{1F9DB}', rarity: 'rare' },
   { id: 'chain_kill',    name: 'Chain Kill',       description: 'Kills deal 2 damage to nearest enemy',  icon: '\u26A1', rarity: 'legendary' },
+  // ── Movement / Tactical ──
+  { id: 'swift_march',   name: 'Swift March',      description: 'March speed +15%',                        icon: '\u{1F3C3}', rarity: 'common' },
+  { id: 'scavenger',     name: 'Scavenger',        description: 'Gold pouches appear 40% more often',      icon: '\u{1F9F2}', rarity: 'common' },
+  { id: 'piercing',      name: 'Piercing Shots',   description: 'Bullets pierce through 1 extra enemy',    icon: '\u{1F4CD}', rarity: 'rare' },
+  { id: 'last_stand',    name: 'Last Stand',       description: '3x fire rate when at 1 unit',             icon: '\u{1F6A8}', rarity: 'rare' },
+  { id: 'gold_rush',     name: 'Gold Rush',        description: 'Earn +5 gold per gate passed',            icon: '\u{1F4B0}', rarity: 'common' },
+  { id: 'thorns',        name: 'Thorns',           description: 'Enemies take 3 damage on contact',        icon: '\u{1F335}', rarity: 'rare' },
+  { id: 'double_tap',    name: 'Double Tap',       description: '15% chance to fire 2 bullets at once',    icon: '\u{1F3AF}', rarity: 'legendary' },
   // ── Curse (powerful but risky) ──
   { id: 'glass_cannon',  name: 'Glass Cannon',     description: '2x bullet damage, but contact damage +2', icon: '\u{1F52E}', rarity: 'legendary' },
 ];
@@ -218,7 +226,7 @@ export class PerkManager {
   }
 
   get extraStartingUnits(): number {
-    return this.count('second_wind') * 3;
+    return this.count('second_wind') * 2;
   }
 
   get gateBonusAdd(): number {
@@ -226,7 +234,7 @@ export class PerkManager {
   }
 
   get gateBonusUnitsOnPositive(): number {
-    return this.count('rally_cry') * 2;
+    return this.count('rally_cry');
   }
 
   get goldKillMultiplier(): number {
@@ -255,8 +263,34 @@ export class PerkManager {
 
   /** Berserker: bonus fire rate when units are low */
   berserkerMultiplier(unitCount: number): number {
-    if (!this.has('berserker') || unitCount > 5) return 1;
-    return 0.5; // 50% faster (lower = faster fire rate)
+    let mult = 1;
+    if (this.has('berserker') && unitCount <= 5) mult *= 0.5;
+    if (this.has('last_stand') && unitCount <= 1) mult *= 0.33;
+    return mult;
+  }
+
+  get marchSpeedMultiplier(): number {
+    return 1 + this.count('swift_march') * 0.15;
+  }
+
+  get pouchFrequencyMultiplier(): number {
+    return this.has('scavenger') ? 0.6 : 1; // lower = more frequent
+  }
+
+  get hasPiercing(): boolean {
+    return this.has('piercing');
+  }
+
+  get goldPerGate(): number {
+    return this.count('gold_rush') * 5;
+  }
+
+  get thornsDamage(): number {
+    return this.count('thorns') * 3;
+  }
+
+  get doubleTapChance(): number {
+    return this.has('double_tap') ? 0.15 : 0;
   }
 
   /** Gold multiplier from run streak */

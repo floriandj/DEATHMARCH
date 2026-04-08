@@ -7,6 +7,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   levelIndex: number = 0;
   active: boolean = false;
   hp: number = 0;
+  maxHp: number = 0;
   speed: number = 0;
   contactDamage: number = 0;
   splashRadius: number = 0;
@@ -35,7 +36,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.setVisible(true);
     this.setActive(true);
     this.isElite = elite;
-    this.hp = elite ? Math.ceil(stats.hp * 2.5) : stats.hp;
+    const baseHp = elite ? Math.ceil(stats.hp * 2.5) : stats.hp;
+    this.hp = baseHp;
+    this.maxHp = baseHp;
     this.speed = stats.speed;
     this.contactDamage = stats.contactDamage;
     this.splashRadius = stats.splashRadius;

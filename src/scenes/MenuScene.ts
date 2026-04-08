@@ -115,6 +115,7 @@ export class MenuScene extends Phaser.Scene {
     this.drawPaths(positions, maxUnlocked);
     this.drawWorldBanners(positions, visibleCount);
     this.drawNodes(positions, maxUnlocked);
+    this.drawPerkBar();
 
     const currentY = positions[Math.min(maxUnlocked, positions.length - 1)].y;
     this.scrollContainer.y = -currentY + GAME_HEIGHT * 0.45;
@@ -343,6 +344,54 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.scrollContainer.add(c);
+  }
+
+  private drawPerkBar(): void {
+    const activePerks = PerkManager.instance.getAll();
+    if (activePerks.length === 0) return;
+
+    // Draw perks in a row above the footer
+    const footH = 80;
+    const perkY = GAME_HEIGHT - footH - 50;
+    const perkBarW = Math.min(CW, activePerks.length * 44 + 24);
+    const startX = (GAME_WIDTH - perkBarW) / 2;
+
+    // Background panel
+    const bg = this.add.graphics().setDepth(10);
+    bg.fillStyle(0x1a2840, 0.9);
+    bg.fillRoundedRect(startX, perkY - 18, perkBarW, 36, 18);
+    bg.lineStyle(1, 0xfbbf24, 0.3);
+    bg.strokeRoundedRect(startX, perkY - 18, perkBarW, 36, 18);
+
+    // Label
+    this.add.text(startX + 12, perkY, 'PERKS', {
+      fontSize: '9px', color: '#fbbf24', fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
+    }).setOrigin(0, 0.5).setDepth(11);
+
+    // Perk icons
+    const iconStartX = startX + 60;
+    const uniquePerks = new Map<string, { perk: typeof activePerks[0]; count: number }>();
+    for (const p of activePerks) {
+      const existing = uniquePerks.get(p.id);
+      if (existing) existing.count++;
+      else uniquePerks.set(p.id, { perk: p, count: 1 });
+    }
+
+    let i = 0;
+    for (const { perk, count } of uniquePerks.values()) {
+      const ix = iconStartX + i * 40;
+      const icon = this.add.text(ix, perkY, perk.icon, {
+        fontSize: '18px',
+      }).setOrigin(0.5).setDepth(11);
+
+      if (count > 1) {
+        this.add.text(ix + 10, perkY + 8, `x${count}`, {
+          fontSize: '9px', color: '#fbbf24', fontFamily: F, fontStyle: 'bold',
+          stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5).setDepth(11);
+      }
+      i++;
+    }
   }
 
   private startGame(): void {

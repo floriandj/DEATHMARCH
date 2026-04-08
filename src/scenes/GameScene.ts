@@ -82,6 +82,9 @@ export class GameScene extends Phaser.Scene {
   private unitShadows: Phaser.GameObjects.Image[] = [];
   private enemyShadows: Map<Enemy, Phaser.GameObjects.Image> = new Map();
 
+  // Enemy health bars
+  private enemyHpBars!: Phaser.GameObjects.Graphics;
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -157,6 +160,9 @@ export class GameScene extends Phaser.Scene {
       this.crates.push(new WeaponCrate(this));
     }
 
+    // Enemy health bar overlay
+    this.enemyHpBars = this.add.graphics().setDepth(12);
+
     // World setup
     this.armyWorldY = 0;
     this.cameras.main.setBounds(-Infinity, -Infinity, Infinity, Infinity);
@@ -215,7 +221,7 @@ export class GameScene extends Phaser.Scene {
     const AGGRO_RANGE = 500; // enemies start moving when army is this close
     const level = LevelManager.instance.current;
     const perks = PerkManager.instance;
-    const marchSpeed = level.marchSpeed;
+    const marchSpeed = level.marchSpeed * perks.marchSpeedMultiplier;
 
     // 1. Army marches upward in world space
     this.distance += marchSpeed * dt;
@@ -318,7 +324,7 @@ export class GameScene extends Phaser.Scene {
       pouch.setAlpha(1);
       (pouch as any).goldValue = Math.round(10 + Math.random() * 15);
       this.goldPouches.push(pouch);
-      this.nextPouchDistance = this.distance + 250 + Math.random() * 200;
+      this.nextPouchDistance = this.distance + (250 + Math.random() * 200) * perks.pouchFrequencyMultiplier;
     }
 
     // 5e. Check gold pouch collection
@@ -373,7 +379,11 @@ export class GameScene extends Phaser.Scene {
         const dx = b.x - enemy.x;
         const dy = b.y - enemy.y;
         if (dx * dx + dy * dy < (enemy.displayWidth / 2 + 5) ** 2) {
-          this.bullets.despawn(idx);
+          if (b.pierceCount > 0) {
+            b.pierceCount--;
+          } else {
+            this.bullets.despawn(idx);
+          }
           const totalDmg = b.damage + perks.bonusBulletDamage;
           this.showDamageNumber(b.x, b.y - 10, totalDmg);
           const killed = enemy.takeDamage(totalDmg);
@@ -464,6 +474,10 @@ export class GameScene extends Phaser.Scene {
             SoundManager.play('shield_absorb');
             this.cameras.main.flash(200, 100, 200, 255, true);
           } else {
+            // Perk: Thorns — deal damage back to enemy on contact
+            if (perks.thornsDamage > 0) {
+              enemy.takeDamage(perks.thornsDamage);
+            }
             // Apply perk modifiers to contact damage
             let contactDmg = Math.max(1, enemy.contactDamage - perks.contactDamageReduction + perks.contactDamagePenalty);
             this.unitCount = Math.max(0, this.unitCount - contactDmg);
@@ -505,6 +519,25 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
+    // 7b. Draw enemy health bars
+    this.enemyHpBars.clear();
+    for (const enemy of this.enemies) {
+      if (!enemy.active) continue;
+      if (enemy.hp >= enemy.maxHp) continue; // don't show full-hp bars
+      const barW = Math.max(20, enemy.displayWidth * 1.2);
+      const barH = 3;
+      const barX = enemy.x - barW / 2;
+      const barY = enemy.y - enemy.displayHeight / 2 - 8;
+      const hpFrac = Math.max(0, enemy.hp / enemy.maxHp);
+      // Background
+      this.enemyHpBars.fillStyle(0x000000, 0.6);
+      this.enemyHpBars.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+      // HP fill
+      const hpColor = hpFrac > 0.5 ? 0xff4444 : hpFrac > 0.25 ? 0xff8800 : 0xff2222;
+      this.enemyHpBars.fillStyle(hpColor, 0.9);
+      this.enemyHpBars.fillRect(barX, barY, barW * hpFrac, barH);
+    }
+
     // 8. Gates — static, check if unit walks into them
     for (const gate of this.gates) {
       if (!gate.active || gate.passed) continue;
@@ -533,6 +566,10 @@ export class GameScene extends Phaser.Scene {
             this.unitCount += perks.gateBonusUnitsOnPositive;
           }
           this.unitCount = Math.max(1, this.unitCount);
+          // Perk: Gold Rush — earn gold per gate
+          if (perks.goldPerGate > 0) {
+            this.pouchGold += perks.goldPerGate;
+          }
           SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
           this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
           gate.despawn();
@@ -569,7 +606,12 @@ export class GameScene extends Phaser.Scene {
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, effectiveFireRate)) {
-        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex)) {
+        const pierce = perks.hasPiercing ? 1 : 0;
+        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, 1, pierce)) {
+          // Perk: Double Tap — chance to fire a second bullet
+          if (perks.doubleTapChance > 0 && Math.random() < perks.doubleTapChance) {
+            this.bullets.fire(unit.x + (Math.random() - 0.5) * 8, unit.y, bulletColor, unit.poolIndex, 1, pierce);
+          }
           if (this.shootSoundTimer > 150) {
             SoundManager.play(`shoot_${this.currentWeapon}`);
             this.shootSoundTimer = 0;
@@ -976,10 +1018,10 @@ export class GameScene extends Phaser.Scene {
       label = '\u{1F525} FURY!';
       subtitle = '2x FIRE RATE';
     } else if (orbType === 'heal') {
-      this.unitCount += 3;
+      this.unitCount += 2;
       this.respawnArmy();
       label = '\u{1F49A} HEAL!';
-      subtitle = '+3 UNITS';
+      subtitle = '+2 UNITS';
     } else if (orbType === 'curse_slow') {
       this.curseSlowTimer = 8000;
       label = '\u{1F9CA} CURSED!';
@@ -1010,10 +1052,10 @@ export class GameScene extends Phaser.Scene {
         label = '\u{1F3B2} MEGA FURY!';
         subtitle = '2x FIRE RATE 12s';
       } else if (chaosRoll < 0.5) {
-        this.unitCount += 5;
+        this.unitCount += 3;
         this.respawnArmy();
         label = '\u{1F3B2} REINFORCEMENTS!';
-        subtitle = '+5 UNITS';
+        subtitle = '+3 UNITS';
       } else if (chaosRoll < 0.75) {
         const lost = Math.min(3, this.unitCount - 1);
         this.unitCount = Math.max(1, this.unitCount - lost);

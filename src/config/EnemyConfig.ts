@@ -16,7 +16,7 @@ export interface EnemyStats {
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   goblin: {
     type: 'goblin',
-    hp: 1,
+    hp: 2,
     speed: 70,
     size: 12,
     contactDamage: 1,
@@ -28,7 +28,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   },
   orc: {
     type: 'orc',
-    hp: 3,
+    hp: 5,
     speed: 80,
     size: 16,
     contactDamage: 2,
@@ -40,7 +40,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   },
   troll: {
     type: 'troll',
-    hp: 8,
+    hp: 12,
     speed: 50,
     size: 22,
     contactDamage: 3,
@@ -52,7 +52,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   },
   demon: {
     type: 'demon',
-    hp: 5,
+    hp: 8,
     speed: 160,
     size: 16,
     contactDamage: 2,

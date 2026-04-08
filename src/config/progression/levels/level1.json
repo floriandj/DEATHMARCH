@@ -22,22 +22,22 @@
 
   "enemies": {
     "goblin": {
-      "type": "goblin", "hp": 1, "speed": 70, "size": 12,
+      "type": "goblin", "hp": 2, "speed": 70, "size": 12,
       "contactDamage": 1, "splashRadius": 0, "splashDamage": 0,
       "color": "#ff6b6b", "appearsAtDistance": 0, "scoreValue": 10
     },
     "orc": {
-      "type": "orc", "hp": 3, "speed": 80, "size": 16,
+      "type": "orc", "hp": 5, "speed": 80, "size": 16,
       "contactDamage": 2, "splashRadius": 0, "splashDamage": 0,
       "color": "#e64980", "appearsAtDistance": 450, "scoreValue": 30
     },
     "troll": {
-      "type": "troll", "hp": 8, "speed": 50, "size": 22,
+      "type": "troll", "hp": 12, "speed": 50, "size": 22,
       "contactDamage": 3, "splashRadius": 0, "splashDamage": 0,
       "color": "#be4bdb", "appearsAtDistance": 900, "scoreValue": 50
     },
     "demon": {
-      "type": "demon", "hp": 5, "speed": 160, "size": 16,
+      "type": "demon", "hp": 8, "speed": 160, "size": 16,
       "contactDamage": 2, "splashRadius": 50, "splashDamage": 1,
       "color": "#ffd43b", "appearsAtDistance": 1400, "scoreValue": 40
     }
@@ -63,9 +63,9 @@
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 100 },
       { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 200 },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 400 },
-      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 600 }
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 600 }
     ]
   },
 

@@ -4,6 +4,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { LevelManager } from '@/config/progression';
+import { PerkManager } from '@/systems/PerkManager';
 
 /** Safe margin from edges to avoid ENVELOP cropping */
 const PAD = 32;
@@ -170,6 +171,9 @@ export class HUDScene extends Phaser.Scene {
       fontSize: '14px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5).setAlpha(0);
+
+    // ── Active perks tray (bottom-center) ──
+    this.drawPerkTray();
 
     // ── Pause button (bottom-right, always visible) ──
     const pauseBg = this.add.graphics();
@@ -349,6 +353,49 @@ export class HUDScene extends Phaser.Scene {
     if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
     if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
     return String(n);
+  }
+
+  private drawPerkTray(): void {
+    const activePerks = PerkManager.instance.getAll();
+    if (activePerks.length === 0) return;
+
+    // Deduplicate perks
+    const uniquePerks = new Map<string, { icon: string; count: number }>();
+    for (const p of activePerks) {
+      const existing = uniquePerks.get(p.id);
+      if (existing) existing.count++;
+      else uniquePerks.set(p.id, { icon: p.icon, count: 1 });
+    }
+
+    const perkCount = uniquePerks.size;
+    const iconSize = 22;
+    const spacing = 28;
+    const totalW = perkCount * spacing;
+    const trayY = GAME_HEIGHT - 40;
+    const startX = GAME_WIDTH / 2 - totalW / 2 + spacing / 2;
+
+    // Background pill
+    const bg = this.add.graphics();
+    bg.fillStyle(0x0d1520, 0.7);
+    bg.fillRoundedRect(startX - spacing / 2 - 6, trayY - 14, totalW + 12, 28, 14);
+    bg.lineStyle(1, 0xfbbf24, 0.2);
+    bg.strokeRoundedRect(startX - spacing / 2 - 6, trayY - 14, totalW + 12, 28, 14);
+
+    let i = 0;
+    for (const { icon, count } of uniquePerks.values()) {
+      const ix = startX + i * spacing;
+      this.add.text(ix, trayY, icon, {
+        fontSize: `${iconSize - 4}px`,
+      }).setOrigin(0.5);
+
+      if (count > 1) {
+        this.add.text(ix + 8, trayY + 6, `${count}`, {
+          fontSize: '8px', color: '#fbbf24', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+          stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5);
+      }
+      i++;
+    }
   }
 
   private getWeaponSvgKey(weaponType: string): string {
