@@ -58,6 +58,7 @@ interface CheckpointData {
 }
 
 const STORAGE_KEY = 'deathmarch-checkpoint';
+const RUN_STATE_KEY = 'deathmarch-run-state';
 
 export class PerkManager {
   private static _instance: PerkManager | null = null;
@@ -77,11 +78,15 @@ export class PerkManager {
 
   /** Re-sync in-memory state with localStorage (call when returning to menu) */
   syncFromStorage(): void {
+    this.ironWillUsed = false;
+    // Prefer current run state (saved on every perk change) over checkpoint
+    if (this.loadRunState()) return;
+
+    // Fall back to checkpoint data
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       this.activePerks = [];
       this.runStreak = 0;
-      this.ironWillUsed = false;
       return;
     }
     try {
@@ -94,10 +99,33 @@ export class PerkManager {
     }
   }
 
+  // ── Run state persistence (saved on every perk change, survives menu visits) ──
+
+  private saveRunState(): void {
+    localStorage.setItem(RUN_STATE_KEY, JSON.stringify({
+      perks: this.activePerks,
+      streak: this.runStreak,
+    }));
+  }
+
+  private loadRunState(): boolean {
+    const raw = localStorage.getItem(RUN_STATE_KEY);
+    if (!raw) return false;
+    try {
+      const data = JSON.parse(raw);
+      this.activePerks = data.perks || [];
+      this.runStreak = data.streak || 0;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   // ── Perk management ──
 
   addPerk(id: string): void {
     this.activePerks.push(id);
+    this.saveRunState();
   }
 
   has(id: string): boolean {
@@ -154,6 +182,7 @@ export class PerkManager {
 
   /** On death: restore perks to the last checkpoint state */
   restoreCheckpoint(): void {
+    localStorage.removeItem(RUN_STATE_KEY);
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       this.activePerks = [];
@@ -179,6 +208,7 @@ export class PerkManager {
     this.ironWillUsed = false;
     this.runStreak = 0;
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(RUN_STATE_KEY);
   }
 
   /** Called at start of each level to reset per-level flags */
@@ -189,6 +219,7 @@ export class PerkManager {
   /** Called on boss victory */
   onBossVictory(): void {
     this.runStreak++;
+    this.saveRunState();
   }
 
   // ── Random perk selection ──
