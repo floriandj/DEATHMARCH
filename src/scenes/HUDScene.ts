@@ -62,18 +62,21 @@ export class HUDScene extends Phaser.Scene {
     this.levelBanner = this.add.container(GAME_WIDTH / 2, 180).setDepth(20);
     const bannerBg = this.add.graphics();
     bannerBg.fillStyle(0x000000, 0.7);
-    bannerBg.fillRoundedRect(-220, -50, 440, 100, 24);
+    bannerBg.fillRoundedRect(-264, -60, 528, 120, 29);
     bannerBg.lineStyle(2, accentColor, 0.6);
-    bannerBg.strokeRoundedRect(-220, -50, 440, 100, 24);
+    bannerBg.strokeRoundedRect(-264, -60, 528, 120, 29);
     this.levelBanner.add(bannerBg);
-    this.levelBanner.add(this.add.text(0, -22, `LEVEL ${levelIndex + 1}`, {
-      fontSize: '18px', color: accentHex, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', letterSpacing: 5,
+    this.levelBanner.add(this.add.text(0, -26, `LEVEL ${levelIndex + 1}`, {
+      fontSize: '22px', color: accentHex, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', letterSpacing: 5,
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
-    this.levelBanner.add(this.add.text(0, 8, level.name.toUpperCase(), {
-      fontSize: '26px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    this.levelBanner.add(this.add.text(0, 10, level.name.toUpperCase(), {
+      fontSize: '32px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
-    this.levelBanner.add(this.add.text(0, 36, level.theme.worldName, {
-      fontSize: '13px', color: '#888888', fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: 3,
+    this.levelBanner.add(this.add.text(0, 44, level.theme.worldName, {
+      fontSize: '16px', color: '#6a8ea0', fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: 3,
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
     this.levelBanner.setAlpha(0);
     this.tweens.add({ targets: this.levelBanner, alpha: 1, y: { from: 160, to: 180 }, duration: 500, ease: 'Power2' });
@@ -83,50 +86,53 @@ export class HUDScene extends Phaser.Scene {
     this.topElements = this.add.container(0, 0);
 
     const topBarBg = this.add.graphics();
-    topBarBg.fillStyle(0x0d1520, 0.85);
-    topBarBg.fillRect(0, 0, GAME_WIDTH, 74);
-    topBarBg.fillStyle(0xffd700, 0.6);
-    topBarBg.fillRect(0, 72, GAME_WIDTH, 2);
+    topBarBg.fillStyle(0x1c6da3, 0.85);
+    topBarBg.fillRect(0, 0, GAME_WIDTH, 89);
+    topBarBg.fillStyle(0xebb654, 0.6);
+    topBarBg.fillRect(0, 87, GAME_WIDTH, 2);
     topBarBg.fillStyle(0x000000, 0.15);
-    topBarBg.fillRect(0, 74, GAME_WIDTH, 8);
+    topBarBg.fillRect(0, 89, GAME_WIDTH, 10);
     this.topElements.add(topBarBg);
 
     // Score badge (gold border)
     const scoreBadge = this.add.graphics();
-    scoreBadge.fillStyle(0xffd700, 0.1);
-    scoreBadge.fillRoundedRect(PAD - 4, 8, 155, 40, 20);
-    scoreBadge.lineStyle(1.5, 0xffd700, 0.5);
-    scoreBadge.strokeRoundedRect(PAD - 4, 8, 155, 40, 20);
+    scoreBadge.fillStyle(0xebb654, 0.1);
+    scoreBadge.fillRoundedRect(PAD - 4, 10, 185, 48, 24);
+    scoreBadge.lineStyle(1.5, 0xebb654, 0.5);
+    scoreBadge.strokeRoundedRect(PAD - 4, 10, 185, 48, 24);
     this.topElements.add(scoreBadge);
-    this.topElements.add(this.add.text(PAD + 10, 24, '\u2605', { fontSize: '20px', color: '#ffd700' }).setOrigin(0, 0.5));
-    this.scoreText = this.add.text(PAD + 34, 24, '0', {
-      fontSize: '22px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    this.topElements.add(this.add.text(PAD + 10, 30, '\u2605', { fontSize: '24px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2 }).setOrigin(0, 0.5));
+    this.scoreText = this.add.text(PAD + 38, 30, '0', {
+      fontSize: '26px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
     this.topElements.add(this.scoreText);
 
     // Distance (center, subtle gold)
-    this.distanceText = this.add.text(GAME_WIDTH / 2, 24, '0m', {
-      fontSize: '14px', color: '#b8860b', fontFamily: 'Arial, Helvetica, sans-serif',
+    this.distanceText = this.add.text(GAME_WIDTH / 2, 30, '0m', {
+      fontSize: '18px', color: '#c89530', fontFamily: 'Arial, Helvetica, sans-serif',
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5);
     this.topElements.add(this.distanceText);
 
     // Units badge (blue border)
     const unitBadge = this.add.graphics();
-    unitBadge.fillStyle(0x00d4ff, 0.1);
-    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 130, 8, 130, 40, 20);
-    unitBadge.lineStyle(1.5, 0x00d4ff, 0.5);
-    unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 130, 8, 130, 40, 20);
+    unitBadge.fillStyle(0x40c4e8, 0.1);
+    unitBadge.fillRoundedRect(GAME_WIDTH - PAD - 155, 10, 155, 48, 24);
+    unitBadge.lineStyle(1.5, 0x40c4e8, 0.5);
+    unitBadge.strokeRoundedRect(GAME_WIDTH - PAD - 155, 10, 155, 48, 24);
     this.topElements.add(unitBadge);
-    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 116, 24, '\u2694', { fontSize: '20px', color: '#00d4ff' }).setOrigin(0, 0.5));
-    this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 24, '0', {
-      fontSize: '22px', color: '#00d4ff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    this.topElements.add(this.add.text(GAME_WIDTH - PAD - 140, 30, '\u2694', { fontSize: '24px', color: '#40c4e8', stroke: '#1a3a4a', strokeThickness: 2 }).setOrigin(0, 0.5));
+    this.unitText = this.add.text(GAME_WIDTH - PAD - 8, 30, '0', {
+      fontSize: '26px', color: '#40c4e8', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(1, 0.5);
     this.topElements.add(this.unitText);
 
     // Gold (row 2, left)
-    this.goldText = this.add.text(PAD + 10, 50, '\u{1FA99} 0g', {
-      fontSize: '13px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    this.goldText = this.add.text(PAD + 10, 62, '\u{1FA99} 0g', {
+      fontSize: '16px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
     this.topElements.add(this.goldText);
 
@@ -134,41 +140,41 @@ export class HUDScene extends Phaser.Scene {
     this.progressBar = this.add.graphics();
 
     // ── Boss HP bar (hidden, replaces top bar when active) ──
-    const barWidth = 560;
+    const barWidth = 580;
     const barX = (GAME_WIDTH - barWidth) / 2;
-    const barY = 16;
+    const barY = 20;
 
     // Dark backing panel behind boss HP area
     this.bossBackingPanel = this.add.graphics().setVisible(false);
-    this.bossBackingPanel.fillStyle(0x0d1520, 0.85);
-    this.bossBackingPanel.fillRect(0, 0, GAME_WIDTH, 74);
-    this.bossBackingPanel.fillStyle(0xff4040, 0.4);
-    this.bossBackingPanel.fillRect(0, 72, GAME_WIDTH, 2);
+    this.bossBackingPanel.fillStyle(0x1c6da3, 0.85);
+    this.bossBackingPanel.fillRect(0, 0, GAME_WIDTH, 89);
+    this.bossBackingPanel.fillStyle(0xe85454, 0.4);
+    this.bossBackingPanel.fillRect(0, 87, GAME_WIDTH, 2);
     this.bossBackingPanel.fillStyle(0x000000, 0.15);
-    this.bossBackingPanel.fillRect(0, 74, GAME_WIDTH, 8);
+    this.bossBackingPanel.fillRect(0, 89, GAME_WIDTH, 10);
 
     this.bossHpBg = this.add.graphics().setVisible(false);
     this.bossHpBar = this.add.graphics().setVisible(false);
-    this.bossHpLabel = this.add.text(GAME_WIDTH / 2, barY + 16, '', {
-      fontSize: '16px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    this.bossHpLabel = this.add.text(GAME_WIDTH / 2, barY + 19, '', {
+      fontSize: '20px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5).setVisible(false);
 
     this.bossHpBg.fillStyle(0xffffff, 0.1);
-    this.bossHpBg.fillRoundedRect(barX - 4, barY, barWidth + 8, 32, 16);
-    this.bossHpBg.lineStyle(1, 0xff6b6b, 0.35);
-    this.bossHpBg.strokeRoundedRect(barX - 4, barY, barWidth + 8, 32, 16);
+    this.bossHpBg.fillRoundedRect(barX - 4, barY, barWidth + 8, 38, 19);
+    this.bossHpBg.lineStyle(1, 0xf07070, 0.35);
+    this.bossHpBg.strokeRoundedRect(barX - 4, barY, barWidth + 8, 38, 19);
 
     // ── Weapon indicator (circular frame) ──
     const wFrame = this.add.graphics();
-    wFrame.fillStyle(0x0d1520, 0.8);
-    wFrame.fillCircle(PAD + 24, GAME_HEIGHT - 80, 22);
-    wFrame.lineStyle(2, 0x888888, 0.6);
-    wFrame.strokeCircle(PAD + 24, GAME_HEIGHT - 80, 22);
-    this.weaponIcon = this.add.sprite(PAD + 24, GAME_HEIGHT - 80, 'weapon_svg_pistol')
-      .setDisplaySize(28, 28).setAlpha(0).setOrigin(0.5);
-    this.weaponLabel = this.add.text(PAD + 52, GAME_HEIGHT - 80, '', {
-      fontSize: '14px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+    wFrame.fillStyle(0x1c6da3, 0.8);
+    wFrame.fillCircle(PAD + 28, GAME_HEIGHT - 80, 26);
+    wFrame.lineStyle(2, 0x6a8ea0, 0.6);
+    wFrame.strokeCircle(PAD + 28, GAME_HEIGHT - 80, 26);
+    this.weaponIcon = this.add.sprite(PAD + 28, GAME_HEIGHT - 80, 'weapon_svg_pistol')
+      .setDisplaySize(34, 34).setAlpha(0).setOrigin(0.5);
+    this.weaponLabel = this.add.text(PAD + 60, GAME_HEIGHT - 80, '', {
+      fontSize: '18px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5).setAlpha(0);
 
@@ -177,13 +183,13 @@ export class HUDScene extends Phaser.Scene {
 
     // ── Pause button (bottom-right, always visible) ──
     const pauseBg = this.add.graphics();
-    pauseBg.fillStyle(0x0d1520, 0.8);
-    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 44, GAME_HEIGHT - 80 - 22, 44, 44, 14);
-    pauseBg.lineStyle(1, 0xffd700, 0.3);
-    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 44, GAME_HEIGHT - 80 - 22, 44, 44, 14);
+    pauseBg.fillStyle(0x1c6da3, 0.8);
+    pauseBg.fillRoundedRect(GAME_WIDTH - PAD - 52, GAME_HEIGHT - 80 - 26, 52, 52, 17);
+    pauseBg.lineStyle(1, 0xebb654, 0.3);
+    pauseBg.strokeRoundedRect(GAME_WIDTH - PAD - 52, GAME_HEIGHT - 80 - 26, 52, 52, 17);
 
-    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 22, GAME_HEIGHT - 80, '\u23F8', {
-      fontSize: '22px', color: '#ffd700',
+    const pauseBtn = this.add.text(GAME_WIDTH - PAD - 26, GAME_HEIGHT - 80, '\u23F8', {
+      fontSize: '26px', color: '#ebb654', stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5);
 
     pauseBtn.on('pointerdown', () => {
@@ -205,36 +211,38 @@ export class HUDScene extends Phaser.Scene {
     overlay.setDepth(30);
 
     const title = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT * 0.35, 'PAUSED', {
-      fontSize: '44px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
-      letterSpacing: 8,
+      fontSize: '52px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      letterSpacing: 10, stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setDepth(31);
 
     // Resume button
     const resumeContainer = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT * 0.50).setDepth(31);
     const rBg = this.add.graphics();
-    rBg.fillStyle(0x51cf66, 0.18);
-    rBg.fillRoundedRect(-140, -32, 280, 64, 32);
-    rBg.lineStyle(2, 0x51cf66, 0.6);
-    rBg.strokeRoundedRect(-140, -32, 280, 64, 32);
+    rBg.fillStyle(0x4cde39, 0.18);
+    rBg.fillRoundedRect(-168, -38, 336, 76, 38);
+    rBg.lineStyle(2, 0x4cde39, 0.6);
+    rBg.strokeRoundedRect(-168, -38, 336, 76, 38);
     resumeContainer.add(rBg);
     resumeContainer.add(this.add.text(0, 0, '\u25B6  RESUME', {
-      fontSize: '24px', color: '#51cf66', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      fontSize: '28px', color: '#4cde39', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
-    const rHit = this.add.zone(0, 0, 280, 64).setInteractive({ useHandCursor: true });
+    const rHit = this.add.zone(0, 0, 336, 76).setInteractive({ useHandCursor: true });
     resumeContainer.add(rHit);
 
     // Quit button
-    const quitContainer = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT * 0.60).setDepth(31);
+    const quitContainer = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT * 0.62).setDepth(31);
     const qBg = this.add.graphics();
-    qBg.fillStyle(0xff6b6b, 0.12);
-    qBg.fillRoundedRect(-120, -26, 240, 52, 26);
-    qBg.lineStyle(1, 0xff6b6b, 0.4);
-    qBg.strokeRoundedRect(-120, -26, 240, 52, 26);
+    qBg.fillStyle(0xf07070, 0.12);
+    qBg.fillRoundedRect(-144, -31, 288, 62, 31);
+    qBg.lineStyle(1, 0xf07070, 0.4);
+    qBg.strokeRoundedRect(-144, -31, 288, 62, 31);
     quitContainer.add(qBg);
     quitContainer.add(this.add.text(0, 0, '\u2630  QUIT', {
-      fontSize: '20px', color: '#ff6b6b', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      fontSize: '24px', color: '#f07070', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
-    const qHit = this.add.zone(0, 0, 240, 52).setInteractive({ useHandCursor: true });
+    const qHit = this.add.zone(0, 0, 288, 62).setInteractive({ useHandCursor: true });
     quitContainer.add(qHit);
 
     const cleanup = () => {
@@ -277,12 +285,12 @@ export class HUDScene extends Phaser.Scene {
       this.progressBar.clear();
       // Background track
       this.progressBar.fillStyle(0xffffff, 0.06);
-      this.progressBar.fillRect(PAD, 78, GAME_WIDTH - PAD * 2, 5);
-      this.progressBar.fillStyle(0xff4040, 0.4);
-      this.progressBar.fillRect(PAD, 78, (GAME_WIDTH - PAD * 2) * progress, 5);
+      this.progressBar.fillRect(PAD, 94, GAME_WIDTH - PAD * 2, 6);
+      this.progressBar.fillStyle(0xe85454, 0.4);
+      this.progressBar.fillRect(PAD, 94, (GAME_WIDTH - PAD * 2) * progress, 6);
       if (progress < 0.98) {
-        this.progressBar.fillStyle(0xff4040, 0.6);
-        this.progressBar.fillCircle(PAD + (GAME_WIDTH - PAD * 2) * progress, 80, 3);
+        this.progressBar.fillStyle(0xe85454, 0.6);
+        this.progressBar.fillCircle(PAD + (GAME_WIDTH - PAD * 2) * progress, 97, 4);
       }
     } else {
       this.progressBar.clear();
@@ -298,18 +306,18 @@ export class HUDScene extends Phaser.Scene {
     this.topElements.setVisible(!showBoss);
 
     if (showBoss) {
-      const barWidth = 560;
+      const barWidth = 580;
       const barX = (GAME_WIDTH - barWidth) / 2;
-      const barY = 16;
+      const barY = 20;
       const fillWidth = barWidth * this.bossHpPercent;
 
       this.bossHpBar.clear();
-      const hpColor = this.bossHpPercent > 0.5 ? 0xff4040 :
-                       this.bossHpPercent > 0.2 ? 0xff6b00 : 0xff2020;
+      const hpColor = this.bossHpPercent > 0.5 ? 0xe85454 :
+                       this.bossHpPercent > 0.2 ? 0xe89040 : 0xe84040;
       this.bossHpBar.fillStyle(hpColor, 0.85);
-      this.bossHpBar.fillRoundedRect(barX, barY + 2, fillWidth, 28, 14);
+      this.bossHpBar.fillRoundedRect(barX, barY + 2, fillWidth, 34, 17);
       this.bossHpBar.fillStyle(0xffffff, 0.15);
-      this.bossHpBar.fillRoundedRect(barX + 4, barY + 5, Math.max(fillWidth - 8, 0), 10, 5);
+      this.bossHpBar.fillRoundedRect(barX + 4, barY + 6, Math.max(fillWidth - 8, 0), 12, 6);
 
       this.bossHpLabel.setText(`${this.bossName || 'BOSS'}  ${Math.ceil(this.bossHpPercent * 100)}%`);
     }
@@ -322,7 +330,7 @@ export class HUDScene extends Phaser.Scene {
       const svgKey = this.getWeaponSvgKey(this.weaponType);
       if (this.weaponIcon.texture.key !== svgKey) {
         this.weaponIcon.setTexture(svgKey);
-        this.weaponIcon.setDisplaySize(32, 32);
+        this.weaponIcon.setDisplaySize(38, 38);
       }
     }
   }
@@ -330,8 +338,8 @@ export class HUDScene extends Phaser.Scene {
   private showStreakPopup(streak: number): void {
     const x = GAME_WIDTH / 2 + (Math.random() - 0.5) * 100;
     const y = GAME_HEIGHT * 0.45;
-    const size = Math.min(52, 26 + streak * 3);
-    const color = streak >= 10 ? '#ffd700' : streak >= 5 ? '#ff6600' : '#ff4444';
+    const size = Math.min(62, 32 + streak * 3);
+    const color = streak >= 10 ? '#ebb654' : streak >= 5 ? '#e8923a' : '#e85454';
     const txt = this.add.text(x, y, `x${streak}`, {
       fontSize: `${size}px`, color, fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 5,
@@ -368,18 +376,18 @@ export class HUDScene extends Phaser.Scene {
     }
 
     const perkCount = uniquePerks.size;
-    const iconSize = 22;
-    const spacing = 28;
+    const iconSize = 26;
+    const spacing = 34;
     const totalW = perkCount * spacing;
-    const trayY = GAME_HEIGHT - 40;
+    const trayY = GAME_HEIGHT - 44;
     const startX = GAME_WIDTH / 2 - totalW / 2 + spacing / 2;
 
     // Background pill
     const bg = this.add.graphics();
-    bg.fillStyle(0x0d1520, 0.7);
-    bg.fillRoundedRect(startX - spacing / 2 - 6, trayY - 14, totalW + 12, 28, 14);
-    bg.lineStyle(1, 0xfbbf24, 0.2);
-    bg.strokeRoundedRect(startX - spacing / 2 - 6, trayY - 14, totalW + 12, 28, 14);
+    bg.fillStyle(0x1c6da3, 0.7);
+    bg.fillRoundedRect(startX - spacing / 2 - 8, trayY - 17, totalW + 16, 34, 17);
+    bg.lineStyle(1, 0xebb654, 0.2);
+    bg.strokeRoundedRect(startX - spacing / 2 - 8, trayY - 17, totalW + 16, 34, 17);
 
     let i = 0;
     for (const { icon, count } of uniquePerks.values()) {
@@ -389,8 +397,8 @@ export class HUDScene extends Phaser.Scene {
       }).setOrigin(0.5);
 
       if (count > 1) {
-        this.add.text(ix + 8, trayY + 6, `${count}`, {
-          fontSize: '8px', color: '#fbbf24', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+        this.add.text(ix + 10, trayY + 7, `${count}`, {
+          fontSize: '12px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
           stroke: '#000', strokeThickness: 2,
         }).setOrigin(0.5);
       }

@@ -602,6 +602,7 @@ export class BossScene extends Phaser.Scene {
     const warningLine = this.add.rectangle(GAME_WIDTH / 2, warningY, GAME_WIDTH, 60, 0xff0000, 0.15);
     const warningText = this.add.text(GAME_WIDTH / 2, warningY, '! CHARGE !', {
       fontSize: '20px', color: '#ff4444', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setAlpha(0.7);
 
     // Flash the warning

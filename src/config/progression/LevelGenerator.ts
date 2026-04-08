@@ -60,8 +60,8 @@ const WORLDS: WorldDef[] = [
     tag: 'goblin',
     displayName: 'Green Meadows',
     theme: {
-      groundColor: 0x2d6b1e, detailColors: [0x3a8528, 0x257018, 0x4a9935, 0x1e5a12],
-      glowColors: [0x44aa22, 0x55cc33, 0x338811], accentColor: 0xff6b6b, accentHex: '#ff6b6b',
+      groundColor: 0x6fbf5e, detailColors: [0x7fcc6e, 0x5aad4a, 0x8fd980, 0x4e9e3e],
+      glowColors: [0xa8e89a, 0xb8f0ab, 0x90dd80], accentColor: 0xff6b6b, accentHex: '#ff6b6b',
     },
     levelNames: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Troll Bridge', 'Demon Gate'],
     enemies: [
@@ -85,8 +85,8 @@ const WORLDS: WorldDef[] = [
     tag: 'infernal',
     displayName: 'Lava Fields',
     theme: {
-      groundColor: 0x8b4513, detailColors: [0x6b3410, 0xa0522d, 0x7a4118, 0x5c2e0e],
-      glowColors: [0xff6600, 0xff4400, 0xcc3300], accentColor: 0xff4400, accentHex: '#ff4400',
+      groundColor: 0xc48a5a, detailColors: [0xb07848, 0xd49e6e, 0xc08050, 0xa06838],
+      glowColors: [0xffaa66, 0xff9955, 0xffbb77], accentColor: 0xff6644, accentHex: '#ff6644',
     },
     levelNames: ['Ember Fields', 'Crimson Gauntlet', 'Hellfire Trench', 'Molten Core', 'Inferno Heart'],
     enemies: [
@@ -110,8 +110,8 @@ const WORLDS: WorldDef[] = [
     tag: 'frost',
     displayName: 'Snow Fields',
     theme: {
-      groundColor: 0xb8d4e8, detailColors: [0xa0c4d8, 0xc8e0f0, 0x90b8d0, 0xd0e8f4],
-      glowColors: [0xddeeff, 0xccddff, 0xeef4ff], accentColor: 0x3399ff, accentHex: '#3399ff',
+      groundColor: 0xd0e8f4, detailColors: [0xc0dcea, 0xdcf0fa, 0xb4d4e6, 0xe4f4fc],
+      glowColors: [0xe8f4ff, 0xddeeff, 0xf0f8ff], accentColor: 0x5cb8ff, accentHex: '#5cb8ff',
     },
     levelNames: ['Frostbite Pass', 'Glacier Ruins', 'Banshee Hollow', 'Ice Citadel', 'The Frozen Throne'],
     enemies: [
@@ -135,8 +135,8 @@ const WORLDS: WorldDef[] = [
     tag: 'plague',
     displayName: 'Swamp Lands',
     theme: {
-      groundColor: 0x4a6b3a, detailColors: [0x3d5c2e, 0x587a48, 0x526e40, 0x3a5828],
-      glowColors: [0x88bb44, 0x66aa22, 0xaacc55], accentColor: 0x2ecc71, accentHex: '#2ecc71',
+      groundColor: 0x7aab6a, detailColors: [0x6b9c5c, 0x8cbc7c, 0x78a868, 0x62944e],
+      glowColors: [0xaadd88, 0x99cc66, 0xbbee99], accentColor: 0x5ed48e, accentHex: '#5ed48e',
     },
     levelNames: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Toxic Depths', 'Plague Heart'],
     enemies: [
@@ -160,8 +160,8 @@ const WORLDS: WorldDef[] = [
     tag: 'ash',
     displayName: 'Desert Sands',
     theme: {
-      groundColor: 0xc4a055, detailColors: [0xb89040, 0xd4b068, 0xa88030, 0xdcc078],
-      glowColors: [0xeedd88, 0xddcc66, 0xffee99], accentColor: 0xc0392b, accentHex: '#c0392b',
+      groundColor: 0xdcc078, detailColors: [0xd0b468, 0xe6cc88, 0xc8a858, 0xf0d898],
+      glowColors: [0xf4e8aa, 0xeede90, 0xfaf0bb], accentColor: 0xe05544, accentHex: '#e05544',
     },
     levelNames: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Dark Sanctum', 'Throne of Ash'],
     enemies: [

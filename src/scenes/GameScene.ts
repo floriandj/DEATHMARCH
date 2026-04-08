@@ -359,7 +359,7 @@ export class GameScene extends Phaser.Scene {
           SoundManager.play('gold_pouch');
           // Float-up text
           const txt = this.add.text(pouch.x, pouch.y, `+${value}g`, {
-            fontSize: '20px', color: '#ffd700', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+            fontSize: '20px', color: '#ebb654', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
             stroke: '#000000', strokeThickness: 3,
           }).setOrigin(0.5);
           this.tweens.add({
@@ -956,7 +956,7 @@ export class GameScene extends Phaser.Scene {
     // Color scheme per type
     const colors: Record<string, { core: number; glow: number; ring: number; icon: string }> = {
       fury:        { core: 0xff4400, glow: 0xff6600, ring: 0xff8800, icon: '\u{1F525}' },
-      heal:        { core: 0x22c55e, glow: 0x4ade80, ring: 0x86efac, icon: '\u{1F49A}' },
+      heal:        { core: 0x4cde39, glow: 0x6be85a, ring: 0x86efac, icon: '\u{1F49A}' },
       curse_slow:  { core: 0x7c3aed, glow: 0x9333ea, ring: 0xa855f7, icon: '\u{1F9CA}' },
       curse_drain: { core: 0xdc2626, glow: 0xef4444, ring: 0xf87171, icon: '\u{1F480}' },
       curse_blind: { core: 0x6b21a8, glow: 0x7e22ce, ring: 0x9333ea, icon: '\u{1F441}\uFE0F' },
@@ -1044,7 +1044,7 @@ export class GameScene extends Phaser.Scene {
 
     const colors: Record<string, { flash: [number, number, number]; text: string }> = {
       fury:        { flash: [255, 80, 0],    text: '#ff6600' },
-      heal:        { flash: [50, 220, 100],   text: '#4ade80' },
+      heal:        { flash: [50, 220, 100],   text: '#6be85a' },
       curse_slow:  { flash: [120, 50, 220],   text: '#a855f7' },
       curse_drain: { flash: [220, 40, 40],    text: '#f87171' },
       curse_blind: { flash: [100, 30, 170],   text: '#9333ea' },

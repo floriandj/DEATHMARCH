@@ -7,18 +7,18 @@ import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 import { PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
 
-const PAD = 28;
+const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
 const F = 'Arial, Helvetica, sans-serif';
-const NODE_R = 34;
+const NODE_R = 41;
 const NODE_SPACING = 160;
 const WORLD_GAP = 80;
 const LOOKAHEAD = 8;
-const C_BG = 0x0f1923;
-const C_PANEL = 0x1a2840;
-const C_BORDER = 0x2a3f5f;
-const C_YELLOW = 0xfbbf24;
-const C_GREEN = 0x22c55e;
+const C_BG = 0x2484c5;
+const C_PANEL = 0x2e92d4;
+const C_BORDER = 0x4aa8e0;
+const C_YELLOW = 0xebb654;
+const C_GREEN = 0x4cde39;
 
 const COL_L = 155;
 const COL_C = GAME_WIDTH / 2;
@@ -37,7 +37,7 @@ export class MenuScene extends Phaser.Scene {
   constructor() { super({ key: 'MenuScene' }); }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0a0f1a');
+    this.cameras.main.setBackgroundColor('#2484c5');
     this.cameras.main.fadeIn(400, 0, 0, 0);
     SoundManager.init();
     PerkManager.instance.syncFromStorage();
@@ -49,64 +49,66 @@ export class MenuScene extends Phaser.Scene {
     const visibleCount = maxUnlocked + 1 + LOOKAHEAD;
 
     // ── Header panel (fixed) ──
-    const headerH = 120;
+    const headerH = 144;
     const hdr = this.add.graphics().setDepth(10);
-    hdr.fillStyle(0x0d1520, 1);
+    hdr.fillStyle(0x1c6da3, 1);
     hdr.fillRect(0, 0, GAME_WIDTH, headerH);
     // Gold accent line at top
-    hdr.fillStyle(0xffd700, 0.9);
+    hdr.fillStyle(0xebb654, 0.9);
     hdr.fillRect(0, 0, GAME_WIDTH, 4);
     // Gradient fade below header (dark → transparent)
     const fadeH = 24;
     for (let s = 0; s < fadeH; s++) {
-      hdr.fillStyle(0x0d1520, 1 - s / fadeH);
+      hdr.fillStyle(0x1c6da3, 1 - s / fadeH);
       hdr.fillRect(0, headerH + s, GAME_WIDTH, 1);
     }
 
-    this.add.text(GAME_WIDTH / 2, 38, 'DEATHMARCH', {
-      fontSize: '34px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
-      stroke: '#b8860b', strokeThickness: 3,
+    this.add.text(GAME_WIDTH / 2, 46, 'DEATHMARCH', {
+      fontSize: '42px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
+      stroke: '#c89530', strokeThickness: 3,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
     // Score pill
-    this.pill(PAD, 72, 145, 34, 0xffd700, 11);
-    this.add.text(PAD + 12, 89, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
-      fontSize: '15px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
+    this.pill(PAD, 88, 174, 41, 0xebb654, 11);
+    this.add.text(PAD + 14, 108, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
+      fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5).setDepth(11);
 
     // Gold pill
-    this.pill(GAME_WIDTH - PAD - 135, 72, 135, 34, 0xffd700, 11);
-    this.add.text(GAME_WIDTH - PAD - 12, 89, `\u{1FA99} ${WalletManager.gold}g`, {
-      fontSize: '15px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
+    this.pill(GAME_WIDTH - PAD - 162, 88, 162, 41, 0xebb654, 11);
+    this.add.text(GAME_WIDTH - PAD - 14, 108, `\u{1FA99} ${WalletManager.gold}g`, {
+      fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(1, 0.5).setDepth(11);
 
     // ── Footer (fixed) ──
-    const footH = 80;
+    const footH = 96;
     const foot = this.add.graphics().setDepth(10);
-    foot.fillStyle(0x0d1520, 1);
+    foot.fillStyle(0x1c6da3, 1);
     foot.fillRect(0, GAME_HEIGHT - footH, GAME_WIDTH, footH);
-    foot.lineStyle(1, 0xffd700, 0.15);
+    foot.lineStyle(1, 0xebb654, 0.15);
     foot.lineBetween(0, GAME_HEIGHT - footH, GAME_WIDTH, GAME_HEIGHT - footH);
 
-    const settBtnW = 220, settBtnH = 52;
+    const settBtnW = 260, settBtnH = 62;
     const settBtnX = GAME_WIDTH / 2, settBtnY = GAME_HEIGHT - footH / 2;
     const settBg = this.add.graphics().setDepth(11);
-    settBg.fillStyle(0x1a2840, 1);
+    settBg.fillStyle(0x2e92d4, 1);
     settBg.fillRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
-    settBg.lineStyle(1.5, 0xffd700, 0.3);
+    settBg.lineStyle(1.5, 0xebb654, 0.3);
     settBg.strokeRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
 
     const settBtn = this.add.text(settBtnX, settBtnY, '\u2699  SETTINGS', {
-      fontSize: '22px', color: '#94a3b8', fontFamily: F, fontStyle: 'bold',
-      stroke: '#b8860b', strokeThickness: 1,
+      fontSize: '26px', color: '#8fb0c4', fontFamily: F, fontStyle: 'bold',
+      stroke: '#c89530', strokeThickness: 1,
     }).setOrigin(0.5).setDepth(11);
 
     const settHit = this.add.zone(settBtnX, settBtnY, settBtnW, settBtnH)
       .setInteractive({ useHandCursor: true }).setDepth(12);
     settHit.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
     settHit.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settHit.on('pointerout', () => settBtn.setColor('#94a3b8'));
+    settHit.on('pointerout', () => settBtn.setColor('#8fb0c4'));
 
     // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
@@ -152,7 +154,7 @@ export class MenuScene extends Phaser.Scene {
 
   private buildPositions(count: number): { x: number; y: number }[] {
     const pos: { x: number; y: number }[] = [];
-    let y = 180;
+    let y = 210;
     for (let i = 0; i < count; i++) {
       if (i > 0 && i % 5 === 0) y += WORLD_GAP;
       pos.push({ x: getNodeX(i), y }); y += NODE_SPACING;
@@ -198,7 +200,7 @@ export class MenuScene extends Phaser.Scene {
       const lvl = generateLevel(world.startLevel);
       const accent = lvl.theme.accentColor;
 
-      const ribbonW = 300, ribbonH = 32, notchW = 12;
+      const ribbonW = 360, ribbonH = 38, notchW = 14;
       const rx = GAME_WIDTH / 2 - ribbonW / 2;
       const bg = this.add.graphics();
       bg.fillStyle(accent, 0.85);
@@ -226,7 +228,7 @@ export class MenuScene extends Phaser.Scene {
       this.scrollContainer.add(bg);
 
       this.scrollContainer.add(this.add.text(GAME_WIDTH / 2, y, world.name.toUpperCase(), {
-        fontSize: '13px', color: '#ffffff', fontFamily: F, fontStyle: 'bold', letterSpacing: 4,
+        fontSize: '18px', color: '#ffffff', fontFamily: F, fontStyle: 'bold', letterSpacing: 4,
         stroke: '#000', strokeThickness: 1,
       }).setOrigin(0.5));
     }
@@ -245,7 +247,7 @@ export class MenuScene extends Phaser.Scene {
       if (isCurrent) {
         // Glow
         const glow = this.add.graphics();
-        glow.fillStyle(0xffd700, 0.12);
+        glow.fillStyle(0xebb654, 0.12);
         glow.fillCircle(0, 0, NODE_R + 12);
         nc.add(glow);
         this.tweens.add({ targets: glow, alpha: { from: 0.1, to: 0.4 }, scale: { from: 0.95, to: 1.1 },
@@ -257,22 +259,23 @@ export class MenuScene extends Phaser.Scene {
         ng.fillCircle(0, 0, NODE_R);
         ng.fillStyle(0xffffff, 0.2);
         ng.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.65);
-        ng.lineStyle(3, 0xffd700, 0.8);
+        ng.lineStyle(3, 0xebb654, 0.8);
         ng.strokeCircle(0, 0, NODE_R);
         ng.lineStyle(1.5, 0xffffff, 0.3);
         ng.strokeCircle(0, 0, NODE_R - 3);
         nc.add(ng);
 
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '22px', color: '#fff', fontFamily: F, fontStyle: 'bold',
+          fontSize: '26px', color: '#fff', fontFamily: F, fontStyle: 'bold',
           stroke: '#000', strokeThickness: 2,
         }).setOrigin(0.5));
 
-        nc.add(this.add.text(0, NODE_R + 16, lvl.name.toUpperCase(), {
-          fontSize: '11px', color: '#4ade80', fontFamily: F, fontStyle: 'bold',
+        nc.add(this.add.text(0, NODE_R + 18, lvl.name.toUpperCase(), {
+          fontSize: '18px', color: '#6be85a', fontFamily: F, fontStyle: 'bold',
+          stroke: '#1a3a4a', strokeThickness: 2,
         }).setOrigin(0.5));
 
-        this.createPlayButton(x, y + NODE_R + 48);
+        this.createPlayButton(x, y + NODE_R + 56);
 
       } else if (isCompleted) {
         const ng = this.add.graphics();
@@ -282,7 +285,7 @@ export class MenuScene extends Phaser.Scene {
         ng.fillCircle(0, -NODE_R * 0.2, NODE_R * 0.55);
         nc.add(ng);
         nc.add(this.add.text(0, -2, '\u2713', {
-          fontSize: '22px', color: '#fff', fontFamily: F, fontStyle: 'bold',
+          fontSize: '26px', color: '#fff', fontFamily: F, fontStyle: 'bold',
           stroke: '#000', strokeThickness: 2,
         }).setOrigin(0.5));
 
@@ -294,7 +297,8 @@ export class MenuScene extends Phaser.Scene {
         ng.strokeCircle(0, 0, NODE_R - 4);
         nc.add(ng);
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '16px', color: '#475569', fontFamily: F, fontStyle: 'bold',
+          fontSize: '20px', color: '#4a7088', fontFamily: F, fontStyle: 'bold',
+          stroke: '#1a3a4a', strokeThickness: 2,
         }).setOrigin(0.5));
       }
 
@@ -314,7 +318,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createPlayButton(x: number, y: number): void {
-    const w = 150, h = 42, r = h / 2;
+    const w = 180, h = 52, r = h / 2;
     const c = this.add.container(x, y);
 
     const sh = this.add.graphics();
@@ -323,7 +327,7 @@ export class MenuScene extends Phaser.Scene {
     c.add(sh);
 
     const bg = this.add.graphics();
-    bg.fillStyle(0x16a34a, 1);
+    bg.fillStyle(0x3cb82e, 1);
     bg.fillRoundedRect(-w / 2, -r, w, h, r);
     bg.fillStyle(C_GREEN, 1);
     bg.fillRoundedRect(-w / 2, -r, w, h * 0.5, { tl: r, tr: r, bl: 4, br: 4 });
@@ -332,7 +336,7 @@ export class MenuScene extends Phaser.Scene {
     c.add(bg);
 
     c.add(this.add.text(0, 0, '\u25B6  PLAY', {
-      fontSize: '20px', color: '#fff', fontFamily: F, fontStyle: 'bold',
+      fontSize: '24px', color: '#fff', fontFamily: F, fontStyle: 'bold',
       stroke: '#000', strokeThickness: 1,
     }).setOrigin(0.5));
 
@@ -352,25 +356,26 @@ export class MenuScene extends Phaser.Scene {
     if (activePerks.length === 0) return;
 
     // Draw perks in a row above the footer
-    const footH = 80;
-    const perkY = GAME_HEIGHT - footH - 50;
-    const perkBarW = Math.min(CW, activePerks.length * 44 + 24);
+    const footH = 96;
+    const perkY = GAME_HEIGHT - footH - 58;
+    const perkBarW = Math.min(CW, activePerks.length * 52 + 28);
     const startX = (GAME_WIDTH - perkBarW) / 2;
 
     // Background panel
     const bg = this.add.graphics().setDepth(10);
-    bg.fillStyle(0x1a2840, 0.9);
-    bg.fillRoundedRect(startX, perkY - 18, perkBarW, 36, 18);
-    bg.lineStyle(1, 0xfbbf24, 0.3);
-    bg.strokeRoundedRect(startX, perkY - 18, perkBarW, 36, 18);
+    bg.fillStyle(0x2e92d4, 0.9);
+    bg.fillRoundedRect(startX, perkY - 22, perkBarW, 44, 22);
+    bg.lineStyle(1, 0xebb654, 0.3);
+    bg.strokeRoundedRect(startX, perkY - 22, perkBarW, 44, 22);
 
     // Label
-    this.add.text(startX + 12, perkY, 'PERKS', {
-      fontSize: '9px', color: '#fbbf24', fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
+    this.add.text(startX + 14, perkY, 'PERKS', {
+      fontSize: '14px', color: '#ebb654', fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
+      stroke: '#1a3a4a', strokeThickness: 1,
     }).setOrigin(0, 0.5).setDepth(11);
 
     // Perk icons
-    const iconStartX = startX + 60;
+    const iconStartX = startX + 72;
     const uniquePerks = new Map<string, { perk: typeof activePerks[0]; count: number }>();
     for (const p of activePerks) {
       const existing = uniquePerks.get(p.id);
@@ -380,14 +385,14 @@ export class MenuScene extends Phaser.Scene {
 
     let i = 0;
     for (const { perk, count } of uniquePerks.values()) {
-      const ix = iconStartX + i * 40;
+      const ix = iconStartX + i * 48;
       const icon = this.add.text(ix, perkY, perk.icon, {
-        fontSize: '18px',
+        fontSize: '22px',
       }).setOrigin(0.5).setDepth(11);
 
       if (count > 1) {
-        this.add.text(ix + 10, perkY + 8, `x${count}`, {
-          fontSize: '9px', color: '#fbbf24', fontFamily: F, fontStyle: 'bold',
+        this.add.text(ix + 12, perkY + 10, `x${count}`, {
+          fontSize: '12px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
           stroke: '#000', strokeThickness: 2,
         }).setOrigin(0.5).setDepth(11);
       }

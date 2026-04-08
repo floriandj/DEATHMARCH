@@ -5,12 +5,12 @@ import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 import { registerSW } from 'virtual:pwa-register';
 
-const PAD = 28;
+const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
 const F = 'Arial, Helvetica, sans-serif';
-const C_PANEL = 0x1a2840;
-const C_BORDER = 0x2a3f5f;
-const C_YELLOW = 0xfbbf24;
+const C_PANEL = 0x2e92d4;
+const C_BORDER = 0x4aa8e0;
+const C_YELLOW = 0xebb654;
 
 export class SettingsScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
@@ -20,57 +20,59 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0a0f1a');
+    this.cameras.main.setBackgroundColor('#2484c5');
 
     // Header
     const hdr = this.add.graphics();
-    hdr.fillStyle(0x0d1520, 1);
-    hdr.fillRect(0, 0, GAME_WIDTH, 84);
-    hdr.fillStyle(0xffd700, 0.9);
+    hdr.fillStyle(0x1c6da3, 1);
+    hdr.fillRect(0, 0, GAME_WIDTH, 100);
+    hdr.fillStyle(0xebb654, 0.9);
     hdr.fillRect(0, 0, GAME_WIDTH, 3);
-    hdr.lineStyle(1, 0xffd700, 0.2);
-    hdr.lineBetween(0, 84, GAME_WIDTH, 84);
+    hdr.lineStyle(1, 0xebb654, 0.2);
+    hdr.lineBetween(0, 100, GAME_WIDTH, 100);
 
-    this.add.text(GAME_WIDTH / 2, 46, '\u2699  SETTINGS', {
-      fontSize: '32px', color: '#ffd700', fontFamily: F, fontStyle: 'bold',
-      stroke: '#b8860b', strokeThickness: 2,
+    this.add.text(GAME_WIDTH / 2, 54, '\u2699  SETTINGS', {
+      fontSize: '38px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
+      stroke: '#c89530', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5);
 
-    let y = 100;
+    let y = 118;
     const vs = Math.min(1.3, Math.max(0.85, GAME_HEIGHT / 1280));
 
     // ── Sections ──
-    y = this.section(y, 'APP UPDATE', 'Force-refresh to the latest version', 0x3b82f6, 'UPDATE', () => this.hardUpdate(), vs);
+    y = this.section(y, 'APP UPDATE', 'Force-refresh to the latest version', 0x2e92d4, 'UPDATE', () => this.hardUpdate(), vs);
     y = this.section(y, 'CLEAR CACHE', 'Wipe service worker cache and reload', C_YELLOW, 'CLEAR', () => this.clearCache(), vs);
-    y = this.section(y, 'SOUND', SoundManager.isMuted ? 'Sound is OFF' : 'Sound is ON', 0x22c55e, SoundManager.isMuted ? 'UNMUTE' : 'MUTE', () => {
+    y = this.section(y, 'SOUND', SoundManager.isMuted ? 'Sound is OFF' : 'Sound is ON', 0x4cde39, SoundManager.isMuted ? 'UNMUTE' : 'MUTE', () => {
       SoundManager.toggleMute();
       this.scene.restart();
     }, vs);
-    y = this.section(y, 'RESET GAME', 'Wipe ALL progress, gold, and scores', 0xef4444, 'RESET', () => this.resetAll(), vs);
+    y = this.section(y, 'RESET GAME', 'Wipe ALL progress, gold, and scores', 0xe85454, 'RESET', () => this.resetAll(), vs);
 
     // Status text
     this.statusText = this.add.text(GAME_WIDTH / 2, y + 10, '', {
-      fontSize: `${Math.round(14 * vs)}px`, color: '#4ade80', fontFamily: F, align: 'center',
+      fontSize: `${Math.round(17 * vs)}px`, color: '#6be85a', fontFamily: F, align: 'center',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setWordWrapWidth(CW);
 
     // Version info
     const verBg = this.add.graphics();
-    verBg.fillStyle(0x0d1520, 0.8);
-    verBg.fillRoundedRect(PAD, GAME_HEIGHT - 124, CW, 48, 14);
-    verBg.lineStyle(1, 0xffd700, 0.15);
-    verBg.strokeRoundedRect(PAD, GAME_HEIGHT - 124, CW, 48, 14);
-    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 100, `DEATHMARCH v2.0  \u2022  ${new Date().toISOString().slice(0, 10)}`, {
-      fontSize: '12px', color: '#b8860b', fontFamily: F,
+    verBg.fillStyle(0x1c6da3, 0.8);
+    verBg.fillRoundedRect(PAD, GAME_HEIGHT - 140, CW, 58, 17);
+    verBg.lineStyle(1, 0xebb654, 0.15);
+    verBg.strokeRoundedRect(PAD, GAME_HEIGHT - 140, CW, 58, 17);
+    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 111, `DEATHMARCH v2.0  \u2022  ${new Date().toISOString().slice(0, 10)}`, {
+      fontSize: '16px', color: '#c89530', fontFamily: F,
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5);
 
     // Back button
-    this.gradientBtn(GAME_WIDTH / 2, GAME_HEIGHT - 50, '\u2190  BACK', CW, Math.round(52 * vs), 0x374151, 0x1f2937, '#9ca3af',
+    this.gradientBtn(GAME_WIDTH / 2, GAME_HEIGHT - 56, '\u2190  BACK', CW, Math.round(62 * vs), 0x3090c8, 0x1c6da3, '#8fb0c4',
       () => this.scene.start('MenuScene'));
   }
 
   private section(y: number, title: string, desc: string, color: number, btnLabel: string, cb: () => void, vs: number): number {
-    const h = Math.round(90 * vs);
+    const h = Math.round(108 * vs);
 
     // Panel
     const g = this.add.graphics();
@@ -82,20 +84,22 @@ export class SettingsScene extends Phaser.Scene {
     g.fillStyle(color, 0.9);
     g.fillRoundedRect(PAD + 2, y + 2, CW - 4, 5, { tl: 12, tr: 12, bl: 0, br: 0 });
     // Accent dot
-    g.fillStyle(0xffd700, 0.5);
-    g.fillCircle(PAD + 20, y + Math.round(32 * vs), 5);
+    g.fillStyle(0xebb654, 0.5);
+    g.fillCircle(PAD + 20, y + Math.round(38 * vs), 6);
 
-    this.add.text(PAD + 34, y + Math.round(28 * vs), title, {
-      fontSize: `${Math.round(17 * vs)}px`, color: '#e2e8f0', fontFamily: F, fontStyle: 'bold',
+    this.add.text(PAD + 34, y + Math.round(34 * vs), title, {
+      fontSize: `${Math.round(20 * vs)}px`, color: '#d4e6f0', fontFamily: F, fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
 
-    this.add.text(PAD + 34, y + Math.round(52 * vs), desc, {
-      fontSize: `${Math.round(12 * vs)}px`, color: '#64748b', fontFamily: F,
+    this.add.text(PAD + 34, y + Math.round(62 * vs), desc, {
+      fontSize: `${Math.round(16 * vs)}px`, color: '#6a8ea0', fontFamily: F,
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
 
     // Button
-    const bw = Math.round(100 * vs), bh = Math.round(36 * vs);
-    const bx = PAD + CW - Math.round(60 * vs);
+    const bw = Math.round(120 * vs), bh = Math.round(43 * vs);
+    const bx = PAD + CW - Math.round(72 * vs);
     const c = this.add.container(bx, y + h / 2);
     const bg = this.add.graphics();
     bg.fillStyle(color, 0.85);
@@ -104,7 +108,8 @@ export class SettingsScene extends Phaser.Scene {
     bg.fillRoundedRect(-bw / 2 + 2, -bh / 2 + 2, bw - 4, bh * 0.4, { tl: bh / 2 - 1, tr: bh / 2 - 1, bl: 0, br: 0 });
     c.add(bg);
     c.add(this.add.text(0, 0, btnLabel, {
-      fontSize: `${Math.round(14 * vs)}px`, color: '#fff', fontFamily: F, fontStyle: 'bold',
+      fontSize: `${Math.round(18 * vs)}px`, color: '#fff', fontFamily: F, fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
     const hit = this.add.zone(0, 0, bw + 16, bh + 8).setInteractive({ useHandCursor: true });
     c.add(hit);
@@ -113,7 +118,7 @@ export class SettingsScene extends Phaser.Scene {
       this.tweens.add({ targets: c, scale: 0.92, duration: 50, yoyo: true, onComplete: () => { c.setScale(1); cb(); } });
     });
 
-    return y + h + Math.round(10 * vs);
+    return y + h + Math.round(12 * vs);
   }
 
   private gradientBtn(x: number, y: number, label: string, w: number, h: number, cTop: number, cBot: number, tColor: string, cb: () => void): void {
@@ -132,14 +137,15 @@ export class SettingsScene extends Phaser.Scene {
     bg.fillRoundedRect(-w / 2 + 4, -r + 3, w - 8, h * 0.28, { tl: r - 3, tr: r - 3, bl: 0, br: 0 });
     c.add(bg);
     c.add(this.add.text(0, 0, label, {
-      fontSize: '18px', color: tColor, fontFamily: F, fontStyle: 'bold',
+      fontSize: '22px', color: tColor, fontFamily: F, fontStyle: 'bold',
+      stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
     const hit = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
     c.add(hit);
     hit.on('pointerdown', () => { SoundManager.play('button_click'); cb(); });
   }
 
-  private showStatus(msg: string, color: string = '#4ade80'): void {
+  private showStatus(msg: string, color: string = '#6be85a'): void {
     this.statusText.setColor(color).setText(msg);
     this.tweens.add({ targets: this.statusText, alpha: { from: 0, to: 1 }, duration: 300 });
   }
@@ -148,7 +154,7 @@ export class SettingsScene extends Phaser.Scene {
     this.showStatus('Checking for updates...');
     try {
       const updateSW = registerSW({ immediate: true, onNeedRefresh() { updateSW(true); },
-        onOfflineReady: () => { this.showStatus('Already up to date.', '#fbbf24'); } });
+        onOfflineReady: () => { this.showStatus('Already up to date.', '#ebb654'); } });
       this.time.delayedCall(3000, () => { this.showStatus('Reloading...', '#38bdf8'); this.time.delayedCall(500, () => window.location.reload()); });
     } catch { this.showStatus('Reloading...', '#38bdf8'); this.time.delayedCall(500, () => window.location.reload()); }
   }

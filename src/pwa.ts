@@ -21,8 +21,8 @@ function showUpdateBanner() {
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1a1a2e;
-      border: 2px solid #ff4040;
+      background: #2484c5;
+      border: 2px solid #5cb8ff;
       border-radius: 12px;
       padding: 16px 24px;
       display: flex;
