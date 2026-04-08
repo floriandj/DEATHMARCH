@@ -88,7 +88,7 @@ export class HUDScene extends Phaser.Scene {
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 5, fill: true, stroke: false },
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 44, level.theme.worldName, {
-      fontSize: '16px', color: '#6a8ea0', fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: 3,
+      fontSize: '16px', color: '#a8c8d8', fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: 3,
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: HUD_SHADOW,
     }).setOrigin(0.5));
@@ -133,7 +133,7 @@ export class HUDScene extends Phaser.Scene {
 
     // Distance (center, subtle gold)
     this.distanceText = this.add.text(GAME_WIDTH / 2, 30, '0m', {
-      fontSize: '18px', color: '#c89530', fontFamily: 'Arial, Helvetica, sans-serif',
+      fontSize: '18px', color: '#e0b050', fontFamily: 'Arial, Helvetica, sans-serif',
       stroke: '#000000', strokeThickness: 2,
       shadow: HUD_SHADOW,
     }).setOrigin(0.5);

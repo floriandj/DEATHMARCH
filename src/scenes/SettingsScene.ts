@@ -33,7 +33,7 @@ export class SettingsScene extends Phaser.Scene {
 
     this.add.text(GAME_WIDTH / 2, 54, '\u2699  SETTINGS', {
       fontSize: '38px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
-      stroke: '#c89530', strokeThickness: 2,
+      stroke: '#e0b050', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5);
 
@@ -62,12 +62,12 @@ export class SettingsScene extends Phaser.Scene {
     verBg.lineStyle(1, 0xebb654, 0.15);
     verBg.strokeRoundedRect(PAD, GAME_HEIGHT - 140, CW, 58, 17);
     this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 111, `DEATHMARCH v2.0  \u2022  ${new Date().toISOString().slice(0, 10)}`, {
-      fontSize: '16px', color: '#c89530', fontFamily: F,
+      fontSize: '16px', color: '#e0b050', fontFamily: F,
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5);
 
     // Back button
-    this.gradientBtn(GAME_WIDTH / 2, GAME_HEIGHT - 56, '\u2190  BACK', CW, Math.round(62 * vs), 0x3090c8, 0x1c6da3, '#8fb0c4',
+    this.gradientBtn(GAME_WIDTH / 2, GAME_HEIGHT - 56, '\u2190  BACK', CW, Math.round(62 * vs), 0x3090c8, 0x1c6da3, '#d4e8f4',
       () => this.scene.start('MenuScene'));
   }
 
@@ -93,7 +93,7 @@ export class SettingsScene extends Phaser.Scene {
     }).setOrigin(0, 0.5);
 
     this.add.text(PAD + 34, y + Math.round(62 * vs), desc, {
-      fontSize: `${Math.round(16 * vs)}px`, color: '#6a8ea0', fontFamily: F,
+      fontSize: `${Math.round(16 * vs)}px`, color: '#a8c8d8', fontFamily: F,
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
 

@@ -84,7 +84,7 @@ export class SplashScene extends Phaser.Scene {
       color: '#ebb654',
       fontFamily: 'Arial, Helvetica, sans-serif',
       fontStyle: 'bold',
-      stroke: '#c89530',
+      stroke: '#e0b050',
       strokeThickness: 4,
       shadow: { offsetX: 2, offsetY: 3, color: '#000000', blur: 6, fill: true },
     }).setOrigin(0.5).setAlpha(0).setScale(1.8);
@@ -112,7 +112,7 @@ export class SplashScene extends Phaser.Scene {
       .setAlpha(0);
 
     const versionText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT * 0.53 + vBadgeH / 2, 'v2.0', {
-      fontSize: '16px', color: '#c89530', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      fontSize: '16px', color: '#e0b050', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setAlpha(0);
 

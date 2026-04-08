@@ -73,7 +73,7 @@ export class GameOverScene extends Phaser.Scene {
     this.tweens.add({ targets: title, scale: 1, alpha: 1, duration: 500, ease: 'Back.easeOut' });
 
     this.add.text(GAME_WIDTH / 2, y + titleH * 0.65, `Level ${levelIndex + 1} \u2022 ${level.name}`, {
-      fontSize: `${Math.round(20 * vs)}px`, color: '#8fb0c4', fontFamily: F, fontStyle: 'bold',
+      fontSize: `${Math.round(20 * vs)}px`, color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
     }).setOrigin(0.5);
@@ -103,7 +103,7 @@ export class GameOverScene extends Phaser.Scene {
     const scoreRowY = y + Math.round(36 * vs);
     this.iconBadge(PAD + 22, scoreRowY, '\u2B50', C_YELLOW, vs);
     this.add.text(PAD + Math.round(62 * vs), scoreRowY, 'SCORE', {
-      fontSize: `${Math.round(18 * vs)}px`, color: '#8fb0c4', fontFamily: F, fontStyle: 'bold',
+      fontSize: `${Math.round(18 * vs)}px`, color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
     const scoreVal = this.add.text(PAD + CW - 22, scoreRowY + Math.round(7 * vs), '0', {
@@ -165,7 +165,7 @@ export class GameOverScene extends Phaser.Scene {
       this.panel(PAD, y, CW, perkH, isVictory ? 0xa864e8 : 0xe8923a);
       const perkLabel = isVictory ? 'ACTIVE PERKS' :
         (activePerks.length > 0 ? `\u{1F6A9} CHECKPOINT PERKS (LVL ${checkpointLvl + 1})` : 'NO CHECKPOINT PERKS');
-      const labelColor = isVictory ? '#c084fc' : (activePerks.length > 0 ? '#fb923c' : '#8fb0c4');
+      const labelColor = isVictory ? '#c084fc' : (activePerks.length > 0 ? '#fb923c' : '#d4e8f4');
       this.add.text(PAD + 16, y + perkH * 0.35, perkLabel, {
         fontSize: `${Math.round(14 * vs)}px`, color: labelColor, fontFamily: F, fontStyle: 'bold', letterSpacing: 1,
         stroke: '#1a3a4a', strokeThickness: 2,
@@ -243,7 +243,7 @@ export class GameOverScene extends Phaser.Scene {
       this.btn(btnY, retryLabel, C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 500);
       btnY += btnH + btnGap;
     }
-    this.btn(btnY, '\u2630  LEVELS', 0x3090c8, 0x1c6da3, '#8fb0c4', () => this.scene.start('MenuScene'), canAdvance ? 700 : 600);
+    this.btn(btnY, '\u2630  LEVELS', 0x3090c8, 0x1c6da3, '#d4e8f4', () => this.scene.start('MenuScene'), canAdvance ? 700 : 600);
   }
 
   // ── Dark panel with colored top accent bar ──
@@ -287,7 +287,7 @@ export class GameOverScene extends Phaser.Scene {
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
     this.add.text(PAD + Math.round(62 * vs), y + Math.round(24 * vs), hint, {
-      fontSize: `${Math.round(16 * vs)}px`, color: '#6a8ea0', fontFamily: F,
+      fontSize: `${Math.round(16 * vs)}px`, color: '#a8c8d8', fontFamily: F,
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
 
@@ -303,7 +303,7 @@ export class GameOverScene extends Phaser.Scene {
     }
     c.add(bg);
     c.add(this.add.text(0, 0, costStr, {
-      fontSize: `${Math.round(18 * vs)}px`, color: canBuy ? '#fff' : '#6a8ea0', fontFamily: F, fontStyle: 'bold',
+      fontSize: `${Math.round(18 * vs)}px`, color: canBuy ? '#fff' : '#a8c8d8', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
 

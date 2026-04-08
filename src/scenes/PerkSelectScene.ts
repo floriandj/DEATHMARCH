@@ -45,7 +45,7 @@ export class PerkSelectScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.add.text(GAME_WIDTH / 2, 120, 'Choose a perk for your run', {
-      fontSize: '20px', color: '#8fb0c4', fontFamily: F,
+      fontSize: '20px', color: '#d4e8f4', fontFamily: F,
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5);
 
@@ -92,12 +92,12 @@ export class PerkSelectScene extends Phaser.Scene {
 
     // ── Skip button (subtle, bottom) ──
     const skipText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 60, 'SKIP', {
-      fontSize: '20px', color: '#6a8ea0', fontFamily: F, fontStyle: 'bold',
+      fontSize: '20px', color: '#a8c8d8', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-    skipText.on('pointerover', () => skipText.setColor('#8fb0c4'));
-    skipText.on('pointerout', () => skipText.setColor('#6a8ea0'));
+    skipText.on('pointerover', () => skipText.setColor('#d4e8f4'));
+    skipText.on('pointerout', () => skipText.setColor('#a8c8d8'));
     skipText.on('pointerdown', () => {
       this.selectPerk(null, data);
     });
@@ -164,7 +164,7 @@ export class PerkSelectScene extends Phaser.Scene {
 
     // Description
     container.add(this.add.text(0, -h / 2 + 210, perk.description, {
-      fontSize: '16px', color: '#8fb0c4', fontFamily: F,
+      fontSize: '16px', color: '#d4e8f4', fontFamily: F,
       wordWrap: { width: w - 34 }, align: 'center', lineSpacing: 4,
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },

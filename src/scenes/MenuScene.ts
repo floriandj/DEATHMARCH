@@ -74,7 +74,7 @@ export class MenuScene extends Phaser.Scene {
 
     this.add.text(GAME_WIDTH / 2, 46, 'DEATHMARCH', {
       fontSize: '42px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
-      stroke: '#c89530', strokeThickness: 3,
+      stroke: '#e0b050', strokeThickness: 3,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
@@ -127,8 +127,8 @@ export class MenuScene extends Phaser.Scene {
     settBg.strokeRoundedRect(settBtnX - settBtnW / 2, settBtnY - settBtnH / 2, settBtnW, settBtnH, settBtnH / 2);
 
     const settBtn = this.add.text(settBtnX, settBtnY, '\u2699  SETTINGS', {
-      fontSize: '26px', color: '#8fb0c4', fontFamily: F, fontStyle: 'bold',
-      stroke: '#c89530', strokeThickness: 1,
+      fontSize: '26px', color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
+      stroke: '#e0b050', strokeThickness: 1,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
@@ -136,7 +136,7 @@ export class MenuScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true }).setDepth(12);
     settHit.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
     settHit.on('pointerover', () => settBtn.setColor('#ffffff'));
-    settHit.on('pointerout', () => settBtn.setColor('#8fb0c4'));
+    settHit.on('pointerout', () => settBtn.setColor('#d4e8f4'));
 
     // ── Scrollable map ──
     this.scrollContainer = this.add.container(0, 0).setDepth(5);
@@ -343,7 +343,7 @@ export class MenuScene extends Phaser.Scene {
         ng.strokeCircle(0, 0, NODE_R - 4);
         nc.add(ng);
         nc.add(this.add.text(0, -2, String(i + 1), {
-          fontSize: '20px', color: '#4a7088', fontFamily: F, fontStyle: 'bold',
+          fontSize: '20px', color: '#7aaabb', fontFamily: F, fontStyle: 'bold',
           stroke: '#1a3a4a', strokeThickness: 2,
           shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
         }).setOrigin(0.5));
