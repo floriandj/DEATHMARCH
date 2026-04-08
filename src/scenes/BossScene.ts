@@ -7,6 +7,8 @@ import {
   BULLET_POOL_SIZE,
   ARMY_INPUT_Y_RANGE,
   ARMY_Y_OFFSET_MAX,
+  ARMY_LATERAL_SPEED,
+  ARMY_VERTICAL_SPEED,
   ENTITY_SCALE,
   SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
@@ -194,9 +196,11 @@ export class BossScene extends Phaser.Scene {
     const dt = delta / 1000;
     this.input_handler.update(dt);
     const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
-    this.armyX = normalized * (FIELD_WIDTH / 2);
+    this.armyX += normalized * ARMY_LATERAL_SPEED * dt;
+    this.armyX = Phaser.Math.Clamp(this.armyX, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
     const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
-    this.armyYOffset = normalizedY * ARMY_Y_OFFSET_MAX;
+    this.armyYOffset += normalizedY * ARMY_VERTICAL_SPEED * dt;
+    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_MAX, ARMY_Y_OFFSET_MAX);
     this.respawnArmy();
 
     // 1b. Unit physics

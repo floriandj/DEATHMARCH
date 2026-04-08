@@ -21,7 +21,9 @@ export const FORMATION_SPACING = 30; // pixels between units in formation
 
 // Army movement (shared between GameScene and BossScene)
 export const ARMY_INPUT_Y_RANGE = 200; // drag range for Y input normalization (lower = more responsive)
-export const ARMY_Y_OFFSET_MAX = 350; // max pixels the army can nudge forward/back
+export const ARMY_Y_OFFSET_MAX = 240; // max pixels the army can nudge forward/back
+export const ARMY_LATERAL_SPEED = 340; // pixels per second for joystick X movement
+export const ARMY_VERTICAL_SPEED = 220; // pixels per second for joystick Y movement
 
 // Gates
 export const GATE_INTERVAL = 800; // meters between gate pairs
