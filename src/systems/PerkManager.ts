@@ -75,6 +75,25 @@ export class PerkManager {
     return PerkManager._instance;
   }
 
+  /** Re-sync in-memory state with localStorage (call when returning to menu) */
+  syncFromStorage(): void {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      this.activePerks = [];
+      this.runStreak = 0;
+      this.ironWillUsed = false;
+      return;
+    }
+    try {
+      const data: CheckpointData = JSON.parse(raw);
+      this.activePerks = data.perks || [];
+      this.runStreak = data.streak || 0;
+    } catch {
+      this.activePerks = [];
+      this.runStreak = 0;
+    }
+  }
+
   // ── Perk management ──
 
   addPerk(id: string): void {

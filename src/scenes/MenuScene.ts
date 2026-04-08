@@ -40,6 +40,7 @@ export class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#0a0f1a');
     this.cameras.main.fadeIn(400, 0, 0, 0);
     SoundManager.init();
+    PerkManager.instance.syncFromStorage();
 
     const mgr = LevelManager.instance;
     const savedLevel = parseInt(localStorage.getItem('deathmarch-level') || '0', 10);
