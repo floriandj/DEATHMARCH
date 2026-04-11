@@ -211,22 +211,28 @@ export class GameScene extends Phaser.Scene {
       duration: 800, yoyo: true, repeat: 2, ease: 'Sine.easeInOut',
     });
 
-    const hint = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 180, 'USE THE JOYSTICK\nTO GUIDE YOUR ARMY', {
+    const isMobile = !this.sys.game.device.os.desktop;
+    const hintText = isMobile ? 'USE THE JOYSTICK\nTO GUIDE YOUR ARMY' : 'USE WASD OR ARROW KEYS\nTO GUIDE YOUR ARMY';
+    const hint = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 180, hintText, {
       fontSize: '28px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
       align: 'center',
     }).setOrigin(0.5).setDepth(101);
 
-    const tap = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 40, 'Tap anywhere to start', {
+    const tapText = isMobile ? 'Tap anywhere to start' : 'Press any key or click to start';
+    const tap = this.add.text(GAME_WIDTH / 2, this.armyWorldY - 40, tapText, {
       fontSize: '16px', color: '#888888', fontFamily: 'Arial, Helvetica, sans-serif',
     }).setOrigin(0.5).setDepth(101);
 
-    // Dismiss on tap
-    this.input.once('pointerdown', () => {
+    // Dismiss on tap or keypress
+    const dismissTutorial = () => {
       this.tweens.add({
         targets: [overlay, hand, hint, tap], alpha: 0, duration: 300,
         onComplete: () => { overlay.destroy(); hand.destroy(); hint.destroy(); tap.destroy(); },
       });
-    });
+      this.input.keyboard?.off('keydown', dismissTutorial);
+    };
+    this.input.once('pointerdown', dismissTutorial);
+    this.input.keyboard?.once('keydown', dismissTutorial);
   }
 
   update(_time: number, delta: number): void {

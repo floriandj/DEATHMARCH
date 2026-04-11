@@ -19,6 +19,14 @@ export class InputHandler {
   private joystickBase: Phaser.GameObjects.Graphics;
   private joystickThumb: Phaser.GameObjects.Graphics;
 
+  // Keyboard support
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
+  private keyW: Phaser.Input.Keyboard.Key | undefined;
+  private keyA: Phaser.Input.Keyboard.Key | undefined;
+  private keyS: Phaser.Input.Keyboard.Key | undefined;
+  private keyD: Phaser.Input.Keyboard.Key | undefined;
+  private keyboardActive: boolean = false;
+
   constructor(scene: Phaser.Scene) {
     this.gameWidth = scene.scale.width;
     this.gameHeight = scene.scale.height;
@@ -62,10 +70,31 @@ export class InputHandler {
       this.drawJoystick(0, 0, false);
       this.joystickContainer.setVisible(false);
     });
+
+    // Keyboard controls (arrow keys + WASD)
+    if (scene.input.keyboard) {
+      this.cursors = scene.input.keyboard.createCursorKeys();
+      this.keyW = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+      this.keyA = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+      this.keyS = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+      this.keyD = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    }
   }
 
   /** Call each frame to smoothly lerp toward joystick position */
   update(dt: number): void {
+    // Check keyboard input
+    const kbX = this.getKeyboardX();
+    const kbY = this.getKeyboardY();
+    this.keyboardActive = kbX !== 0 || kbY !== 0;
+
+    // Keyboard takes priority when active, otherwise use joystick
+    if (this.keyboardActive) {
+      this.normalizedX = kbX;
+      this.offsetY = kbY * 200;
+      return;
+    }
+
     if (this.activePointerId !== null) {
       this.normalizedX = this.targetNormX;
       this.offsetY = this.targetOffsetY * 200;
@@ -75,6 +104,24 @@ export class InputHandler {
     const speed = 18;
     this.normalizedX = Phaser.Math.Linear(this.normalizedX, 0, 1 - Math.exp(-speed * dt));
     this.offsetY = Phaser.Math.Linear(this.offsetY, 0, 1 - Math.exp(-speed * dt));
+  }
+
+  private getKeyboardX(): number {
+    const left = (this.cursors?.left?.isDown ?? false) || (this.keyA?.isDown ?? false);
+    const right = (this.cursors?.right?.isDown ?? false) || (this.keyD?.isDown ?? false);
+    if (left && right) return 0;
+    if (left) return -1;
+    if (right) return 1;
+    return 0;
+  }
+
+  private getKeyboardY(): number {
+    const up = (this.cursors?.up?.isDown ?? false) || (this.keyW?.isDown ?? false);
+    const down = (this.cursors?.down?.isDown ?? false) || (this.keyS?.isDown ?? false);
+    if (up && down) return 0;
+    if (up) return -1;
+    if (down) return 1;
+    return 0;
   }
 
   getNormalized(_halfWidth: number): number {
