@@ -368,15 +368,15 @@ function generateBossTint(levelIndex: number, worldIdx: number): string | undefi
 }
 
 function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
-  // Balanced: mostly +1/+2 with riskier subtract options. No multiply gates.
+  // Every gate has one positive side and one negative side, with multipliers/dividers mixed in.
   return [
-    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 1 }, minDistance: 0 },
-    { left: { op: 'add', value: 1 }, right: { op: 'add', value: 1 }, minDistance: 0 },
-    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: Math.round(triggerDistance * 0.3) },
-    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.45) },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.6) },
-    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.75) },
+    { left: { op: 'add', value: 2 }, right: { op: 'subtract', value: 1 }, minDistance: 0 },
+    { left: { op: 'add', value: 1 }, right: { op: 'subtract', value: 2 }, minDistance: 0 },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'subtract', value: 2 }, minDistance: Math.round(triggerDistance * 0.15) },
+    { left: { op: 'add', value: 3 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.3) },
+    { left: { op: 'multiply', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.45) },
+    { left: { op: 'add', value: 4 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.6) },
+    { left: { op: 'multiply', value: 3 }, right: { op: 'divide', value: 3 }, minDistance: Math.round(triggerDistance * 0.75) },
   ];
 }
 

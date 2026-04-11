@@ -60,12 +60,13 @@
     "interval": 650,
     "templates": [
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 100 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 200 },
-      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 400 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 600 },
-      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 600 }
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
+      { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 200 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "subtract", "value": 2  }, "minDistance": 400 },
+      { "left": { "op": "add",      "value": 3 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
+      { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 800 },
+      { "left": { "op": "add",      "value": 2 }, "right": { "op": "subtract", "value": 3  }, "minDistance": 1000 },
+      { "left": { "op": "multiply", "value": 3 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 1400 }
     ]
   },
 

@@ -18,12 +18,11 @@ import { LevelManager, hexToNum } from '@/config/progression';
 import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
-import { pickGatePair } from '@/systems/GateSpawner';
+import { pickGatePair, pickWeaponGatePair } from '@/systems/GateSpawner';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
 import { Enemy } from '@/entities/Enemy';
 import { Gate } from '@/entities/Gate';
-import { WeaponCrate } from '@/entities/WeaponCrate';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
@@ -50,14 +49,13 @@ export class GameScene extends Phaser.Scene {
   private bullets!: BulletPool;
   private enemies: Enemy[] = [];
   private gates: Gate[] = [];
-  private crates: WeaponCrate[] = [];
-
   // Gate tracking
   private nextGateDistance: number = 500;
+  private weaponGateDistances: number[] = []; // distances at which weapon gates spawn
+  private weaponGateIndex: number = 0; // next weapon gate to spawn
 
   // Weapon system
   private currentWeapon: string = 'pistol';
-  private crateSpawned: boolean = false; // one crate per weapon tier
 
   // Track active unit count to know when to respawn vs reposition
   private activeUnitCount: number = 0;
@@ -117,8 +115,11 @@ export class GameScene extends Phaser.Scene {
     // Apply weapon tier boost
     const weaponTier = Math.min(boosts.weaponTier, level.weaponOrder.length - 1);
     this.currentWeapon = level.weaponOrder[weaponTier];
-    this.crateSpawned = false;
     this.shootSoundTimer = 0;
+
+    // Build weapon gate distances from weapon crate configs
+    this.weaponGateDistances = level.weaponCrates.map((c) => c.distance);
+    this.weaponGateIndex = weaponTier; // skip already-obtained weapon tiers
 
     this.spawningComplete = false;
 
@@ -167,11 +168,6 @@ export class GameScene extends Phaser.Scene {
     this.gates = [];
     for (let i = 0; i < 5; i++) {
       this.gates.push(new Gate(this));
-    }
-
-    this.crates = [];
-    for (let i = 0; i < 3; i++) {
-      this.crates.push(new WeaponCrate(this));
     }
 
     // Enemy health bar overlay
@@ -303,7 +299,20 @@ export class GameScene extends Phaser.Scene {
 
     // 5. Spawn gates in world space (static — army walks through them)
     if (this.distance >= this.nextGateDistance && this.distance < level.boss.triggerDistance) {
-      const pair = pickGatePair(this.distance);
+      // Check if a weapon gate should spawn at this distance
+      let pair;
+      if (this.weaponGateIndex < this.weaponGateDistances.length
+        && this.distance >= this.weaponGateDistances[this.weaponGateIndex]) {
+        const crateCfg = level.weaponCrates[this.weaponGateIndex];
+        const nextWeaponType = crateCfg.nextWeapon;
+        const weaponDef = level.weapons[nextWeaponType];
+        const weaponName = weaponDef ? weaponDef.name : nextWeaponType.toUpperCase();
+        const unitBonus = Math.max(2, Math.floor(this.unitCount * 0.3));
+        pair = pickWeaponGatePair(weaponName, nextWeaponType, unitBonus);
+        this.weaponGateIndex++;
+      } else {
+        pair = pickGatePair(this.distance);
+      }
       const gate = this.gates.find((g) => !g.active);
       if (gate) {
         const gateWorldY = this.armyWorldY - GAME_HEIGHT - 50;
@@ -311,31 +320,6 @@ export class GameScene extends Phaser.Scene {
         gate.setPosition(GAME_WIDTH / 2, gateWorldY);
       }
       this.nextGateDistance += level.gates.interval;
-    }
-
-    // 5b. Spawn weapon crate (one per tier, at fixed distance)
-    // Crates are delayed if a gate is too close to prevent visual overlap
-    const crateCfg = LevelManager.instance.getCrateForWeapon(this.currentWeapon);
-    if (!this.crateSpawned && crateCfg && this.distance >= crateCfg.distance) {
-      const gateProximity = this.distance % level.gates.interval;
-      const tooCloseToGate = gateProximity < 80 || gateProximity > level.gates.interval - 80;
-      if (!tooCloseToGate) {
-        const crate = this.crates.find((c) => !c.active);
-        if (crate) {
-          const crateX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.4;
-          const crateY = this.armyWorldY - GAME_HEIGHT - 50;
-          crate.spawn(crateX, crateY, this.currentWeapon as any);
-          this.crateSpawned = true;
-        }
-      }
-    }
-
-    // 5c. Despawn crates army has passed
-    for (const crate of this.crates) {
-      if (!crate.active) continue;
-      if (crate.y > this.armyWorldY + 200) {
-        crate.despawn();
-      }
     }
 
     // 5d. Spawn gold pouches at intervals
@@ -443,23 +427,6 @@ export class GameScene extends Phaser.Scene {
         }
       }
 
-      // Hit weapon crates
-      for (const crate of this.crates) {
-        if (!crate.active) continue;
-        const cx = b.x - crate.x;
-        const cy = b.y - crate.y;
-        if (cx * cx + cy * cy < 900) { // 30^2
-          this.bullets.despawn(idx);
-          const newWeapon = crate.takeDamage(b.damage);
-          if (newWeapon) {
-            SoundManager.play('weapon_upgrade');
-            this.currentWeapon = newWeapon;
-            this.crateSpawned = false;
-            this.showWeaponUpgrade(crate.x, crate.y, newWeapon);
-          }
-          return;
-        }
-      }
     });
 
     // 7. Update enemies — idle until army is close, then aggro
@@ -468,13 +435,36 @@ export class GameScene extends Phaser.Scene {
 
       const distToArmy = Math.abs(enemy.y - this.armyWorldY);
 
-      // Despawn if enemy fell very far behind the army
-      if (enemy.y > this.armyWorldY + 600) {
+      // Enemy reached or passed the army line — deal 1 damage and remove
+      if (enemy.y >= this.armyWorldY) {
+        if (WalletManager.useShield()) {
+          SoundManager.play('shield_absorb');
+          this.cameras.main.flash(200, 100, 200, 255, true);
+        } else {
+          if (perks.thornsDamage > 0) {
+            enemy.takeDamage(perks.thornsDamage);
+            this.quirkThorns(enemy.x, enemy.y);
+          }
+          this.unitCount = Math.max(0, this.unitCount - 1);
+        }
+        enemy.playContactExplosion();
         enemy.despawn();
+        if (this.unitCount <= 0) {
+          if (perks.hasIronWill) {
+            perks.ironWillUsed = true;
+            this.unitCount = 1;
+            this.cameras.main.flash(300, 255, 50, 50, true);
+            this.quirkIronWill();
+          } else {
+            this.gameOver();
+            return;
+          }
+        }
+        this.respawnArmy();
         continue;
       }
 
-      // Move when army is within aggro range (includes enemies behind)
+      // Move when army is within aggro range
       if (distToArmy < AGGRO_RANGE) {
         let nearestX = GAME_WIDTH / 2 + this.armyX;
         let nearestY = this.armyWorldY;
@@ -491,40 +481,7 @@ export class GameScene extends Phaser.Scene {
           }
         }
 
-        const reached = enemy.updateMovement(delta, nearestX, nearestY, this.armyWorldY, marchSpeed);
-        if (reached) {
-          if (WalletManager.useShield()) {
-            // Shield absorbed the hit
-            SoundManager.play('shield_absorb');
-            this.cameras.main.flash(200, 100, 200, 255, true);
-          } else {
-            // Perk: Thorns — deal damage back to enemy on contact
-            if (perks.thornsDamage > 0) {
-              enemy.takeDamage(perks.thornsDamage);
-              this.quirkThorns(enemy.x, enemy.y);
-            }
-            // Apply perk modifiers to contact damage
-            let contactDmg = Math.max(1, enemy.contactDamage - perks.contactDamageReduction + perks.contactDamagePenalty);
-            this.unitCount = Math.max(0, this.unitCount - contactDmg);
-            if (enemy.splashRadius > 0) {
-              this.unitCount = Math.max(0, this.unitCount - enemy.splashDamage);
-            }
-          }
-          enemy.despawn();
-          if (this.unitCount <= 0) {
-            // Perk: Iron Will — survive with 1 unit once per level
-            if (perks.hasIronWill) {
-              perks.ironWillUsed = true;
-              this.unitCount = 1;
-              this.cameras.main.flash(300, 255, 50, 50, true);
-              this.quirkIronWill();
-            } else {
-              this.gameOver();
-              return;
-            }
-          }
-          this.respawnArmy();
-        }
+        enemy.updateMovement(delta, nearestX, nearestY, this.armyWorldY, marchSpeed);
       }
     }
 
@@ -581,23 +538,30 @@ export class GameScene extends Phaser.Scene {
         const unitRelativeX = hitUnit.x - gate.x;
         const result = gate.checkPassByX(unitRelativeX);
         if (result) {
-          const oldCount = this.unitCount;
-          this.unitCount = result.apply(this.unitCount);
-          // Perk: Lucky Gates — add ops give +1 extra per stack
-          if (this.unitCount > oldCount && perks.gateBonusAdd > 0) {
-            this.unitCount += perks.gateBonusAdd;
+          // Weapon upgrade gate
+          if (result.weaponUpgrade) {
+            this.currentWeapon = result.weaponUpgrade;
+            SoundManager.play('weapon_upgrade');
+            this.showWeaponUpgrade(hitUnit.x, gate.y, result.weaponUpgrade);
+          } else {
+            const oldCount = this.unitCount;
+            this.unitCount = result.apply(this.unitCount);
+            // Perk: Lucky Gates — add ops give +1 extra per stack
+            if (this.unitCount > oldCount && perks.gateBonusAdd > 0) {
+              this.unitCount += perks.gateBonusAdd;
+            }
+            // Perk: Rally Cry — positive gates give +2 bonus per stack
+            if (this.unitCount > oldCount && perks.gateBonusUnitsOnPositive > 0) {
+              this.unitCount += perks.gateBonusUnitsOnPositive;
+            }
+            this.unitCount = Math.max(1, this.unitCount);
+            SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
+            this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
           }
-          // Perk: Rally Cry — positive gates give +2 bonus per stack
-          if (this.unitCount > oldCount && perks.gateBonusUnitsOnPositive > 0) {
-            this.unitCount += perks.gateBonusUnitsOnPositive;
-          }
-          this.unitCount = Math.max(1, this.unitCount);
           // Perk: Gold Rush — earn gold per gate
           if (perks.goldPerGate > 0) {
             this.pouchGold += perks.goldPerGate;
           }
-          SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
-          this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
           gate.despawn();
           this.respawnArmy();
           continue;
@@ -632,7 +596,7 @@ export class GameScene extends Phaser.Scene {
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, effectiveFireRate)) {
-        const pierce = perks.hasPiercing ? 1 : 0;
+        const pierce = perks.pierceCount;
         if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, 1, pierce)) {
           // Perk: Double Tap — chance to fire a second bullet
           if (perks.doubleTapChance > 0 && Math.random() < perks.doubleTapChance) {
@@ -647,9 +611,9 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 9b. Perk: Regeneration — gain units at distance intervals
+    // 9b. Perk: Regeneration — gain units at distance intervals (stacks: more units per tick)
     if (perks.regenDistanceInterval && this.distance >= this.nextRegenDistance) {
-      this.unitCount++;
+      this.unitCount += perks.regenUnitsPerTick;
       this.nextRegenDistance = this.distance + perks.regenDistanceInterval;
       this.respawnArmy();
       this.quirkRegeneration();
@@ -840,11 +804,11 @@ export class GameScene extends Phaser.Scene {
       onComplete: () => text.destroy(),
     });
 
-    // Flash the screen briefly
+    // Subtle screen tint on gate pass
     if (isPositive) {
-      this.cameras.main.flash(200, 81, 207, 102, true); // green flash
+      this.cameras.main.flash(80, 81, 207, 102, true); // green tint
     } else {
-      this.cameras.main.flash(200, 255, 107, 107, true); // red flash
+      this.cameras.main.flash(80, 255, 107, 107, true); // red tint
     }
   }
 
@@ -902,8 +866,8 @@ export class GameScene extends Phaser.Scene {
       ease: 'Power2',
     });
 
-    this.cameras.main.flash(300, 255, 255, 255, true);
-    this.cameras.main.shake(200, 0.015);
+    this.cameras.main.flash(100, 255, 255, 255, true);
+    this.cameras.main.shake(100, 0.005);
   }
 
   /** Chain Kill perk: deal 2 damage to the nearest enemy */
@@ -921,7 +885,7 @@ export class GameScene extends Phaser.Scene {
       }
     }
     if (nearest) {
-      nearest.takeDamage(2);
+      nearest.takeDamage(PerkManager.instance.chainKillDamage);
       // Visual: lightning bolt effect
       const bolt = this.add.text(nearest.x, nearest.y - 15, '\u26A1', { fontSize: '20px' }).setOrigin(0.5);
       this.tweens.add({ targets: bolt, alpha: 0, y: nearest.y - 40, duration: 300, onComplete: () => bolt.destroy() });
@@ -938,7 +902,7 @@ export class GameScene extends Phaser.Scene {
       const dx = e.x - x;
       const dy = e.y - y;
       if (dx * dx + dy * dy < splashRadius * splashRadius) {
-        e.takeDamage(1);
+        e.takeDamage(PerkManager.instance.explosiveSplashDamage);
       }
     }
     // Visual: small explosion
@@ -1006,8 +970,19 @@ export class GameScene extends Phaser.Scene {
     const icon = this.add.text(0, -1, c.icon, { fontSize: '16px' }).setOrigin(0.5);
     container.add(icon);
 
-    // Layer 5: Orbiting sparkles (smooth for positive, erratic for curse)
+    // Layer 4b: Positive/negative badge — clear at a glance
     const isCurse = orbType.startsWith('curse_') || orbType === 'chaos';
+    const badgeColor = isCurse ? 0xff2222 : 0x22dd44;
+    const badgeSymbol = isCurse ? '\u2013' : '+';
+    const badge = this.add.circle(12, -12, 7, badgeColor, 0.95).setStrokeStyle(1.5, 0xffffff, 0.9);
+    container.add(badge);
+    const badgeText = this.add.text(12, -12, badgeSymbol, {
+      fontSize: '12px', color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5);
+    container.add(badgeText);
+
+    // Layer 5: Orbiting sparkles (smooth for positive, erratic for curse)
     const sparkCount = isCurse ? 5 : 3;
     const sparkColor = isCurse ? c.core : 0xffffff;
     for (let i = 0; i < sparkCount; i++) {
@@ -1201,9 +1176,8 @@ export class GameScene extends Phaser.Scene {
       duration: 800, delay: 100, ease: 'Power2', onComplete: () => subTxt.destroy(),
     });
 
-    // Screen flash matching orb color
-    this.cameras.main.flash(250, c.flash[0], c.flash[1], c.flash[2], true);
-    this.cameras.main.shake(150, 0.01);
+    // Subtle screen tint matching orb color
+    this.cameras.main.flash(80, c.flash[0], c.flash[1], c.flash[2], true);
 
     orb.destroy();
   }

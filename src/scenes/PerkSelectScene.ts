@@ -26,7 +26,7 @@ export class PerkSelectScene extends Phaser.Scene {
   }
 
   create(data: PerkSelectData): void {
-    this.cameras.main.setBackgroundColor('#2484c5');
+    this.cameras.main.setBackgroundColor('#0e1a2b');
     this.cameras.main.fadeIn(600, 0, 0, 0);
 
     const choices = PerkManager.instance.getRandomChoices(3);
@@ -45,8 +45,8 @@ export class PerkSelectScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.add.text(GAME_WIDTH / 2, 120, 'Choose a perk for your run', {
-      fontSize: '20px', color: '#d4e8f4', fontFamily: F,
-      stroke: '#1a3a4a', strokeThickness: 2,
+      fontSize: '20px', color: '#e0eef8', fontFamily: F,
+      stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5);
 
     // Show run streak if > 0
@@ -118,7 +118,7 @@ export class PerkSelectScene extends Phaser.Scene {
 
     // Card background
     const bg = this.add.graphics();
-    bg.fillStyle(0x2e92d4, 0.95);
+    bg.fillStyle(0x111d2e, 0.97);
     bg.fillRoundedRect(-w / 2, -h / 2, w, h, 20);
     bg.lineStyle(2, rc.border, 0.8);
     bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
@@ -164,10 +164,10 @@ export class PerkSelectScene extends Phaser.Scene {
 
     // Description
     container.add(this.add.text(0, -h / 2 + 210, perk.description, {
-      fontSize: '16px', color: '#d4e8f4', fontFamily: F,
+      fontSize: '16px', color: '#c8dce8', fontFamily: F,
       wordWrap: { width: w - 34 }, align: 'center', lineSpacing: 4,
-      stroke: '#1a3a4a', strokeThickness: 2,
-      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
+      stroke: '#000000', strokeThickness: 3,
+      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 3, fill: true },
     }).setOrigin(0.5, 0));
 
     // Hit zone
@@ -188,7 +188,7 @@ export class PerkSelectScene extends Phaser.Scene {
     // Hover effect
     hitZone.on('pointerover', () => {
       bg.clear();
-      bg.fillStyle(0x2a88c4, 0.95);
+      bg.fillStyle(0x1a2a40, 0.97);
       bg.fillRoundedRect(-w / 2, -h / 2, w, h, 20);
       bg.lineStyle(3, rc.border, 1);
       bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
@@ -202,7 +202,7 @@ export class PerkSelectScene extends Phaser.Scene {
 
     hitZone.on('pointerout', () => {
       bg.clear();
-      bg.fillStyle(0x2e92d4, 0.95);
+      bg.fillStyle(0x111d2e, 0.97);
       bg.fillRoundedRect(-w / 2, -h / 2, w, h, 20);
       bg.lineStyle(2, rc.border, 0.8);
       bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);

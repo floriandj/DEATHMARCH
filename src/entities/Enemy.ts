@@ -135,6 +135,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
     this.x += (dx / dist) * currentSpeed * dt;
     this.y += (dy / dist) * currentSpeed * dt;
+    // Never allow enemy to pass behind the army line
+    if (this.y > armyWorldY) this.y = armyWorldY;
     return false;
   }
 
@@ -189,6 +191,45 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         y: this.y + Math.sin(angle) * 30,
         alpha: 0,
         duration: 400,
+        onComplete: () => p.destroy(),
+      });
+    }
+  }
+
+  /** Big explosion effect when enemy is destroyed at the army line */
+  playContactExplosion(): void {
+    const x = this.x;
+    const y = this.y;
+    const color = this.enemyColor;
+
+    // Flash ring
+    const ring = this.scene.add.graphics();
+    ring.lineStyle(3, 0xffffff, 0.9);
+    ring.strokeCircle(x, y, 4);
+    this.scene.tweens.add({
+      targets: ring,
+      scaleX: 3, scaleY: 3, alpha: 0,
+      duration: 300, ease: 'Quad.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+
+    // Burst particles — more and faster than normal death
+    const count = 10;
+    for (let i = 0; i < count; i++) {
+      const p = this.scene.add.sprite(x, y, 'death_particle');
+      p.setTint(i % 3 === 0 ? 0xffffff : color);
+      p.setAlpha(1);
+      p.setScale(1.2 + Math.random() * 0.6);
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+      const dist = 30 + Math.random() * 40;
+      this.scene.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * dist,
+        y: y + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0,
+        duration: 200 + Math.random() * 200,
+        ease: 'Quad.easeOut',
         onComplete: () => p.destroy(),
       });
     }

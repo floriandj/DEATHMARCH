@@ -167,12 +167,14 @@ export class Gate extends Phaser.GameObjects.Container {
   private textureForColor(color: number): string {
     if (color === 0x51cf66) return 'gate_multiply';
     if (color === 0xff6b6b) return 'gate_subtract';
+    if (color === 0xffd43b) return 'gate_multiply'; // weapon gates use gold/multiply style
     return 'gate_add';
   }
 
   private strokeForColor(color: number): string {
     if (color === 0x51cf66) return '#1a5c2a';
     if (color === 0xff6b6b) return '#661010';
+    if (color === 0xffd43b) return '#665510'; // weapon gate gold stroke
     return '#0a3355';
   }
 }

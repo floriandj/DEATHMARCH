@@ -4,6 +4,8 @@ export interface GateOption {
   label: string;
   color: number;
   apply: (unitCount: number) => number;
+  /** If set, passing this gate upgrades the weapon to this type */
+  weaponUpgrade?: string;
 }
 
 export interface GatePair {
@@ -37,4 +39,24 @@ export function pickGatePair(distance: number): GatePair {
     return { left, right };
   }
   return { left: right, right: left };
+}
+
+/** Create a weapon gate: one side upgrades the weapon, other side gives units */
+export function pickWeaponGatePair(weaponName: string, weaponType: string, unitBonus: number): GatePair {
+  const weaponOption: GateOption = {
+    label: weaponName,
+    color: 0xffd43b, // gold for weapon upgrades
+    apply: (c) => c, // no unit change
+    weaponUpgrade: weaponType,
+  };
+  const unitOption: GateOption = {
+    label: `+${unitBonus}`,
+    color: 0x00d4ff, // blue for add
+    apply: (c) => c + unitBonus,
+  };
+
+  if (Math.random() < 0.5) {
+    return { left: weaponOption, right: unitOption };
+  }
+  return { left: unitOption, right: weaponOption };
 }
