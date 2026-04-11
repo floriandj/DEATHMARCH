@@ -376,6 +376,7 @@ function buildGateTemplates(triggerDistance: number): GateTemplateConfig[] {
     { left: { op: 'add', value: 3 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.3) },
     { left: { op: 'multiply', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.45) },
     { left: { op: 'subtract', value: 2 }, right: { op: 'divide', value: 2 }, minDistance: Math.round(triggerDistance * 0.5) },
+    { left: { op: 'divide', value: 2 }, right: { op: 'divide', value: 3 }, minDistance: Math.round(triggerDistance * 0.55) },
     { left: { op: 'add', value: 4 }, right: { op: 'subtract', value: 3 }, minDistance: Math.round(triggerDistance * 0.6) },
     { left: { op: 'subtract', value: 3 }, right: { op: 'divide', value: 3 }, minDistance: Math.round(triggerDistance * 0.7) },
     { left: { op: 'multiply', value: 3 }, right: { op: 'divide', value: 3 }, minDistance: Math.round(triggerDistance * 0.75) },
