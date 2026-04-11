@@ -63,7 +63,9 @@
       { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 200 },
       { "left": { "op": "add",      "value": 4 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 350 },
       { "left": { "op": "add",      "value": 5 }, "right": { "op": "subtract", "value": 5  }, "minDistance": 550 },
+      { "left": { "op": "subtract", "value": 2 }, "right": { "op": "divide",   "value": 2  }, "minDistance": 600 },
       { "left": { "op": "multiply", "value": 2 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 700 },
+      { "left": { "op": "subtract", "value": 4 }, "right": { "op": "divide",   "value": 3  }, "minDistance": 900 },
       { "left": { "op": "add",      "value": 6 }, "right": { "op": "subtract", "value": 4  }, "minDistance": 850 }
     ]
   },
