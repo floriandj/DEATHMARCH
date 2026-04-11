@@ -76,13 +76,15 @@ export class PerkSelectScene extends Phaser.Scene {
       }).setOrigin(0.5);
     }
 
-    // ── Perk cards ──
-    const cardW = 240;
-    const cardH = 330;
-    const gap = 20;
+    // ── Perk cards (responsive to screen size) ──
+    const margin = 24;
+    const gap = 14;
+    const cardW = Math.min(220, Math.floor((GAME_WIDTH - margin * 2 - gap * 2) / 3));
+    const maxCardH = Math.min(300, GAME_HEIGHT - 280); // leave room for header + skip
+    const cardH = Math.max(200, maxCardH);
     const totalW = cardW * 3 + gap * 2;
     const startX = (GAME_WIDTH - totalW) / 2 + cardW / 2;
-    const cardY = GAME_HEIGHT * 0.45;
+    const cardY = 210 + cardH / 2;
 
     for (let i = 0; i < choices.length; i++) {
       const perk = choices[i];
@@ -91,7 +93,8 @@ export class PerkSelectScene extends Phaser.Scene {
     }
 
     // ── Skip button (subtle, bottom) ──
-    const skipText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 60, 'SKIP', {
+    const skipY = Math.min(GAME_HEIGHT - 40, cardY + cardH / 2 + 40);
+    const skipText = this.add.text(GAME_WIDTH / 2, skipY, 'SKIP', {
       fontSize: '20px', color: '#a8c8d8', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
@@ -136,36 +139,41 @@ export class PerkSelectScene extends Phaser.Scene {
     highlight.fillRect(-w / 2, -h / 2 + 7, w, 3);
     container.add(highlight);
 
+    // Scale font sizes based on card width
+    const iconSize = Math.min(48, Math.round(w * 0.22));
+    const nameSize = Math.min(18, Math.round(w * 0.08));
+    const descSize = Math.min(14, Math.round(w * 0.065));
+
     // Circular glow behind icon
     const iconGlow = this.add.graphics();
     iconGlow.fillStyle(rc.glow, 0.15);
-    iconGlow.fillCircle(0, -h / 2 + 66, 40);
+    iconGlow.fillCircle(0, -h / 2 + h * 0.18, 34);
     container.add(iconGlow);
 
     // Icon
-    const icon = this.add.text(0, -h / 2 + 66, perk.icon, {
-      fontSize: '56px',
+    const icon = this.add.text(0, -h / 2 + h * 0.18, perk.icon, {
+      fontSize: `${iconSize}px`,
     }).setOrigin(0.5);
     container.add(icon);
 
     // Rarity label
-    container.add(this.add.text(0, -h / 2 + 114, rc.label, {
-      fontSize: '14px', color: rc.text, fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
+    container.add(this.add.text(0, -h / 2 + h * 0.33, rc.label, {
+      fontSize: '12px', color: rc.text, fontFamily: F, fontStyle: 'bold', letterSpacing: 2,
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0.5));
 
     // Name
-    container.add(this.add.text(0, -h / 2 + 150, perk.name.toUpperCase(), {
-      fontSize: '20px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
-      wordWrap: { width: w - 28 }, align: 'center',
+    container.add(this.add.text(0, -h / 2 + h * 0.44, perk.name.toUpperCase(), {
+      fontSize: `${nameSize}px`, color: '#ffffff', fontFamily: F, fontStyle: 'bold',
+      wordWrap: { width: w - 20 }, align: 'center',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5));
 
     // Description
-    container.add(this.add.text(0, -h / 2 + 210, perk.description, {
-      fontSize: '16px', color: '#c8dce8', fontFamily: F,
-      wordWrap: { width: w - 34 }, align: 'center', lineSpacing: 4,
+    container.add(this.add.text(0, -h / 2 + h * 0.58, perk.description, {
+      fontSize: `${descSize}px`, color: '#c8dce8', fontFamily: F,
+      wordWrap: { width: w - 20 }, align: 'center', lineSpacing: 3,
       stroke: '#000000', strokeThickness: 3,
       shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 3, fill: true },
     }).setOrigin(0.5, 0));
