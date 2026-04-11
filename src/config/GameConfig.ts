@@ -24,8 +24,8 @@ export const ARMY_INPUT_Y_RANGE = 200; // drag range for Y input normalization (
 export const ARMY_START_WORLD_Y = 120; // initial world offset so the army starts higher on screen
 export const ARMY_Y_OFFSET_FORWARD_MAX = 420; // max pixels the army can nudge toward the front
 export const ARMY_Y_OFFSET_BACK_MAX = 120; // max pixels the army can nudge toward the back
-export const ARMY_LATERAL_SPEED = 340; // pixels per second for joystick X movement
-export const ARMY_VERTICAL_SPEED = 260; // pixels per second for joystick Y movement
+export const ARMY_LATERAL_SPEED = 480; // pixels per second for joystick X movement
+export const ARMY_VERTICAL_SPEED = 360; // pixels per second for joystick Y movement
 
 // Gates
 export const GATE_INTERVAL = 800; // meters between gate pairs

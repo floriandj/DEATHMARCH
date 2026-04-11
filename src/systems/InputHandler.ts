@@ -26,6 +26,7 @@ export class InputHandler {
   private keyS: Phaser.Input.Keyboard.Key | undefined;
   private keyD: Phaser.Input.Keyboard.Key | undefined;
   private keyboardActive: boolean = false;
+  private keyboardWasActive: boolean = false;
 
   constructor(scene: Phaser.Scene) {
     this.gameWidth = scene.scale.width;
@@ -92,8 +93,18 @@ export class InputHandler {
     if (this.keyboardActive) {
       this.normalizedX = kbX;
       this.offsetY = kbY * 200;
+      this.keyboardWasActive = true;
       return;
     }
+
+    // Instant stop when keyboard keys are released (no drift)
+    if (this.keyboardWasActive && this.activePointerId === null) {
+      this.normalizedX = 0;
+      this.offsetY = 0;
+      this.keyboardWasActive = false;
+      return;
+    }
+    this.keyboardWasActive = false;
 
     if (this.activePointerId !== null) {
       this.normalizedX = this.targetNormX;

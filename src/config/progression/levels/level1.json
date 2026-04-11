@@ -44,11 +44,11 @@
   },
 
   "waves": {
-    "gracePeriod": 80,
+    "gracePeriod": 250,
     "brackets": [
-      { "maxDistance": 200,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 120, "intervalMax": 180 },
-      { "maxDistance": 400,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 80,  "intervalMax": 120 },
-      { "maxDistance": 650,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 60,  "intervalMax": 85  },
+      { "maxDistance": 250,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 160, "intervalMax": 220 },
+      { "maxDistance": 450,  "clusterMin": 1, "clusterMax": 1, "intervalMin": 100, "intervalMax": 150 },
+      { "maxDistance": 650,  "clusterMin": 1, "clusterMax": 2, "intervalMin": 65,  "intervalMax": 90  },
       { "maxDistance": 950,  "clusterMin": 2, "clusterMax": 3, "intervalMin": 45,  "intervalMax": 65  },
       { "maxDistance": 1300, "clusterMin": 2, "clusterMax": 4, "intervalMin": 35,  "intervalMax": 50  },
       { "maxDistance": 1700, "clusterMin": 3, "clusterMax": 5, "intervalMin": 25,  "intervalMax": 35  },
@@ -57,7 +57,7 @@
   },
 
   "gates": {
-    "interval": 800,
+    "interval": 650,
     "templates": [
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "subtract", "value": 1  }, "minDistance": 0   },
       { "left": { "op": "add",      "value": 1 }, "right": { "op": "add",      "value": 1  }, "minDistance": 0   },
