@@ -49,11 +49,8 @@ export class GameOverScene extends Phaser.Scene {
       WalletManager.clearPendingBoosts();
     }
 
-    // On death: keep current perks but go back to checkpoint level
+    // Perks earned up to the last checkpoint persist across deaths
     const checkpointLvl = PerkManager.instance.checkpointLevel;
-    if (!data.bossDefeated) {
-      mgr.setLevel(checkpointLvl);
-    }
 
     const vs = Math.min(1.35, Math.max(0.85, GAME_HEIGHT / 1280));
     let y = Math.round(24 * vs);
@@ -241,10 +238,7 @@ export class GameOverScene extends Phaser.Scene {
       this.btn(btnY, '\u21BB  REPLAY', C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 600);
       btnY += btnH + btnGap;
     } else {
-      const retryLabel = checkpointLvl === levelIndex
-        ? '\u{1F4AA}  TRY AGAIN'
-        : `\u{1F6A9}  RETRY FROM LVL ${checkpointLvl + 1}`;
-      this.btn(btnY, retryLabel, C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 500);
+      this.btn(btnY, '\u{1F4AA}  RETRY LEVEL', C_BLUE, 0x2563eb, '#fff', () => this.fadeToGame(), 500);
       btnY += btnH + btnGap;
     }
     this.btn(btnY, '\u2630  LEVELS', 0x3090c8, 0x1c6da3, '#d4e8f4', () => this.scene.start('MenuScene'), canAdvance ? 700 : 600);
