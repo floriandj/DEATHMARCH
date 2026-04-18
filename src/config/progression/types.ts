@@ -137,8 +137,3 @@ export interface LevelConfig {
   // Scoring
   scoring: ScoringConfig;
 }
-
-/** Manifest listing all available levels in order */
-export interface ProgressionManifest {
-  levels: LevelConfig[];
-}

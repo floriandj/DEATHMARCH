@@ -71,10 +71,9 @@ src/
     ├── WeaponConfig.ts      # Weapon definitions
     └── progression/         # Level system
         ├── LevelManager.ts  # Singleton managing level state
-        ├── LevelGenerator.ts # Procedural level generation
+        ├── LevelGenerator.ts # Procedural level generation (5 cycling world themes)
         ├── types.ts         # Progression type definitions
-        ├── index.ts         # Barrel export
-        └── levels/          # JSON configs (level1.json–level5.json)
+        └── index.ts         # Barrel export
 
 tests/                       # Vitest unit tests
 public/assets/sprites/       # SVG sprite assets
@@ -84,7 +83,7 @@ docs/                        # Game design specs and plans
 ## Architecture & Key Patterns
 
 - **Object Pooling:** `ObjectPool<T>` reuses entities to avoid GC spikes. Pool sizes: bullets (`BULLET_POOL_SIZE = 3000`), enemies (`ENEMY_POOL_SIZE`, 100), units (`MAX_UNITS = 200` — unit overflow converts 1:1 into level gold).
-- **Configuration-Driven Levels:** All level progression is defined in JSON files (`src/config/progression/levels/`). Enemy types, weapons, gates, and bosses are loaded from config — no code changes needed for level tuning.
+- **Procedural Levels:** Level configs are generated on demand by `LevelGenerator.generateLevel(index)`. Five world themes (goblin/infernal/frost/plague/ash) cycle every 5 levels; difficulty creeps up with each cycle. Enemies are produced procedurally via `ProceduralEnemy`. Tune levels by editing `LevelGenerator.ts`, not JSON.
 - **Singleton LevelManager:** Manages progression state across scenes. Provides methods for enemy selection, weapon progression, gate templates, and scoring.
 - **State Machines:** Boss entities use phase-based state machines with enrage mechanics.
 - **Isometric Rendering:** `IsoHelper` handles game-to-screen coordinate transforms. Depth sorting by Y position.

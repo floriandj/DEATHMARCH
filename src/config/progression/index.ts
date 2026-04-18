@@ -15,5 +15,4 @@ export type {
   BossConfig,
   ScoringConfig,
   WaveConfig,
-  ProgressionManifest,
 } from './types';

@@ -11,7 +11,8 @@
       "Bash(npm run:*)",
       "Bash(ls /c/Users/Floriandj/Development/DEATHMARCH/public/assets/sprites/decor_*)",
       "Bash(sed -i 's/0x3a5a6e/0x2484c5/g; s/0x4a6e82/0x2e92d4/g; s/0x5a8498/0x4aa8e0/g; s/0x2e4f60/0x1c6da3/g; s/0x4a6878/0x3090c8/g; s/0x3a5868/0x1c6da3/g; s/0x3a5a70/0x2a88c4/g' src/scenes/MenuScene.ts src/scenes/GameOverScene.ts src/scenes/SettingsScene.ts src/scenes/PerkSelectScene.ts src/scenes/HUDScene.ts)",
-      "Bash(sed -i \"s/#3a5a6e/#2484c5/g\" src/scenes/MenuScene.ts src/scenes/SplashScene.ts src/scenes/SettingsScene.ts src/scenes/PerkSelectScene.ts src/scenes/GameOverScene.ts src/main.ts)"
+      "Bash(sed -i \"s/#3a5a6e/#2484c5/g\" src/scenes/MenuScene.ts src/scenes/SplashScene.ts src/scenes/SettingsScene.ts src/scenes/PerkSelectScene.ts src/scenes/GameOverScene.ts src/main.ts)",
+      "Bash(git rm *)"
     ]
   }
 }

@@ -260,9 +260,12 @@ export function generateLevel(levelIndex: number): LevelConfig {
 
   // ── Waves (easy levels = sparse, hard levels = dense) ──
   const baseInterval = Math.max(30, 100 - cycle * 4 - posInCycle * 5);
+  // Level 1 (index 0) gets a gentler opening so the solo starting unit
+  // has time to reach the first gate before enemies pile on.
+  const isFirstLevel = levelIndex === 0;
   const brackets: WaveBracket[] = [
-    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 2, intervalMin: Math.round(baseInterval * 0.8), intervalMax: baseInterval + 40 },
-    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.5), intervalMin: Math.round(baseInterval * 0.6), intervalMax: Math.round(baseInterval * 0.8) },
+    { maxDistance: Math.round(triggerDistance * 0.10), clusterMin: 1, clusterMax: 2, intervalMin: isFirstLevel ? 400 : Math.round(baseInterval * 0.8), intervalMax: isFirstLevel ? 600 : baseInterval + 40 },
+    { maxDistance: Math.round(triggerDistance * 0.20), clusterMin: 1, clusterMax: 2 + Math.floor(posInCycle * 0.5), intervalMin: isFirstLevel ? 220 : Math.round(baseInterval * 0.6), intervalMax: isFirstLevel ? 320 : Math.round(baseInterval * 0.8) },
     { maxDistance: Math.round(triggerDistance * 0.35), clusterMin: 2, clusterMax: 3 + posInCycle, intervalMin: Math.round(baseInterval * 0.45), intervalMax: Math.round(baseInterval * 0.6) },
     { maxDistance: Math.round(triggerDistance * 0.50), clusterMin: 2, clusterMax: 4 + posInCycle, intervalMin: Math.round(baseInterval * 0.35), intervalMax: Math.round(baseInterval * 0.5) },
     { maxDistance: Math.round(triggerDistance * 0.70), clusterMin: 3, clusterMax: 5 + posInCycle, intervalMin: Math.round(baseInterval * 0.25), intervalMax: Math.round(baseInterval * 0.38) },
@@ -300,7 +303,7 @@ export function generateLevel(levelIndex: number): LevelConfig {
     weaponCrates,
     enemies,
     waves: {
-      gracePeriod: Math.max(50, 120 - cycle * 4 - posInCycle * 6),
+      gracePeriod: isFirstLevel ? 400 : Math.max(50, 120 - cycle * 4 - posInCycle * 6),
       brackets,
     },
     gates: { interval: gateInterval, templates: [] },
