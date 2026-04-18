@@ -1103,7 +1103,7 @@ export class BossScene extends Phaser.Scene {
     SoundManager.play('defeat');
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
-    const goldEarned = WalletManager.earnLevelGold(this.levelGold, Math.floor(this.pouchGold * 0.5));
+    const goldEarned = WalletManager.earnLevelGold(this.levelGold, this.pouchGold);
     this.scene.start('GameOverScene', {
       score: Math.floor(this.score),
       distance: Math.floor(this.distance),

@@ -1416,7 +1416,7 @@ export class GameScene extends Phaser.Scene {
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
     // Earn gold (partial on death)
-    const goldEarned = WalletManager.earnLevelGold(this.levelGold, Math.floor(this.pouchGold * 0.5));
+    const goldEarned = WalletManager.earnLevelGold(this.levelGold, this.pouchGold);
     this.scene.start('GameOverScene', {
       score: Math.floor(this.score),
       distance: Math.floor(this.distance),
