@@ -5,7 +5,6 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
-  BULLET_TOP_CULL_MARGIN,
   ARMY_START_WORLD_Y,
   ARMY_LATERAL_SPEED,
   ARMY_FOLLOW_STRENGTH,
@@ -288,8 +287,8 @@ export class BossScene extends Phaser.Scene {
     this.bullets.forEachActive((b, idx) => {
       if (bossKilled) return;
 
-      // Cull early near the top of the screen
-      if (b.y < BULLET_TOP_CULL_MARGIN) {
+      // Off-screen cull (bullets need to reach the boss near the top)
+      if (b.y < -50) {
         this.bullets.despawn(idx);
         return;
       }
