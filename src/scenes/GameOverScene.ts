@@ -288,12 +288,12 @@ export class GameOverScene extends Phaser.Scene {
     this.iconBadge(PAD + 29, y + 10, icon, iconColor, vs * 0.85);
 
     this.add.text(PAD + Math.round(62 * vs), y, item.name, {
-      fontSize: `${Math.round(18 * vs)}px`, color: canBuy ? '#d4e6f0' : '#475569', fontFamily: F, fontStyle: 'bold',
-      stroke: '#1a3a4a', strokeThickness: 2,
+      fontSize: `${Math.round(18 * vs)}px`, color: '#ffffff', fontFamily: F, fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5);
     this.add.text(PAD + Math.round(62 * vs), y + Math.round(24 * vs), hint, {
-      fontSize: `${Math.round(16 * vs)}px`, color: '#a8c8d8', fontFamily: F,
-      stroke: '#1a3a4a', strokeThickness: 2,
+      fontSize: `${Math.round(16 * vs)}px`, color: '#ffffff', fontFamily: F,
+      stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0, 0.5);
 
     const bw = Math.round(94 * vs), bh = Math.round(41 * vs);
