@@ -5,12 +5,11 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
+  BULLET_TOP_CULL_MARGIN,
   ARMY_START_WORLD_Y,
-  ARMY_INPUT_Y_RANGE,
-  ARMY_Y_OFFSET_FORWARD_MAX,
-  ARMY_Y_OFFSET_BACK_MAX,
   ARMY_LATERAL_SPEED,
-  ARMY_VERTICAL_SPEED,
+  ARMY_FOLLOW_STRENGTH,
+  ARMY_SCREEN_BOTTOM_OFFSET,
   ENTITY_SCALE,
   SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
@@ -194,15 +193,18 @@ export class BossScene extends Phaser.Scene {
 
     const bossCfg = LevelManager.instance.bossConfig;
 
-    // 1. Update army position (X + Y, same as GameScene)
+    // 1. Update army X — pointer = follow finger, keyboard = directional steer
     const dt = delta / 1000;
     this.input_handler.update(dt);
-    const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
-    this.armyX += normalized * ARMY_LATERAL_SPEED * dt;
+    const pointerX = this.input_handler.getPointerScreenX();
+    if (pointerX !== null) {
+      const targetArmyX = Phaser.Math.Clamp(pointerX - GAME_WIDTH / 2, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
+      this.armyX = Phaser.Math.Linear(this.armyX, targetArmyX, 1 - Math.exp(-ARMY_FOLLOW_STRENGTH * dt));
+    } else {
+      const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
+      this.armyX += normalized * ARMY_LATERAL_SPEED * dt;
+    }
     this.armyX = Phaser.Math.Clamp(this.armyX, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
-    const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
-    this.armyYOffset += normalizedY * ARMY_VERTICAL_SPEED * dt;
-    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_FORWARD_MAX, ARMY_Y_OFFSET_BACK_MAX);
     this.respawnArmy();
 
     // 1b. Unit physics
@@ -286,8 +288,8 @@ export class BossScene extends Phaser.Scene {
     this.bullets.forEachActive((b, idx) => {
       if (bossKilled) return;
 
-      // Off-screen
-      if (b.y < -50) {
+      // Cull early near the top of the screen
+      if (b.y < BULLET_TOP_CULL_MARGIN) {
         this.bullets.despawn(idx);
         return;
       }
@@ -653,7 +655,7 @@ export class BossScene extends Phaser.Scene {
         this.cameras.main.shake(150, 0.01);
 
         // Charge hit impact particles
-        this.spawnImpactParticles(armyScreenX, GAME_HEIGHT - 200, 10, 0xff6600);
+        this.spawnImpactParticles(armyScreenX, GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET, 10, 0xff6600);
 
         if (this.unitCount <= 0) {
           this.gameOver();
@@ -678,7 +680,7 @@ export class BossScene extends Phaser.Scene {
     SoundManager.play('boss_rocket_launch');
 
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+    const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
     // Create rocket sprite
     const rocket = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 30, 'vfx_ring');
@@ -725,7 +727,7 @@ export class BossScene extends Phaser.Scene {
     SoundManager.play('boss_barrage');
 
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+    const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
     const shot = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 20, 'vfx_spark');
     shot.setTint(0xff00ff);
@@ -753,7 +755,7 @@ export class BossScene extends Phaser.Scene {
   private updateBossProjectiles(delta: number): void {
     const dt = delta / 1000;
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+    const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
     for (let i = this.bossProjectiles.length - 1; i >= 0; i--) {
       const proj = this.bossProjectiles[i];
@@ -837,7 +839,7 @@ export class BossScene extends Phaser.Scene {
 
   private respawnArmy(): void {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-    const armyScreenY = GAME_HEIGHT - 200 + this.armyYOffset;
+    const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
     if (this.unitCount !== this.activeUnitCount) {
       const shrinking = this.unitCount < this.activeUnitCount;

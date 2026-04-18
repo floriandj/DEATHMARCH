@@ -15,6 +15,7 @@ export const UNIT_FIRE_RATE = 500; // ms between bullets per unit (slower but st
 export const BULLET_SPEED = 400; // pixels per second
 export const BULLET_DAMAGE = 3;
 export const BULLET_POOL_SIZE = 3000;
+export const BULLET_TOP_CULL_MARGIN = 300; // bullets despawn this many px below the top of the visible screen
 
 // Army formation
 export const FORMATION_SPACING = 30; // pixels between units in formation
@@ -22,9 +23,11 @@ export const FORMATION_SPACING = 30; // pixels between units in formation
 // Army movement (shared between GameScene and BossScene)
 export const ARMY_INPUT_Y_RANGE = 200; // drag range for Y input normalization (lower = more responsive)
 export const ARMY_START_WORLD_Y = 120; // initial world offset so the army starts higher on screen
+export const ARMY_SCREEN_BOTTOM_OFFSET = 460; // pixels from bottom of screen where the army is pinned
 export const ARMY_Y_OFFSET_FORWARD_MAX = 420; // max pixels the army can nudge toward the front
 export const ARMY_Y_OFFSET_BACK_MAX = 120; // max pixels the army can nudge toward the back
-export const ARMY_LATERAL_SPEED = 480; // pixels per second for joystick X movement
+export const ARMY_LATERAL_SPEED = 480; // pixels per second for keyboard X movement
+export const ARMY_FOLLOW_STRENGTH = 10; // exponential lerp strength for finger-follow (higher = snappier)
 export const ARMY_VERTICAL_SPEED = 360; // pixels per second for joystick Y movement
 
 // Gates

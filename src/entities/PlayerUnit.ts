@@ -128,10 +128,19 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     }
   }
 
-  updateFiring(delta: number, fireRate: number): boolean {
+  /**
+   * Advance the fire timer. Returns true when a shot should be fired.
+   * When `holdFire` is true the timer is clamped at `fireRate` so the unit stays
+   * "loaded" and shoots immediately on the first frame a target is in range.
+   */
+  updateFiring(delta: number, fireRate: number, holdFire: boolean = false): boolean {
     if (!this.active || this.isStunned) return false;
     this.fireTimer += delta;
     if (this.fireTimer >= fireRate) {
+      if (holdFire) {
+        this.fireTimer = fireRate;
+        return false;
+      }
       this.fireTimer -= fireRate;
       return true;
     }

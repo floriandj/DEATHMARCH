@@ -5,13 +5,12 @@ import {
   GAME_HEIGHT,
   FIELD_WIDTH,
   BULLET_POOL_SIZE,
+  BULLET_TOP_CULL_MARGIN,
   ENEMY_POOL_SIZE,
   ARMY_START_WORLD_Y,
-  ARMY_INPUT_Y_RANGE,
-  ARMY_Y_OFFSET_FORWARD_MAX,
-  ARMY_Y_OFFSET_BACK_MAX,
   ARMY_LATERAL_SPEED,
-  ARMY_VERTICAL_SPEED,
+  ARMY_FOLLOW_STRENGTH,
+  ARMY_SCREEN_BOTTOM_OFFSET,
   SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
@@ -245,17 +244,20 @@ export class GameScene extends Phaser.Scene {
     this.armyWorldY -= marchSpeed * dt;
 
     // 2. Camera follows army (army stays 200px from bottom)
-    this.cameras.main.scrollY = this.armyWorldY - GAME_HEIGHT + 200;
+    this.cameras.main.scrollY = this.armyWorldY - GAME_HEIGHT + ARMY_SCREEN_BOTTOM_OFFSET;
     this.background.update(this.cameras.main.scrollY);
 
-    // 3. Update army position from input (X: left/right, Y: forward/back)
+    // 3. Update army X from input — pointer = follow finger, keyboard = directional steer
     this.input_handler.update(dt);
-    const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
-    this.armyX += normalized * ARMY_LATERAL_SPEED * dt;
+    const pointerX = this.input_handler.getPointerScreenX();
+    if (pointerX !== null) {
+      const targetArmyX = Phaser.Math.Clamp(pointerX - GAME_WIDTH / 2, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
+      this.armyX = Phaser.Math.Linear(this.armyX, targetArmyX, 1 - Math.exp(-ARMY_FOLLOW_STRENGTH * dt));
+    } else {
+      const normalized = this.input_handler.getNormalized(GAME_WIDTH / 2);
+      this.armyX += normalized * ARMY_LATERAL_SPEED * dt;
+    }
     this.armyX = Phaser.Math.Clamp(this.armyX, -FIELD_WIDTH / 2, FIELD_WIDTH / 2);
-    const normalizedY = this.input_handler.getNormalizedY(ARMY_INPUT_Y_RANGE);
-    this.armyYOffset += normalizedY * ARMY_VERTICAL_SPEED * dt;
-    this.armyYOffset = Phaser.Math.Clamp(this.armyYOffset, -ARMY_Y_OFFSET_FORWARD_MAX, ARMY_Y_OFFSET_BACK_MAX);
     this.respawnArmy();
 
     // 3b. Unit physics
@@ -374,8 +376,8 @@ export class GameScene extends Phaser.Scene {
     const camBottom = camTop + GAME_HEIGHT;
     this.bullets.update(delta);
     this.bullets.forEachActive((b, idx) => {
-      // Off-screen cull
-      if (b.y < camTop - 100 || b.y > camBottom + 100) {
+      // Cull early near the top of the visible area, and off-screen below
+      if (b.y < camTop + BULLET_TOP_CULL_MARGIN || b.y > camBottom + 100) {
         this.bullets.despawn(idx);
         return;
       }
@@ -593,9 +595,10 @@ export class GameScene extends Phaser.Scene {
       }
     }
     this.shootSoundTimer += delta;
+    const holdFire = !this.hasEnemyInKillZone(camTop);
     for (const unit of this.units) {
       if (!unit.active) continue;
-      if (unit.updateFiring(delta, effectiveFireRate)) {
+      if (unit.updateFiring(delta, effectiveFireRate, holdFire)) {
         const pierce = perks.pierceCount;
         if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, 1, pierce)) {
           // Perk: Double Tap — chance to fire a second bullet
@@ -687,6 +690,17 @@ export class GameScene extends Phaser.Scene {
     this.hud.levelGold = this.levelGold + this.pouchGold;
     this.hud.weaponType = this.currentWeapon;
     this.hud.weaponName = weaponStats.name;
+  }
+
+  /** Any active enemy above the army and still within bullet reach. */
+  private hasEnemyInKillZone(camTop: number): boolean {
+    const killTop = camTop + BULLET_TOP_CULL_MARGIN;
+    const killBottom = this.armyWorldY;
+    for (const enemy of this.enemies) {
+      if (!enemy.active) continue;
+      if (enemy.y >= killTop && enemy.y <= killBottom) return true;
+    }
+    return false;
   }
 
   /** Reposition army in world space. */
