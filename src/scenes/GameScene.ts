@@ -11,6 +11,7 @@ import {
   ARMY_LATERAL_SPEED,
   ARMY_FOLLOW_STRENGTH,
   ARMY_SCREEN_BOTTOM_OFFSET,
+  MAX_UNITS,
   SVG_RENDER_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
@@ -105,7 +106,7 @@ export class GameScene extends Phaser.Scene {
     const boosts = WalletManager.consumeBoosts();
     const perks = PerkManager.instance;
     perks.resetLevel();
-    this.unitCount = level.startingUnits + boosts.extraUnits + perks.extraStartingUnits;
+    this.unitCount = Math.min(MAX_UNITS, level.startingUnits + boosts.extraUnits + perks.extraStartingUnits);
     this.activeUnitCount = 0;
     this.killStreak = 0;
     this.lastKillTime = 0;
@@ -150,7 +151,7 @@ export class GameScene extends Phaser.Scene {
 
     // Create entity pools
     this.units = [];
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < MAX_UNITS; i++) {
       this.units.push(new PlayerUnit(this, i));
     }
 
@@ -409,6 +410,7 @@ export class GameScene extends Phaser.Scene {
             // Perk: Vampiric — chance to gain a unit
             if (perks.vampiricChance > 0 && Math.random() < perks.vampiricChance) {
               this.unitCount++;
+              this.capUnitsToGold();
               this.respawnArmy();
               this.quirkVampiric(enemy.x, enemy.y);
             }
@@ -557,6 +559,7 @@ export class GameScene extends Phaser.Scene {
               this.unitCount += perks.gateBonusUnitsOnPositive;
             }
             this.unitCount = Math.max(1, this.unitCount);
+            this.capUnitsToGold();
             SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
             this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
           }
@@ -617,6 +620,7 @@ export class GameScene extends Phaser.Scene {
     // 9b. Perk: Regeneration — gain units at distance intervals (stacks: more units per tick)
     if (perks.regenDistanceInterval && this.distance >= this.nextRegenDistance) {
       this.unitCount += perks.regenUnitsPerTick;
+      this.capUnitsToGold();
       this.nextRegenDistance = this.distance + perks.regenDistanceInterval;
       this.respawnArmy();
       this.quirkRegeneration();
@@ -690,6 +694,15 @@ export class GameScene extends Phaser.Scene {
     this.hud.levelGold = this.levelGold + this.pouchGold;
     this.hud.weaponType = this.currentWeapon;
     this.hud.weaponName = weaponStats.name;
+  }
+
+  /** Cap unitCount at MAX_UNITS; any overflow converts 1:1 into level gold. */
+  private capUnitsToGold(): void {
+    if (this.unitCount > MAX_UNITS) {
+      const overflow = this.unitCount - MAX_UNITS;
+      this.unitCount = MAX_UNITS;
+      this.levelGold += overflow;
+    }
   }
 
   /** Any active enemy above the army and still within bullet reach. */
@@ -1062,6 +1075,7 @@ export class GameScene extends Phaser.Scene {
       subtitle = '2x FIRE RATE';
     } else if (orbType === 'heal') {
       this.unitCount += 2;
+      this.capUnitsToGold();
       this.respawnArmy();
       label = '\u{1F49A} HEAL!';
       subtitle = '+2 UNITS';
@@ -1096,6 +1110,7 @@ export class GameScene extends Phaser.Scene {
         subtitle = '2x FIRE RATE 12s';
       } else if (chaosRoll < 0.5) {
         this.unitCount += 3;
+        this.capUnitsToGold();
         this.respawnArmy();
         label = '\u{1F3B2} REINFORCEMENTS!';
         subtitle = '+3 UNITS';

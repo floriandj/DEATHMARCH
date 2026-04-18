@@ -28,6 +28,7 @@ export const ARMY_Y_OFFSET_FORWARD_MAX = 420; // max pixels the army can nudge t
 export const ARMY_Y_OFFSET_BACK_MAX = 120; // max pixels the army can nudge toward the back
 export const ARMY_LATERAL_SPEED = 480; // pixels per second for keyboard X movement
 export const ARMY_FOLLOW_STRENGTH = 10; // exponential lerp strength for finger-follow (higher = snappier)
+export const MAX_UNITS = 200; // unit count cap; excess units from gates/perks convert to +1 gold each
 export const ARMY_VERTICAL_SPEED = 360; // pixels per second for joystick Y movement
 
 // Gates
