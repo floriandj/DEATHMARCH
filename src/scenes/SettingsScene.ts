@@ -5,15 +5,12 @@ import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 import { PerkManager } from '@/systems/PerkManager';
 import { LevelManager } from '@/config/progression';
-import { registerSW } from 'virtual:pwa-register';
 
 const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
 const F = 'Arial, Helvetica, sans-serif';
 const C_PANEL = 0x2e92d4;
 const C_BORDER = 0x4aa8e0;
-const C_YELLOW = 0xebb654;
-
 export class SettingsScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
 
@@ -43,12 +40,6 @@ export class SettingsScene extends Phaser.Scene {
     const vs = Math.min(1.3, Math.max(0.85, GAME_HEIGHT / 1280));
 
     // ── Sections ──
-    y = this.section(y, 'APP UPDATE', 'Force-refresh to the latest version', 0x2e92d4, 'UPDATE', () => this.hardUpdate(), vs);
-    y = this.section(y, 'CLEAR CACHE', 'Wipe service worker cache and reload', C_YELLOW, 'CLEAR', () => this.clearCache(), vs);
-    y = this.section(y, 'SOUND', SoundManager.isMuted ? 'Sound is OFF' : 'Sound is ON', 0x4cde39, SoundManager.isMuted ? 'UNMUTE' : 'MUTE', () => {
-      SoundManager.toggleMute();
-      this.scene.restart();
-    }, vs);
     y = this.section(y, 'RESET GAME', 'Wipe ALL progress, gold, and scores', 0xe85454, 'RESET', () => this.resetAll(), vs);
 
     // Status text
@@ -150,24 +141,6 @@ export class SettingsScene extends Phaser.Scene {
   private showStatus(msg: string, color: string = '#6be85a'): void {
     this.statusText.setColor(color).setText(msg);
     this.tweens.add({ targets: this.statusText, alpha: { from: 0, to: 1 }, duration: 300 });
-  }
-
-  private hardUpdate(): void {
-    this.showStatus('Checking for updates...');
-    try {
-      const updateSW = registerSW({ immediate: true, onNeedRefresh() { updateSW(true); },
-        onOfflineReady: () => { this.showStatus('Already up to date.', '#ebb654'); } });
-      this.time.delayedCall(3000, () => { this.showStatus('Reloading...', '#38bdf8'); this.time.delayedCall(500, () => window.location.reload()); });
-    } catch { this.showStatus('Reloading...', '#38bdf8'); this.time.delayedCall(500, () => window.location.reload()); }
-  }
-
-  private async clearCache(): Promise<void> {
-    this.showStatus('Clearing cache...');
-    try {
-      if ('caches' in window) await Promise.all((await caches.keys()).map(n => caches.delete(n)));
-      if ('serviceWorker' in navigator) await Promise.all((await navigator.serviceWorker.getRegistrations()).map(r => r.unregister()));
-      this.showStatus('Cache cleared! Reloading...'); this.time.delayedCall(1000, () => window.location.reload());
-    } catch { this.showStatus('Failed to clear cache.', '#f87171'); }
   }
 
   private resetAll(): void {
