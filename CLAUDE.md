@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-DEATHMARCH is a web-based isometric mobile game built with **Phaser 3**. It's an endless wave-based army strategy game where players control units, pass through gates for unit multiplication/addition, and face multi-phase boss battles across 5 levels.
+DEATHMARCH is a web-based isometric mobile game built with **Phaser 3**. It's an endless wave-based army strategy game where players steer a formation left/right by holding/dragging their finger, pass through gates that add/multiply/divide units, swap weapons, or apply penalties, and face multi-phase boss battles. Level progression is endless: five JSON seed configs feed a procedural `LevelGenerator`, then new levels are generated on demand.
 
 Deployed as a **Progressive Web App** via Docker (nginx serving static assets).
 
@@ -19,7 +19,7 @@ Deployed as a **Progressive Web App** via Docker (nginx serving static assets).
 ## Commands
 
 ```bash
-npm run dev          # Start dev server on port 3000
+npm run dev          # Start Vite dev server (prefers 3000, falls back to 3001/3002)
 npm run build        # Type-check (tsc --noEmit) then Vite build
 npm test             # Run tests once (vitest run)
 npm run test:watch   # Run tests in watch mode
@@ -37,17 +37,18 @@ src/
 │   ├── Boss.ts              # Boss state machine with phase cycles
 │   ├── Bullet.ts            # Projectile (pooled)
 │   ├── Enemy.ts             # Enemy with health, movement, death effects
-│   ├── Gate.ts              # Unit multiplication/division gates
+│   ├── Gate.ts              # Gates: add/multiply/divide units, weapon swap, or penalties
 │   ├── PlayerUnit.ts        # Individual army unit
 │   └── WeaponCrate.ts       # Weapon upgrade pickup
 ├── scenes/                  # Phaser scenes
 │   ├── BootScene.ts         # Asset loading
 │   ├── SplashScene.ts       # Splash screen
 │   ├── MenuScene.ts         # Main menu with level selection
-│   ├── SettingsScene.ts     # Settings/preferences
+│   ├── SettingsScene.ts     # Settings (boss test, reset)
 │   ├── GameScene.ts         # Core gameplay loop
 │   ├── BossScene.ts         # Boss fight phase management
 │   ├── HUDScene.ts          # Score/unit count overlay
+│   ├── PerkSelectScene.ts   # Between-level perk draft
 │   └── GameOverScene.ts     # Results screen
 ├── systems/                 # Cross-entity coordination
 │   ├── ObjectPool.ts        # Generic object pooling (bullets, enemies, units)
@@ -55,11 +56,12 @@ src/
 │   ├── IsoHelper.ts         # Isometric coordinate transforms
 │   ├── WaveSpawner.ts       # Distance-based enemy wave generation
 │   ├── GateSpawner.ts       # Gate pair selection from templates
-│   ├── InputHandler.ts      # Touch/drag input handling
+│   ├── InputHandler.ts      # Finger-follow X-axis + keyboard steering
 │   ├── Background.ts        # Scrolling background
 │   ├── ProceduralEnemy.ts   # Procedural enemy generation
 │   ├── SoundManager.ts      # Audio management
 │   ├── WakeLock.ts          # Screen wake lock for mobile
+│   ├── PerkManager.ts       # Singleton: active perks, checkpoints, run state
 │   └── WalletManager.ts     # In-game currency/wallet system
 ├── pwa.ts                   # PWA service worker registration
 ├── pwa-register.d.ts        # PWA type declarations
@@ -81,7 +83,7 @@ docs/                        # Game design specs and plans
 
 ## Architecture & Key Patterns
 
-- **Object Pooling:** `ObjectPool<T>` reuses entities to avoid GC spikes. Pool sizes: bullets (10,000), enemies (100), units (200).
+- **Object Pooling:** `ObjectPool<T>` reuses entities to avoid GC spikes. Pool sizes: bullets (`BULLET_POOL_SIZE = 3000`), enemies (`ENEMY_POOL_SIZE`, 100), units (`MAX_UNITS = 200` — unit overflow converts 1:1 into level gold).
 - **Configuration-Driven Levels:** All level progression is defined in JSON files (`src/config/progression/levels/`). Enemy types, weapons, gates, and bosses are loaded from config — no code changes needed for level tuning.
 - **Singleton LevelManager:** Manages progression state across scenes. Provides methods for enemy selection, weapon progression, gate templates, and scoring.
 - **State Machines:** Boss entities use phase-based state machines with enrage mechanics.
