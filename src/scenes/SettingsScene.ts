@@ -40,6 +40,7 @@ export class SettingsScene extends Phaser.Scene {
     const vs = Math.min(1.3, Math.max(0.85, GAME_HEIGHT / 1280));
 
     // ── Sections ──
+    y = this.section(y, 'BOSS TEST', 'Jump into a boss fight for the current level', 0xebb654, 'FIGHT', () => this.bossTest(), vs);
     y = this.section(y, 'RESET GAME', 'Wipe ALL progress, gold, and scores', 0xe85454, 'RESET', () => this.resetAll(), vs);
 
     // Status text
@@ -141,6 +142,19 @@ export class SettingsScene extends Phaser.Scene {
   private showStatus(msg: string, color: string = '#6be85a'): void {
     this.statusText.setColor(color).setText(msg);
     this.tweens.add({ targets: this.statusText, alpha: { from: 0, to: 1 }, duration: 300 });
+  }
+
+  private bossTest(): void {
+    const mgr = LevelManager.instance;
+    const weapon = mgr.current.startingWeapon;
+    this.scene.start('BossScene', {
+      score: 0,
+      distance: 0,
+      unitCount: 50,
+      weapon,
+      levelGold: 0,
+      pouchGold: 0,
+    });
   }
 
   private resetAll(): void {
