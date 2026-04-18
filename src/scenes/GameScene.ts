@@ -103,7 +103,7 @@ export class GameScene extends Phaser.Scene {
     this.distance = 0;
     this.score = 0;
     // Consume single-use boosts from shop + perk bonuses
-    const boosts = WalletManager.consumeBoosts();
+    const boosts = WalletManager.applyBoosts();
     const perks = PerkManager.instance;
     perks.resetLevel();
     this.unitCount = Math.min(MAX_UNITS, level.startingUnits + boosts.extraUnits + perks.extraStartingUnits);
@@ -1412,7 +1412,6 @@ export class GameScene extends Phaser.Scene {
 
   private gameOver(): void {
     SoundManager.play('defeat');
-    WalletManager.consumeShield();
     this.input_handler.destroy();
     this.scene.stop('HUDScene');
     // Earn gold (partial on death)

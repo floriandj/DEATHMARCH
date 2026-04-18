@@ -1,6 +1,6 @@
 // src/systems/WalletManager.ts
 // Gold currency with single-use shop upgrades.
-// Bought items apply to the NEXT level only, then reset.
+// Bought items apply to every retry of the next level and only clear once it's completed.
 
 const STORAGE_KEY = 'deathmarch-wallet';
 
@@ -98,21 +98,17 @@ export const WalletManager = {
     return false;
   },
 
-  /** Call at the start of a level to consume pending boosts (except shield which is consumed on hit) */
-  consumeBoosts(): { extraUnits: number; weaponTier: number } {
+  /** Read pending boosts at the start of a level. Values persist until clearPendingBoosts() is called on victory. */
+  applyBoosts(): { extraUnits: number; weaponTier: number } {
     const d = load();
-    const result = { extraUnits: d.pendingExtraUnits, weaponTier: d.pendingWeaponTier };
-    // Reset single-use boosts after consuming
-    d.pendingExtraUnits = 0;
-    d.pendingWeaponTier = 0;
-    // Shield is consumed on hit, not here
-    save(d);
-    return result;
+    return { extraUnits: d.pendingExtraUnits, weaponTier: d.pendingWeaponTier };
   },
 
-  /** Consume remaining shield at level end (unused shields are lost) */
-  consumeShield(): void {
+  /** Clear all pending shop boosts — call on level victory only. */
+  clearPendingBoosts(): void {
     const d = load();
+    d.pendingExtraUnits = 0;
+    d.pendingWeaponTier = 0;
     d.pendingShield = 0;
     save(d);
   },

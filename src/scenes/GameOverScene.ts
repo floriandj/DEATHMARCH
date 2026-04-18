@@ -44,7 +44,10 @@ export class GameOverScene extends Phaser.Scene {
     const canAdvance = data.bossDefeated && mgr.hasNextLevel;
     const goldEarned = data.goldEarned || 0;
     const showShop = !data.bossDefeated;
-    if (data.bossDefeated) SoundManager.play('victory');
+    if (data.bossDefeated) {
+      SoundManager.play('victory');
+      WalletManager.clearPendingBoosts();
+    }
 
     // On death: keep current perks but go back to checkpoint level
     const checkpointLvl = PerkManager.instance.checkpointLevel;
