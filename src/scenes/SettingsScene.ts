@@ -3,6 +3,8 @@ import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
+import { PerkManager } from '@/systems/PerkManager';
+import { LevelManager } from '@/config/progression';
 import { registerSW } from 'virtual:pwa-register';
 
 const PAD = 34;
@@ -174,6 +176,10 @@ export class SettingsScene extends Phaser.Scene {
     localStorage.removeItem('deathmarch-muted');
     localStorage.removeItem('deathmarch-tutorial-seen');
     WalletManager.reset();
+    // Clear perk checkpoint + live run state AND in-memory singleton
+    PerkManager.instance.resetAll();
+    // Reset level singleton so currentLevelIndex isn't stuck at an advanced level
+    LevelManager.reset();
     this.showStatus('All progress wiped!', '#f87171');
     this.time.delayedCall(1000, () => this.scene.start('MenuScene'));
   }
