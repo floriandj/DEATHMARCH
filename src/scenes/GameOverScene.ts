@@ -189,10 +189,11 @@ export class GameOverScene extends Phaser.Scene {
     // ── Shop panel (death only) ──
     if (showShop) {
       const itemH = Math.round(67 * vs);
-      const shopH = Math.round(82 * vs) + 4 * itemH;
+      const headerH = Math.round(92 * vs);
+      const shopH = headerH + 4 * itemH + Math.round(10 * vs);
       this.panel(PAD, y, CW, shopH, C_ORANGE);
 
-      this.add.text(GAME_WIDTH / 2, y + Math.round(24 * vs), 'POWER UP', {
+      this.add.text(GAME_WIDTH / 2, y + Math.round(26 * vs), 'POWER UP', {
         fontSize: `${Math.round(24 * vs)}px`, color: '#ebb654', fontFamily: F, fontStyle: 'bold', letterSpacing: 4,
         stroke: '#1a3a4a', strokeThickness: 2,
         shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
@@ -200,7 +201,7 @@ export class GameOverScene extends Phaser.Scene {
 
       // Gold pill
       const pillW = Math.round(144 * vs), pillH = Math.round(34 * vs);
-      const pillY = y + Math.round(48 * vs);
+      const pillY = y + Math.round(50 * vs);
       const pg = this.add.graphics();
       pg.fillStyle(C_YELLOW, 0.2);
       pg.fillRoundedRect(GAME_WIDTH / 2 - pillW / 2, pillY, pillW, pillH, pillH / 2);
@@ -209,17 +210,16 @@ export class GameOverScene extends Phaser.Scene {
         stroke: '#1a3a4a', strokeThickness: 2,
       }).setOrigin(0.5);
 
-      let iy = y + Math.round(86 * vs);
       const items = WalletManager.getShopItems();
       const shopIcons = ['\u{1F6E1}\uFE0F', '\u{1F52B}', '\u{1F6E1}\uFE0F', '\u{1FA99}'];
       const shopColors = [C_BLUE, C_RED, C_GREEN, C_YELLOW];
       const hints = ['1 extra soldier', 'Stronger weapon', 'Block 1 hit', '+50% gold forever'];
       for (let i = 0; i < items.length; i++) {
+        const rowTop = y + headerH + i * itemH;
         if (i > 0) {
-          this.add.rectangle(GAME_WIDTH / 2, iy - Math.round(2 * vs), CW - 36, 1, 0xffffff, 0.1);
+          this.add.rectangle(GAME_WIDTH / 2, rowTop, CW - 36, 1, 0xffffff, 0.1);
         }
-        this.shopItem(iy, shopIcons[i], shopColors[i], items[i], hints[i], vs);
-        iy += itemH;
+        this.shopItem(rowTop + itemH / 2, shopIcons[i], shopColors[i], items[i], hints[i], vs);
       }
       y += shopH + Math.round(14 * vs);
     }
@@ -279,26 +279,29 @@ export class GameOverScene extends Phaser.Scene {
     }).setOrigin(0.5);
   }
 
-  // ── Shop item row ──
-  private shopItem(y: number, icon: string, iconColor: number, item: ReturnType<typeof WalletManager.getShopItems>[0], hint: string, vs: number): void {
+  // ── Shop item row (cy = vertical center of row) ──
+  private shopItem(cy: number, icon: string, iconColor: number, item: ReturnType<typeof WalletManager.getShopItems>[0], hint: string, vs: number): void {
     const canBuy = item.canBuy();
     const cost = item.cost();
     const costStr = cost === Infinity ? 'MAX' : `${cost}g`;
 
-    this.iconBadge(PAD + 29, y + 10, icon, iconColor, vs * 0.85);
+    const badgeX = PAD + Math.round(30 * vs);
+    const textX = PAD + Math.round(62 * vs);
 
-    this.add.text(PAD + Math.round(62 * vs), y, item.name, {
+    this.iconBadge(badgeX, cy, icon, iconColor, vs * 0.85);
+
+    this.add.text(textX, cy - Math.round(11 * vs), item.name, {
       fontSize: `${Math.round(18 * vs)}px`, color: '#ffffff', fontFamily: F, fontStyle: 'bold',
       stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0, 0.5);
-    this.add.text(PAD + Math.round(62 * vs), y + Math.round(24 * vs), hint, {
+    this.add.text(textX, cy + Math.round(11 * vs), hint, {
       fontSize: `${Math.round(16 * vs)}px`, color: '#ffffff', fontFamily: F,
       stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0, 0.5);
 
     const bw = Math.round(94 * vs), bh = Math.round(41 * vs);
-    const bx = PAD + CW - Math.round(58 * vs);
-    const c = this.add.container(bx, y + 8);
+    const bx = PAD + CW - Math.round(12 * vs) - bw / 2;
+    const c = this.add.container(bx, cy);
     const bg = this.add.graphics();
     bg.fillStyle(canBuy ? C_GREEN : 0x3090c8, canBuy ? 1 : 0.6);
     bg.fillRoundedRect(-bw / 2, -bh / 2, bw, bh, bh / 2);
