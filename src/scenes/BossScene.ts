@@ -519,8 +519,10 @@ export class BossScene extends Phaser.Scene {
 
     this.slamZoneX = dangerIndices.map((i: number) => lanes[i]);
 
+    const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
     for (let i = 0; i < this.slamZoneX.length && i < this.dangerZones.length; i++) {
-      this.dangerZones[i].setPosition(GAME_WIDTH / 2 + this.slamZoneX[i], GAME_HEIGHT - 400);
+      // Zone is 300 tall with origin (0.5, 0); center it on the army
+      this.dangerZones[i].setPosition(GAME_WIDTH / 2 + this.slamZoneX[i], armyScreenY - 150);
       this.dangerZones[i].setVisible(true);
       this.dangerZones[i].setAlpha(0.3);
 
@@ -553,11 +555,11 @@ export class BossScene extends Phaser.Scene {
       }
     }
 
-    // Slam impact VFX: shockwave particles along danger zones
+    // Slam impact VFX: shockwave particles along danger zones, at the army's feet
+    const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
     for (const zoneX of this.slamZoneX) {
       const impactX = GAME_WIDTH / 2 + zoneX;
-      const impactY = GAME_HEIGHT - 250;
-      this.spawnImpactParticles(impactX, impactY, 8, 0xff2200);
+      this.spawnImpactParticles(impactX, armyScreenY, 8, 0xff2200);
     }
     this.cameras.main.shake(250, 0.025);
 
