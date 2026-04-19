@@ -107,7 +107,7 @@ export class GameOverScene extends Phaser.Scene {
       fontSize: `${Math.round(18 * vs)}px`, color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
     }).setOrigin(0, 0.5);
-    const scoreVal = this.add.text(PAD + CW - 22, scoreRowY + Math.round(7 * vs), '0', {
+    const scoreVal = this.add.text(PAD + CW - 22, scoreRowY, '0', {
       fontSize: `${Math.round(53 * vs)}px`, color: '#ffffff', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
@@ -115,7 +115,7 @@ export class GameOverScene extends Phaser.Scene {
     // Golden glow behind score counter
     const scoreGlow = this.add.graphics();
     scoreGlow.fillStyle(C_YELLOW, 0.18);
-    scoreGlow.fillEllipse(PAD + CW - 22 - Math.round(60 * vs), scoreRowY + Math.round(7 * vs), Math.round(180 * vs), Math.round(60 * vs));
+    scoreGlow.fillEllipse(PAD + CW - 22 - Math.round(60 * vs), scoreRowY, Math.round(180 * vs), Math.round(60 * vs));
     scoreGlow.setAlpha(0);
     if (data.score > 0) {
       const ctr = { val: 0 };
@@ -134,7 +134,7 @@ export class GameOverScene extends Phaser.Scene {
     // Distance
     const row2Y = y + Math.round(110 * vs);
     this.iconBadge(PAD + 22, row2Y, '\u{1F3C3}', C_TEAL, vs);
-    this.add.text(PAD + Math.round(62 * vs), row2Y - 4, `${data.distance}m`, {
+    this.add.text(PAD + Math.round(62 * vs), row2Y, `${data.distance}m`, {
       fontSize: `${Math.round(29 * vs)}px`, color: '#38bdf8', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
@@ -142,7 +142,7 @@ export class GameOverScene extends Phaser.Scene {
 
     // Gold
     this.iconBadge(GAME_WIDTH / 2 + Math.round(24 * vs), row2Y, '\u{1FA99}', C_ORANGE, vs);
-    this.add.text(GAME_WIDTH / 2 + Math.round(65 * vs), row2Y - 4, `+${goldEarned}g`, {
+    this.add.text(GAME_WIDTH / 2 + Math.round(65 * vs), row2Y, `+${goldEarned}g`, {
       fontSize: `${Math.round(29 * vs)}px`, color: '#ebb654', fontFamily: F, fontStyle: 'bold',
       stroke: '#1a3a4a', strokeThickness: 2,
       shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 2, fill: true },
