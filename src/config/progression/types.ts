@@ -101,6 +101,9 @@ export interface LevelTheme {
   accentColor: number;       // UI accent (HUD banner, etc.)
   accentHex: string;         // same as accentColor but as "#rrggbb"
   worldName: string;         // e.g. "Goblin Wastes"
+  decorKeys?: string[];      // procedural decor texture keys used by Background
+  pathColor?: number;        // override path/road color; falls back to groundColor×0.85
+  useStonePath?: boolean;    // render center path as tiled stones instead of plain rect
 }
 
 /** Top-level level definition */

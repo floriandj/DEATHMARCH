@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { EnemyStats } from '@/config/EnemyConfig';
-import { ENTITY_SCALE, SVG_RENDER_SCALE } from '@/config/GameConfig';
+import { ENTITY_SCALE, PIXEL_SPRITE_SCALE } from '@/config/GameConfig';
 import { getSpriteForType, getTintForType } from '@/systems/ProceduralEnemy';
 
 export class Enemy extends Phaser.GameObjects.Sprite {
@@ -25,7 +25,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private shieldHp: number = 0;
 
   constructor(scene: Phaser.Scene) {
-    super(scene, 0, 0, 'enemy_goblin');
+    super(scene, 0, 0, 'char_goblin');
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
@@ -47,7 +47,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.enemyType = stats.type;
     this.enemyColor = stats.color;
     this.setAlpha(1);
-    const baseScale = ENTITY_SCALE / SVG_RENDER_SCALE;
+    const baseScale = PIXEL_SPRITE_SCALE;
     this.setScale(elite ? baseScale * 1.3 : baseScale);
 
     // Reset trait state
@@ -57,23 +57,23 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.isDashing = false;
     this.shieldHp = this.isShielded() ? Math.ceil(stats.hp * 0.3) : 0;
 
-    // Set texture: procedural enemies reuse SVG sprites with color tint
+    // Set texture: procedural enemies reuse 0x72 creature sprites with color tint
     if (stats.type.startsWith('proc_')) {
       const spriteBase = getSpriteForType(stats.type, this.levelIndex);
-      const texKey = `enemy_${spriteBase}`;
+      const texKey = `char_${spriteBase}`;
       const tint = getTintForType(stats.type, this.levelIndex);
       if (this.scene.textures.exists(texKey)) {
         this.setTexture(texKey);
         this.setTint(tint);
-        const animKey = `enemy_${spriteBase}_walk`;
+        const animKey = `char_${spriteBase}_run`;
         if (this.scene.anims.exists(animKey)) this.play(animKey);
       }
     } else {
-      const texKey = `enemy_${stats.type}`;
+      const texKey = `char_${stats.type}`;
       if (this.scene.textures.exists(texKey)) {
         this.setTexture(texKey);
         this.clearTint();
-        const animKey = `enemy_${stats.type}_walk`;
+        const animKey = `char_${stats.type}_run`;
         if (this.scene.anims.exists(animKey)) this.play(animKey);
       }
     }

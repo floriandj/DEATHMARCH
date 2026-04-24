@@ -10,7 +10,7 @@ import {
   ARMY_FOLLOW_STRENGTH,
   ARMY_SCREEN_BOTTOM_OFFSET,
   ENTITY_SCALE,
-  SVG_RENDER_SCALE,
+  PIXEL_SPRITE_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
 import { Background } from '@/systems/Background';
@@ -118,16 +118,15 @@ export class BossScene extends Phaser.Scene {
     this.bossState = new BossState(scaledBossCfg);
 
     // Boss sprite - starts off-screen, will animate in
-    const bossSpriteKey = bossCfg.sprite || 'boss';
-    this.bossScale = (bossCfg.scale ?? 1.5) * ENTITY_SCALE / SVG_RENDER_SCALE;
+    const bossSpriteKey = bossCfg.sprite || 'char_big_demon';
+    // Bosses are scaled 2× relative to regular pixel sprites for presence
+    this.bossScale = (bossCfg.scale ?? 1.5) * PIXEL_SPRITE_SCALE * 2;
     this.bossSprite = this.add.sprite(GAME_WIDTH / 2, -150, bossSpriteKey);
     this.bossSprite.setScale(this.bossScale);
     this.bossSprite.setAlpha(0);
     const bossAnimKey = `${bossSpriteKey}_idle`;
     if (this.anims.exists(bossAnimKey)) {
       this.bossSprite.play(bossAnimKey);
-    } else {
-      this.bossSprite.play('boss_idle');
     }
     // Apply tint if specified
     if (bossCfg.tint) {

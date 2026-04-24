@@ -9,10 +9,18 @@ describe('WaveSpawner', () => {
 
   it('produces spawn commands based on distance', () => {
     const spawner = new WaveSpawner();
-    const spawns = spawner.update(50);
-    for (const s of spawns) {
-      expect(s.type).toBe('goblin');
-      expect(s.x).toBeDefined();
+    const mgr = LevelManager.instance;
+    const trigger = mgr.bossConfig.triggerDistance;
+    // Sweep through the whole level; expect at least one spawn with a defined type + x.
+    const allSpawns = [];
+    for (let d = 0; d < trigger; d += 50) {
+      allSpawns.push(...spawner.update(d));
+    }
+    expect(allSpawns.length).toBeGreaterThan(0);
+    for (const s of allSpawns) {
+      expect(typeof s.type).toBe('string');
+      expect(s.type.length).toBeGreaterThan(0);
+      expect(typeof s.x).toBe('number');
     }
   });
 
@@ -35,39 +43,47 @@ describe('WaveSpawner', () => {
   });
 
   it('can spawn second enemy type after its intro distance', () => {
-    const spawner = new WaveSpawner();
     const mgr = LevelManager.instance;
+    const trigger = mgr.bossConfig.triggerDistance;
     const enemies = Object.values(mgr.enemies);
     const sorted = [...enemies].sort((a, b) => a.appearsAtDistance - b.appearsAtDistance);
-    const secondAppears = sorted[1]?.appearsAtDistance ?? 500;
+    const secondType = sorted[1]?.type;
+    expect(secondType).toBeDefined();
 
-    for (let d = 10; d <= secondAppears; d += 10) {
-      spawner.update(d);
-    }
+    // Run the whole level to exercise the random pick. Spawn density + weight
+    // ramp guarantees the second-tier enemy appears at some point before the boss.
+    const spawner = new WaveSpawner();
     const types = new Set<string>();
-    for (let d = secondAppears + 10; d <= secondAppears + 600; d += 10) {
+    for (let d = 0; d <= trigger - 10; d += 5) {
       for (const s of spawner.update(d)) {
         types.add(s.type);
       }
     }
-    expect(types.has(sorted[1].type)).toBe(true);
+    expect(types.has(secondType!)).toBe(true);
   });
 
   it('increases spawn density with distance', () => {
-    const spawnerEarly = new WaveSpawner();
-    const spawnerLate = new WaveSpawner();
+    // Compare an early bracket window vs a late bracket window, sized relative
+    // to this level's actual trigger distance so the test is config-agnostic.
+    const trigger = LevelManager.instance.bossConfig.triggerDistance;
+    const windowSize = Math.round(trigger * 0.15);
 
+    const earlySpawner = new WaveSpawner();
     let earlyCount = 0;
-    for (let d = 10; d <= 200; d += 10) {
-      earlyCount += spawnerEarly.update(d).length;
+    const earlyWindowEnd = Math.round(trigger * 0.25);
+    for (let d = 0; d <= earlyWindowEnd; d += 5) {
+      earlyCount += earlySpawner.update(d).length;
     }
 
-    for (let d = 10; d <= 800; d += 10) {
-      spawnerLate.update(d);
+    const lateSpawner = new WaveSpawner();
+    // Advance the late spawner up to the start of the late window first
+    const lateWindowStart = Math.round(trigger * 0.75);
+    for (let d = 0; d <= lateWindowStart; d += 5) {
+      lateSpawner.update(d);
     }
     let lateCount = 0;
-    for (let d = 810; d <= 1000; d += 10) {
-      lateCount += spawnerLate.update(d).length;
+    for (let d = lateWindowStart + 5; d <= lateWindowStart + windowSize; d += 5) {
+      lateCount += lateSpawner.update(d).length;
     }
 
     expect(lateCount).toBeGreaterThan(earlyCount);

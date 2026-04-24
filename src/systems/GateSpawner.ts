@@ -109,6 +109,27 @@ export function pickGatePair(distance: number): GatePair {
   return { left: toOption(right), right: toOption(left) };
 }
 
+/**
+ * Single-barrel loot option for barrels scattered between pair spawns.
+ * Always positive — scaled by progression so late-game loot is juicier.
+ */
+export function pickLootOption(distance: number): GateOption {
+  const p = progress(distance);
+  const roll = Math.random();
+  let cfg: GateCfg;
+  if (roll < 0.7) {
+    // Most common: small additive bonus
+    cfg = { op: 'add', value: 1 + Math.floor(p * 3) };
+  } else if (roll < 0.92) {
+    // Sometimes: bigger bonus
+    cfg = { op: 'add', value: 2 + Math.floor(p * 4) };
+  } else {
+    // Rare: small multiplier
+    cfg = { op: 'multiply', value: 2 };
+  }
+  return toOption(cfg);
+}
+
 /** Create a weapon gate: one side upgrades the weapon, other side gives units */
 export function pickWeaponGatePair(weaponName: string, weaponType: string, unitBonus: number): GatePair {
   const weaponOption: GateOption = {

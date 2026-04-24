@@ -1,75 +1,79 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { pickGatePair } from '../src/systems/GateSpawner';
-import { LevelManager, gateApplyFn, gateLabel } from '../src/config/progression';
+import { pickGatePair, pickWeaponGatePair } from '../src/systems/GateSpawner';
+import { LevelManager, gateApplyFn } from '../src/config/progression';
 
 describe('GateSpawner', () => {
   beforeEach(() => {
     LevelManager.reset();
   });
 
-  it('has at least 5 gate templates', () => {
-    const templates = LevelManager.instance.current.gates.templates;
-    expect(templates.length).toBeGreaterThanOrEqual(5);
+  describe('pickGatePair', () => {
+    it('returns a valid pair with labels, colors, and apply fns', () => {
+      const pair = pickGatePair(0);
+      for (const side of [pair.left, pair.right]) {
+        expect(side).toHaveProperty('label');
+        expect(side).toHaveProperty('color');
+        expect(typeof side.apply).toBe('function');
+        expect(side.label.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('produces label variety across many high-distance rolls', () => {
+      const labels = new Set<string>();
+      for (let i = 0; i < 200; i++) {
+        const pair = pickGatePair(3000);
+        labels.add(pair.left.label);
+        labels.add(pair.right.label);
+      }
+      // Across 400 rolls we expect at least several distinct operations
+      expect(labels.size).toBeGreaterThan(3);
+    });
+
+    it('always returns apply functions that never drop unit count below 1', () => {
+      for (let i = 0; i < 100; i++) {
+        const pair = pickGatePair(Math.random() * 5000);
+        expect(pair.left.apply(1)).toBeGreaterThanOrEqual(1);
+        expect(pair.right.apply(1)).toBeGreaterThanOrEqual(1);
+      }
+    });
   });
 
-  it('each template has a left and right gate with op and value', () => {
-    const templates = LevelManager.instance.current.gates.templates;
-    for (const tpl of templates) {
-      expect(tpl.left).toHaveProperty('op');
-      expect(tpl.left).toHaveProperty('value');
-      expect(tpl.right).toHaveProperty('op');
-      expect(tpl.right).toHaveProperty('value');
-    }
+  describe('pickWeaponGatePair', () => {
+    it('always produces one weapon-upgrade side and one unit-bonus side', () => {
+      for (let i = 0; i < 20; i++) {
+        const pair = pickWeaponGatePair('SMG', 'smg', 5);
+        const sides = [pair.left, pair.right];
+        const upgrades = sides.filter((s) => s.weaponUpgrade === 'smg');
+        expect(upgrades).toHaveLength(1);
+        const bonuses = sides.filter((s) => s.weaponUpgrade == null);
+        expect(bonuses).toHaveLength(1);
+        expect(bonuses[0].apply(10)).toBe(15);
+      }
+    });
+
+    it('weapon side has the weapon name as label', () => {
+      const pair = pickWeaponGatePair('PLASMA RIFLE', 'plasma', 3);
+      const upgradeSide = [pair.left, pair.right].find((s) => s.weaponUpgrade === 'plasma');
+      expect(upgradeSide?.label).toBe('PLASMA RIFLE');
+    });
   });
 
-  it('-3 gate subtracts 3 units but never below 1', () => {
-    const templates = LevelManager.instance.current.gates.templates;
-    const sub3 = templates.find(
-      (t) => (t.left.op === 'subtract' && t.left.value === 3) || (t.right.op === 'subtract' && t.right.value === 3),
-    );
-    expect(sub3).toBeDefined();
-    const side = sub3!.left.op === 'subtract' && sub3!.left.value === 3 ? sub3!.left : sub3!.right;
-    const apply = gateApplyFn(side);
-    expect(apply(5)).toBe(2);
-    expect(apply(1)).toBe(1);
-  });
-
-  it('+2 gate adds 2 units', () => {
-    const templates = LevelManager.instance.current.gates.templates;
-    const add = templates.find(
-      (t) => (t.left.op === 'add' && t.left.value === 2) || (t.right.op === 'add' && t.right.value === 2),
-    );
-    expect(add).toBeDefined();
-    const side = add!.left.op === 'add' && add!.left.value === 2 ? add!.left : add!.right;
-    const apply = gateApplyFn(side);
-    expect(apply(5)).toBe(7);
-  });
-
-  it('-1 gate subtracts but never goes below 1', () => {
-    const templates = LevelManager.instance.current.gates.templates;
-    const sub = templates.find(
-      (t) => (t.left.op === 'subtract' && t.left.value === 1) || (t.right.op === 'subtract' && t.right.value === 1),
-    );
-    expect(sub).toBeDefined();
-    const side = sub!.left.op === 'subtract' && sub!.left.value === 1 ? sub!.left : sub!.right;
-    const apply = gateApplyFn(side);
-    expect(apply(10)).toBe(9);
-    expect(apply(1)).toBe(1);
-  });
-
-  it('pickGatePair returns a valid pair', () => {
-    const pair = pickGatePair(0);
-    expect(pair.left).toHaveProperty('label');
-    expect(pair.right).toHaveProperty('label');
-  });
-
-  it('pickGatePair at high distance can return late-game templates', () => {
-    const labels = new Set<string>();
-    for (let i = 0; i < 50; i++) {
-      const pair = pickGatePair(1000);
-      labels.add(pair.left.label);
-      labels.add(pair.right.label);
-    }
-    expect(labels.size).toBeGreaterThan(2);
+  describe('gateApplyFn math', () => {
+    it('add adds the value', () => {
+      expect(gateApplyFn({ op: 'add', value: 3 })(10)).toBe(13);
+    });
+    it('subtract never drops below 1', () => {
+      expect(gateApplyFn({ op: 'subtract', value: 5 })(10)).toBe(5);
+      expect(gateApplyFn({ op: 'subtract', value: 5 })(3)).toBe(1);
+      expect(gateApplyFn({ op: 'subtract', value: 99 })(1)).toBe(1);
+    });
+    it('multiply multiplies', () => {
+      expect(gateApplyFn({ op: 'multiply', value: 3 })(4)).toBe(12);
+    });
+    it('divide rounds down and never drops below 1', () => {
+      expect(gateApplyFn({ op: 'divide', value: 2 })(9)).toBe(4);
+      expect(gateApplyFn({ op: 'divide', value: 2 })(1)).toBe(1);
+      expect(gateApplyFn({ op: 'divide', value: 10 })(3)).toBe(1);
+    });
   });
 });

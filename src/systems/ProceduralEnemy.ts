@@ -1,31 +1,32 @@
 // src/systems/ProceduralEnemy.ts
-// Procedural mob generator that reuses existing SVG enemy sprites with color tinting.
-// No runtime texture generation — just picks a base sprite + applies a color tint at spawn.
+// Procedural mob generator that reuses 0x72 DungeonTilesetII creature sprites
+// with per-world color tinting. No runtime texture generation — just picks a
+// base sprite + applies a color tint at spawn.
 
 import type { LevelEnemyConfig } from '@/config/progression';
 
 // ---------------------------------------------------------------------------
-// Available SVG enemy sprites (loaded in BootScene from all 5 worlds)
+// Available 0x72 character sprite bases (loaded in BootScene as `char_<name>`)
 // ---------------------------------------------------------------------------
 
 const SPRITE_POOL = [
-  'goblin', 'orc', 'troll', 'demon',
-  'berserker', 'hellhound', 'warlock',
-  'frostbite', 'ice_golem', 'banshee', 'yeti',
-  'rat_swarm', 'blighted', 'spore_carrier', 'abomination',
-  'shadow_knight', 'ashwalker', 'void_weaver', 'archfiend',
+  'goblin', 'orc_warrior', 'muddy', 'big_demon',
+  'masked_orc', 'swampy', 'ice_zombie',
+  'imp', 'big_zombie', 'wogol', 'pumpkin_dude',
+  'tiny_zombie', 'slug', 'lizard_f', 'ogre',
+  'chort', 'skelet', 'necromancer',
 ];
 
-// Grouped by visual archetype for better tier matching
+// Grouped by visual archetype for tier matching
 const TIER_SPRITES = [
-  // Tier 0 (weak, small): small fast creatures
-  ['goblin', 'rat_swarm', 'frostbite', 'hellhound', 'ashwalker'],
-  // Tier 1 (medium): mid-size fighters
-  ['orc', 'berserker', 'banshee', 'blighted', 'void_weaver'],
-  // Tier 2 (tough): large slow tanks
-  ['troll', 'warlock', 'yeti', 'spore_carrier', 'shadow_knight'],
-  // Tier 3 (elite): boss-like mobs
-  ['demon', 'ice_golem', 'abomination', 'archfiend'],
+  // Tier 0 (weak, small)
+  ['goblin', 'tiny_zombie', 'imp', 'swampy', 'skelet'],
+  // Tier 1 (medium)
+  ['orc_warrior', 'masked_orc', 'wogol', 'slug', 'necromancer'],
+  // Tier 2 (tough)
+  ['muddy', 'ice_zombie', 'pumpkin_dude', 'lizard_f', 'chort'],
+  // Tier 3 (elite, boss-like)
+  ['big_demon', 'big_zombie', 'ogre'],
 ];
 
 // ---------------------------------------------------------------------------
@@ -79,7 +80,7 @@ function seededRng(seed: number): () => number {
 export interface ProceduralEnemyDef {
   type: string;
   name: string;
-  spriteBase: string;   // e.g. 'orc' → uses texture 'enemy_orc' + anim 'enemy_orc_walk'
+  spriteBase: string;   // e.g. 'orc_warrior' → uses texture 'char_orc_warrior' + anim 'char_orc_warrior_run'
   tintColor: number;
   colorHex: string;
   trait: EnemyTrait;

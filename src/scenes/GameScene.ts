@@ -12,17 +12,18 @@ import {
   ARMY_FOLLOW_STRENGTH,
   ARMY_SCREEN_BOTTOM_OFFSET,
   MAX_UNITS,
-  SVG_RENDER_SCALE,
+  PIXEL_SPRITE_SCALE,
 } from '@/config/GameConfig';
 import { LevelManager, hexToNum } from '@/config/progression';
+import { getWeaponFx } from '@/config/WeaponFx';
 import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { WaveSpawner } from '@/systems/WaveSpawner';
-import { pickGatePair, pickWeaponGatePair } from '@/systems/GateSpawner';
+import { pickGatePair, pickWeaponGatePair, pickLootOption } from '@/systems/GateSpawner';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
 import { Enemy } from '@/entities/Enemy';
-import { Gate } from '@/entities/Gate';
+import { Barrel } from '@/entities/Barrel';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
@@ -48,11 +49,13 @@ export class GameScene extends Phaser.Scene {
   private units: PlayerUnit[] = [];
   private bullets!: BulletPool;
   private enemies: Enemy[] = [];
-  private gates: Gate[] = [];
-  // Gate tracking
+  private barrels: Barrel[] = [];
+  // Barrel-pair tracking (replaces old gates)
   private nextGateDistance: number = 500;
-  private weaponGateDistances: number[] = []; // distances at which weapon gates spawn
-  private weaponGateIndex: number = 0; // next weapon gate to spawn
+  private weaponGateDistances: number[] = []; // distances at which weapon barrels spawn
+  private weaponGateIndex: number = 0; // next weapon barrel to spawn
+  // Scattered loot barrel tracking — spawns between gate pairs
+  private nextLootBarrelDistance: number = 200;
 
   // Weapon system
   private currentWeapon: string = 'pistol';
@@ -111,6 +114,7 @@ export class GameScene extends Phaser.Scene {
     this.killStreak = 0;
     this.lastKillTime = 0;
     this.nextGateDistance = level.gates.interval;
+    this.nextLootBarrelDistance = 180;
 
     // Apply weapon tier boost
     const weaponTier = Math.min(boosts.weaponTier, level.weaponOrder.length - 1);
@@ -165,9 +169,9 @@ export class GameScene extends Phaser.Scene {
       this.enemies.push(e);
     }
 
-    this.gates = [];
-    for (let i = 0; i < 5; i++) {
-      this.gates.push(new Gate(this));
+    this.barrels = [];
+    for (let i = 0; i < 24; i++) {
+      this.barrels.push(new Barrel(this));
     }
 
     // Enemy health bar overlay
@@ -300,9 +304,8 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 5. Spawn gates in world space (static — army walks through them)
+    // 5. Spawn barrel pairs in world space (shootable — replaces old drive-through gates)
     if (this.distance >= this.nextGateDistance && this.distance < level.boss.triggerDistance) {
-      // Check if a weapon gate should spawn at this distance
       let pair;
       if (this.weaponGateIndex < this.weaponGateDistances.length
         && this.distance >= this.weaponGateDistances[this.weaponGateIndex]) {
@@ -316,13 +319,29 @@ export class GameScene extends Phaser.Scene {
       } else {
         pair = pickGatePair(this.distance);
       }
-      const gate = this.gates.find((g) => !g.active);
-      if (gate) {
-        const gateWorldY = this.armyWorldY - GAME_HEIGHT - 50;
-        gate.spawn(gateWorldY, pair.left, pair.right);
-        gate.setPosition(GAME_WIDTH / 2, gateWorldY);
-      }
+      const spawnY = this.armyWorldY - GAME_HEIGHT - 40;
+      const leftX = GAME_WIDTH / 2 - 150;
+      const rightX = GAME_WIDTH / 2 + 150;
+      const leftBarrel = this.barrels.find((b) => !b.active);
+      if (leftBarrel) leftBarrel.spawn(leftX, spawnY, pair.left);
+      const rightBarrel = this.barrels.find((b) => !b.active);
+      if (rightBarrel) rightBarrel.spawn(rightX, spawnY, pair.right);
       this.nextGateDistance += level.gates.interval;
+    }
+
+    // 5c. Scatter loot barrels in between — small positive bonuses, cheap HP
+    if (this.distance >= this.nextLootBarrelDistance && this.distance < level.boss.triggerDistance) {
+      // Usually just 1 barrel; occasionally 2 side-by-side for a mini-cluster
+      const count = Math.random() < 0.2 ? 2 : 1;
+      for (let i = 0; i < count; i++) {
+        const free = this.barrels.find((b) => !b.active);
+        if (!free) break;
+        const lootX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.7;
+        const lootY = this.armyWorldY - GAME_HEIGHT - 30 - Math.random() * 100;
+        free.spawn(lootX, lootY, pickLootOption(this.distance));
+      }
+      // Sparser cadence — roughly one event every 400–700 distance
+      this.nextLootBarrelDistance = this.distance + 400 + Math.random() * 300;
     }
 
     // 5d. Spawn gold pouches at intervals
@@ -330,7 +349,7 @@ export class GameScene extends Phaser.Scene {
       const pouchX = GAME_WIDTH / 2 + (Math.random() - 0.5) * FIELD_WIDTH * 0.6;
       const pouchY = this.armyWorldY - GAME_HEIGHT - 80;
       const pouch = this.add.sprite(pouchX, pouchY, 'gold_pouch');
-      pouch.setScale(2 / SVG_RENDER_SCALE);
+      pouch.setScale(PIXEL_SPRITE_SCALE);
       pouch.setAlpha(1);
       (pouch as any).goldValue = Math.round(10 + Math.random() * 15);
       this.goldPouches.push(pouch);
@@ -381,6 +400,22 @@ export class GameScene extends Phaser.Scene {
       if (b.y < camTop + BULLET_TOP_CULL_MARGIN || b.y > camBottom + 100) {
         this.bullets.despawn(idx);
         return;
+      }
+
+      // Hit barrels (before enemies so they take precedence at same position)
+      for (const barrel of this.barrels) {
+        if (!barrel.active) continue;
+        const bdx = b.x - barrel.x;
+        const bdy = b.y - barrel.y;
+        if (bdx * bdx + bdy * bdy < 28 * 28) {
+          const totalDmg = b.damage + perks.bonusBulletDamage;
+          this.bullets.despawn(idx);
+          const destroyed = barrel.takeDamage(totalDmg);
+          if (destroyed) {
+            this.applyBarrelEffect(barrel);
+          }
+          return;
+        }
       }
 
       // Hit enemies
@@ -525,57 +560,11 @@ export class GameScene extends Phaser.Scene {
       this.enemyHpBars.fillRect(barX, barY, barW * hpFrac, barH);
     }
 
-    // 8. Gates — static, check if unit walks into them
-    for (const gate of this.gates) {
-      if (!gate.active || gate.passed) continue;
-
-      let hitUnit: PlayerUnit | null = null;
-      for (const unit of this.units) {
-        if (!unit.active) continue;
-        if (Math.abs(unit.y - gate.y) < 20) {
-          hitUnit = unit;
-          break;
-        }
-      }
-
-      if (hitUnit) {
-        const unitRelativeX = hitUnit.x - gate.x;
-        const result = gate.checkPassByX(unitRelativeX);
-        if (result) {
-          // Weapon upgrade gate
-          if (result.weaponUpgrade) {
-            this.currentWeapon = result.weaponUpgrade;
-            SoundManager.play('weapon_upgrade');
-            this.showWeaponUpgrade(hitUnit.x, gate.y, result.weaponUpgrade);
-          } else {
-            const oldCount = this.unitCount;
-            this.unitCount = result.apply(this.unitCount);
-            // Perk: Lucky Gates — add ops give +1 extra per stack
-            if (this.unitCount > oldCount && perks.gateBonusAdd > 0) {
-              this.unitCount += perks.gateBonusAdd;
-            }
-            // Perk: Rally Cry — positive gates give +2 bonus per stack
-            if (this.unitCount > oldCount && perks.gateBonusUnitsOnPositive > 0) {
-              this.unitCount += perks.gateBonusUnitsOnPositive;
-            }
-            this.unitCount = Math.max(1, this.unitCount);
-            this.capUnitsToGold();
-            SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
-            this.showGateEffect(hitUnit.x, gate.y, result.label, this.unitCount > oldCount);
-          }
-          // Perk: Gold Rush — earn gold per gate
-          if (perks.goldPerGate > 0) {
-            this.pouchGold += perks.goldPerGate;
-          }
-          gate.despawn();
-          this.respawnArmy();
-          continue;
-        }
-      }
-
-      // Despawn gates army has passed
-      if (gate.y > this.armyWorldY + 200) {
-        gate.despawn();
+    // 8. Barrels — despawn any that the army has already passed (no effect on miss)
+    for (const barrel of this.barrels) {
+      if (!barrel.active) continue;
+      if (barrel.y > this.armyWorldY + 200) {
+        barrel.despawn();
       }
     }
 
@@ -599,14 +588,16 @@ export class GameScene extends Phaser.Scene {
     }
     this.shootSoundTimer += delta;
     const holdFire = !this.hasEnemyInKillZone(camTop);
+    const fx = getWeaponFx(this.currentWeapon);
     for (const unit of this.units) {
       if (!unit.active) continue;
       if (unit.updateFiring(delta, effectiveFireRate, holdFire)) {
         const pierce = perks.pierceCount;
-        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, 1, pierce)) {
+        if (this.bullets.fire(unit.x, unit.y, bulletColor, unit.poolIndex, 1, pierce, fx.bulletTex, fx.bulletScale, fx.trail)) {
+          this.spawnMuzzleFlash(unit.x, unit.y, fx.muzzleTint ?? bulletColor, fx.muzzleScale);
           // Perk: Double Tap — chance to fire a second bullet
           if (perks.doubleTapChance > 0 && Math.random() < perks.doubleTapChance) {
-            this.bullets.fire(unit.x + (Math.random() - 0.5) * 8, unit.y, bulletColor, unit.poolIndex, 1, pierce);
+            this.bullets.fire(unit.x + (Math.random() - 0.5) * 8, unit.y, bulletColor, unit.poolIndex, 1, pierce, fx.bulletTex, fx.bulletScale, fx.trail);
             this.quirkDoubleTap(unit.x, unit.y);
           }
           if (this.shootSoundTimer > 150) {
@@ -808,6 +799,36 @@ export class GameScene extends Phaser.Scene {
       duration: 400, ease: 'Power2', onComplete: () => txt.destroy(),
     });
     this.dmgNumberAccum = 0;
+  }
+
+  /** Apply the destroyed barrel's gate-option effect (unit change, weapon upgrade, perks). */
+  private applyBarrelEffect(barrel: Barrel): void {
+    const result = barrel.option;
+    if (!result) return;
+    const perks = PerkManager.instance;
+
+    if (result.weaponUpgrade) {
+      this.currentWeapon = result.weaponUpgrade;
+      SoundManager.play('weapon_upgrade');
+      this.showWeaponUpgrade(barrel.x, barrel.y, result.weaponUpgrade);
+    } else {
+      const oldCount = this.unitCount;
+      this.unitCount = result.apply(this.unitCount);
+      if (this.unitCount > oldCount && perks.gateBonusAdd > 0) {
+        this.unitCount += perks.gateBonusAdd;
+      }
+      if (this.unitCount > oldCount && perks.gateBonusUnitsOnPositive > 0) {
+        this.unitCount += perks.gateBonusUnitsOnPositive;
+      }
+      this.unitCount = Math.max(1, this.unitCount);
+      this.capUnitsToGold();
+      SoundManager.play(this.unitCount > oldCount ? 'gate_positive' : 'gate_negative');
+      this.showGateEffect(barrel.x, barrel.y, result.label, this.unitCount > oldCount);
+    }
+    if (perks.goldPerGate > 0) {
+      this.pouchGold += perks.goldPerGate;
+    }
+    this.respawnArmy();
   }
 
   private showGateEffect(x: number, y: number, label: string, isPositive: boolean): void {
@@ -1353,6 +1374,25 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({
       targets: gfx, alpha: 0, duration: 250,
       onComplete: () => gfx.destroy(),
+    });
+  }
+
+  /** Spawn a brief muzzle flash sprite in front of the firing unit */
+  private spawnMuzzleFlash(x: number, y: number, color: number, scaleMul: number = 1): void {
+    const flash = this.add.sprite(x, y - 10, 'muzzle_flash');
+    flash.setTint(color);
+    flash.setDepth(6);
+    flash.setBlendMode(Phaser.BlendModes.ADD);
+    flash.setScale(scaleMul * (0.9 + Math.random() * 0.3));
+    flash.setRotation(Math.random() * Math.PI);
+    flash.setAlpha(0.95);
+    this.tweens.add({
+      targets: flash,
+      alpha: 0,
+      scale: flash.scale * 0.5,
+      duration: 90,
+      ease: 'Quad.easeOut',
+      onComplete: () => flash.destroy(),
     });
   }
 

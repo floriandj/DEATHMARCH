@@ -1,9 +1,10 @@
 // src/systems/BulletPool.ts
 // Data-driven bullet pool with O(1) spawn/despawn.
-// Uses a tiny procedural texture + Phaser Sprites for efficient batched rendering.
+// Supports per-bullet texture/scale (set by weapon) and lightweight trails.
 
 import Phaser from 'phaser';
 import { BULLET_SPEED, BULLET_DAMAGE } from '@/config/GameConfig';
+import type { TrailKind } from '@/config/WeaponFx';
 
 /** Per-bullet state. */
 export interface BulletData {
@@ -17,23 +18,31 @@ export interface BulletData {
   ownerIndex: number;
   /** How many more enemies this bullet can pierce through */
   pierceCount: number;
+  /** Trail effect kind — determines particle cadence/size */
+  trail: TrailKind;
+  /** ms until next trail particle spawn */
+  trailTimer: number;
 }
 
-/** Texture key for the shared procedural bullet sprite. */
-const TEX_KEY = '__bullet_pool';
+/** Fallback pill texture used when a weapon doesn't specify one. */
+const FALLBACK_TEX = '__bullet_pool_fallback';
 
 export class BulletPool {
+  private scene: Phaser.Scene;
   private pool: BulletData[];
   private sprites: Phaser.GameObjects.Sprite[];
   private freeStack: number[];
+  private depth: number;
 
   constructor(scene: Phaser.Scene, capacity: number, depth: number = 5) {
-    // Generate a tiny white pill texture once (tinted per-bullet at fire time)
-    if (!scene.textures.exists(TEX_KEY)) {
+    this.scene = scene;
+    this.depth = depth;
+
+    if (!scene.textures.exists(FALLBACK_TEX)) {
       const g = scene.add.graphics();
       g.fillStyle(0xffffff, 1);
       g.fillRoundedRect(0, 0, 4, 8, 2);
-      g.generateTexture(TEX_KEY, 4, 8);
+      g.generateTexture(FALLBACK_TEX, 4, 8);
       g.destroy();
     }
 
@@ -42,10 +51,10 @@ export class BulletPool {
     this.freeStack = new Array(capacity);
 
     for (let i = 0; i < capacity; i++) {
-      this.pool[i] = { x: 0, y: 0, vy: 0, damage: BULLET_DAMAGE, color: 0xffd43b, active: false, ownerIndex: -1, pierceCount: 0 };
+      this.pool[i] = { x: 0, y: 0, vy: 0, damage: BULLET_DAMAGE, color: 0xffd43b, active: false, ownerIndex: -1, pierceCount: 0, trail: 'none', trailTimer: 0 };
       this.freeStack[i] = capacity - 1 - i;
 
-      const s = scene.add.sprite(0, 0, TEX_KEY);
+      const s = scene.add.sprite(0, 0, FALLBACK_TEX);
       s.setVisible(false);
       s.setActive(false);
       s.setDepth(depth);
@@ -54,7 +63,11 @@ export class BulletPool {
   }
 
   /** Spawn a bullet. Returns false if pool is exhausted. */
-  fire(x: number, y: number, color: number, ownerIndex: number = -1, damageMult: number = 1, pierceCount: number = 0): boolean {
+  fire(
+    x: number, y: number, color: number,
+    ownerIndex: number = -1, damageMult: number = 1, pierceCount: number = 0,
+    textureKey: string = FALLBACK_TEX, scale: number = 1, trail: TrailKind = 'none',
+  ): boolean {
     if (this.freeStack.length === 0) return false;
     const idx = this.freeStack.pop()!;
     const b = this.pool[idx];
@@ -66,8 +79,13 @@ export class BulletPool {
     b.active = true;
     b.ownerIndex = ownerIndex;
     b.pierceCount = pierceCount;
+    b.trail = trail;
+    b.trailTimer = 0;
 
     const s = this.sprites[idx];
+    const texKey = this.scene.textures.exists(textureKey) ? textureKey : FALLBACK_TEX;
+    s.setTexture(texKey);
+    s.setScale(scale);
     s.setPosition(x, y);
     s.setTint(color);
     s.setVisible(true);
@@ -87,7 +105,7 @@ export class BulletPool {
     }
   }
 
-  /** Move all active bullets and sync sprite positions. */
+  /** Move all active bullets and sync sprite positions. Spawns trail particles. */
   update(delta: number): void {
     const dt = delta / 1000;
     const len = this.pool.length;
@@ -96,7 +114,41 @@ export class BulletPool {
       if (!b.active) continue;
       b.y += b.vy * dt;
       this.sprites[i].y = b.y;
+
+      if (b.trail !== 'none') {
+        b.trailTimer -= delta;
+        if (b.trailTimer <= 0) {
+          this.emitTrailParticle(b);
+          b.trailTimer = this.trailInterval(b.trail);
+        }
+      }
     }
+  }
+
+  private trailInterval(kind: TrailKind): number {
+    switch (kind) {
+      case 'rail':   return 18;
+      case 'plasma': return 28;
+      case 'void':   return 26;
+      case 'holy':   return 22;
+      default:       return 9999;
+    }
+  }
+
+  private emitTrailParticle(b: BulletData): void {
+    const p = this.scene.add.sprite(b.x + (Math.random() - 0.5) * 2, b.y + 4, 'trail_dot');
+    p.setTint(b.color);
+    p.setDepth(this.depth - 1);
+    const scale = b.trail === 'holy' ? 2.0 : b.trail === 'plasma' ? 1.6 : 1.3;
+    p.setScale(scale);
+    p.setAlpha(0.9);
+    this.scene.tweens.add({
+      targets: p,
+      alpha: 0,
+      scale: scale * 0.3,
+      duration: b.trail === 'rail' ? 120 : 200,
+      onComplete: () => p.destroy(),
+    });
   }
 
   /**

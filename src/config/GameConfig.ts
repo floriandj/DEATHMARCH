@@ -63,8 +63,9 @@ export const SCORE_PER_SURVIVING_UNIT = 100;
 // Enemy pool
 export const ENEMY_POOL_SIZE = 100;
 
-// SVGs render at 4x their viewBox pixel size for sharp display
-export const SVG_RENDER_SCALE = 4;
+// Display scale for pixel-art sprites (0x72 natives are 16–32 px).
+// 2.5 makes a 16×16 sprite render at 40×40 on screen, matching the prior SVG footprint.
+export const PIXEL_SPRITE_SCALE = 2.5;
 
 // Global sprite scale multiplier for all game entities (units, enemies, bosses, bullets)
 export const ENTITY_SCALE = 2;

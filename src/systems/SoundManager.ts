@@ -133,28 +133,40 @@ const sounds: Record<string, () => void> = {
   shoot_flamer: () => {
     const c = getCtx();
     const t = c.currentTime;
-    noise(0.08, 0.12, out(), t, 1500);
-    osc('sawtooth', 120, 0.08, 0.06, out(), t, 80);
+    // Longer hiss + low rumble for whoosh feel
+    noise(0.14, 0.14, out(), t, 1200);
+    noise(0.10, 0.08, out(), t + 0.02, 3500);
+    osc('sawtooth', 140, 0.12, 0.08, out(), t, 60);
+    osc('triangle', 220, 0.08, 0.05, out(), t + 0.03, 100);
   },
   shoot_plasma: () => {
     const c = getCtx();
     const t = c.currentTime;
-    osc('sine', 600, 0.08, 0.12, out(), t, 1200);
-    osc('triangle', 900, 0.06, 0.06, out(), t + 0.02, 1500);
+    // Wubby bounce — two staggered sweeps that feel plasma-y
+    osc('sine', 700, 0.10, 0.14, out(), t, 1400);
+    osc('triangle', 1050, 0.08, 0.07, out(), t + 0.02, 1800);
+    osc('sine', 380, 0.06, 0.06, out(), t + 0.05, 200);
   },
   shoot_voidbeam: () => {
     const c = getCtx();
     const t = c.currentTime;
-    osc('sine', 300, 0.1, 0.15, out(), t, 2000);
-    osc('square', 150, 0.08, 0.06, out(), t, 600);
-    noise(0.05, 0.04, out(), t + 0.02, 10000);
+    // Sub-bass whump + dark shimmer
+    osc('sine', 60, 0.15, 0.20, out(), t, 30);
+    osc('sine', 280, 0.12, 0.13, out(), t, 1600);
+    osc('square', 140, 0.10, 0.06, out(), t, 500);
+    osc('triangle', 520, 0.08, 0.05, out(), t + 0.03, 900);
+    noise(0.08, 0.05, out(), t + 0.02, 9000);
   },
   shoot_godslayer: () => {
     const c = getCtx();
     const t = c.currentTime;
-    osc('sawtooth', 200, 0.15, 0.2, out(), t, 3000);
-    osc('sine', 100, 0.12, 0.1, out(), t, 400);
-    noise(0.08, 0.08, out(), t, 6000);
+    // Thunderous boom + holy chord on top
+    osc('sawtooth', 180, 0.18, 0.22, out(), t, 2600);
+    osc('sine', 90, 0.15, 0.14, out(), t, 300);
+    osc('sine', 440, 0.22, 0.10, out(), t + 0.04);
+    osc('sine', 554, 0.22, 0.09, out(), t + 0.06);
+    osc('sine', 659, 0.22, 0.09, out(), t + 0.08);
+    noise(0.12, 0.10, out(), t, 5000);
   },
 
   enemy_hit: () => {

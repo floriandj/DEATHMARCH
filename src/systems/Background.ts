@@ -56,18 +56,58 @@ export class Background {
     );
     container.add(bg);
 
-    // Road/path down center
-    const pathColor = this.blendColor(t.groundColor, 0x000000, 0.15);
-    const road = this.scene.add.rectangle(
-      GAME_WIDTH / 2, CHUNK_HEIGHT / 2,
-      60, CHUNK_HEIGHT,
-      pathColor, 0.3,
-    );
-    container.add(road);
-    const roadEdgeL = this.scene.add.rectangle(GAME_WIDTH / 2 - 30, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathColor, 0.15);
-    const roadEdgeR = this.scene.add.rectangle(GAME_WIDTH / 2 + 30, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathColor, 0.15);
-    container.add(roadEdgeL);
-    container.add(roadEdgeR);
+    // Road/path down center — tiled stones per world when useStonePath is on
+    const pathColor = t.pathColor ?? this.blendColor(t.groundColor, 0x000000, 0.2);
+    const pathLight = this.blendColor(pathColor, 0xffffff, 0.25);
+    const pathDark = this.blendColor(pathColor, 0x000000, 0.35);
+    const roadWidth = 72;
+
+    if (t.useStonePath) {
+      // Dirt bed underneath for contrast
+      const bed = this.scene.add.rectangle(
+        GAME_WIDTH / 2, CHUNK_HEIGHT / 2,
+        roadWidth + 10, CHUNK_HEIGHT,
+        pathDark, 0.45,
+      );
+      container.add(bed);
+
+      // 2-column cobblestone pattern
+      const tile = 12;
+      const rows = Math.ceil(CHUNK_HEIGHT / tile) + 1;
+      for (let row = 0; row < rows; row++) {
+        const ty = row * tile;
+        const stagger = (row % 2) * (tile / 2);
+        for (let col = -2; col <= 2; col++) {
+          const tx = GAME_WIDTH / 2 + col * tile + stagger;
+          const variation = rng(row * 7 + col * 13);
+          const tileColor = variation < 0.5 ? pathColor : pathLight;
+          const stone = this.scene.add.rectangle(tx, ty, tile - 2, tile - 2, tileColor, 0.85);
+          container.add(stone);
+          // Small highlight corner
+          if (variation < 0.35) {
+            const hl = this.scene.add.rectangle(tx - 2, ty - 2, 3, 1, 0xffffff, 0.15);
+            container.add(hl);
+          }
+        }
+      }
+      // Road edge shadow
+      const edgeL = this.scene.add.rectangle(GAME_WIDTH / 2 - roadWidth / 2 - 1, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathDark, 0.6);
+      const edgeR = this.scene.add.rectangle(GAME_WIDTH / 2 + roadWidth / 2 + 1, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathDark, 0.6);
+      container.add(edgeL); container.add(edgeR);
+    } else {
+      // Plain dirt path (swamp / plague uses this — squishy feel)
+      const road = this.scene.add.rectangle(GAME_WIDTH / 2, CHUNK_HEIGHT / 2, roadWidth, CHUNK_HEIGHT, pathColor, 0.45);
+      container.add(road);
+      for (let r = 0; r < 4; r++) {
+        const ry = rng(300 + r) * CHUNK_HEIGHT;
+        const rx = GAME_WIDTH / 2 + (rng(310 + r) - 0.5) * (roadWidth - 10);
+        const puddle = this.scene.add.ellipse(rx, ry, 20 + rng(320 + r) * 14, 6, pathDark, 0.5);
+        container.add(puddle);
+      }
+      const edgeL = this.scene.add.rectangle(GAME_WIDTH / 2 - roadWidth / 2, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathDark, 0.4);
+      const edgeR = this.scene.add.rectangle(GAME_WIDTH / 2 + roadWidth / 2, CHUNK_HEIGHT / 2, 2, CHUNK_HEIGHT, pathDark, 0.4);
+      container.add(edgeL); container.add(edgeR);
+    }
 
     // Color variation bands (richer)
     const bandCount = 3 + Math.floor(rng(50) * 4);
@@ -127,23 +167,27 @@ export class Background {
       }
     }
 
-    // Decoration sprites (trees, rocks, bushes)
-    const decorCount = 2 + Math.floor(rng(200) * 3);
-    const decorKeys = ['decor_tree', 'decor_rock', 'decor_bush'];
+    // Decoration sprites from the world's themed decor pool
+    const decorKeys = (t.decorKeys && t.decorKeys.length) ? t.decorKeys : ['decor_tree', 'decor_rock', 'decor_bush'];
+    const decorCount = 4 + Math.floor(rng(200) * 5);
     for (let d = 0; d < decorCount; d++) {
       const dx = rng(210 + d * 3);
       // Avoid center road area
       const decorX = dx < 0.5
-        ? rng(211 + d * 3) * GAME_WIDTH * 0.35
-        : GAME_WIDTH * 0.65 + rng(211 + d * 3) * GAME_WIDTH * 0.35;
+        ? 20 + rng(211 + d * 3) * (GAME_WIDTH * 0.35 - 20)
+        : GAME_WIDTH * 0.65 + rng(211 + d * 3) * (GAME_WIDTH * 0.35 - 20);
       const decorY = rng(212 + d * 3) * CHUNK_HEIGHT;
       const key = decorKeys[Math.floor(rng(213 + d * 3) * decorKeys.length)];
 
       if (this.scene.textures.exists(key)) {
         const sprite = this.scene.add.image(decorX, decorY, key);
-        sprite.setAlpha(0.5 + rng(214 + d * 3) * 0.3);
-        sprite.setScale(0.6 + rng(215 + d * 3) * 0.6);
-        sprite.setTint(t.detailColors[Math.floor(rng(216 + d * 3) * t.detailColors.length)]);
+        sprite.setAlpha(0.75 + rng(214 + d * 3) * 0.25);
+        sprite.setScale(1.2 + rng(215 + d * 3) * 1.0);
+        // Only tint neutral-colored decor (trees/bones/stones) so themed items keep their color
+        const neutralKeys = ['decor_tree', 'decor_pine', 'decor_bush', 'decor_stump', 'decor_log', 'decor_column'];
+        if (neutralKeys.includes(key)) {
+          sprite.setTint(t.detailColors[Math.floor(rng(216 + d * 3) * t.detailColors.length)]);
+        }
         container.add(sprite);
       }
     }

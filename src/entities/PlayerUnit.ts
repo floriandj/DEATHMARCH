@@ -1,8 +1,5 @@
 import Phaser from 'phaser';
-import {
-  ENTITY_SCALE,
-  SVG_RENDER_SCALE,
-} from '@/config/GameConfig';
+import { PIXEL_SPRITE_SCALE } from '@/config/GameConfig';
 
 export class PlayerUnit extends Phaser.GameObjects.Sprite {
   active: boolean = false;
@@ -17,7 +14,7 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
   readonly poolIndex: number;
 
   constructor(scene: Phaser.Scene, index: number = 0) {
-    super(scene, 0, 0, 'unit');
+    super(scene, 0, 0, 'char_knight_m');
     scene.add.existing(this);
     this.setVisible(false);
     this.setActive(false);
@@ -43,9 +40,9 @@ export class PlayerUnit extends Phaser.GameObjects.Sprite {
     this.fireTimer = this.fireOffset;
     this.stunTimer = 0;
     this.setAlpha(1);
-    this.setScale(1.5 * ENTITY_SCALE / SVG_RENDER_SCALE);
+    this.setScale(PIXEL_SPRITE_SCALE);
     this.clearTint();
-    this.play('unit_march');
+    this.play('char_knight_m_run');
   }
 
   /** Set target without resetting fire timer */

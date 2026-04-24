@@ -25,6 +25,9 @@ interface WorldThemeDef {
   glowColors: number[];
   accentColor: number;
   accentHex: string;
+  decorKeys?: string[];
+  pathColor?: number;
+  useStonePath?: boolean;
 }
 
 interface EnemyTemplate {
@@ -61,6 +64,8 @@ const WORLDS: WorldDef[] = [
     theme: {
       groundColor: 0x6fbf5e, detailColors: [0x7fcc6e, 0x5aad4a, 0x8fd980, 0x4e9e3e],
       glowColors: [0xa8e89a, 0xb8f0ab, 0x90dd80], accentColor: 0x4cde39, accentHex: '#4cde39',
+      decorKeys: ['decor_tree', 'decor_pine', 'decor_bush', 'decor_rock', 'decor_mushroom', 'decor_flowers', 'decor_log', 'decor_stump'],
+      pathColor: 0x8b6914, useStonePath: true,
     },
     levelNames: ['The March Begins', 'Goblin Gauntlet', 'Orc Stronghold', 'Troll Bridge', 'Demon Gate'],
     enemies: [
@@ -76,7 +81,7 @@ const WORLDS: WorldDef[] = [
       ar: { type: 'ar', name: 'ASSAULT RIFLE', fireRate: 250, bulletColor: '#51cf66' },
       lmg: { type: 'lmg', name: 'LMG', fireRate: 120, bulletColor: '#ff6b6b' },
     },
-    bossSprite: 'boss_gorath',
+    bossSprite: 'char_ogre',
     bossNames: ['Gorath Spawn', 'Gorath the Fierce', 'Gorath the Destroyer', 'Gorath Reborn', 'Gorath the Undying'],
   },
   // ── World 2: Infernal Pits ──
@@ -86,6 +91,8 @@ const WORLDS: WorldDef[] = [
     theme: {
       groundColor: 0xc48a5a, detailColors: [0xb07848, 0xd49e6e, 0xc08050, 0xa06838],
       glowColors: [0xffaa66, 0xff9955, 0xffbb77], accentColor: 0xff6644, accentHex: '#ff6644',
+      decorKeys: ['decor_crack', 'decor_skull', 'decor_bones', 'decor_rock', 'decor_tree', 'decor_column'],
+      pathColor: 0x3a1a0a, useStonePath: true,
     },
     levelNames: ['Ember Fields', 'Crimson Gauntlet', 'Hellfire Trench', 'Molten Core', 'Inferno Heart'],
     enemies: [
@@ -101,7 +108,7 @@ const WORLDS: WorldDef[] = [
       lmg: { type: 'lmg', name: 'LMG', fireRate: 110, bulletColor: '#ff6b6b' },
       minigun: { type: 'minigun', name: 'MINIGUN', fireRate: 55, bulletColor: '#ff00ff' },
     },
-    bossSprite: 'boss_inferno',
+    bossSprite: 'char_big_demon',
     bossNames: ['Flame Wraith', 'Inferno Beast', 'Molten Colossus', 'Magma Lord', 'Inferno Titan'],
   },
   // ── World 3: Frozen Abyss ──
@@ -111,6 +118,8 @@ const WORLDS: WorldDef[] = [
     theme: {
       groundColor: 0xd0e8f4, detailColors: [0xc0dcea, 0xdcf0fa, 0xb4d4e6, 0xe4f4fc],
       glowColors: [0xe8f4ff, 0xddeeff, 0xf0f8ff], accentColor: 0x5cb8ff, accentHex: '#5cb8ff',
+      decorKeys: ['decor_tree', 'decor_icicle', 'decor_crystal', 'decor_rock', 'decor_pine', 'decor_gravestone'],
+      pathColor: 0x7590a8, useStonePath: true,
     },
     levelNames: ['Frostbite Pass', 'Glacier Ruins', 'Banshee Hollow', 'Ice Citadel', 'The Frozen Throne'],
     enemies: [
@@ -126,7 +135,7 @@ const WORLDS: WorldDef[] = [
       cryo: { type: 'cryo', name: 'CRYO CANNON', fireRate: 150, bulletColor: '#7fdbff' },
       railgun: { type: 'railgun', name: 'RAILGUN', fireRate: 45, bulletColor: '#00ffcc' },
     },
-    bossSprite: 'boss_frost',
+    bossSprite: 'char_big_zombie',
     bossNames: ['Ice Shade', 'Frost Troll King', 'Glacier Beast', 'Blizzard Wyrm', 'Frost Wyrm'],
   },
   // ── World 4: Plague Wastes ──
@@ -136,6 +145,8 @@ const WORLDS: WorldDef[] = [
     theme: {
       groundColor: 0x7b8a5e, detailColors: [0x6c7a56, 0x8b9b6f, 0x7b8b66, 0x5f6c4d],
       glowColors: [0xc0b68a, 0xb1a577, 0xc9c19d], accentColor: 0x8b6f38, accentHex: '#8b6f38',
+      decorKeys: ['decor_mushroom', 'decor_tree', 'decor_slime', 'decor_bones', 'decor_gravestone', 'decor_log', 'decor_stump'],
+      pathColor: 0x4a5230, useStonePath: false,
     },
     levelNames: ['Rat Warren', 'Blighted Mire', 'Spore Caverns', 'Toxic Depths', 'Plague Heart'],
     enemies: [
@@ -151,7 +162,7 @@ const WORLDS: WorldDef[] = [
       flamer: { type: 'flamer', name: 'FLAMETHROWER', fireRate: 75, bulletColor: '#ff6348' },
       plasma: { type: 'plasma', name: 'PLASMA RIFLE', fireRate: 40, bulletColor: '#7bed9f' },
     },
-    bossSprite: 'boss_plague',
+    bossSprite: 'char_big_zombie',
     bossNames: ['Plague Rat King', 'Toxic Hulk', 'Spore Lord', 'Blight Titan', 'Plague Hydra'],
   },
   // ── World 5: Throne of Ash ──
@@ -161,6 +172,8 @@ const WORLDS: WorldDef[] = [
     theme: {
       groundColor: 0xdcc078, detailColors: [0xd0b468, 0xe6cc88, 0xc8a858, 0xf0d898],
       glowColors: [0xf4e8aa, 0xeede90, 0xfaf0bb], accentColor: 0xd4b55a, accentHex: '#d4b55a',
+      decorKeys: ['decor_cactus', 'decor_sand_dune', 'decor_skull', 'decor_bones', 'decor_column', 'decor_rock'],
+      pathColor: 0xa88450, useStonePath: true,
     },
     levelNames: ['Shadow Vanguard', 'Ashwalker Trail', 'Void Rift', 'Dark Sanctum', 'Throne of Ash'],
     enemies: [
@@ -176,7 +189,7 @@ const WORLDS: WorldDef[] = [
       voidbeam: { type: 'voidbeam', name: 'VOID BEAM', fireRate: 30, bulletColor: '#a855f7' },
       godslayer: { type: 'godslayer', name: 'GODSLAYER', fireRate: 20, bulletColor: '#fbbf24' },
     },
-    bossSprite: 'boss_lich',
+    bossSprite: 'char_necromancer',
     bossNames: ['Shadow Lord', 'Ash Demon', 'Void Prince', 'Dark Sovereign', 'Lich King'],
   },
 ];
@@ -294,6 +307,9 @@ export function generateLevel(levelIndex: number): LevelConfig {
       accentColor: world.theme.accentColor,
       accentHex: world.theme.accentHex,
       worldName: world.displayName,
+      decorKeys: world.theme.decorKeys,
+      pathColor: world.theme.pathColor,
+      useStonePath: world.theme.useStonePath,
     },
     startingUnits: 1,
     marchSpeed,
