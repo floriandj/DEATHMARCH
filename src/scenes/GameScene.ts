@@ -704,6 +704,11 @@ export class GameScene extends Phaser.Scene {
       if (!enemy.active) continue;
       if (enemy.y >= killTop && enemy.y <= killBottom) return true;
     }
+    // Barrels count as valid targets — open fire when any barrel enters range.
+    for (const barrel of this.barrels) {
+      if (!barrel.active) continue;
+      if (barrel.y >= killTop && barrel.y <= killBottom) return true;
+    }
     return false;
   }
 
