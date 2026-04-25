@@ -5,6 +5,7 @@
 import Phaser from 'phaser';
 import { BULLET_SPEED, BULLET_DAMAGE } from '@/config/GameConfig';
 import type { TrailKind } from '@/config/WeaponFx';
+import type { ParticlePool } from '@/systems/ParticlePool';
 
 /** Per-bullet state. */
 export interface BulletData {
@@ -33,10 +34,12 @@ export class BulletPool {
   private sprites: Phaser.GameObjects.Sprite[];
   private freeStack: number[];
   private depth: number;
+  private particles: ParticlePool | null;
 
-  constructor(scene: Phaser.Scene, capacity: number, depth: number = 5) {
+  constructor(scene: Phaser.Scene, capacity: number, depth: number = 5, particles: ParticlePool | null = null) {
     this.scene = scene;
     this.depth = depth;
+    this.particles = particles;
 
     if (!scene.textures.exists(FALLBACK_TEX)) {
       const g = scene.add.graphics();
@@ -136,17 +139,32 @@ export class BulletPool {
   }
 
   private emitTrailParticle(b: BulletData): void {
+    const scale = b.trail === 'holy' ? 2.0 : b.trail === 'plasma' ? 1.6 : 1.3;
+    const life = b.trail === 'rail' ? 120 : 200;
+
+    if (this.particles && this.particles.spawn({
+      x: b.x + (Math.random() - 0.5) * 2,
+      y: b.y + 4,
+      textureKey: 'trail_dot',
+      tint: b.color,
+      scale,
+      endScale: scale * 0.3,
+      alpha: 0.9,
+      life,
+      depth: this.depth - 1,
+    })) return;
+
+    // Fallback (no shared pool wired up): legacy sprite + tween path.
     const p = this.scene.add.sprite(b.x + (Math.random() - 0.5) * 2, b.y + 4, 'trail_dot');
     p.setTint(b.color);
     p.setDepth(this.depth - 1);
-    const scale = b.trail === 'holy' ? 2.0 : b.trail === 'plasma' ? 1.6 : 1.3;
     p.setScale(scale);
     p.setAlpha(0.9);
     this.scene.tweens.add({
       targets: p,
       alpha: 0,
       scale: scale * 0.3,
-      duration: b.trail === 'rail' ? 120 : 200,
+      duration: life,
       onComplete: () => p.destroy(),
     });
   }

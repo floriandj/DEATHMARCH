@@ -22,6 +22,7 @@ import { WaveSpawner } from '@/systems/WaveSpawner';
 import { pickGatePair, pickWeaponGatePair, pickLootOption } from '@/systems/GateSpawner';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
+import { ParticlePool } from '@/systems/ParticlePool';
 import { Enemy } from '@/entities/Enemy';
 import { Barrel } from '@/entities/Barrel';
 import { HUDScene } from '@/scenes/HUDScene';
@@ -48,6 +49,7 @@ export class GameScene extends Phaser.Scene {
   // Entity arrays
   private units: PlayerUnit[] = [];
   private bullets!: BulletPool;
+  private particles!: ParticlePool;
   private enemies: Enemy[] = [];
   private barrels: Barrel[] = [];
   // Barrel-pair tracking (replaces old gates)
@@ -159,7 +161,8 @@ export class GameScene extends Phaser.Scene {
       this.units.push(new PlayerUnit(this, i));
     }
 
-    this.bullets = new BulletPool(this, BULLET_POOL_SIZE);
+    this.particles = new ParticlePool(this, 600, 'trail_dot', 4);
+    this.bullets = new BulletPool(this, BULLET_POOL_SIZE, 5, this.particles);
 
     this.enemies = [];
     const currentLevelIdx = LevelManager.instance.currentLevelIndex;
@@ -395,6 +398,7 @@ export class GameScene extends Phaser.Scene {
     const camTop = this.cameras.main.scrollY;
     const camBottom = camTop + GAME_HEIGHT;
     this.bullets.update(delta);
+    this.particles.update(delta);
     this.bullets.forEachActive((b, idx) => {
       // Cull early near the top of the visible area, and off-screen below
       if (b.y < camTop + BULLET_TOP_CULL_MARGIN || b.y > camBottom + 100) {
@@ -1384,20 +1388,18 @@ export class GameScene extends Phaser.Scene {
 
   /** Spawn a brief muzzle flash sprite in front of the firing unit */
   private spawnMuzzleFlash(x: number, y: number, color: number, scaleMul: number = 1): void {
-    const flash = this.add.sprite(x, y - 10, 'muzzle_flash');
-    flash.setTint(color);
-    flash.setDepth(6);
-    flash.setBlendMode(Phaser.BlendModes.ADD);
-    flash.setScale(scaleMul * (0.9 + Math.random() * 0.3));
-    flash.setRotation(Math.random() * Math.PI);
-    flash.setAlpha(0.95);
-    this.tweens.add({
-      targets: flash,
-      alpha: 0,
-      scale: flash.scale * 0.5,
-      duration: 90,
-      ease: 'Quad.easeOut',
-      onComplete: () => flash.destroy(),
+    const scale = scaleMul * (0.9 + Math.random() * 0.3);
+    this.particles.spawn({
+      x, y: y - 10,
+      textureKey: 'muzzle_flash',
+      tint: color,
+      scale,
+      endScale: scale * 0.5,
+      alpha: 0.95,
+      rotation: Math.random() * Math.PI,
+      blendAdd: true,
+      depth: 6,
+      life: 90,
     });
   }
 

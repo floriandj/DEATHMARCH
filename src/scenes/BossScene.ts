@@ -17,6 +17,7 @@ import { Background } from '@/systems/Background';
 import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
+import { ParticlePool } from '@/systems/ParticlePool';
 import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
@@ -50,6 +51,7 @@ export class BossScene extends Phaser.Scene {
 
   private units: PlayerUnit[] = [];
   private bullets!: BulletPool;
+  private particles!: ParticlePool;
   private bossSprite!: Phaser.GameObjects.Sprite;
   private scaledBossHp: number = 0;
 
@@ -152,7 +154,8 @@ export class BossScene extends Phaser.Scene {
     for (let i = 0; i < 200; i++) {
       this.units.push(new PlayerUnit(this, i));
     }
-    this.bullets = new BulletPool(this, BULLET_POOL_SIZE);
+    this.particles = new ParticlePool(this, 400, 'vfx_spark', 4);
+    this.bullets = new BulletPool(this, BULLET_POOL_SIZE, 5, this.particles);
 
     // Danger zone rectangles (for slam phase)
     this.dangerZones = [];
@@ -290,6 +293,7 @@ export class BossScene extends Phaser.Scene {
 
     // 6. Update bullets
     this.bullets.update(delta);
+    this.particles.update(delta);
     const bossHitRadius = (50 * ENTITY_SCALE) ** 2;
     let bossKilled = false;
     this.bullets.forEachActive((b, idx) => {
@@ -357,21 +361,22 @@ export class BossScene extends Phaser.Scene {
 
   /** Small spark burst when a bullet hits the boss */
   private spawnHitSpark(x: number, y: number): void {
-    const count = 3;
-    for (let i = 0; i < count; i++) {
-      const p = this.add.sprite(x, y, 'vfx_spark');
-      p.setTint(this.bossState.enraged ? 0xff4400 : 0xffcc00);
-      p.setAlpha(1);
+    const tint = this.bossState.enraged ? 0xff4400 : 0xffcc00;
+    for (let i = 0; i < 3; i++) {
       const angle = Math.random() * Math.PI * 2;
       const dist = 8 + Math.random() * 12;
-      this.tweens.add({
-        targets: p,
-        x: x + Math.cos(angle) * dist,
-        y: y + Math.sin(angle) * dist,
-        alpha: 0,
-        scale: 0.3,
-        duration: 150 + Math.random() * 100,
-        onComplete: () => p.destroy(),
+      const life = 150 + Math.random() * 100;
+      const speed = dist / (life / 1000);
+      this.particles.spawn({
+        x, y,
+        textureKey: 'vfx_spark',
+        tint,
+        scale: 1,
+        endScale: 0.3,
+        alpha: 1,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life,
       });
     }
   }
@@ -379,19 +384,20 @@ export class BossScene extends Phaser.Scene {
   /** Ground impact particles (entrance + slam) */
   private spawnImpactParticles(x: number, y: number, count: number, color: number): void {
     for (let i = 0; i < count; i++) {
-      const p = this.add.sprite(x, y, 'vfx_ring');
-      p.setTint(color);
-      p.setAlpha(0.9);
       const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
       const dist = 30 + Math.random() * 50;
-      this.tweens.add({
-        targets: p,
-        x: x + Math.cos(angle) * dist,
-        y: y + Math.sin(angle) * dist * 0.4, // flatten vertically for ground effect
-        alpha: 0,
-        scale: 0.2,
-        duration: 400 + Math.random() * 200,
-        onComplete: () => p.destroy(),
+      const life = 400 + Math.random() * 200;
+      const seconds = life / 1000;
+      this.particles.spawn({
+        x, y,
+        textureKey: 'vfx_ring',
+        tint: color,
+        scale: 1,
+        endScale: 0.2,
+        alpha: 0.9,
+        vx: (Math.cos(angle) * dist) / seconds,
+        vy: (Math.sin(angle) * dist * 0.4) / seconds,
+        life,
       });
     }
   }
