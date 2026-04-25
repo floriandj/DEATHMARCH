@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
 import { PerkManager, PerkDef, CHECKPOINT_INTERVAL } from '@/systems/PerkManager';
 import { SoundManager } from '@/systems/SoundManager';
+import { UIFactory, UIPalette } from '@/systems/UIFactory';
 
 const F = 'Arial, Helvetica, sans-serif';
 
@@ -92,18 +93,20 @@ export class PerkSelectScene extends Phaser.Scene {
       this.createPerkCard(cx, cardY, cardW, cardH, perk, data, i);
     }
 
-    // ── Skip button (subtle, bottom) ──
-    const skipY = Math.min(GAME_HEIGHT - 40, cardY + cardH / 2 + 40);
-    const skipText = this.add.text(GAME_WIDTH / 2, skipY, 'SKIP', {
-      fontSize: '20px', color: '#a8c8d8', fontFamily: F, fontStyle: 'bold',
-      stroke: '#1a3a4a', strokeThickness: 2,
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-    skipText.on('pointerover', () => skipText.setColor('#d4e8f4'));
-    skipText.on('pointerout', () => skipText.setColor('#a8c8d8'));
-    skipText.on('pointerdown', () => {
-      this.selectPerk(null, data);
-    });
+    // ── Skip button (squishy, bottom) ──
+    const skipY = Math.min(GAME_HEIGHT - 56, cardY + cardH / 2 + 56);
+    UIFactory.createButton(
+      this, GAME_WIDTH / 2, skipY, 200, 56, 'SKIP',
+      () => this.selectPerk(null, data),
+      {
+        fillColor: UIPalette.panelDark,
+        borderColor: UIPalette.sky,
+        borderWidth: 3,
+        cornerRadius: 28,
+        fontSize: 20,
+        fontColor: '#5de2ff',
+      },
+    );
   }
 
   private createPerkCard(
@@ -113,31 +116,24 @@ export class PerkSelectScene extends Phaser.Scene {
     const rc = RARITY_COLORS[perk.rarity];
     const container = this.add.container(x, y);
 
-    // Outer glow behind card in rarity color
+    // Outer rarity halo (subtle ambient glow that pulses on hover).
     const outerGlow = this.add.graphics();
-    outerGlow.fillStyle(rc.glow, 0.1);
-    outerGlow.fillRoundedRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16, 24);
+    outerGlow.fillStyle(rc.glow, 0.14);
+    outerGlow.fillRoundedRect(-w / 2 - 10, -h / 2 - 10, w + 20, h + 20, 28);
     container.add(outerGlow);
 
-    // Card background
-    const bg = this.add.graphics();
-    bg.fillStyle(0x111d2e, 0.97);
-    bg.fillRoundedRect(-w / 2, -h / 2, w, h, 20);
-    bg.lineStyle(2, rc.border, 0.8);
-    bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
-    container.add(bg);
-
-    // Rarity strip at top
-    const strip = this.add.graphics();
-    strip.fillStyle(rc.border, 0.3);
-    strip.fillRoundedRect(-w / 2, -h / 2, w, 7, { tl: 20, tr: 20, bl: 0, br: 0 });
-    container.add(strip);
-
-    // Bright highlight strip just below rarity strip
-    const highlight = this.add.graphics();
-    highlight.fillStyle(0xffffff, 0.12);
-    highlight.fillRect(-w / 2, -h / 2 + 7, w, 3);
-    container.add(highlight);
+    // Card body via UIFactory: drop shadow + thick rarity-tinted border +
+    // glossy white highlight on top + dark navy fill.
+    const cardPanel = UIFactory.createPanel(this, 0, 0, w, h, {
+      fillColor: UIPalette.panelDark,
+      borderColor: rc.border,
+      borderWidth: 4,
+      cornerRadius: 22,
+      shadowOffset: 8,
+      shadowAlpha: 0.45,
+      highlightAlpha: 0.16,
+    });
+    container.add(cardPanel);
 
     // Scale font sizes based on card width
     const iconSize = Math.min(48, Math.round(w * 0.22));
@@ -195,36 +191,32 @@ export class PerkSelectScene extends Phaser.Scene {
 
     // Hover effect
     hitZone.on('pointerover', () => {
-      bg.clear();
-      bg.fillStyle(0x1a2a40, 0.97);
-      bg.fillRoundedRect(-w / 2, -h / 2, w, h, 20);
-      bg.lineStyle(3, rc.border, 1);
-      bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
-      container.setScale(1.05);
-      // Brighten glow and start pulse
+      this.tweens.add({ targets: container, scale: 1.06, duration: 160, ease: 'Back.easeOut' });
       outerGlow.clear();
-      outerGlow.fillStyle(rc.glow, 0.25);
-      outerGlow.fillRoundedRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16, 24);
+      outerGlow.fillStyle(rc.glow, 0.30);
+      outerGlow.fillRoundedRect(-w / 2 - 10, -h / 2 - 10, w + 20, h + 20, 28);
       glowPulse.resume();
     });
 
     hitZone.on('pointerout', () => {
-      bg.clear();
-      bg.fillStyle(0x111d2e, 0.97);
-      bg.fillRoundedRect(-w / 2, -h / 2, w, h, 20);
-      bg.lineStyle(2, rc.border, 0.8);
-      bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
-      container.setScale(1);
-      // Reset glow
+      this.tweens.add({ targets: container, scale: 1, duration: 160, ease: 'Quad.easeOut' });
       glowPulse.pause();
       outerGlow.setAlpha(1);
       outerGlow.clear();
-      outerGlow.fillStyle(rc.glow, 0.1);
-      outerGlow.fillRoundedRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16, 24);
+      outerGlow.fillStyle(rc.glow, 0.14);
+      outerGlow.fillRoundedRect(-w / 2 - 10, -h / 2 - 10, w + 20, h + 20, 28);
     });
 
     hitZone.on('pointerdown', () => {
-      this.selectPerk(perk, data);
+      // Squishy press-in before selecting.
+      this.tweens.add({
+        targets: container,
+        scale: 0.94,
+        duration: 80,
+        yoyo: true,
+        ease: 'Quad.easeOut',
+        onComplete: () => this.selectPerk(perk, data),
+      });
     });
 
     // Entrance animation — stagger cards with vertical bounce

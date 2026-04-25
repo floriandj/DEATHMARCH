@@ -1,11 +1,9 @@
 // src/scenes/SplashScene.ts
+// Bright-casual splash: gradient backdrop, animated title chip, squishy CTA.
 import Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT } from '@/config/GameConfig';
+import { UIFactory, UIPalette } from '@/systems/UIFactory';
 
 const F = 'Arial, Helvetica, sans-serif';
-const GOLD = 0xebb654;
-const GOLD_HEX = '#ebb654';
-const MUTED = '#7a94ae';
 
 export class SplashScene extends Phaser.Scene {
   constructor() {
@@ -13,80 +11,145 @@ export class SplashScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#0a1626');
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
 
-    // ── Soft radial glow (centered, warm) ──
-    const glow = this.add.graphics();
-    for (let i = 6; i >= 1; i--) {
-      glow.fillStyle(GOLD, 0.012 * i);
-      glow.fillCircle(GAME_WIDTH / 2, GAME_HEIGHT * 0.42, 60 + i * 60);
+    this.drawGradientBackdrop(W, H);
+    this.spawnFloatingDust(W, H);
+
+    // ── Title chip (slides in + pops with Back.easeOut) ──
+    const chipW = Math.min(640, Math.round(W * 0.84));
+    const chipH = 168;
+    const chipY = Math.round(H * 0.42);
+    const chip = UIFactory.createPanel(this, W / 2, chipY, chipW, chipH, {
+      fillColor: UIPalette.panelDark,
+      borderColor: UIPalette.white,
+      borderWidth: 5,
+      cornerRadius: 32,
+      shadowOffset: 12,
+      shadowAlpha: 0.5,
+      highlightAlpha: 0.14,
+    });
+    chip.add(this.add.text(0, -34, 'DEATHMARCH', {
+      fontSize: '54px',
+      color: '#ffd866',
+      fontFamily: F,
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 5,
+      shadow: { offsetX: 0, offsetY: 4, color: '#000000', blur: 8, fill: true },
+    }).setOrigin(0.5));
+    chip.add(this.add.text(0, 22, 'ENDLESS WAR', {
+      fontSize: '20px',
+      color: '#5de2ff',
+      fontFamily: F,
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setLetterSpacing(8));
+
+    chip.setAlpha(0);
+    chip.y = chipY - 60;
+    this.tweens.add({
+      targets: chip,
+      alpha: 1,
+      y: chipY,
+      duration: 700,
+      ease: 'Back.easeOut',
+    });
+
+    // Subtle bob so the title feels alive.
+    this.time.delayedCall(800, () => {
+      this.tweens.add({
+        targets: chip,
+        y: chipY + 6,
+        duration: 1700,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    });
+
+    // ── Squishy CTA ──
+    const ctaY = Math.round(H * 0.74);
+    const ctaW = Math.min(420, Math.round(W * 0.7));
+    const cta = UIFactory.createButton(
+      this, W / 2, ctaY, ctaW, 92, 'TAP TO PLAY  ▶',
+      () => this.transitionToMenu(),
+      {
+        fillColor: UIPalette.gold,
+        borderColor: UIPalette.white,
+        borderWidth: 5,
+        cornerRadius: 46,
+        shadowOffset: 8,
+        fontSize: 30,
+        fontColor: '#3a2400',
+        fontFamily: F,
+      },
+    );
+    cta.setAlpha(0);
+    this.tweens.add({ targets: cta, alpha: 1, duration: 500, delay: 400, ease: 'Sine.easeOut' });
+
+    // Heartbeat pulse to draw the eye.
+    this.time.delayedCall(900, () => {
+      this.tweens.add({
+        targets: cta,
+        scale: 1.04,
+        duration: 700,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    });
+
+    // Tap anywhere also works.
+    this.input.once('pointerdown', () => this.transitionToMenu());
+  }
+
+  private drawGradientBackdrop(W: number, H: number): void {
+    // Procedural diagonal gradient: sky -> coral
+    const top = 0x5de2ff;
+    const bottom = 0xff5e5e;
+    const steps = 40;
+    const g = this.add.graphics();
+    for (let s = 0; s < steps; s++) {
+      const t = s / (steps - 1);
+      const r = Math.round(Phaser.Math.Linear((top >> 16) & 0xff, (bottom >> 16) & 0xff, t));
+      const gr = Math.round(Phaser.Math.Linear((top >> 8) & 0xff, (bottom >> 8) & 0xff, t));
+      const b = Math.round(Phaser.Math.Linear(top & 0xff, bottom & 0xff, t));
+      g.fillStyle((r << 16) | (gr << 8) | b, 1);
+      const sliceY = Math.floor((H * s) / steps);
+      const sliceH = Math.ceil(H / steps) + 1;
+      g.fillRect(0, sliceY, W, sliceH);
     }
+    // Soft white spotlight behind the title
+    const spot = this.add.graphics();
+    for (let i = 6; i >= 1; i--) {
+      spot.fillStyle(0xffffff, 0.04 * i);
+      spot.fillCircle(W / 2, H * 0.42, 90 + i * 50);
+    }
+  }
 
-    // ── Drifting dust particles ──
-    for (let i = 0; i < 10; i++) {
-      const x = Phaser.Math.Between(40, GAME_WIDTH - 40);
-      const y = Phaser.Math.Between(GAME_HEIGHT * 0.15, GAME_HEIGHT * 0.95);
-      const p = this.add.circle(x, y, Phaser.Math.FloatBetween(0.8, 1.6), GOLD, 0);
+  private spawnFloatingDust(W: number, H: number): void {
+    for (let i = 0; i < 14; i++) {
+      const x = Phaser.Math.Between(40, W - 40);
+      const y = Phaser.Math.Between(60, H - 60);
+      const p = this.add.circle(x, y, Phaser.Math.FloatBetween(1.4, 3), 0xffffff, 0);
       this.tweens.add({
         targets: p,
-        y: y - Phaser.Math.Between(40, 90),
-        alpha: { from: 0, to: Phaser.Math.FloatBetween(0.25, 0.5) },
-        duration: Phaser.Math.Between(5000, 8500),
+        y: y - Phaser.Math.Between(60, 140),
+        alpha: { from: 0, to: Phaser.Math.FloatBetween(0.35, 0.6) },
+        duration: Phaser.Math.Between(4500, 7500),
         yoyo: true,
         repeat: -1,
         delay: Phaser.Math.Between(0, 2500),
         ease: 'Sine.easeInOut',
       });
     }
-
-    // ── Title ──
-    const title = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT * 0.42, 'DEATHMARCH', {
-      fontSize: '56px', color: GOLD_HEX, fontFamily: F, fontStyle: 'bold',
-      stroke: '#000000', strokeThickness: 2,
-      shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 12, fill: true },
-    }).setOrigin(0.5).setAlpha(0).setLetterSpacing(10);
-    title.y = GAME_HEIGHT * 0.42 + 14;
-    this.tweens.add({
-      targets: title,
-      alpha: 1,
-      y: GAME_HEIGHT * 0.42,
-      duration: 1100,
-      delay: 200,
-      ease: 'Sine.easeOut',
-    });
-
-    // ── Hairline divider below title (draws in from center) ──
-    const divider = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT * 0.48, 220, 1.5, GOLD);
-    divider.setAlpha(0).setScale(0, 1);
-    this.tweens.add({ targets: divider, alpha: 0.9, scaleX: 1, duration: 900, delay: 900, ease: 'Power2' });
-
-    // ── Subtitle ──
-    const subtitle = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT * 0.52, 'ENDLESS WAR', {
-      fontSize: '16px', color: MUTED, fontFamily: F,
-    }).setOrigin(0.5).setAlpha(0).setLetterSpacing(12);
-    this.tweens.add({ targets: subtitle, alpha: 0.85, duration: 900, delay: 1300, ease: 'Sine.easeOut' });
-
-    // ── Tap prompt ──
-    const tapText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT * 0.82, 'TAP TO BEGIN', {
-      fontSize: '14px', color: '#ffffff', fontFamily: F,
-    }).setOrigin(0.5).setAlpha(0).setLetterSpacing(8);
-
-    this.tweens.add({
-      targets: tapText,
-      alpha: 0.7,
-      duration: 700,
-      delay: 1900,
-      onComplete: () => {
-        this.tweens.add({ targets: tapText, alpha: 0.2, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-      },
-    });
-
-    this.input.once('pointerdown', () => this.transitionToMenu());
   }
 
   private transitionToMenu(): void {
     if (this.scene.isActive('MenuScene')) return;
-
     this.cameras.main.fadeOut(400, 0, 0, 0);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       this.scene.start('MenuScene');

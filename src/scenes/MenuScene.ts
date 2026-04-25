@@ -6,6 +6,7 @@ import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/pro
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 import { PerkDef, PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
+import { UIFactory, UIPalette } from '@/systems/UIFactory';
 
 const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
@@ -80,44 +81,50 @@ export class MenuScene extends Phaser.Scene {
       shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(11);
 
-    // Score pill
-    const scorePillX = PAD;
-    const scorePillW = 174;
-    this.pill(scorePillX, 88, scorePillW, 41, 0xebb654, 11);
-    this.add.text(scorePillX + scorePillW / 2, 108, `\u2B50 ${localStorage.getItem('deathmarch-highscore') || '0'}`, {
-      fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
-      stroke: '#1a3a4a', strokeThickness: 2,
-      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
-    }).setOrigin(0.5).setDepth(11);
+    // Score pill (sky-blue, top-left)
+    const scoreVal = localStorage.getItem('deathmarch-highscore') || '0';
+    const scorePillW = 192;
+    const scorePill = UIFactory.createPill(this, PAD + scorePillW / 2, 102, scorePillW, 56, {
+      fillColor: UIPalette.sky,
+      borderColor: UIPalette.white,
+      borderWidth: 4,
+    });
+    scorePill.setDepth(11);
+    scorePill.add(this.add.text(0, 0, `\u2B50 ${scoreVal}`, {
+      fontSize: '22px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
+      stroke: '#1a3a55', strokeThickness: 3,
+    }).setOrigin(0.5));
 
-    // Gold pill
-    const goldPillX = GAME_WIDTH - PAD - 162;
-    const goldPillW = 162;
-    this.pill(goldPillX, 88, goldPillW, 41, 0xebb654, 11);
-    this.add.text(goldPillX + goldPillW / 2, 108, `\u{1F4B0} ${WalletManager.gold}g`, {
-      fontSize: '18px', color: '#ebb654', fontFamily: F, fontStyle: 'bold',
-      stroke: '#1a3a4a', strokeThickness: 2,
-      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
-    }).setOrigin(0.5).setDepth(11);
+    // Gold pill (top-right) with pulsing "+" icon
+    const goldPillW = 184;
+    const goldPillX = GAME_WIDTH - PAD - 70 - goldPillW / 2;
+    const goldPill = UIFactory.createPill(this, goldPillX, 102, goldPillW, 56, {
+      fillColor: UIPalette.gold,
+      borderColor: UIPalette.white,
+      borderWidth: 4,
+    });
+    goldPill.setDepth(11);
+    goldPill.add(this.add.text(-12, 0, `${WalletManager.gold}g`, {
+      fontSize: '22px', color: '#3a2400', fontFamily: F, fontStyle: 'bold',
+      stroke: '#ffffff', strokeThickness: 2,
+    }).setOrigin(0.5));
+    const plus = UIFactory.createPlusIcon(this, goldPillW / 2 - 22, 0, 32);
+    UIFactory.pulse(this, plus, { from: 0.92, to: 1.10, duration: 750 });
+    goldPill.add(plus);
 
-    const settingsSize = 60;
-    const settingsX = GAME_WIDTH - PAD - settingsSize / 2;
-    const settingsY = 52;
-    const settingsBg = this.add.graphics().setDepth(11);
-    settingsBg.fillStyle(0x2e92d4, 1);
-    settingsBg.fillRoundedRect(settingsX - settingsSize / 2, settingsY - settingsSize / 2, settingsSize, settingsSize, 18);
-    settingsBg.lineStyle(1.5, 0xebb654, 0.5);
-    settingsBg.strokeRoundedRect(settingsX - settingsSize / 2, settingsY - settingsSize / 2, settingsSize, settingsSize, 18);
-    const settingsIcon = this.add.text(settingsX, settingsY, '\u2699', {
-      fontSize: '26px', color: '#d4e8f4', fontFamily: F, fontStyle: 'bold',
-      stroke: '#e0b050', strokeThickness: 1,
-      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 2, fill: true },
-    }).setOrigin(0.5).setDepth(12);
-    const settingsHit = this.add.zone(settingsX, settingsY, settingsSize, settingsSize)
-      .setInteractive({ useHandCursor: true }).setDepth(13);
-    settingsHit.on('pointerdown', () => { SoundManager.play('button_click'); this.scene.start('SettingsScene'); });
-    settingsHit.on('pointerover', () => settingsIcon.setColor('#ffffff'));
-    settingsHit.on('pointerout', () => settingsIcon.setColor('#d4e8f4'));
+    // Settings button — squishy circular coral button (top-right)
+    UIFactory.createButton(
+      this, GAME_WIDTH - PAD - 32, 56, 64, 64, '\u2699',
+      () => this.scene.start('SettingsScene'),
+      {
+        fillColor: UIPalette.coral,
+        borderColor: UIPalette.white,
+        borderWidth: 4,
+        cornerRadius: 32,
+        fontSize: 30,
+        fontColor: '#ffffff',
+      },
+    ).setDepth(13);
 
     // ── Footer (fixed) ──
     const footH = 96;
@@ -378,52 +385,53 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createBottomPlayButton(): void {
-    const w = 320, h = 52, r = h / 2;
+    const w = 360, h = 80;
     const x = GAME_WIDTH / 2;
     const footH = 96;
     const y = GAME_HEIGHT - footH / 2;
-    const c = this.add.container(x, y).setDepth(12);
 
-    // Outer glow behind button
-    const outerGlow = this.add.graphics();
-    outerGlow.fillStyle(C_GREEN, 0.12);
-    outerGlow.fillEllipse(0, 0, w + 40, h + 30);
-    outerGlow.fillStyle(C_GREEN, 0.06);
-    outerGlow.fillEllipse(0, 0, w + 64, h + 48);
-    c.add(outerGlow);
-    this.tweens.add({ targets: outerGlow, alpha: { from: 0.7, to: 1.0 }, scale: { from: 0.97, to: 1.05 },
-      duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    // Pulsing glow halo behind the CTA so it reads as "tap me".
+    const glow = this.add.graphics().setDepth(11);
+    const drawHalo = (alpha: number) => {
+      glow.clear();
+      glow.fillStyle(C_GREEN, 0.12 * alpha);
+      glow.fillEllipse(x, y, w + 56, h + 36);
+      glow.fillStyle(C_GREEN, 0.06 * alpha);
+      glow.fillEllipse(x, y, w + 96, h + 60);
+    };
+    drawHalo(1);
+    this.tweens.add({
+      targets: { v: 1 } as { v: number },
+      v: 0.55,
+      duration: 1100,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+      onUpdate: (tw) => drawHalo((tw.targets[0] as { v: number }).v),
+    });
 
-    const sh = this.add.graphics();
-    sh.fillStyle(0x000000, 0.3);
-    sh.fillRoundedRect(-w / 2 + 2, -r + 3, w, h, r);
-    c.add(sh);
-
-    const bg = this.add.graphics();
-    bg.fillStyle(0x3cb82e, 1);
-    bg.fillRoundedRect(-w / 2, -r, w, h, r);
-    bg.fillStyle(C_GREEN, 1);
-    bg.fillRoundedRect(-w / 2, -r, w, h * 0.5, { tl: r, tr: r, bl: 4, br: 4 });
-    // Brighter highlight strip at top (white at 0.2 opacity)
-    bg.fillStyle(0xffffff, 0.2);
-    bg.fillRoundedRect(-w / 2 + 3, -r + 2, w - 6, 6, { tl: r - 3, tr: r - 3, bl: 0, br: 0 });
-    // Existing specular highlight
-    bg.fillStyle(0xffffff, 0.15);
-    bg.fillRoundedRect(-w / 2 + 4, -r + 3, w - 8, h * 0.28, { tl: r - 3, tr: r - 3, bl: 0, br: 0 });
-    c.add(bg);
-
-    c.add(this.add.text(0, 0, '\u25B6  PLAY', {
-      fontSize: '24px', color: '#fff', fontFamily: F, fontStyle: 'bold',
-      stroke: '#000', strokeThickness: 1,
-      shadow: { offsetX: 1, offsetY: 2, color: '#000', blur: 4, fill: true },
-    }).setOrigin(0.5));
-
-    const hit = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
-    c.add(hit);
-    hit.on('pointerdown', () => {
-      SoundManager.play('button_click');
-      this.tweens.add({ targets: c, scale: 0.93, duration: 50, yoyo: true, ease: 'Power2',
-        onComplete: () => { c.setScale(1); this.startGame(); } });
+    const btn = UIFactory.createButton(
+      this, x, y, w, h, '\u25B6  PLAY',
+      () => this.startGame(),
+      {
+        fillColor: C_GREEN,
+        borderColor: UIPalette.white,
+        borderWidth: 5,
+        cornerRadius: h / 2,
+        shadowOffset: 8,
+        fontSize: 30,
+        fontColor: '#ffffff',
+      },
+    );
+    btn.setDepth(12);
+    // Heartbeat pulse to draw the eye.
+    this.tweens.add({
+      targets: btn,
+      scale: 1.04,
+      duration: 700,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
     });
   }
 
