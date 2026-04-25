@@ -121,9 +121,10 @@ export class BossScene extends Phaser.Scene {
     // Render a static background covering the visible area
     this.background.update(0);
 
-    // Scale boss HP with unit count (higher baseline = less scaling from large armies)
-    const baseUnits = 50;
-    const hpScale = Math.max(1, this.unitCount / baseUnits);
+    // Scale boss HP with unit count. Floor of 1.4× ensures even tiny armies
+    // face a meaningful fight; baseUnits 35 grows scale a bit faster.
+    const baseUnits = 35;
+    const hpScale = Math.max(1.4, this.unitCount / baseUnits);
     const scaledBossCfg = { ...bossCfg, hp: Math.ceil(bossCfg.hp * hpScale) };
     this.scaledBossHp = scaledBossCfg.hp;
     this.bossState = new BossState(scaledBossCfg);
@@ -584,12 +585,12 @@ export class BossScene extends Phaser.Scene {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     for (const zoneX of this.slamZoneX) {
       const zoneCenterX = GAME_WIDTH / 2 + zoneX;
-      if (Math.abs(armyScreenX - zoneCenterX) < 100) {
-        // Hit! Kill a few units (flat amount, not percentage)
-        const unitsToKill = Math.max(1, Math.min(5, Math.ceil(this.unitCount * 0.05)));
+      if (Math.abs(armyScreenX - zoneCenterX) < 130) {
+        // Crushing hit — wipes a noticeable chunk of the army.
+        const unitsToKill = Math.max(5, Math.min(12, Math.ceil(this.unitCount * 0.10)));
         this.unitCount = Math.max(0, this.unitCount - unitsToKill);
 
-        this.cameras.main.shake(200, 0.02);
+        this.cameras.main.shake(280, 0.03);
 
         if (this.unitCount <= 0) {
           this.gameOver();
@@ -666,11 +667,11 @@ export class BossScene extends Phaser.Scene {
     // Charge damages units ONCE if boss passes over army's X position
     if (!this.chargeHit) {
       const armyScreenX = GAME_WIDTH / 2 + this.armyX;
-      if (Math.abs(this.bossSprite.x - armyScreenX) < 60 * ENTITY_SCALE) {
+      if (Math.abs(this.bossSprite.x - armyScreenX) < 80 * ENTITY_SCALE) {
         this.chargeHit = true;
-        const unitsToKill = Math.max(1, Math.min(3, Math.ceil(this.unitCount * 0.05)));
+        const unitsToKill = Math.max(4, Math.min(9, Math.ceil(this.unitCount * 0.08)));
         this.unitCount = Math.max(0, this.unitCount - unitsToKill);
-        this.cameras.main.shake(150, 0.01);
+        this.cameras.main.shake(220, 0.02);
 
         // Charge hit impact particles
         this.spawnImpactParticles(armyScreenX, GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET, 10, 0xff6600);
