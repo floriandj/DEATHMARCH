@@ -18,6 +18,7 @@ import { InputHandler } from '@/systems/InputHandler';
 import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
 import { ParticlePool } from '@/systems/ParticlePool';
+import { UIModal } from '@/systems/UIModal';
 import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
@@ -1217,28 +1218,45 @@ export class BossScene extends Phaser.Scene {
       });
     });
 
-    // ── Transition to results (3500ms) ──
-    this.time.delayedCall(3200, () => {
-      this.cameras.main.fade(500, 0, 0, 0);
-    });
-
-    this.time.delayedCall(3700, () => {
+    // ── Level Complete modal then perk select ──
+    this.time.delayedCall(2400, () => {
       this.score += level.scoring.bossKill;
       this.score += this.unitCount * level.scoring.perSurvivingUnit;
 
-      // Track run streak for gold multiplier
       PerkManager.instance.onBossVictory();
       const streakMult = PerkManager.instance.streakGoldMultiplier;
-
-      this.scene.stop('HUDScene');
       const goldEarned = Math.ceil(WalletManager.earnLevelGold(this.levelGold, this.pouchGold) * streakMult);
 
-      // Route to perk selection before game over screen
-      this.scene.start('PerkSelectScene', {
-        score: Math.floor(this.score),
-        distance: Math.floor(this.distance),
-        goldEarned,
-        levelIndex: LevelManager.instance.currentLevelIndex,
+      const modal = new UIModal(this, {
+        title: 'LEVEL COMPLETE!',
+        subtitle: `${this.hud?.bossName || 'Boss'} defeated`,
+        confirmLabel: 'CONTINUE  ▶',
+      });
+
+      // Stat lines inside the modal: score, distance, gold.
+      const lineStyle = {
+        fontSize: '26px',
+        color: '#ffffff',
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 3,
+      } as Phaser.Types.GameObjects.Text.TextStyle;
+      modal.content.add(this.add.text(0, -40, `SCORE  ${Math.floor(this.score)}`, lineStyle).setOrigin(0.5));
+      modal.content.add(this.add.text(0, 0, `DISTANCE  ${Math.floor(this.distance)}m`, lineStyle).setOrigin(0.5));
+      modal.content.add(this.add.text(0, 40, `\u{1FA99}  +${goldEarned}g`, {
+        ...lineStyle,
+        color: '#ffd866',
+      }).setOrigin(0.5));
+
+      modal.onConfirm(() => {
+        this.scene.stop('HUDScene');
+        this.scene.start('PerkSelectScene', {
+          score: Math.floor(this.score),
+          distance: Math.floor(this.distance),
+          goldEarned,
+          levelIndex: LevelManager.instance.currentLevelIndex,
+        });
       });
     });
   }

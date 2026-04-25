@@ -6,6 +6,7 @@ import { LevelManager } from '@/config/progression';
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 import { PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
+import { UIFactory, UIPalette } from '@/systems/UIFactory';
 
 interface GameOverData { score: number; distance: number; bossDefeated: boolean; goldEarned: number; }
 
@@ -324,60 +325,27 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   // ── Colored gradient button ──
-  private btn(y: number, label: string, colorTop: number, colorBot: number, textColor: string, cb: () => void, delay: number): void {
+  private btn(y: number, label: string, colorTop: number, _colorBot: number, textColor: string, cb: () => void, delay: number): void {
     const vs = Math.min(1.35, Math.max(0.85, GAME_HEIGHT / 1280));
-    const w = CW, h = Math.round(74 * vs), r = h / 2;
+    const w = CW, h = Math.round(74 * vs);
     const x = GAME_WIDTH / 2;
-    const c = this.add.container(x, y).setAlpha(0);
 
-    // Glow behind green (primary) button
-    if (colorTop === C_GREEN) {
-      const btnGlowG = this.add.graphics();
-      btnGlowG.fillStyle(C_GREEN, 0.1);
-      btnGlowG.fillRoundedRect(-w / 2 - 5, -r - 5, w + 10, h + 10, r + 4);
-      c.add(btnGlowG);
-    }
-
-    // Shadow
-    const sh = this.add.graphics();
-    sh.fillStyle(0x000000, 0.4);
-    sh.fillRoundedRect(-w / 2 + 3, -r + 4, w, h, r);
-    c.add(sh);
-
-    // Fill
-    const bg = this.add.graphics();
-    bg.fillStyle(colorBot, 1);
-    bg.fillRoundedRect(-w / 2, -r, w, h, r);
-    bg.fillStyle(colorTop, 1);
-    bg.fillRoundedRect(-w / 2, -r, w, h * 0.5, { tl: r, tr: r, bl: 4, br: 4 });
-    // Shine
-    bg.fillStyle(0xffffff, 0.15);
-    bg.fillRoundedRect(-w / 2 + 6, -r + 3, w - 12, h * 0.28, { tl: r - 4, tr: r - 4, bl: 0, br: 0 });
-    // Bright highlight strip at top
-    bg.fillStyle(0xffffff, 0.15);
-    bg.fillRoundedRect(-w / 2 + 4, -r + 2, w - 8, 4, { tl: r - 2, tr: r - 2, bl: 0, br: 0 });
-    // Gold border for primary buttons
-    if (colorTop === C_GREEN || colorTop === C_BLUE) {
-      bg.lineStyle(1.5, 0xebb654, 0.4);
-      bg.strokeRoundedRect(-w / 2, -r, w, h, r);
-    }
-    c.add(bg);
-
-    c.add(this.add.text(0, 0, label, {
-      fontSize: `${Math.round(26 * vs)}px`, color: textColor, fontFamily: `${E}, ${F}`, fontStyle: 'bold',
-      stroke: '#000', strokeThickness: 1,
-      shadow: { offsetX: 1, offsetY: 1, color: '#000', blur: 3, fill: true },
-    }).setOrigin(0.5));
-
-    const hit = this.add.zone(0, 0, w, h).setInteractive({ useHandCursor: true });
-    c.add(hit);
-    hit.on('pointerdown', () => {
+    const c = UIFactory.createButton(this, x, y, w, h, label, () => {
       SoundManager.play('button_click');
-      this.tweens.add({ targets: c, scale: 0.94, duration: 50, yoyo: true, ease: 'Power2',
-        onComplete: () => { c.setScale(1); cb(); } });
+      cb();
+    }, {
+      fillColor: colorTop,
+      borderColor: UIPalette.white,
+      borderWidth: 4,
+      cornerRadius: h / 2,
+      shadowOffset: 6,
+      fontSize: Math.round(26 * vs),
+      fontColor: textColor,
+      fontFamily: `${E}, ${F}`,
     });
+    c.setAlpha(0);
 
-    this.tweens.add({ targets: c, alpha: 1, y: { from: y + 10, to: y }, duration: 300, delay, ease: 'Power2' });
+    this.tweens.add({ targets: c, alpha: 1, y: { from: y + 12, to: y }, duration: 320, delay, ease: 'Back.easeOut' });
   }
 
   private fadeToGame(): void {
