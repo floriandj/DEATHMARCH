@@ -13,11 +13,6 @@ describe('Barrel hpForOption', () => {
     expect(large).toBeGreaterThan(small);
   });
 
-  it('multiplicative operations cost more than small additive', () => {
-    expect(hpForOption(opt('×2'))).toBeGreaterThan(hpForOption(opt('+1')));
-    expect(hpForOption(opt('×3'))).toBeGreaterThan(hpForOption(opt('×2')));
-  });
-
   it('subtract barrels are cheap (so accidental hits arent too punishing)', () => {
     const subHp = hpForOption(opt('-1'));
     const addHp = hpForOption(opt('+5'));
@@ -36,8 +31,14 @@ describe('Barrel hpForOption', () => {
   });
 
   it('returns positive HP for any known operation label', () => {
-    for (const label of ['+1', '+3', '+5', '×2', '×3', '-1', '-2', '-3', '÷2', '÷3']) {
+    for (const label of ['+1', '+3', '+5', '-1', '-2', '-3', '÷2', '÷3']) {
       expect(hpForOption(opt(label))).toBeGreaterThan(0);
     }
+  });
+
+  it('scales HP up with level index', () => {
+    const baseHp = hpForOption(opt('+3'));
+    const lateHp = hpForOption(opt('+3'), 10);
+    expect(lateHp).toBeGreaterThan(baseHp);
   });
 });

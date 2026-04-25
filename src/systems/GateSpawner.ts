@@ -13,7 +13,7 @@ export interface GatePair {
   right: GateOption;
 }
 
-type GateOp = 'multiply' | 'divide' | 'add' | 'subtract';
+type GateOp = 'divide' | 'add' | 'subtract';
 interface GateCfg { op: GateOp; value: number }
 
 function toOption(cfg: GateCfg): GateOption {
@@ -41,14 +41,11 @@ function progress(distance: number): number {
 // ── Gate generators by category ──
 
 function randomPositive(p: number): GateCfg {
-  // Early: small adds. Later: bigger adds and multipliers.
+  // Adds only — magnitude scales with progression.
   if (p < 0.3 || Math.random() > p) {
     return { op: 'add', value: randomInt(1, 1 + Math.floor(p * 4)) };
   }
-  if (Math.random() < 0.4) {
-    return { op: 'multiply', value: pick([2, 2, 3]) };
-  }
-  return { op: 'add', value: randomInt(2, 3 + Math.floor(p * 3)) };
+  return { op: 'add', value: randomInt(2, 4 + Math.floor(p * 4)) };
 }
 
 function randomNegative(p: number): GateCfg {
@@ -124,8 +121,8 @@ export function pickLootOption(distance: number): GateOption {
     // Sometimes: bigger bonus
     cfg = { op: 'add', value: 2 + Math.floor(p * 4) };
   } else {
-    // Rare: small multiplier
-    cfg = { op: 'multiply', value: 2 };
+    // Rare: chunky additive bonus
+    cfg = { op: 'add', value: 4 + Math.floor(p * 5) };
   }
   return toOption(cfg);
 }

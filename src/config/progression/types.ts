@@ -47,7 +47,7 @@ export interface WeaponCrateConfig {
 
 /** Gate operation template */
 export interface GateOptionConfig {
-  op: 'multiply' | 'divide' | 'add' | 'subtract';
+  op: 'divide' | 'add' | 'subtract';
   value: number;
 }
 

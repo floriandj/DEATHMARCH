@@ -23,7 +23,6 @@ export function hexToNum(hex: string): number {
 /** Build a gate apply function from a config operation */
 export function gateApplyFn(opt: GateOptionConfig): (count: number) => number {
   switch (opt.op) {
-    case 'multiply':  return (c) => c * opt.value;
     case 'divide':    return (c) => Math.max(1, Math.floor(c / opt.value));
     case 'add':       return (c) => c + opt.value;
     case 'subtract':  return (c) => Math.max(1, c - opt.value);
@@ -32,14 +31,13 @@ export function gateApplyFn(opt: GateOptionConfig): (count: number) => number {
 
 /** Build gate label string from config */
 export function gateLabel(opt: GateOptionConfig): string {
-  const symbols = { multiply: '\u00d7', divide: '\u00f7', add: '+', subtract: '-' };
+  const symbols = { divide: '\u00f7', add: '+', subtract: '-' };
   return `${symbols[opt.op]}${opt.value}`;
 }
 
 /** Gate option color by operation type */
 export function gateColor(opt: GateOptionConfig): number {
   switch (opt.op) {
-    case 'multiply':  return 0x51cf66;
     case 'add':       return 0x00d4ff;
     case 'divide':
     case 'subtract':  return 0xff6b6b;

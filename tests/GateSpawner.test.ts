@@ -67,9 +67,6 @@ describe('GateSpawner', () => {
       expect(gateApplyFn({ op: 'subtract', value: 5 })(3)).toBe(1);
       expect(gateApplyFn({ op: 'subtract', value: 99 })(1)).toBe(1);
     });
-    it('multiply multiplies', () => {
-      expect(gateApplyFn({ op: 'multiply', value: 3 })(4)).toBe(12);
-    });
     it('divide rounds down and never drops below 1', () => {
       expect(gateApplyFn({ op: 'divide', value: 2 })(9)).toBe(4);
       expect(gateApplyFn({ op: 'divide', value: 2 })(1)).toBe(1);

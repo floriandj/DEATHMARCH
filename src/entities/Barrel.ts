@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { GateOption } from '@/systems/GateSpawner';
 import { hpForOption, strokeForColor } from '@/entities/Barrel.helpers';
+import { LevelManager } from '@/config/progression';
 
 /**
  * Shootable destructible barrel. Replaces the old drive-through gates.
@@ -54,7 +55,7 @@ export class Barrel extends Phaser.GameObjects.Container {
   spawn(x: number, y: number, option: GateOption): void {
     this.option = option;
     this.destroyed = false;
-    this.maxHp = hpForOption(option);
+    this.maxHp = hpForOption(option, LevelManager.instance.currentLevelIndex);
     this.hp = this.maxHp;
 
     this.label.setText(option.label);
