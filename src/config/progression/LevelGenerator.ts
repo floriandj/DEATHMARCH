@@ -287,9 +287,9 @@ export function generateLevel(levelIndex: number): LevelConfig {
   ];
 
   // ── Boss ──
-  const bossHp = Math.round((400 + cycle * 130 + posInCycle * 110) * (1 + posInCycle * 0.15));
+  const bossHp = Math.round((650 + cycle * 180 + posInCycle * 150) * (1 + posInCycle * 0.20));
   const phases = buildBossPhases(posInCycle, cycle);
-  const chargeSpeed = 240 + cycle * 12 + posInCycle * 10;
+  const chargeSpeed = 260 + cycle * 14 + posInCycle * 12;
 
   // ── Scoring ──
   const perMeter = 1 + cycle;

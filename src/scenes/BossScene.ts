@@ -251,8 +251,8 @@ export class BossScene extends Phaser.Scene {
     // 3b. Handle rocket phase — fire rockets at timed intervals
     if (this.bossState.phase === BossPhase.Rocket) {
       this.rocketTimer += delta;
-      const rocketInterval = this.bossState.enraged ? 480 : 750;
-      const maxRockets = this.bossState.enraged ? 6 : 4;
+      const rocketInterval = this.bossState.enraged ? 380 : 600;
+      const maxRockets = this.bossState.enraged ? 8 : 5;
       if (this.rocketTimer >= rocketInterval && this.rocketsFired < maxRockets) {
         this.rocketTimer = 0;
         this.rocketsFired++;
@@ -263,7 +263,7 @@ export class BossScene extends Phaser.Scene {
     // 3c. Handle barrage phase — rapid small shots
     if (this.bossState.phase === BossPhase.Barrage) {
       this.barrageTimer += delta;
-      const barrageInterval = this.bossState.enraged ? 95 : 165;
+      const barrageInterval = this.bossState.enraged ? 75 : 130;
       if (this.barrageTimer >= barrageInterval) {
         this.barrageTimer = 0;
         this.fireBarrageShot();
@@ -921,7 +921,7 @@ export class BossScene extends Phaser.Scene {
           const ux = proj.sprite.x - unit.x;
           const uy = proj.sprite.y - unit.y;
           if (ux * ux + uy * uy < hitRadiusSq) {
-            const stunDuration = proj.variant === 'arc' ? 1300 : 1100;
+            const stunDuration = proj.variant === 'arc' ? 1700 : 1400;
             unit.stun(stunDuration);
             SoundManager.play('stun_hit');
             this.spawnHitSpark(proj.sprite.x, proj.sprite.y);
@@ -952,15 +952,15 @@ export class BossScene extends Phaser.Scene {
       this.spawnImpactParticles(x, y, 8, 0xffaa00);
     }
 
-    // Heavier hit: kill 2-4 units (cluster kills extra)
-    const killPct = isCluster ? 0.08 : 0.06;
-    const killCap = isCluster ? 5 : 4;
-    const unitsToKill = Math.max(2, Math.min(killCap, Math.ceil(this.unitCount * killPct)));
+    // Heavy hit — kills more units; cluster kills the most.
+    const killPct = isCluster ? 0.13 : 0.10;
+    const killCap = isCluster ? 8 : 6;
+    const unitsToKill = Math.max(3, Math.min(killCap, Math.ceil(this.unitCount * killPct)));
     this.unitCount = Math.max(0, this.unitCount - unitsToKill);
 
-    // Stun nearby surviving units (wider radius, longer stun)
-    const stunRadius = isCluster ? 150 : 130;
-    const stunDuration = isCluster ? 1700 : 1500;
+    // Wider AoE stun, longer duration.
+    const stunRadius = isCluster ? 180 : 160;
+    const stunDuration = isCluster ? 2200 : 1800;
     for (const unit of this.units) {
       if (!unit.active) continue;
       const dx = unit.x - x;
