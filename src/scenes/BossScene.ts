@@ -277,7 +277,10 @@ export class BossScene extends Phaser.Scene {
     const perks = PerkManager.instance;
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     const bulletColor = hexToNum(weaponStats.bulletColor);
-    const effectiveFireRate = weaponStats.fireRate * perks.fireRateMultiplier * perks.berserkerMultiplier(this.unitCount);
+    // Crowd throttle: see GameScene comment — keeps the global bullet rate
+    // bounded as the army size grows.
+    const crowdScale = 1 + Math.max(0, this.unitCount - 30) * 0.018;
+    const effectiveFireRate = weaponStats.fireRate * perks.fireRateMultiplier * perks.berserkerMultiplier(this.unitCount) * crowdScale;
     this.shootSoundTimer += delta;
     for (const unit of this.units) {
       if (!unit.active) continue;

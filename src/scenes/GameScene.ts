@@ -574,6 +574,10 @@ export class GameScene extends Phaser.Scene {
     const weaponStats = LevelManager.instance.getWeaponStats(this.currentWeapon);
     const bulletColor = hexToNum(weaponStats.bulletColor);
     let effectiveFireRate = weaponStats.fireRate * perks.fireRateMultiplier * perks.berserkerMultiplier(this.unitCount);
+    // Crowd throttle: lengthen each unit's fire interval as the army grows so the
+    // global bullet rate plateaus instead of saturating the pool at 200 units.
+    const crowdScale = 1 + Math.max(0, this.unitCount - 30) * 0.018;
+    effectiveFireRate *= crowdScale;
     if (this.furyTimer > 0) { effectiveFireRate *= 0.5; this.furyTimer -= delta; }
     if (this.curseSlowTimer > 0) { effectiveFireRate *= 2; this.curseSlowTimer -= delta; }
 
