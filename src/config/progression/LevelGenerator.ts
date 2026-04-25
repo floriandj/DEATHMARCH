@@ -229,7 +229,7 @@ export function generateLevel(levelIndex: number): LevelConfig {
   const diff = difficultyScale(cycle, posInCycle);
 
   // Core tuning knobs
-  const gateInterval = Math.max(400, Math.round(600 - cycle * 10 - posInCycle * 10));
+  const gateInterval = Math.max(700, Math.round(950 - cycle * 12 - posInCycle * 18));
   // Boss gate lands one interval after the last regular gate
   const rawTrigger = 6000 + cycle * 400 + posInCycle * 300;
   const triggerDistance = Math.ceil(rawTrigger / gateInterval) * gateInterval;

@@ -314,7 +314,8 @@ export class GameScene extends Phaser.Scene {
         const nextWeaponType = crateCfg.nextWeapon;
         const weaponDef = level.weapons[nextWeaponType];
         const weaponName = weaponDef ? weaponDef.name : nextWeaponType.toUpperCase();
-        const unitBonus = Math.max(2, Math.floor(this.unitCount * 0.3));
+        // Hard-cap weapon-gate bonus at +3 to match the +1/+2/+3 barrel rule.
+        const unitBonus = Math.max(1, Math.min(3, Math.floor(this.unitCount * 0.3)));
         pair = pickWeaponGatePair(weaponName, nextWeaponType, unitBonus);
         this.weaponGateIndex++;
       } else {
@@ -332,8 +333,8 @@ export class GameScene extends Phaser.Scene {
 
     // 5c. Scatter loot barrels in between — small positive bonuses, cheap HP
     if (this.distance >= this.nextLootBarrelDistance && this.distance < level.boss.triggerDistance) {
-      // Usually just 1 barrel; occasionally 2 side-by-side for a mini-cluster
-      const count = Math.random() < 0.2 ? 2 : 1;
+      // Usually just 1 barrel; rarely 2 side-by-side for a mini-cluster.
+      const count = Math.random() < 0.08 ? 2 : 1;
       for (let i = 0; i < count; i++) {
         const free = this.barrels.find((b) => !b.active);
         if (!free) break;
@@ -341,8 +342,8 @@ export class GameScene extends Phaser.Scene {
         const lootY = this.armyWorldY - GAME_HEIGHT - 30 - Math.random() * 100;
         free.spawn(lootX, lootY, pickLootOption(this.distance));
       }
-      // Sparser cadence — roughly one event every 400–700 distance
-      this.nextLootBarrelDistance = this.distance + 400 + Math.random() * 300;
+      // Sparser cadence — roughly one event every 750-1300 distance.
+      this.nextLootBarrelDistance = this.distance + 750 + Math.random() * 550;
     }
 
     // 5d. Spawn gold pouches at intervals
