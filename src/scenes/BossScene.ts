@@ -855,19 +855,19 @@ export class BossScene extends Phaser.Scene {
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
-    for (let i = this.bossProjectiles.length - 1; i >= 0; i--) {
+    // Forward sweep with compact-in-place: avoids per-removal splice cost.
+    let writeIdx = 0;
+    for (let i = 0; i < this.bossProjectiles.length; i++) {
       const proj = this.bossProjectiles[i];
-      if (!proj.sprite.active) {
-        this.bossProjectiles.splice(i, 1);
-        continue;
-      }
+      if (!proj.sprite.active) continue;
 
       // Homing rockets gradually steer toward the army
       if (proj.type === 'rocket' && proj.variant === 'homing' && proj.homingStrength > 0) {
         const toX = armyScreenX - proj.sprite.x;
         const toY = armyScreenY - proj.sprite.y;
-        const toDist = Math.sqrt(toX * toX + toY * toY);
-        if (toDist > 1) {
+        const toDistSq = toX * toX + toY * toY;
+        if (toDistSq > 1) {
+          const toDist = Math.sqrt(toDistSq);
           const speed = Math.sqrt(proj.vx * proj.vx + proj.vy * proj.vy);
           const desiredVx = (toX / toDist) * speed;
           const desiredVy = (toY / toDist) * speed;
@@ -889,39 +889,44 @@ export class BossScene extends Phaser.Scene {
       if (proj.sprite.y > GAME_HEIGHT + 50 || proj.sprite.y < -50 ||
           proj.sprite.x < -50 || proj.sprite.x > GAME_WIDTH + 50) {
         proj.sprite.destroy();
-        this.bossProjectiles.splice(i, 1);
         continue;
       }
 
-      // Check impact with army area
+      // Check impact with army area (squared distance — only sqrt below if needed)
       const dx = proj.sprite.x - armyScreenX;
       const dy = proj.sprite.y - armyScreenY;
-      const distToArmy = Math.sqrt(dx * dx + dy * dy);
+      const distToArmySq = dx * dx + dy * dy;
 
-      if (proj.type === 'rocket' && distToArmy < proj.radius) {
+      if (proj.type === 'rocket' && distToArmySq < proj.radius * proj.radius) {
         // Rocket explodes — kill some units + stun nearby
         this.rocketExplode(proj.sprite.x, proj.sprite.y, proj.variant as 'standard' | 'homing' | 'cluster');
         proj.sprite.destroy();
-        this.bossProjectiles.splice(i, 1);
-      } else if (proj.type === 'barrage') {
-        // Barrage shots check against individual units
+        continue;
+      }
+
+      if (proj.type === 'barrage') {
+        let hit = false;
+        const hitRadiusSq = (22 * ENTITY_SCALE) * (22 * ENTITY_SCALE);
         for (const unit of this.units) {
           if (!unit.active) continue;
           const ux = proj.sprite.x - unit.x;
           const uy = proj.sprite.y - unit.y;
-          if (Math.sqrt(ux * ux + uy * uy) < 22 * ENTITY_SCALE) {
-            // Heavier hit — longer stun, arc shots stun even longer
+          if (ux * ux + uy * uy < hitRadiusSq) {
             const stunDuration = proj.variant === 'arc' ? 1300 : 1100;
             unit.stun(stunDuration);
             SoundManager.play('stun_hit');
             this.spawnHitSpark(proj.sprite.x, proj.sprite.y);
             proj.sprite.destroy();
-            this.bossProjectiles.splice(i, 1);
+            hit = true;
             break;
           }
         }
+        if (hit) continue;
       }
+
+      this.bossProjectiles[writeIdx++] = proj;
     }
+    this.bossProjectiles.length = writeIdx;
   }
 
   private rocketExplode(x: number, y: number, variant: 'standard' | 'homing' | 'cluster' = 'standard'): void {

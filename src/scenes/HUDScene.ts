@@ -41,6 +41,12 @@ export class HUDScene extends Phaser.Scene {
   bossName: string = '';
   bossTriggerDistance: number = 3000;
   private lastKillStreak: number = 0;
+  private lastScoreText: string = '';
+  private lastDistanceText: string = '';
+  private lastUnitText: string = '';
+  private lastGoldText: string = '';
+  private lastBossHpText: string = '';
+  private lastWeaponText: string = '';
 
   constructor() {
     super({ key: 'HUDScene' });
@@ -57,6 +63,12 @@ export class HUDScene extends Phaser.Scene {
     this.weaponType = '';
     this.weaponName = '';
     this.bossName = '';
+    this.lastScoreText = '';
+    this.lastDistanceText = '';
+    this.lastUnitText = '';
+    this.lastGoldText = '';
+    this.lastBossHpText = '';
+    this.lastWeaponText = '';
 
     const level = LevelManager.instance.current;
     const levelIndex = LevelManager.instance.currentLevelIndex;
@@ -305,10 +317,26 @@ export class HUDScene extends Phaser.Scene {
   }
 
   update(): void {
-    this.scoreText.setText(this.formatNumber(this.score));
-    this.distanceText.setText(`${Math.floor(this.distance)}m`);
-    this.unitText.setText(String(this.unitCount));
-    this.goldText.setText(`${this.levelGold}g`);
+    const scoreStr = this.formatNumber(this.score);
+    if (scoreStr !== this.lastScoreText) {
+      this.scoreText.setText(scoreStr);
+      this.lastScoreText = scoreStr;
+    }
+    const distanceStr = `${Math.floor(this.distance)}m`;
+    if (distanceStr !== this.lastDistanceText) {
+      this.distanceText.setText(distanceStr);
+      this.lastDistanceText = distanceStr;
+    }
+    const unitStr = String(this.unitCount);
+    if (unitStr !== this.lastUnitText) {
+      this.unitText.setText(unitStr);
+      this.lastUnitText = unitStr;
+    }
+    const goldStr = `${this.levelGold}g`;
+    if (goldStr !== this.lastGoldText) {
+      this.goldText.setText(goldStr);
+      this.lastGoldText = goldStr;
+    }
 
     // Floating kill streak popup (only when streak changes)
     if (this.killStreak > 1 && this.killStreak !== this.lastKillStreak) {
@@ -363,14 +391,21 @@ export class HUDScene extends Phaser.Scene {
       this.bossHpBar.fillStyle(0xffffff, 0.15);
       this.bossHpBar.fillRoundedRect(barX + 4, barY + 4, Math.max(fillWidth - 8, 0), 6, 3);
 
-      this.bossHpLabel.setText(`${this.bossName || 'BOSS'}  ${Math.ceil(this.bossHpPercent * 100)}%`);
+      const bossHpStr = `${this.bossName || 'BOSS'}  ${Math.ceil(this.bossHpPercent * 100)}%`;
+      if (bossHpStr !== this.lastBossHpText) {
+        this.bossHpLabel.setText(bossHpStr);
+        this.lastBossHpText = bossHpStr;
+      }
     }
 
     // Weapon display (bottom-left)
     if (this.weaponType) {
       this.weaponIcon.setAlpha(0.8).setVisible(true);
       this.weaponLabel.setAlpha(0.8).setVisible(true);
-      this.weaponLabel.setText(this.weaponName);
+      if (this.weaponName !== this.lastWeaponText) {
+        this.weaponLabel.setText(this.weaponName);
+        this.lastWeaponText = this.weaponName;
+      }
       const svgKey = this.getWeaponSvgKey(this.weaponType);
       if (this.weaponIcon.texture.key !== svgKey) {
         this.weaponIcon.setTexture(svgKey);

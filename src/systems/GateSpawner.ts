@@ -41,11 +41,15 @@ function progress(distance: number): number {
 // ── Gate generators by category ──
 
 function randomPositive(p: number): GateCfg {
-  // Adds only — magnitude scales with progression.
-  if (p < 0.3 || Math.random() > p) {
-    return { op: 'add', value: randomInt(1, 1 + Math.floor(p * 4)) };
+  // Adds only, capped at +1/+2/+3. Late-game biases toward larger values.
+  const r = Math.random();
+  if (p < 0.3) {
+    return { op: 'add', value: r < 0.7 ? 1 : 2 };
   }
-  return { op: 'add', value: randomInt(2, 4 + Math.floor(p * 4)) };
+  if (p < 0.6) {
+    return { op: 'add', value: r < 0.4 ? 1 : r < 0.85 ? 2 : 3 };
+  }
+  return { op: 'add', value: r < 0.25 ? 1 : r < 0.65 ? 2 : 3 };
 }
 
 function randomNegative(p: number): GateCfg {
@@ -112,19 +116,14 @@ export function pickGatePair(distance: number): GatePair {
  */
 export function pickLootOption(distance: number): GateOption {
   const p = progress(distance);
-  const roll = Math.random();
-  let cfg: GateCfg;
-  if (roll < 0.7) {
-    // Most common: small additive bonus
-    cfg = { op: 'add', value: 1 + Math.floor(p * 3) };
-  } else if (roll < 0.92) {
-    // Sometimes: bigger bonus
-    cfg = { op: 'add', value: 2 + Math.floor(p * 4) };
+  const r = Math.random();
+  let value: number;
+  if (p < 0.3) {
+    value = r < 0.6 ? 1 : 2;
   } else {
-    // Rare: chunky additive bonus
-    cfg = { op: 'add', value: 4 + Math.floor(p * 5) };
+    value = r < 0.4 ? 1 : r < 0.8 ? 2 : 3;
   }
-  return toOption(cfg);
+  return toOption({ op: 'add', value });
 }
 
 /** Create a weapon gate: one side upgrades the weapon, other side gives units */
