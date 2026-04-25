@@ -6,7 +6,7 @@ import { LevelManager, generateLevel, getWorldInfoForLevels } from '@/config/pro
 import { SoundManager } from '@/systems/SoundManager';
 import { WalletManager } from '@/systems/WalletManager';
 import { PerkDef, PerkManager, getCheckpointLevel } from '@/systems/PerkManager';
-import { UIFactory, UIPalette } from '@/systems/UIFactory';
+import { UIFactory, UIPalette, UIText } from '@/systems/UIFactory';
 
 const PAD = 34;
 const CW = GAME_WIDTH - PAD * 2;
@@ -84,29 +84,27 @@ export class MenuScene extends Phaser.Scene {
     // Score pill (sky-blue, top-left)
     const scoreVal = localStorage.getItem('deathmarch-highscore') || '0';
     const scorePillW = 192;
-    const scorePill = UIFactory.createPill(this, PAD + scorePillW / 2, 102, scorePillW, 56, {
+    const scorePill = UIFactory.createPill(this, PAD + scorePillW / 2, 112, scorePillW, 56, {
       fillColor: UIPalette.sky,
       borderColor: UIPalette.white,
       borderWidth: 4,
     });
     scorePill.setDepth(11);
     scorePill.add(this.add.text(0, 0, `\u2B50 ${scoreVal}`, {
-      fontSize: '22px', color: '#ffffff', fontFamily: F, fontStyle: 'bold',
-      stroke: '#1a3a55', strokeThickness: 3,
+      ...UIText.pillValueLight, fontSize: '22px',
     }).setOrigin(0.5));
 
     // Gold pill (top-right) with pulsing "+" icon
     const goldPillW = 184;
     const goldPillX = GAME_WIDTH - PAD - 70 - goldPillW / 2;
-    const goldPill = UIFactory.createPill(this, goldPillX, 102, goldPillW, 56, {
+    const goldPill = UIFactory.createPill(this, goldPillX, 112, goldPillW, 56, {
       fillColor: UIPalette.gold,
       borderColor: UIPalette.white,
       borderWidth: 4,
     });
     goldPill.setDepth(11);
     goldPill.add(this.add.text(-12, 0, `${WalletManager.gold}g`, {
-      fontSize: '22px', color: '#3a2400', fontFamily: F, fontStyle: 'bold',
-      stroke: '#ffffff', strokeThickness: 2,
+      ...UIText.pillValueGold, fontSize: '22px',
     }).setOrigin(0.5));
     const plus = UIFactory.createPlusIcon(this, goldPillW / 2 - 22, 0, 32);
     UIFactory.pulse(this, plus, { from: 0.92, to: 1.10, duration: 750 });

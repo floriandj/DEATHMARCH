@@ -9,7 +9,7 @@
 import Phaser from 'phaser';
 import { LevelManager } from '@/config/progression';
 import { PerkManager } from '@/systems/PerkManager';
-import { UIFactory, UIPalette } from '@/systems/UIFactory';
+import { UIFactory, UIPalette, UIText } from '@/systems/UIFactory';
 
 const PAD = 28;
 
@@ -93,108 +93,80 @@ export class HUDScene extends Phaser.Scene {
 
   // ──────────────────────── Top bar ────────────────────────
 
-  private buildTopBar(camW: number, levelIndex: number): void {
+  private buildTopBar(camW: number, _levelIndex: number): void {
     this.topBar = this.add.container(0, 0).setDepth(8);
 
-    // Pause button (squishy circular button, top-left).
+    const pauseSize = 60;
+    const pauseX = PAD + pauseSize / 2;
+    const rowY = 56;
+    const pillH = 56;
+
+    // Available width between pause button and right edge, minus a centre gap
+    // so the score / gold pills never collide with each other.
+    const sideGap = 14;
+    const centreGap = 24;
+    const usable = camW - PAD * 2 - pauseSize - sideGap - centreGap;
+    const pillW = Math.max(150, Math.min(240, Math.floor(usable / 2)));
+
+    // Pause button (left).
     const pauseBtn = UIFactory.createButton(
-      this,
-      PAD + 32,
-      52,
-      64,
-      64,
-      '⏸',
+      this, pauseX, rowY, pauseSize, pauseSize, '⏸',
       () => this.pauseGame(),
       {
         fillColor: UIPalette.coral,
-        cornerRadius: 32,
-        fontSize: 32,
+        borderColor: UIPalette.white,
+        borderWidth: 4,
+        cornerRadius: pauseSize / 2,
+        fontSize: 28,
         fontColor: '#ffffff',
       },
     );
     this.topBar.add(pauseBtn);
 
-    // Score pill (top-center-left). Sky-blue with a coin icon.
-    const scorePillW = Math.min(280, Math.round(camW * 0.34));
-    const scorePillX = PAD + 32 + 38 + scorePillW / 2;
-    const scorePill = UIFactory.createPill(this, scorePillX, 52, scorePillW, 60, {
+    // Score pill (left-of-centre). Sky-blue with a coin icon on the left.
+    const scorePillX = pauseX + pauseSize / 2 + sideGap + pillW / 2;
+    const scorePill = UIFactory.createPill(this, scorePillX, rowY, pillW, pillH, {
       fillColor: UIPalette.sky,
       borderColor: UIPalette.white,
       borderWidth: 4,
     });
-    const scoreCoin = UIFactory.createCoinIcon(this, -scorePillW / 2 + 28, 0, 36);
-    scorePill.add(scoreCoin);
-    this.scoreText = this.add.text(8, 0, '0', {
-      fontSize: '24px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#1a3a55',
-      strokeThickness: 3,
+    scorePill.add(UIFactory.createCoinIcon(this, -pillW / 2 + 26, 0, 32));
+    this.scoreText = this.add.text(10, 0, '0', {
+      ...UIText.pillValueLight,
+      fontSize: '22px',
     }).setOrigin(0.5);
     scorePill.add(this.scoreText);
     this.topBar.add(scorePill);
 
-    // Level chip (small pill, center).
-    const levelChipW = 130;
-    const levelChip = UIFactory.createPill(this, camW / 2, 52, levelChipW, 52, {
-      fillColor: UIPalette.panelDark,
-      borderColor: UIPalette.gold,
-      borderWidth: 4,
-      highlightAlpha: 0.12,
-    });
-    levelChip.add(this.add.text(0, 0, `Lv.${levelIndex + 1}`, {
-      fontSize: '24px',
-      color: '#ffd866',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 2,
-    }).setOrigin(0.5));
-    this.topBar.add(levelChip);
-
-    // Gold pill (top-right) with pulsing Add icon.
-    const goldPillW = Math.min(260, Math.round(camW * 0.32));
-    const goldPillX = camW - PAD - goldPillW / 2;
-    const goldPill = UIFactory.createPill(this, goldPillX, 52, goldPillW, 60, {
+    // Gold pill (right) with pulsing "+" icon on the right.
+    const goldPillX = camW - PAD - pillW / 2;
+    const goldPill = UIFactory.createPill(this, goldPillX, rowY, pillW, pillH, {
       fillColor: UIPalette.gold,
       borderColor: UIPalette.white,
       borderWidth: 4,
     });
-    this.goldText = this.add.text(-12, 0, '0g', {
-      fontSize: '26px',
-      color: '#3a2400',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#ffffff',
-      strokeThickness: 2,
+    this.goldText = this.add.text(-10, 0, '0g', {
+      ...UIText.pillValueGold,
+      fontSize: '22px',
     }).setOrigin(0.5);
     goldPill.add(this.goldText);
-    const plusIcon = UIFactory.createPlusIcon(this, goldPillW / 2 - 22, 0, 36);
+    const plusIcon = UIFactory.createPlusIcon(this, pillW / 2 - 22, 0, 32);
     UIFactory.pulse(this, plusIcon, { from: 0.92, to: 1.10, duration: 750 });
     goldPill.add(plusIcon);
     this.topBar.add(goldPill);
 
-    // Distance label (centered, just below the chips).
-    this.distanceText = this.add.text(camW / 2, 96, '0m', {
-      fontSize: '20px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
-      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 3, fill: true },
+    // Centre strip below the row: distance + unit count.
+    const stripY = rowY + pillH / 2 + 16;
+    this.distanceText = this.add.text(camW / 2, stripY, '0m', {
+      ...UIText.body,
+      fontSize: '18px',
     }).setOrigin(0.5);
     this.topBar.add(this.distanceText);
 
-    // Unit count text — small chip on the right side under the gold pill.
-    this.unitText = this.add.text(goldPillX, 102, '\u{1F465} 0', {
-      fontSize: '18px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
+    // Unit count tucked under the gold pill (right edge).
+    this.unitText = this.add.text(goldPillX, stripY, '\u{1F465} 0', {
+      ...UIText.body,
+      fontSize: '16px',
     }).setOrigin(0.5);
     this.topBar.add(this.unitText);
   }
@@ -223,13 +195,8 @@ export class HUDScene extends Phaser.Scene {
     this.bossBar.add(this.bossHpFill);
 
     this.bossHpLabel = this.add.text(camW / 2, barY + barH / 2, '', {
+      ...UIText.body,
       fontSize: '22px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
-      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 3, fill: true },
     }).setOrigin(0.5);
     this.bossBar.add(this.bossHpLabel);
 
@@ -260,12 +227,8 @@ export class HUDScene extends Phaser.Scene {
     this.weaponPill.add(this.weaponIcon);
 
     this.weaponLabel = this.add.text(10, 0, '', {
+      ...UIText.body,
       fontSize: '20px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
     }).setOrigin(0.5);
     this.weaponPill.add(this.weaponLabel);
   }
@@ -329,30 +292,20 @@ export class HUDScene extends Phaser.Scene {
     this.levelBanner.add(bannerPanel);
 
     this.levelBanner.add(this.add.text(0, -32, `LEVEL ${levelIndex + 1}`, {
+      ...UIText.subtitle,
       fontSize: '22px',
       color: Phaser.Display.Color.IntegerToColor(accent).rgba,
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
       letterSpacing: 5,
-      stroke: '#000000',
-      strokeThickness: 3,
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 6, levelName.toUpperCase(), {
+      ...UIText.title,
       fontSize: '32px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
-      shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 4, fill: true },
     }).setOrigin(0.5));
     this.levelBanner.add(this.add.text(0, 44, worldName, {
+      ...UIText.muted,
       fontSize: '15px',
       color: '#5de2ff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
       letterSpacing: 4,
-      stroke: '#000000',
-      strokeThickness: 2,
     }).setOrigin(0.5));
 
     this.levelBanner.setAlpha(0);
@@ -380,14 +333,9 @@ export class HUDScene extends Phaser.Scene {
       .setInteractive();
 
     const title = this.add.text(camW / 2, camH * 0.32, 'PAUSED', {
+      ...UIText.title,
       fontSize: '54px',
-      color: '#ffffff',
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontStyle: 'bold',
       letterSpacing: 8,
-      stroke: '#000000',
-      strokeThickness: 4,
-      shadow: { offsetX: 0, offsetY: 4, color: '#000000', blur: 6, fill: true },
     }).setOrigin(0.5).setDepth(31);
 
     const resume = UIFactory.createButton(

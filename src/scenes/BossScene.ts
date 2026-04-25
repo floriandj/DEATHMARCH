@@ -19,6 +19,7 @@ import { PlayerUnit } from '@/entities/PlayerUnit';
 import { BulletPool } from '@/systems/BulletPool';
 import { ParticlePool } from '@/systems/ParticlePool';
 import { UIModal } from '@/systems/UIModal';
+import { UIText } from '@/systems/UIFactory';
 import { BossState, BossPhase } from '@/entities/Boss';
 import { HUDScene } from '@/scenes/HUDScene';
 import { SoundManager } from '@/systems/SoundManager';
@@ -1234,19 +1235,12 @@ export class BossScene extends Phaser.Scene {
       });
 
       // Stat lines inside the modal: score, distance, gold.
-      const lineStyle = {
-        fontSize: '26px',
-        color: '#ffffff',
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontStyle: 'bold',
-        stroke: '#000000',
-        strokeThickness: 3,
-      } as Phaser.Types.GameObjects.Text.TextStyle;
+      const lineStyle = { ...UIText.body, fontSize: '24px' };
       modal.content.add(this.add.text(0, -40, `SCORE  ${Math.floor(this.score)}`, lineStyle).setOrigin(0.5));
       modal.content.add(this.add.text(0, 0, `DISTANCE  ${Math.floor(this.distance)}m`, lineStyle).setOrigin(0.5));
       modal.content.add(this.add.text(0, 40, `\u{1FA99}  +${goldEarned}g`, {
-        ...lineStyle,
-        color: '#ffd866',
+        ...UIText.subtitle,
+        fontSize: '24px',
       }).setOrigin(0.5));
 
       modal.onConfirm(() => {

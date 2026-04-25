@@ -28,6 +28,98 @@ export const UIPalette = {
   danger: 0xff3b6b,
 } as const;
 
+/**
+ * Centralized text style presets. Use these everywhere instead of inlining
+ * fontSize/color/stroke/shadow on each `add.text` so the look stays cohesive.
+ * Sizes are tweakable per use-site via `{ ...UIText.x, fontSize: '24px' }`.
+ */
+const FONT = 'Arial, Helvetica, sans-serif';
+const SHADOW_DROP: Phaser.Types.GameObjects.Text.TextShadow = {
+  offsetX: 0, offsetY: 2, color: '#000000', blur: 3, fill: true, stroke: false,
+};
+
+export const UIText = {
+  /** Big banner / modal title. White on any panel. */
+  title: {
+    fontSize: '40px',
+    color: '#ffffff',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#000000',
+    strokeThickness: 4,
+    shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 5, fill: true },
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  /** Sub-title / accent strap line. Gold over dark. */
+  subtitle: {
+    fontSize: '22px',
+    color: '#ffd866',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#000000',
+    strokeThickness: 3,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  /** Stat / number value displayed inside a bright (sky / panel) pill. */
+  pillValueLight: {
+    fontSize: '24px',
+    color: '#ffffff',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#1a3a55',
+    strokeThickness: 3,
+    shadow: SHADOW_DROP,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  /** Stat / number value on a gold pill. Dark text + white halo for contrast. */
+  pillValueGold: {
+    fontSize: '24px',
+    color: '#3a2400',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#ffffff',
+    strokeThickness: 3,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  /** Standard body / label text on a dark panel. */
+  body: {
+    fontSize: '18px',
+    color: '#ffffff',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#000000',
+    strokeThickness: 3,
+    shadow: SHADOW_DROP,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  /** Secondary / muted label (descriptions, footnotes). */
+  muted: {
+    fontSize: '16px',
+    color: '#a8d4f0',
+    fontFamily: FONT,
+    stroke: '#000000',
+    strokeThickness: 2,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  /** CTA / button label baseline (override fontSize per button). */
+  buttonLight: {
+    color: '#ffffff',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#000000',
+    strokeThickness: 3,
+    shadow: SHADOW_DROP,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+
+  buttonGold: {
+    color: '#3a2400',
+    fontFamily: FONT,
+    fontStyle: 'bold',
+    stroke: '#ffffff',
+    strokeThickness: 3,
+  } as Phaser.Types.GameObjects.Text.TextStyle,
+} as const;
+
 export interface PanelOptions {
   fillColor?: number;
   borderColor?: number;

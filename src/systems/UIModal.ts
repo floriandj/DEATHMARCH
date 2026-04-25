@@ -3,7 +3,7 @@
 // over a semi-transparent dim overlay. Built on UIFactory primitives.
 
 import Phaser from 'phaser';
-import { UIFactory, UIPalette } from '@/systems/UIFactory';
+import { UIFactory, UIPalette, UIText } from '@/systems/UIFactory';
 
 export interface UIModalConfig {
   /** Modal panel width in px. Defaults to 80% of camera width, capped at 720. */
@@ -72,23 +72,16 @@ export class UIModal {
 
     if (config.title) {
       const title = scene.add.text(0, -h / 2 + 60, config.title, {
-        fontSize: '44px',
-        color: '#ffffff',
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontStyle: 'bold',
-        stroke: '#000000',
-        strokeThickness: 4,
-        shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 4, fill: true },
+        ...UIText.title,
+        fontSize: '40px',
       }).setOrigin(0.5);
       this.container.add(title);
     }
 
     if (config.subtitle) {
-      const subtitle = scene.add.text(0, -h / 2 + 110, config.subtitle, {
-        fontSize: '24px',
-        color: '#ffd866',
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontStyle: 'bold',
+      const subtitle = scene.add.text(0, -h / 2 + 108, config.subtitle, {
+        ...UIText.subtitle,
+        fontSize: '22px',
       }).setOrigin(0.5);
       this.container.add(subtitle);
     }
