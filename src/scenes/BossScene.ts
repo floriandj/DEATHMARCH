@@ -64,7 +64,16 @@ export class BossScene extends Phaser.Scene {
   private bossScale: number = 1.5;
 
   // Boss projectiles (rockets + barrage)
-  private bossProjectiles: { sprite: Phaser.GameObjects.Sprite; vx: number; vy: number; type: 'rocket' | 'barrage'; radius: number }[] = [];
+  private bossProjectiles: {
+    sprite: Phaser.GameObjects.Sprite;
+    vx: number;
+    vy: number;
+    type: 'rocket' | 'barrage';
+    variant: 'standard' | 'homing' | 'cluster' | 'straight' | 'spread' | 'arc';
+    radius: number;
+    homingStrength: number;
+    ax: number;
+  }[] = [];
   private rocketTimer: number = 0;
   private rocketsFired: number = 0;
   private barrageTimer: number = 0;
@@ -239,8 +248,8 @@ export class BossScene extends Phaser.Scene {
     // 3b. Handle rocket phase — fire rockets at timed intervals
     if (this.bossState.phase === BossPhase.Rocket) {
       this.rocketTimer += delta;
-      const rocketInterval = this.bossState.enraged ? 600 : 900;
-      const maxRockets = this.bossState.enraged ? 4 : 3;
+      const rocketInterval = this.bossState.enraged ? 480 : 750;
+      const maxRockets = this.bossState.enraged ? 6 : 4;
       if (this.rocketTimer >= rocketInterval && this.rocketsFired < maxRockets) {
         this.rocketTimer = 0;
         this.rocketsFired++;
@@ -251,7 +260,7 @@ export class BossScene extends Phaser.Scene {
     // 3c. Handle barrage phase — rapid small shots
     if (this.bossState.phase === BossPhase.Barrage) {
       this.barrageTimer += delta;
-      const barrageInterval = this.bossState.enraged ? 120 : 200;
+      const barrageInterval = this.bossState.enraged ? 95 : 165;
       if (this.barrageTimer >= barrageInterval) {
         this.barrageTimer = 0;
         this.fireBarrageShot();
@@ -679,42 +688,70 @@ export class BossScene extends Phaser.Scene {
   private fireRocket(): void {
     SoundManager.play('boss_rocket_launch');
 
+    const variant = this.pickRocketVariant();
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
-    // Create rocket sprite
     const rocket = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 30, 'vfx_ring');
-    rocket.setTint(0xff4400);
-    rocket.setScale(2.5);
+    let tint: number;
+    let trailTint: number;
+    let scale: number;
+    let speed: number;
+    let radius: number;
+    let homingStrength: number;
+    if (variant === 'homing') {
+      tint = 0x00ddff;
+      trailTint = 0x66f0ff;
+      scale = 2.2;
+      speed = 220;
+      radius = 60;
+      homingStrength = 1.4;
+    } else if (variant === 'cluster') {
+      tint = 0xffaa00;
+      trailTint = 0xffd866;
+      scale = 3.0;
+      speed = 230;
+      radius = 80;
+      homingStrength = 0;
+    } else {
+      tint = 0xff4400;
+      trailTint = 0xff6600;
+      scale = 2.5;
+      speed = 250;
+      radius = 70;
+      homingStrength = 0;
+    }
+    rocket.setTint(tint);
+    rocket.setScale(scale);
     rocket.setAlpha(0.9);
 
-    // Aim at army with some spread
     const spread = (Math.random() - 0.5) * 120;
     const targetX = armyScreenX + spread;
     const targetY = armyScreenY;
     const dx = targetX - rocket.x;
     const dy = targetY - rocket.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const speed = 250;
 
     this.bossProjectiles.push({
       sprite: rocket,
       vx: (dx / dist) * speed,
       vy: (dy / dist) * speed,
       type: 'rocket',
-      radius: 70,
+      variant,
+      radius,
+      homingStrength,
+      ax: 0,
     });
 
-    // Trail effect on rocket
     const trailTimer = this.time.addEvent({
       delay: 40,
       repeat: -1,
       callback: () => {
         if (!rocket.active) { trailTimer.destroy(); return; }
         const t = this.add.sprite(rocket.x, rocket.y, 'vfx_trail');
-        t.setTint(0xff6600);
+        t.setTint(trailTint);
         t.setAlpha(0.6);
-        t.setScale(1.5);
+        t.setScale(variant === 'cluster' ? 1.8 : 1.5);
         this.tweens.add({
           targets: t, alpha: 0, scale: 0.3,
           duration: 200, onComplete: () => t.destroy(),
@@ -723,33 +760,94 @@ export class BossScene extends Phaser.Scene {
     });
   }
 
+  private pickRocketVariant(): 'standard' | 'homing' | 'cluster' {
+    const r = Math.random();
+    if (this.bossState.enraged) {
+      if (r < 0.30) return 'cluster';
+      if (r < 0.60) return 'homing';
+      return 'standard';
+    }
+    if (r < 0.15) return 'cluster';
+    if (r < 0.40) return 'homing';
+    return 'standard';
+  }
+
   private fireBarrageShot(): void {
     SoundManager.play('boss_barrage');
 
+    const variant = this.pickBarrageVariant();
     const armyScreenX = GAME_WIDTH / 2 + this.armyX;
     const armyScreenY = GAME_HEIGHT - ARMY_SCREEN_BOTTOM_OFFSET + this.armyYOffset;
 
+    if (variant === 'spread') {
+      const baseAngle = Math.atan2(armyScreenY - (this.bossSprite.y + 20), armyScreenX - this.bossSprite.x);
+      const speed = 360;
+      for (let i = -1; i <= 1; i++) {
+        const angle = baseAngle + i * 0.22;
+        const shot = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 20, 'vfx_spark');
+        shot.setTint(0xff3366);
+        shot.setScale(1.9);
+        shot.setAlpha(0.85);
+        this.bossProjectiles.push({
+          sprite: shot,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          type: 'barrage',
+          variant: 'spread',
+          radius: 28,
+          homingStrength: 0,
+          ax: 0,
+        });
+      }
+      return;
+    }
+
     const shot = this.add.sprite(this.bossSprite.x, this.bossSprite.y + 20, 'vfx_spark');
-    shot.setTint(0xff00ff);
+    let tint: number;
+    let speed: number;
+    let ax: number;
+    if (variant === 'arc') {
+      tint = 0x66ff44;
+      speed = 320;
+      ax = (Math.random() < 0.5 ? -1 : 1) * 260;
+    } else {
+      tint = 0xff00ff;
+      speed = 350;
+      ax = 0;
+    }
+    shot.setTint(tint);
     shot.setScale(2);
     shot.setAlpha(0.8);
 
-    // Aim with wider spread
     const spread = (Math.random() - 0.5) * 200;
     const targetX = armyScreenX + spread;
     const targetY = armyScreenY + (Math.random() - 0.5) * 60;
     const dx = targetX - shot.x;
     const dy = targetY - shot.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const speed = 350;
 
     this.bossProjectiles.push({
       sprite: shot,
       vx: (dx / dist) * speed,
       vy: (dy / dist) * speed,
       type: 'barrage',
+      variant,
       radius: 30,
+      homingStrength: 0,
+      ax,
     });
+  }
+
+  private pickBarrageVariant(): 'straight' | 'spread' | 'arc' {
+    const r = Math.random();
+    if (this.bossState.enraged) {
+      if (r < 0.30) return 'spread';
+      if (r < 0.60) return 'arc';
+      return 'straight';
+    }
+    if (r < 0.18) return 'spread';
+    if (r < 0.40) return 'arc';
+    return 'straight';
   }
 
   private updateBossProjectiles(delta: number): void {
@@ -762,6 +860,26 @@ export class BossScene extends Phaser.Scene {
       if (!proj.sprite.active) {
         this.bossProjectiles.splice(i, 1);
         continue;
+      }
+
+      // Homing rockets gradually steer toward the army
+      if (proj.type === 'rocket' && proj.variant === 'homing' && proj.homingStrength > 0) {
+        const toX = armyScreenX - proj.sprite.x;
+        const toY = armyScreenY - proj.sprite.y;
+        const toDist = Math.sqrt(toX * toX + toY * toY);
+        if (toDist > 1) {
+          const speed = Math.sqrt(proj.vx * proj.vx + proj.vy * proj.vy);
+          const desiredVx = (toX / toDist) * speed;
+          const desiredVy = (toY / toDist) * speed;
+          const blend = Math.min(1, proj.homingStrength * dt);
+          proj.vx += (desiredVx - proj.vx) * blend;
+          proj.vy += (desiredVy - proj.vy) * blend;
+        }
+      }
+
+      // Arc barrage shots curve laterally
+      if (proj.type === 'barrage' && proj.variant === 'arc' && proj.ax !== 0) {
+        proj.vx += proj.ax * dt;
       }
 
       proj.sprite.x += proj.vx * dt;
@@ -782,7 +900,7 @@ export class BossScene extends Phaser.Scene {
 
       if (proj.type === 'rocket' && distToArmy < proj.radius) {
         // Rocket explodes — kill some units + stun nearby
-        this.rocketExplode(proj.sprite.x, proj.sprite.y);
+        this.rocketExplode(proj.sprite.x, proj.sprite.y, proj.variant as 'standard' | 'homing' | 'cluster');
         proj.sprite.destroy();
         this.bossProjectiles.splice(i, 1);
       } else if (proj.type === 'barrage') {
@@ -791,11 +909,11 @@ export class BossScene extends Phaser.Scene {
           if (!unit.active) continue;
           const ux = proj.sprite.x - unit.x;
           const uy = proj.sprite.y - unit.y;
-          if (Math.sqrt(ux * ux + uy * uy) < 20 * ENTITY_SCALE) {
-            // Hit a unit — stun it briefly
-            unit.stun(800);
+          if (Math.sqrt(ux * ux + uy * uy) < 22 * ENTITY_SCALE) {
+            // Heavier hit — longer stun, arc shots stun even longer
+            const stunDuration = proj.variant === 'arc' ? 1300 : 1100;
+            unit.stun(stunDuration);
             SoundManager.play('stun_hit');
-            // Small impact spark
             this.spawnHitSpark(proj.sprite.x, proj.sprite.y);
             proj.sprite.destroy();
             this.bossProjectiles.splice(i, 1);
@@ -806,26 +924,40 @@ export class BossScene extends Phaser.Scene {
     }
   }
 
-  private rocketExplode(x: number, y: number): void {
+  private rocketExplode(x: number, y: number, variant: 'standard' | 'homing' | 'cluster' = 'standard'): void {
     SoundManager.play('boss_rocket_explode');
-    this.cameras.main.shake(300, 0.025);
+    const isCluster = variant === 'cluster';
+    this.cameras.main.shake(isCluster ? 420 : 320, isCluster ? 0.035 : 0.028);
 
-    // Explosion VFX
-    this.spawnImpactParticles(x, y, 10, 0xff4400);
-    this.spawnImpactParticles(x, y, 6, 0xffaa00);
+    // Explosion VFX (cluster gets a brighter, larger burst)
+    if (isCluster) {
+      this.spawnImpactParticles(x, y, 14, 0xffaa00);
+      this.spawnImpactParticles(x, y, 10, 0xffd866);
+    } else {
+      this.spawnImpactParticles(x, y, 12, 0xff4400);
+      this.spawnImpactParticles(x, y, 8, 0xffaa00);
+    }
 
-    // Kill 1-2 units
-    const unitsToKill = Math.max(1, Math.min(2, Math.ceil(this.unitCount * 0.04)));
+    // Heavier hit: kill 2-4 units (cluster kills extra)
+    const killPct = isCluster ? 0.08 : 0.06;
+    const killCap = isCluster ? 5 : 4;
+    const unitsToKill = Math.max(2, Math.min(killCap, Math.ceil(this.unitCount * killPct)));
     this.unitCount = Math.max(0, this.unitCount - unitsToKill);
 
-    // Stun nearby surviving units for 1.2 seconds
+    // Stun nearby surviving units (wider radius, longer stun)
+    const stunRadius = isCluster ? 150 : 130;
+    const stunDuration = isCluster ? 1700 : 1500;
     for (const unit of this.units) {
       if (!unit.active) continue;
       const dx = unit.x - x;
       const dy = unit.y - y;
-      if (Math.sqrt(dx * dx + dy * dy) < 100) {
-        unit.stun(1200);
+      if (Math.sqrt(dx * dx + dy * dy) < stunRadius) {
+        unit.stun(stunDuration);
       }
+    }
+
+    if (isCluster) {
+      this.spawnClusterShards(x, y);
     }
 
     if (this.unitCount <= 0) {
@@ -833,6 +965,28 @@ export class BossScene extends Phaser.Scene {
       return;
     }
     this.respawnArmy();
+  }
+
+  private spawnClusterShards(x: number, y: number): void {
+    const shardCount = 6;
+    const speed = 280;
+    for (let i = 0; i < shardCount; i++) {
+      const angle = (Math.PI * 2 * i) / shardCount + (Math.random() - 0.5) * 0.25;
+      const shard = this.add.sprite(x, y, 'vfx_spark');
+      shard.setTint(0xffaa00);
+      shard.setScale(1.7);
+      shard.setAlpha(0.9);
+      this.bossProjectiles.push({
+        sprite: shard,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        type: 'barrage',
+        variant: 'straight',
+        radius: 26,
+        homingStrength: 0,
+        ax: 0,
+      });
+    }
   }
 
   // ---------- Army management ----------
