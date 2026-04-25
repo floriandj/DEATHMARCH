@@ -118,14 +118,12 @@ export class GameScene extends Phaser.Scene {
     this.nextGateDistance = level.gates.interval;
     this.nextLootBarrelDistance = 180;
 
-    // Apply weapon tier boost
-    const weaponTier = Math.min(boosts.weaponTier, level.weaponOrder.length - 1);
-    this.currentWeapon = level.weaponOrder[weaponTier];
+    // Every level starts with its base weapon — no carry-over, no meta tier.
+    this.currentWeapon = level.startingWeapon;
     this.shootSoundTimer = 0;
 
-    // Build weapon gate distances from weapon crate configs
     this.weaponGateDistances = level.weaponCrates.map((c) => c.distance);
-    this.weaponGateIndex = weaponTier; // skip already-obtained weapon tiers
+    this.weaponGateIndex = 0;
 
     this.spawningComplete = false;
 
